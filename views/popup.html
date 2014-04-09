@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html ng-app="mdviewer">
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <title>Markdown Viewer</title>
+
+    <link href="/css/mdviewer.css" rel="stylesheet" type="text/css" media="all" />
+
+    <script src="/jslib/angular.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="/js/mdviewer.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body ng-controller="popup">
+    
+    <a href="" ng-click="onRaw()">{{raw ? 'Html' : 'Markdown'}}</a>
+    <a href="" ng-click="onDefaults()">Defaults</a>
+    
+    <h4>Theme</h4>
+    <select
+        ng-model="theme"
+        ng-change="onTheme()"
+        ng-options="theme.name for theme in themes track by theme.name">
+    </select>
+
+    <h4>Compiler Options</h4>
+    <ul>
+        <li ng-repeat="option in options">
+            <label>
+                <input type="checkbox" ng-model="option.enabled" ng-change="onOptions()" />
+                {{option.name}}
+            </label>
+            
+        </li>
+    </ul>
+
+</body>
+</html>

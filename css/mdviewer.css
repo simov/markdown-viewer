@@ -1,0 +1,16 @@
+* { margin: 0; padding: 0; outline: 0; }
+
+body { font-family: Arial, Helvetica, Sans-Serif; font-size: 14px; line-height: 17px; color: #404040; background: #fff; }
+
+a { color: #0252aa; text-decoration: none; cursor: pointer; }
+a:hover { text-decoration: underline; }
+input, textarea, select { font-family: Arial, Helvetica, sans-serif; font-size: 14px; border: 1px solid #404040; }
+ul { list-style: none; }
+
+
+body { width: 200px; padding: 10px; }
+label { white-space: nowrap; }
+select { width: 200px; }
+[type=checkbox] { position: relative; z-index: 1; top: 2px; }
+h4 { clear: both; padding: 10px 0 2px 0; }
+a:nth-child(2) { float: right; }
