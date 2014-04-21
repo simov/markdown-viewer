@@ -1,14 +1,16 @@
 
-$(function () {
-    (function injectCSS () {
-        var link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.type = 'text/css';
-        link.href = '#';
-        link.id = 'theme';
-        document.head.appendChild(link);
-    }());
+function injectCSS () {
+    var link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = '#';
+    link.id = 'theme';
+    document.head.appendChild(link);
+};
 
+$(function () {
+    injectCSS();
+    
     $('body').addClass('markdown-body');//github
     $('pre').attr('id', 'markdown').hide();
 
@@ -38,7 +40,11 @@ chrome.extension.onMessage.addListener(function (req, sender, sendResponse) {
             break;
         
         case 'theme':
+            var raw = $('#theme').attr('disabled') == 'disabled';
+            $('#theme').remove();
+            injectCSS();
             $('#theme').attr('href', chrome.extension.getURL('/themes/'+req.theme+'.css'));
+            $('#theme').attr('disabled', raw);
             break;
 
         case 'raw':
