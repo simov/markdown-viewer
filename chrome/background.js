@@ -24,7 +24,6 @@ chrome.extension.onMessage.addListener(function (req, sender, sendResponse) {
         case 'settings':
             chrome.storage.sync.get(['options', 'theme', 'raw'], function (data) {
                 delete data.options.langPrefix;
-                console.log(data);
                 sendResponse(data);
             });
             break;
