@@ -31,6 +31,20 @@ $(function () {
         $('#markdown')[data.raw?'show':'hide']();
         $('#html')[data.raw?'hide':'show']();
     });
+
+    var timeout = null;
+    $(window).on('scroll', function (e) {
+        clearTimeout(timeout);
+        timeout = setTimeout(function () {
+            localStorage.setItem('scrolltop', $(window).scrollTop());
+        },100);
+    });
+
+    $(window).on('load', function (e) {
+        setTimeout(function () {
+            $(window).scrollTop(localStorage.getItem('scrolltop'));
+        },100);
+    });
 });
 
 chrome.extension.onMessage.addListener(function (req, sender, sendResponse) {
