@@ -32,18 +32,18 @@ $(function () {
         $('#html')[data.raw?'hide':'show']();
     });
 
-    var timeout = null;
-    $(window).on('scroll', function (e) {
-        clearTimeout(timeout);
-        timeout = setTimeout(function () {
-            localStorage.setItem('scrolltop', $(window).scrollTop());
-        },100);
-    });
-
     $(window).on('load', function (e) {
         setTimeout(function () {
+            var timeout = null;
+            $(window).on('scroll', function (e) {
+                clearTimeout(timeout);
+                timeout = setTimeout(function () {
+                    localStorage.setItem('scrolltop', $(window).scrollTop());
+                }, 100);
+            });
+
             $(window).scrollTop(localStorage.getItem('scrolltop'));
-        },100);
+        }, 100);
     });
 });
 
