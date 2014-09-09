@@ -1,9 +1,9 @@
 
-#Markdown Viewer
+# Markdown Viewer / Chrome Extension
 
-##[Install][9]
+## [Install][9]
 
-##Features
+## Features
 
 - build on top of the [marked][1] compiler
 - support for [GitHub Flavored Markdown][2]
@@ -16,18 +16,7 @@
 - supported file extensions `markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text`
 - [open source][8]
 
-
-  [1]: https://github.com/chjj/marked
-  [2]: https://help.github.com/articles/github-flavored-markdown
-  [3]: https://github.com/chjj/marked#gfm
-  [4]: https://github.com/jasonm23/markdown-css-themes
-  [5]: https://github.com/mixu/markdown-styles
-  [6]: http://prismjs.com/
-  [7]: http://developer.chrome.com/extensions/event_pages.html
-  [8]: https://github.com/simov/markdown-viewer
-  [9]: https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk
-
-##License
+## License
 
 (The MIT License)
 
@@ -38,3 +27,14 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+  [1]: https://github.com/chjj/marked
+  [2]: https://help.github.com/articles/github-flavored-markdown
+  [3]: https://github.com/chjj/marked#gfm
+  [4]: https://github.com/jasonm23/markdown-css-themes
+  [5]: https://github.com/mixu/markdown-styles
+  [6]: http://prismjs.com/
+  [7]: http://developer.chrome.com/extensions/event_pages.html
+  [8]: https://github.com/simov/markdown-viewer
+  [9]: https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk
