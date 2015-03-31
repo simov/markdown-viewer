@@ -37,7 +37,6 @@
 }
 
 .markdown-body hr {
-  -moz-box-sizing: content-box;
   box-sizing: content-box;
   height: 0;
 }
@@ -68,7 +67,6 @@
 }
 
 .markdown-body input[type="checkbox"] {
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
   padding: 0;
 }
@@ -84,12 +82,11 @@
 }
 
 .markdown-body * {
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
 
 .markdown-body input {
-  font: 13px/1.4 Helvetica, arial, freesans, clean, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+  font: 13px/1.4 Helvetica, arial, nimbussansl, liberationsans, freesans, clean, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
 .markdown-body a {
@@ -98,7 +95,6 @@
 }
 
 .markdown-body a:hover,
-.markdown-body a:focus,
 .markdown-body a:active {
   text-decoration: underline;
 }
@@ -186,7 +182,8 @@
 }
 
 .markdown-body code {
-  font: 12px Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-size: 12px;
 }
 
 .markdown-body pre {
@@ -195,18 +192,21 @@
   font: 12px Consolas, "Liberation Mono", Menlo, Courier, monospace;
 }
 
-.markdown-body kbd {
-  background-color: #e7e7e7;
-  background-image: -webkit-linear-gradient(#fefefe, #e7e7e7);
-  background-image: linear-gradient(#fefefe, #e7e7e7);
-  background-repeat: repeat-x;
-  border-radius: 2px;
-  border: 1px solid #cfcfcf;
-  color: #000;
-  padding: 3px 5px;
-  line-height: 10px;
-  font: 11px Consolas, "Liberation Mono", Menlo, Courier, monospace;
+.markdown-body .octicon {
+  font: normal normal normal 16px/1 octicons-anchor;
   display: inline-block;
+  text-decoration: none;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.markdown-body .octicon-link:before {
+  content: '\f05c';
 }
 
 .markdown-body>*:first-child {
@@ -217,10 +217,14 @@
   margin-bottom: 0 !important;
 }
 
+.markdown-body a:not([href]) {
+  color: inherit;
+  text-decoration: none;
+}
+
 .markdown-body .anchor {
   position: absolute;
   top: 0;
-  bottom: 0;
   left: 0;
   display: block;
   padding-right: 6px;
@@ -262,10 +266,8 @@
 .markdown-body h4:hover .anchor,
 .markdown-body h5:hover .anchor,
 .markdown-body h6:hover .anchor {
-  height: 1em;
   padding-left: 8px;
   margin-left: -30px;
-  line-height: 1;
   text-decoration: none;
 }
 
@@ -285,6 +287,10 @@
   border-bottom: 1px solid #eee;
 }
 
+.markdown-body h1 .anchor {
+  line-height: 1;
+}
+
 .markdown-body h2 {
   padding-bottom: 0.3em;
   font-size: 1.75em;
@@ -292,22 +298,42 @@
   border-bottom: 1px solid #eee;
 }
 
+.markdown-body h2 .anchor {
+  line-height: 1;
+}
+
 .markdown-body h3 {
   font-size: 1.5em;
   line-height: 1.43;
+}
+
+.markdown-body h3 .anchor {
+  line-height: 1.2;
 }
 
 .markdown-body h4 {
   font-size: 1.25em;
 }
 
+.markdown-body h4 .anchor {
+  line-height: 1.2;
+}
+
 .markdown-body h5 {
   font-size: 1em;
+}
+
+.markdown-body h5 .anchor {
+  line-height: 1.1;
 }
 
 .markdown-body h6 {
   font-size: 1em;
   color: #777;
+}
+
+.markdown-body h6 .anchor {
+  line-height: 1.1;
 }
 
 .markdown-body p,
@@ -406,7 +432,6 @@
 
 .markdown-body img {
   max-width: 100%;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
 
@@ -476,209 +501,131 @@
   content: normal;
 }
 
-.markdown-body .highlight {
-  background: #fff;
+.markdown-body kbd {
+  display: inline-block;
+  padding: 3px 5px;
+  font-size: 11px;
+  line-height: 10px;
+  color: #555;
+  vertical-align: middle;
+  background-color: #fcfcfc;
+  border: solid 1px #ccc;
+  border-bottom-color: #bbb;
+  border-radius: 3px;
+  box-shadow: inset 0 -1px 0 #bbb;
 }
 
-.markdown-body .highlight .mf,
-.markdown-body .highlight .mh,
-.markdown-body .highlight .mi,
-.markdown-body .highlight .mo,
-.markdown-body .highlight .il,
-.markdown-body .highlight .m {
-  color: #945277;
+.markdown-body .pl-c {
+  color: #969896;
 }
 
-.markdown-body .highlight .s,
-.markdown-body .highlight .sb,
-.markdown-body .highlight .sc,
-.markdown-body .highlight .sd,
-.markdown-body .highlight .s2,
-.markdown-body .highlight .se,
-.markdown-body .highlight .sh,
-.markdown-body .highlight .si,
-.markdown-body .highlight .sx,
-.markdown-body .highlight .s1 {
-  color: #df5000;
+.markdown-body .pl-c1,
+.markdown-body .pl-s .pl-v {
+  color: #0086b3;
 }
 
-.markdown-body .highlight .kc,
-.markdown-body .highlight .kd,
-.markdown-body .highlight .kn,
-.markdown-body .highlight .kp,
-.markdown-body .highlight .kr,
-.markdown-body .highlight .kt,
-.markdown-body .highlight .k,
-.markdown-body .highlight .o {
-  font-weight: bold;
+.markdown-body .pl-e,
+.markdown-body .pl-en {
+  color: #795da3;
 }
 
-.markdown-body .highlight .kt {
-  color: #458;
-}
-
-.markdown-body .highlight .c,
-.markdown-body .highlight .cm,
-.markdown-body .highlight .c1 {
-  color: #998;
-  font-style: italic;
-}
-
-.markdown-body .highlight .cp,
-.markdown-body .highlight .cs {
-  color: #999;
-  font-weight: bold;
-}
-
-.markdown-body .highlight .cs {
-  font-style: italic;
-}
-
-.markdown-body .highlight .n {
+.markdown-body .pl-s .pl-s1,
+.markdown-body .pl-smi {
   color: #333;
 }
 
-.markdown-body .highlight .na,
-.markdown-body .highlight .nv,
-.markdown-body .highlight .vc,
-.markdown-body .highlight .vg,
-.markdown-body .highlight .vi {
+.markdown-body .pl-ent {
+  color: #63a35c;
+}
+
+.markdown-body .pl-k {
+  color: #a71d5d;
+}
+
+.markdown-body .pl-pds,
+.markdown-body .pl-s,
+.markdown-body .pl-s .pl-pse .pl-s1,
+.markdown-body .pl-sr,
+.markdown-body .pl-sr .pl-cce,
+.markdown-body .pl-sr .pl-sra,
+.markdown-body .pl-sr .pl-sre {
+  color: #183691;
+}
+
+.markdown-body .pl-v {
+  color: #ed6a43;
+}
+
+.markdown-body .pl-id {
+  color: #b52a1d;
+}
+
+.markdown-body .pl-ii {
+  background-color: #b52a1d;
+  color: #f8f8f8;
+}
+
+.markdown-body .pl-sr .pl-cce {
+  color: #63a35c;
+  font-weight: bold;
+}
+
+.markdown-body .pl-ml {
+  color: #693a17;
+}
+
+.markdown-body .pl-mh,
+.markdown-body .pl-mh .pl-en,
+.markdown-body .pl-ms {
+  color: #1d3e81;
+  font-weight: bold;
+}
+
+.markdown-body .pl-mq {
   color: #008080;
 }
 
-.markdown-body .highlight .nb {
-  color: #0086B3;
-}
-
-.markdown-body .highlight .nc {
-  color: #458;
-  font-weight: bold;
-}
-
-.markdown-body .highlight .no {
-  color: #094e99;
-}
-
-.markdown-body .highlight .ni {
-  color: #800080;
-}
-
-.markdown-body .highlight .ne {
-  color: #990000;
-  font-weight: bold;
-}
-
-.markdown-body .highlight .nf {
-  color: #945277;
-  font-weight: bold;
-}
-
-.markdown-body .highlight .nn {
-  color: #555;
-}
-
-.markdown-body .highlight .nt {
-  color: #000080;
-}
-
-.markdown-body .highlight .err {
-  color: #a61717;
-  background-color: #e3d2d2;
-}
-
-.markdown-body .highlight .gd {
-  color: #000;
-  background-color: #fdd;
-}
-
-.markdown-body .highlight .gd .x {
-  color: #000;
-  background-color: #faa;
-}
-
-.markdown-body .highlight .ge {
+.markdown-body .pl-mi {
+  color: #333;
   font-style: italic;
 }
 
-.markdown-body .highlight .gr {
-  color: #aa0000;
-}
-
-.markdown-body .highlight .gh {
-  color: #999;
-}
-
-.markdown-body .highlight .gi {
-  color: #000;
-  background-color: #dfd;
-}
-
-.markdown-body .highlight .gi .x {
-  color: #000;
-  background-color: #afa;
-}
-
-.markdown-body .highlight .go {
-  color: #888;
-}
-
-.markdown-body .highlight .gp {
-  color: #555;
-}
-
-.markdown-body .highlight .gs {
+.markdown-body .pl-mb {
+  color: #333;
   font-weight: bold;
 }
 
-.markdown-body .highlight .gu {
-  color: #800080;
+.markdown-body .pl-md {
+  background-color: #ffecec;
+  color: #bd2c00;
+}
+
+.markdown-body .pl-mi1 {
+  background-color: #eaffea;
+  color: #55a532;
+}
+
+.markdown-body .pl-mdr {
+  color: #795da3;
   font-weight: bold;
 }
 
-.markdown-body .highlight .gt {
-  color: #aa0000;
+.markdown-body .pl-mo {
+  color: #1d3e81;
 }
 
-.markdown-body .highlight .ow {
-  font-weight: bold;
-}
-
-.markdown-body .highlight .w {
-  color: #bbb;
-}
-
-.markdown-body .highlight .sr {
-  color: #017936;
-}
-
-.markdown-body .highlight .ss {
-  color: #8b467f;
-}
-
-.markdown-body .highlight .bp {
-  color: #999;
-}
-
-.markdown-body .highlight .gc {
-  color: #999;
-  background-color: #EAF2F5;
-}
-
-.markdown-body .octicon {
-  font: normal normal 16px octicons-anchor;
-  line-height: 1;
+.markdown-body kbd {
   display: inline-block;
-  text-decoration: none;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-.markdown-body .octicon-link:before {
-  content: '\f05c';
+  padding: 3px 5px;
+  font: 11px Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  line-height: 10px;
+  color: #555;
+  vertical-align: middle;
+  background-color: #fcfcfc;
+  border: solid 1px #ccc;
+  border-bottom-color: #bbb;
+  border-radius: 3px;
+  box-shadow: inset 0 -1px 0 #bbb;
 }
 
 .markdown-body .task-list-item {
@@ -690,9 +637,14 @@
 }
 
 .markdown-body .task-list-item input {
-  float: left;
-  margin: 0.3em 0 0.25em -1.6em;
+  margin: 0 0.35em 0.25em -1.6em;
   vertical-align: middle;
+}
+
+.markdown-body :checked+.radio-label {
+  z-index: 1;
+  position: relative;
+  border-color: #4183c4;
 }
 
 /*markdown-viewer*/
