@@ -5,13 +5,13 @@
 
 ## Features
 
-- build on top of the [marked][1] compiler
+- built on top of the [marked][1] compiler
 - support for [GitHub Flavored Markdown][2]
 - full control over the [compiler options][3]
 - 20 themes from [jasonm23][4] and [mixu][5]
 - syntax highlighted code blocks using [prism][6]
 - settings synchronisation through google sync
-- build as [event page][7] - the extension is loaded only when it's needed
+- built as [event page][7] - the extension is loaded only when it's needed
 - quickly switch between raw markdown and html
 - supported file extensions `markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text`
 - [open source][8]
@@ -20,7 +20,7 @@
 
 (The MIT License)
 
-Copyright (c) 2013-2014 simov <simeonvelichkov@gmail.com>
+Copyright (c) 2013-2015 simov <simeonvelichkov@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
