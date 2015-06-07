@@ -1,7 +1,9 @@
 
 # Markdown Viewer / Chrome Extension
 
+
 ## [Install][9]
+
 
 ## Features
 
@@ -15,6 +17,7 @@
 - quickly switch between raw markdown and html
 - supported file extensions `markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text`
 - [open source][8]
+
 
 ## License
 
