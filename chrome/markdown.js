@@ -11,25 +11,25 @@ var md = (function () {
         smartLists: true,
         smartypants: false,
         langPrefix: 'language-'//prism
-    };
+    }
 
     function compile (markdown, sendResponse) {
         chrome.storage.sync.get(function (sync) {
-            marked.setOptions(sync.options);
+            marked.setOptions(sync.options)
 
             marked(markdown, function (err, html) {
-                if (err) throw err;
+                if (err) throw err
                 // prism fix
-                html = html.replace(/language-html/g, 'language-markup');
-                html = html.replace(/language-js/g, 'language-javascript');
+                html = html.replace(/language-html/g, 'language-markup')
+                html = html.replace(/language-js/g, 'language-javascript')
                 
-                sendResponse({message: 'marked', marked: html});
-            });
-        });
+                sendResponse({message: 'marked', marked: html})
+            })
+        })
     }
 
     return {
         defaults: defaults,
         compile: compile
     }
-}());
+}())
