@@ -10,7 +10,8 @@ chrome.storage.sync.get(function (sync) {
 
 chrome.tabs.onUpdated.addListener(function (id, info, tab) {
     if (info.status === 'complete') return;
-    if (/.*\/.*\.(markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)$/.test(tab.url)) {
+    if (/.*\/.*\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*)?$/
+        .test(tab.url)) {
         chrome.pageAction.show(id);
     }
 });
