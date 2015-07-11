@@ -45,7 +45,9 @@
                 "file:///*/*.text"
             ],
             "exclude_matches": [
-                "*://github.com/*"
+                "*://github.com/*",
+                "*://bitbucket.org/*",
+                "*://gitlab.com/*"
             ],
             "css": [
                 "/css/prism.css"
