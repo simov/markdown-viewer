@@ -63,7 +63,6 @@
     ],
 
     "web_accessible_resources": [
-        "/images/dirty-shade.png",
         "/jslib/jquery-2.0.3.min.map",
 
         "/themes/github.css",
