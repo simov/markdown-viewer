@@ -1,108 +1,108 @@
 {
-    "manifest_version": 2,
-    "name"            : "Markdown Viewer",
-    "version"         : "1.6",
-    "description"     : "Markdown Viewer",
+  "manifest_version": 2,
+  "name"            : "Markdown Viewer",
+  "version"         : "1.6",
+  "description"     : "Markdown Viewer",
 
-    "page_action": {
-        "default_icon": {
-            "19" : "/images/icon19.png",
-            "38" : "/images/icon38.png"
-        },
-        "default_title": "Markdown Viewer",
-        "default_popup": "/views/popup.html"
+  "page_action": {
+    "default_icon": {
+      "19" : "/images/icon19.png",
+      "38" : "/images/icon38.png"
     },
-    
-    "background" : {
-        "scripts": [
-            "/jslib/marked.js",
-            "/chrome/markdown.js",
-            "/chrome/background.js"
-        ],
-        "persistent": false
-    },
-
-    "content_scripts": [
-        {
-            "matches": [
-                "*://*/*.markdown",
-                "*://*/*.mdown",
-                "*://*/*.mkdn",
-                "*://*/*.md",
-                "*://*/*.mkd",
-                "*://*/*.mdwn",
-                "*://*/*.mdtxt",
-                "*://*/*.mdtext",
-                "*://*/*.text",
-                "file:///*/*.markdown",
-                "file:///*/*.mdown",
-                "file:///*/*.mkdn",
-                "file:///*/*.md",
-                "file:///*/*.mkd",
-                "file:///*/*.mdwn",
-                "file:///*/*.mdtxt",
-                "file:///*/*.mdtext",
-                "file:///*/*.text"
-            ],
-            "exclude_matches": [
-                "*://github.com/*",
-                "*://bitbucket.org/*",
-                "*://gitlab.com/*"
-            ],
-            "css": [
-                "/css/prism.css"
-            ],
-            "js": [
-                "/jslib/jquery-2.0.3.min.js",
-                "/jslib/prism.js",
-                "/js/content.js"
-            ],
-            "run_at": "document_start",
-            "all_frames": true
-        }
+    "default_title": "Markdown Viewer",
+    "default_popup": "/views/popup.html"
+  },
+  
+  "background" : {
+    "scripts": [
+      "/jslib/marked.js",
+      "/chrome/markdown.js",
+      "/chrome/background.js"
     ],
+    "persistent": false
+  },
 
-    "web_accessible_resources": [
-        "/jslib/jquery-2.0.3.min.map",
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*/*.markdown",
+        "*://*/*.mdown",
+        "*://*/*.mkdn",
+        "*://*/*.md",
+        "*://*/*.mkd",
+        "*://*/*.mdwn",
+        "*://*/*.mdtxt",
+        "*://*/*.mdtext",
+        "*://*/*.text",
+        "file:///*/*.markdown",
+        "file:///*/*.mdown",
+        "file:///*/*.mkdn",
+        "file:///*/*.md",
+        "file:///*/*.mkd",
+        "file:///*/*.mdwn",
+        "file:///*/*.mdtxt",
+        "file:///*/*.mdtext",
+        "file:///*/*.text"
+      ],
+      "exclude_matches": [
+        "*://github.com/*",
+        "*://bitbucket.org/*",
+        "*://gitlab.com/*"
+      ],
+      "css": [
+        "/css/prism.css"
+      ],
+      "js": [
+        "/jslib/jquery-2.0.3.min.js",
+        "/jslib/prism.js",
+        "/js/content.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ],
 
-        "/themes/github.css",
-         
-        "/themes/avenir-white.css",
-        "/themes/foghorn.css",
-        "/themes/jasonm23-dark.css",
-        "/themes/jasonm23-foghorn.css",
-        "/themes/jasonm23-markdown.css",
-        "/themes/jasonm23-swiss.css",
-        "/themes/markdown10.css",
-        "/themes/markdown1.css",
-        "/themes/markdown2.css",
-        "/themes/markdown3.css",
-        "/themes/markdown4.css",
-        "/themes/markdown5.css",
-        "/themes/markdown6.css",
-        "/themes/markdown7.css",
-        "/themes/markdown8.css",
-        "/themes/markdown9.css",
-        "/themes/markdown-alt.css",
-        "/themes/markdown.css",
-        "/themes/markedapp-byword.css",
-        "/themes/screen.css",
-        "/themes/swiss.css",
-        "/themes/thomasf-solarizedcssdark.css",
-        "/themes/thomasf-solarizedcsslight.css"
-    ],
+  "web_accessible_resources": [
+    "/jslib/jquery-2.0.3.min.map",
 
-    "icons": {
-        "16" : "/images/icon16.png",
-        "48" : "/images/icon48.png",
-        "128": "/images/icon128.png"
-    },
-    "homepage_url": "https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk",
+    "/themes/github.css",
+     
+    "/themes/avenir-white.css",
+    "/themes/foghorn.css",
+    "/themes/jasonm23-dark.css",
+    "/themes/jasonm23-foghorn.css",
+    "/themes/jasonm23-markdown.css",
+    "/themes/jasonm23-swiss.css",
+    "/themes/markdown10.css",
+    "/themes/markdown1.css",
+    "/themes/markdown2.css",
+    "/themes/markdown3.css",
+    "/themes/markdown4.css",
+    "/themes/markdown5.css",
+    "/themes/markdown6.css",
+    "/themes/markdown7.css",
+    "/themes/markdown8.css",
+    "/themes/markdown9.css",
+    "/themes/markdown-alt.css",
+    "/themes/markdown.css",
+    "/themes/markedapp-byword.css",
+    "/themes/screen.css",
+    "/themes/swiss.css",
+    "/themes/thomasf-solarizedcssdark.css",
+    "/themes/thomasf-solarizedcsslight.css"
+  ],
 
-    "permissions": [
-        "tabs",
-        "storage"
-    ],
+  "icons": {
+    "16" : "/images/icon16.png",
+    "48" : "/images/icon48.png",
+    "128": "/images/icon128.png"
+  },
+  "homepage_url": "https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk",
 
-    "content_security_policy": "script-src 'unsafe-eval'; object-src 'self'"
+  "permissions": [
+    "tabs",
+    "storage"
+  ],
+
+  "content_security_policy": "script-src 'unsafe-eval'; object-src 'self'"
 }
