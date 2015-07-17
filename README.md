@@ -19,6 +19,11 @@
 - [open source][8]
 
 
+## After Install
+
+In order to view local files, make sure that the `Allow access to file URLs` checkbox is checked for the *Markdown Viewer* extension in `chrome://extensions`
+
+
 ## License
 
 The MIT License (MIT)
