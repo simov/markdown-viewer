@@ -4,18 +4,17 @@
 }
 
 .markdown-body {
-  -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
   color: #333;
-  overflow: hidden;
-  font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   font-size: 16px;
   line-height: 1.6;
   word-wrap: break-word;
 }
 
 .markdown-body a {
-  background: transparent;
+  background-color: transparent;
 }
 
 .markdown-body a:active,
@@ -86,11 +85,11 @@
 }
 
 .markdown-body input {
-  font: 13px/1.4 Helvetica, arial, nimbussansl, liberationsans, freesans, clean, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+  font: 13px / 1.4 Helvetica, arial, nimbussansl, liberationsans, freesans, clean, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
 .markdown-body a {
-  color: #4183c4;
+  color: #4078c0;
   text-decoration: none;
 }
 
@@ -192,6 +191,10 @@
   font: 12px Consolas, "Liberation Mono", Menlo, Courier, monospace;
 }
 
+.markdown-body .select::-ms-expand {
+  opacity: 0;
+}
+
 .markdown-body .octicon {
   font: normal normal normal 16px/1 octicons-anchor;
   display: inline-block;
@@ -223,13 +226,9 @@
 }
 
 .markdown-body .anchor {
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: block;
-  padding-right: 6px;
-  padding-left: 30px;
-  margin-left: -30px;
+  display: inline-block;
+  padding-right: 2px;
+  margin-left: -18px;
 }
 
 .markdown-body .anchor:focus {
@@ -242,7 +241,6 @@
 .markdown-body h4,
 .markdown-body h5,
 .markdown-body h6 {
-  position: relative;
   margin-top: 1em;
   margin-bottom: 16px;
   font-weight: bold;
@@ -255,9 +253,9 @@
 .markdown-body h4 .octicon-link,
 .markdown-body h5 .octicon-link,
 .markdown-body h6 .octicon-link {
-  display: none;
   color: #000;
   vertical-align: middle;
+  visibility: hidden;
 }
 
 .markdown-body h1:hover .anchor,
@@ -266,8 +264,6 @@
 .markdown-body h4:hover .anchor,
 .markdown-body h5:hover .anchor,
 .markdown-body h6:hover .anchor {
-  padding-left: 8px;
-  margin-left: -30px;
   text-decoration: none;
 }
 
@@ -277,7 +273,7 @@
 .markdown-body h4:hover .anchor .octicon-link,
 .markdown-body h5:hover .anchor .octicon-link,
 .markdown-body h6:hover .anchor .octicon-link {
-  display: inline-block;
+  visibility: visible;
 }
 
 .markdown-body h1 {
@@ -432,7 +428,8 @@
 
 .markdown-body img {
   max-width: 100%;
-  box-sizing: border-box;
+  box-sizing: content-box;
+  background-color: #fff;
 }
 
 .markdown-body code {
@@ -628,6 +625,17 @@
   box-shadow: inset 0 -1px 0 #bbb;
 }
 
+.markdown-body:before {
+  display: table;
+  content: "";
+}
+
+.markdown-body:after {
+  display: table;
+  clear: both;
+  content: "";
+}
+
 .markdown-body .task-list-item {
   list-style-type: none;
 }
@@ -644,7 +652,7 @@
 .markdown-body :checked+.radio-label {
   z-index: 1;
   position: relative;
-  border-color: #4183c4;
+  border-color: #4078c0;
 }
 
 /*markdown-viewer*/
@@ -652,13 +660,13 @@
   overflow: auto;
 
   min-width: 200px;
-  max-width: 728px;
+  max-width: 888px;
 
   background-color: #fff;
   border: 1px solid #ddd;
   /*border-radius: 3px;*/
 
-  padding: 30px;
+  padding: 45px;
   margin: 20px auto;
 }
 .markdown-body #html>*:first-child {
