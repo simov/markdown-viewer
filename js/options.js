@@ -27,7 +27,7 @@ mdviewer.controller('popup', ['$scope', function ($scope) {
       message: 'settings'
     }, function (res) {
       $scope.options = toArray(res.options, 'name', 'enabled')
-      
+
       $scope.themes = chrome.runtime.getManifest().web_accessible_resources
         .filter(function (file) {return file.indexOf('/themes/') == 0})
         .map(function (file) {
@@ -41,13 +41,13 @@ mdviewer.controller('popup', ['$scope', function ($scope) {
     })
   }
   init()
-  
+
   $scope.onOptions = function () {
     chrome.extension.sendMessage({
       message: 'options',
       options: toObject(JSON.parse(angular.toJson($scope.options)), 'name', 'enabled')
     }, function (res) {
-      
+
     })
   }
   $scope.onTheme = function () {
@@ -64,7 +64,7 @@ mdviewer.controller('popup', ['$scope', function ($scope) {
       message: 'raw',
       raw: $scope.raw
     }, function (res) {
-      
+
     })
   }
   $scope.onDefaults = function () {

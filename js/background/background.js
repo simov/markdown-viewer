@@ -21,7 +21,7 @@ chrome.extension.onMessage.addListener(function (req, sender, sendResponse) {
     case 'markdown':
       md.compile(req.markdown, sendResponse)
       break
-    
+
     case 'settings':
       chrome.storage.sync.get(['options', 'theme', 'raw'], function (data) {
         delete data.options.langPrefix

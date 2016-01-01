@@ -22,7 +22,7 @@ var md = (function () {
         // prism fix
         html = html.replace(/language-html/g, 'language-markup')
         html = html.replace(/language-js/g, 'language-javascript')
-        
+
         sendResponse({message: 'marked', marked: html})
       })
     })

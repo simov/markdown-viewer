@@ -10,14 +10,14 @@
       "38" : "/images/icon38.png"
     },
     "default_title": "Markdown Viewer",
-    "default_popup": "/views/popup.html"
+    "default_popup": "/views/options.html"
   },
-  
+
   "background" : {
     "scripts": [
-      "/jslib/marked.js",
-      "/chrome/markdown.js",
-      "/chrome/background.js"
+      "/js/vendor/marked.js",
+      "/js/background/markdown.js",
+      "/js/background/background.js"
     ],
     "persistent": false
   },
@@ -53,8 +53,8 @@
         "/css/prism.css"
       ],
       "js": [
-        "/jslib/jquery-2.0.3.min.js",
-        "/jslib/prism.js",
+        "/js/vendor/jquery-2.0.3.min.js",
+        "/js/vendor/prism.js",
         "/js/content.js"
       ],
       "run_at": "document_start",
@@ -63,10 +63,10 @@
   ],
 
   "web_accessible_resources": [
-    "/jslib/jquery-2.0.3.min.map",
+    "/js/vendor/jquery-2.0.3.min.map",
 
     "/themes/github.css",
-     
+
     "/themes/avenir-white.css",
     "/themes/foghorn.css",
     "/themes/jasonm23-dark.css",

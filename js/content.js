@@ -10,7 +10,7 @@ function injectCSS () {
 
 $(function () {
   injectCSS()
-  
+
   $('body').addClass('markdown-body')//github
   $('pre').attr('id', 'markdown').hide()
 
@@ -26,7 +26,7 @@ $(function () {
     message: 'settings',
   }, function (data) {
     $('#theme').attr('href', chrome.extension.getURL('/themes/'+data.theme+'.css'))
-    
+
     $('#theme').attr('disabled', data.raw)
     $('#markdown')[data.raw?'show':'hide']()
     $('#html')[data.raw?'hide':'show']()
@@ -52,7 +52,7 @@ chrome.extension.onMessage.addListener(function (req, sender, sendResponse) {
     case 'reload':
       window.location.reload(true)
       break
-    
+
     case 'theme':
       var raw = $('#theme').attr('disabled') == 'disabled'
       $('#theme').remove()
