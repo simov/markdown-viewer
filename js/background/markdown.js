@@ -3,14 +3,20 @@ var md = (function () {
   // marked
   var defaults = {
     gfm: true,
-    // highlight: null,
     tables: true,
     breaks: false,
     pedantic: false,
-    sanitize: true,
-    smartLists: true,
-    smartypants: false,
-    langPrefix: 'language-'//prism
+    sanitize: false,
+    // sanitizer: null,
+    // mangle: true, // mangling of email addresses
+    smartLists: false,
+    // silent: false, // report errors
+    // highlight: null,
+    langPrefix: 'language-', // prism
+    smartypants: false
+    // headerPrefix: '',
+    // renderer:
+    // xhtml: false // handle self closing HTML tags
   }
 
   function compile (markdown, sendResponse) {
