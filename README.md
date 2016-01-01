@@ -43,6 +43,11 @@ Option          | Default | Description
 **tables**      | `true`  | Enable GFM [tables][10]. This option requires the gfm option to be true.
 
 
+## Markdown Syntax
+
+Navigate to this [URL][11] and play around with the extension's options.
+
+
 ## License
 
 The MIT License (MIT)
@@ -78,3 +83,4 @@ SOFTWARE.
   [8]: https://github.com/simov/markdown-viewer
   [9]: https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk
   [10]: https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#tables
+  [11]: https://raw.githubusercontent.com/simov/markdown-viewer/master/syntax.md
