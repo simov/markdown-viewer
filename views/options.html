@@ -1,36 +1,37 @@
 <!DOCTYPE html>
-<html ng-app="mdviewer">
+<html>
 <head>
   <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
   <title>Markdown Viewer</title>
 
   <link href="/css/options.css" rel="stylesheet" type="text/css" media="all" />
 
-  <script src="/js/vendor/angular.min.js" type="text/javascript" charset="utf-8"></script>
-  <script src="/js/options.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/js/vendor/riot.min.js" type="text/javascript" charset="utf-8"></script>
 </head>
-<body ng-controller="popup">
+<body>
 
-  <a href="" ng-click="onRaw()">{{raw ? 'Html' : 'Markdown'}}</a>
-  <a href="" ng-click="onDefaults()">Defaults</a>
+  <template id="options">
+    <a href="" onclick="{onRaw}">{raw ? 'Html' : 'Markdown'}</a>
+    <a href="" onclick="{onDefaults}">Defaults</a>
 
-  <h4>Theme</h4>
-  <select
-    ng-model="theme"
-    ng-change="onTheme()"
-    ng-options="theme.name for theme in themes track by theme.name">
-  </select>
+    <h4>Theme</h4>
+    <select onchange="{onTheme}">
+      <option each="{name in themes}" __selected="{theme === name}">{name}</option>
+    </select>
 
-  <h4>Compiler Options</h4>
-  <ul>
-    <li ng-repeat="option in options">
-      <label>
-        <input type="checkbox" ng-model="option.enabled" ng-change="onOptions()" />
-        {{option.name}}
-      </label>
+    <h4>Compiler Options</h4>
+    <ul>
+      <li each="{key, value in options}">
+        <label>
+          <input type="checkbox" __checked="{value}" onchange="{onOptions}" />
+          {key}
+        </label>
+      </li>
+    </ul>
+  </template>
 
-    </li>
-  </ul>
+  <options></options>
 
+  <script src="/js/options.js" type="text/javascript" charset="utf-8"></script>
 </body>
 </html>

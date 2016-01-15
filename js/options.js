@@ -1,77 +1,64 @@
 
-// module
-var mdviewer = angular.module('mdviewer', [])
+riot.tag('options', options.innerHTML, function () {
+  function init (res) {
+    this.options = res.options
+    this.theme = res.theme
 
-function toArray (obj, key, value) {
-  var arr = []
-  for (var k in obj) {
-    var tmp = {}
-    tmp[key] = k
-    tmp[value] = obj[k]
-    arr.push(tmp)
+    this.themes = chrome.runtime.getManifest().web_accessible_resources
+      .filter(function (file) {
+        return file.indexOf('/themes/') === 0
+      })
+      .map(function (file) {
+        var name = file.replace(/\/themes\/(.*)\.css/, '$1')
+        return name
+      })
+
+    this.raw = res.raw
+    this.update()
   }
-  return arr
-}
 
-function toObject (arr, key, value) {
-  var obj = {}
-  for (var i=0; i < arr.length; i++) {
-    obj[arr[i][key]] = arr[i][value]
-  }
-  return obj
-}
+  // init
+  chrome.extension.sendMessage({
+    message: 'settings'
+  }, init.bind(this))
 
-mdviewer.controller('popup', ['$scope', function ($scope) {
-  function init () {
-    chrome.extension.sendMessage({
-      message: 'settings'
-    }, function (res) {
-      $scope.options = toArray(res.options, 'name', 'enabled')
-
-      $scope.themes = chrome.runtime.getManifest().web_accessible_resources
-        .filter(function (file) {return file.indexOf('/themes/') == 0})
-        .map(function (file) {
-          var name = file.replace(/\/themes\/(.*)\.css/,'$1')
-          if (name == res.theme) $scope.theme = {name: name}
-          return {name: name}
-        })
-
-      $scope.raw = res.raw
-      $scope.$digest()
-    })
-  }
-  init()
-
-  $scope.onOptions = function () {
+  this.onOptions = function (e) {
+    this.options[e.item.key] = !e.item.value
     chrome.extension.sendMessage({
       message: 'options',
-      options: toObject(JSON.parse(angular.toJson($scope.options)), 'name', 'enabled')
+      options: this.options
     }, function (res) {
 
     })
+    return true
   }
-  $scope.onTheme = function () {
+  this.onTheme = function (e) {
+    this.theme = this.themes[e.target.selectedIndex]
     chrome.extension.sendMessage({
       message: 'theme',
-      theme: $scope.theme.name
+      theme: this.theme
     }, function (res) {
 
     })
   }
-  $scope.onRaw = function () {
-    $scope.raw = !$scope.raw
+  this.onRaw = function () {
+    this.raw = !this.raw
     chrome.extension.sendMessage({
       message: 'raw',
-      raw: $scope.raw
+      raw: this.raw
     }, function (res) {
 
     })
   }
-  $scope.onDefaults = function () {
+  this.onDefaults = function () {
     chrome.extension.sendMessage({
       message: 'defaults'
     }, function (res) {
-      init()
-    })
+      chrome.extension.sendMessage({
+        message: 'settings'
+      }, init.bind(this))
+    }.bind(this))
   }
-}])
+})
+
+riot.mount('options')
