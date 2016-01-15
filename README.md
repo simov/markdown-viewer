@@ -42,6 +42,7 @@ Option          | Default | Description
 ## Local Files
 
 To enable the extensions for local files:
+
 1. Navigate to `chrome://extensions`
 2. Make sure that the `Allow access to file URLs` checkbox is checked for the `Markdown Viewer` extension
 
