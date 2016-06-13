@@ -63,8 +63,6 @@
   ],
 
   "web_accessible_resources": [
-    "/js/vendor/jquery-2.2.0.min.map",
-
     "/themes/github.css",
 
     "/themes/avenir-white.css",
