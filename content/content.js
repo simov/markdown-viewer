@@ -1,16 +1,14 @@
 
-function injectCSS () {
+function injectCSS (url) {
   var link = document.createElement('link')
   link.rel = 'stylesheet'
   link.type = 'text/css'
-  link.href = '#'
+  link.href = url
   link.id = 'theme'
   document.head.appendChild(link)
 }
 
 $(function () {
-  injectCSS()
-
   $('body').addClass('markdown-body') // github
   $('pre').attr('id', 'markdown').hide()
 
@@ -22,12 +20,10 @@ $(function () {
     Prism.highlightAll()
   })
 
-  chrome.extension.sendMessage({
-    message: 'settings',
-  }, (data) => {
-    $('#theme').attr('href', chrome.extension.getURL('/themes/' + data.theme + '.css'))
-
-    $('#theme').attr('disabled', data.raw)
+  chrome.extension.sendMessage({message: 'settings'}, (data) => {
+    if (!data.raw) {
+      injectCSS(chrome.extension.getURL('/themes/' + data.theme + '.css'))
+    }
     $('#markdown')[data.raw ? 'show' : 'hide']()
     $('#html')[data.raw ? 'hide' : 'show']()
   })
@@ -52,14 +48,13 @@ chrome.extension.onMessage.addListener((req, sender, sendResponse) => {
     window.location.reload(true)
   }
   else if (req.message === 'theme') {
-    var raw = $('#theme').attr('disabled') === 'disabled'
     $('#theme').remove()
-    injectCSS()
-    $('#theme').attr('href', chrome.extension.getURL('/themes/' + req.theme + '.css'))
-    $('#theme').attr('disabled', raw)
+    injectCSS(chrome.extension.getURL('/themes/' + req.theme + '.css'))
   }
   else if (req.message === 'raw') {
-    $('#theme').attr('disabled', !($('#theme').attr('disabled') === 'disabled'))
+    req.raw
+      ? $('#theme').remove()
+      : injectCSS(chrome.extension.getURL('/themes/' + req.theme + '.css'))
     $('#markdown, #html').toggle()
   }
 })

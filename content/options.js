@@ -44,7 +44,8 @@ m.mount(document.querySelector('body'), {
         state.raw = !state.raw
         chrome.extension.sendMessage({
           message: 'raw',
-          raw: state.raw
+          raw: state.raw,
+          theme: state.theme
         }, (res) => {})
         return false
       },

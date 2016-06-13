@@ -10,14 +10,14 @@
       "38" : "/images/icon38.png"
     },
     "default_title": "Markdown Viewer",
-    "default_popup": "/views/options.html"
+    "default_popup": "/content/options.html"
   },
 
   "background" : {
     "scripts": [
-      "/js/vendor/marked.js",
-      "/js/background/markdown.js",
-      "/js/background/background.js"
+      "/vendor/marked.js",
+      "/background/markdown.js",
+      "/background/background.js"
     ],
     "persistent": false
   },
@@ -53,9 +53,9 @@
         "/css/prism.css"
       ],
       "js": [
-        "/js/vendor/jquery-2.2.0.min.js",
-        "/js/vendor/prism.js",
-        "/js/content.js"
+        "/vendor/jquery-2.2.0.min.js",
+        "/vendor/prism.js",
+        "/content/content.js"
       ],
       "run_at": "document_start",
       "all_frames": true
