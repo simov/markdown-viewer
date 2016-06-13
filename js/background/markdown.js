@@ -1,5 +1,5 @@
 
-var md = (function () {
+var md = (() => {
   // marked
   var defaults = {
     gfm: true,
@@ -20,10 +20,10 @@ var md = (function () {
   }
 
   function compile (markdown, sendResponse) {
-    chrome.storage.sync.get(function (sync) {
+    chrome.storage.sync.get((sync) => {
       marked.setOptions(sync.options)
 
-      marked(markdown, function (err, html) {
+      marked(markdown, (err, html) => {
         if (err) throw err
         sendResponse({message: 'marked', marked: html})
       })
@@ -34,4 +34,4 @@ var md = (function () {
     defaults: defaults,
     compile: compile
   }
-}())
+})()

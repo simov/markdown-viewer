@@ -11,33 +11,33 @@ function injectCSS () {
 $(function () {
   injectCSS()
 
-  $('body').addClass('markdown-body')//github
+  $('body').addClass('markdown-body') // github
   $('pre').attr('id', 'markdown').hide()
 
   chrome.extension.sendMessage({
     message: 'markdown',
     markdown: $('#markdown').text()
-  }, function (res) {
+  }, (res) => {
     $('body').append('<div id="html">').find('#html').append(res.marked)
     Prism.highlightAll()
   })
 
   chrome.extension.sendMessage({
     message: 'settings',
-  }, function (data) {
-    $('#theme').attr('href', chrome.extension.getURL('/themes/'+data.theme+'.css'))
+  }, (data) => {
+    $('#theme').attr('href', chrome.extension.getURL('/themes/' + data.theme + '.css'))
 
     $('#theme').attr('disabled', data.raw)
-    $('#markdown')[data.raw?'show':'hide']()
-    $('#html')[data.raw?'hide':'show']()
+    $('#markdown')[data.raw ? 'show' : 'hide']()
+    $('#html')[data.raw ? 'hide' : 'show']()
   })
 
-  $(window).on('load', function (e) {
-    setTimeout(function () {
+  $(window).on('load', () => {
+    setTimeout(() => {
       var timeout = null
-      $(window).on('scroll', function (e) {
+      $(window).on('scroll', () => {
         clearTimeout(timeout)
-        timeout = setTimeout(function () {
+        timeout = setTimeout(() => {
           localStorage.setItem('scrolltop', $(window).scrollTop())
         }, 100)
       })
@@ -47,23 +47,19 @@ $(function () {
   })
 })
 
-chrome.extension.onMessage.addListener(function (req, sender, sendResponse) {
-  switch (req.message) {
-    case 'reload':
-      window.location.reload(true)
-      break
-
-    case 'theme':
-      var raw = $('#theme').attr('disabled') == 'disabled'
-      $('#theme').remove()
-      injectCSS()
-      $('#theme').attr('href', chrome.extension.getURL('/themes/'+req.theme+'.css'))
-      $('#theme').attr('disabled', raw)
-      break
-
-    case 'raw':
-      $('#theme').attr('disabled', !($('#theme').attr('disabled') == 'disabled'))
-      $('#markdown, #html').toggle()
-      break
+chrome.extension.onMessage.addListener((req, sender, sendResponse) => {
+  if (req.message === 'reload') {
+    window.location.reload(true)
+  }
+  else if (req.message === 'theme') {
+    var raw = $('#theme').attr('disabled') === 'disabled'
+    $('#theme').remove()
+    injectCSS()
+    $('#theme').attr('href', chrome.extension.getURL('/themes/' + req.theme + '.css'))
+    $('#theme').attr('disabled', raw)
+  }
+  else if (req.message === 'raw') {
+    $('#theme').attr('disabled', !($('#theme').attr('disabled') === 'disabled'))
+    $('#markdown, #html').toggle()
   }
 })
