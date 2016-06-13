@@ -64,7 +64,6 @@
 
   "web_accessible_resources": [
     "/themes/github.css",
-
     "/themes/avenir-white.css",
     "/themes/foghorn.css",
     "/themes/jasonm23-dark.css",
@@ -95,12 +94,11 @@
     "48" : "/images/icon48.png",
     "128": "/images/icon128.png"
   },
+
   "homepage_url": "https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk",
 
   "permissions": [
     "tabs",
     "storage"
-  ],
-
-  "content_security_policy": "script-src 'unsafe-eval'; object-src 'self'"
+  ]
 }
