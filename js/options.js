@@ -1,64 +1,89 @@
 
-riot.tag('options', options.innerHTML, function () {
-  function init (res) {
-    this.options = res.options
-    this.theme = res.theme
+m.mount(document.querySelector('body'), {
+  controller: function () {
+    var state = {
+      options: [],
+      themes: [],
+      theme: '',
+      raw: false
+    }
 
-    this.themes = chrome.runtime.getManifest().web_accessible_resources
-      .filter(function (file) {
-        return file.indexOf('/themes/') === 0
-      })
-      .map(function (file) {
-        var name = file.replace(/\/themes\/(.*)\.css/, '$1')
-        return name
-      })
+    function init (res) {
+      state.options = res.options
+      state.theme = res.theme
 
-    this.raw = res.raw
-    this.update()
-  }
+      state.themes = chrome.runtime.getManifest().web_accessible_resources
+        .filter((file) => (file.indexOf('/themes/') === 0))
+        .map((file) => (file.replace(/\/themes\/(.*)\.css/, '$1')))
 
-  // init
-  chrome.extension.sendMessage({
-    message: 'settings'
-  }, init.bind(this))
+      state.raw = res.raw
+      m.endComputation()
+    }
 
-  this.onOptions = function (e) {
-    this.options[e.item.key] = !e.item.value
-    chrome.extension.sendMessage({
-      message: 'options',
-      options: this.options
-    }, function (res) {
+    // init
+    m.startComputation()
+    chrome.extension.sendMessage({message: 'settings'}, init)
 
-    })
-    return true
-  }
-  this.onTheme = function (e) {
-    this.theme = this.themes[e.target.selectedIndex]
-    chrome.extension.sendMessage({
-      message: 'theme',
-      theme: this.theme
-    }, function (res) {
+    return {
+      state: state,
+      changeOptions: (e) => {
+        state.options[e.target.name] = !state.options[e.target.name]
+        chrome.extension.sendMessage({
+          message: 'options',
+          options: state.options
+        }, (res) => {})
+      },
+      changeTheme: (e) => {
+        state.theme = state.themes[e.target.selectedIndex]
+        chrome.extension.sendMessage({
+          message: 'theme',
+          theme: state.theme
+        }, (res) => {})
+      },
+      viewRaw: () => {
+        state.raw = !state.raw
+        chrome.extension.sendMessage({
+          message: 'raw',
+          raw: state.raw
+        }, (res) => {})
+        return false
+      },
+      setDefaults: () => {
+        chrome.extension.sendMessage({
+          message: 'defaults'
+        }, (res) => {
+          m.startComputation()
+          chrome.extension.sendMessage({message: 'settings'}, init)
+        })
+        return false
+      }
+    }
+  },
+  view: (ctrl) => {
+    var state = ctrl.state
 
-    })
-  }
-  this.onRaw = function () {
-    this.raw = !this.raw
-    chrome.extension.sendMessage({
-      message: 'raw',
-      raw: this.raw
-    }, function (res) {
+    return m('#options', [
+      m('a[href=""]', {onclick: ctrl.viewRaw}, (state.raw ? 'Html' : 'Markdown')),
+      m('a[href=""]', {onclick: ctrl.setDefaults}, 'Defaults'),
 
-    })
-  }
-  this.onDefaults = function () {
-    chrome.extension.sendMessage({
-      message: 'defaults'
-    }, function (res) {
-      chrome.extension.sendMessage({
-        message: 'settings'
-      }, init.bind(this))
-    }.bind(this))
+      m('h4', 'Theme'),
+      m('select', {onchange: ctrl.changeTheme}, state.themes.map((theme) =>
+        m('option', {selected: state.theme === theme}, theme)
+      )),
+
+      m('h4', 'Compiler Options'),
+      m('ul', Object.keys(state.options).map((key) =>
+        m('li',
+          m('label',
+            m('input[type="checkbox"]', {
+              name: key,
+              checked: state.options[key],
+              onchange: ctrl.changeOptions
+            }),
+            ' ' + key
+          )
+        )
+      ))
+    ])
   }
 })
-
-riot.mount('options')
