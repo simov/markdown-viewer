@@ -47,7 +47,7 @@ chrome.extension.onMessage.addListener((req, sender, sendResponse) => {
   }
   else if (req.message === 'raw') {
     chrome.storage.sync.set({raw: req.raw}, sendResponse)
-    sendMessage({message: 'raw', raw: req.raw, theme: req.theme})
+    sendMessage({message: 'raw', raw: req.raw})
   }
 
   return true

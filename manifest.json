@@ -53,7 +53,7 @@
         "/css/prism.css"
       ],
       "js": [
-        "/vendor/jquery-2.2.0.min.js",
+        "/vendor/mithril.min.js",
         "/vendor/prism.js",
         "/content/content.js"
       ],
