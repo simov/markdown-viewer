@@ -50,6 +50,7 @@
         "*://gitlab.com/*"
       ],
       "css": [
+        "/css/content.css",
         "/css/prism.css"
       ],
       "js": [

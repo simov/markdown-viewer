@@ -1,13 +1,13 @@
 
 window.addEventListener('DOMContentLoaded', () => {
-  document.querySelector('body').classList.add('markdown-body') // github
+  var $ = document.querySelector.bind(document)
 
-  m.mount(document.querySelector('body'), {
+  m.mount($('body'), {
     controller: function () {
       var state = {
         theme: '',
         html: '',
-        markdown: document.querySelector('pre').innerText,
+        markdown: $('pre').innerText,
         raw: false,
         getURL: () => chrome.extension.getURL('/themes/' + state.theme + '.css')
       }
@@ -50,17 +50,40 @@ window.addEventListener('DOMContentLoaded', () => {
           if (!initialized) {
             Prism.highlightAll()
           }
+        },
+        updateStyles: (theme) => {
+          if (state.raw) {
+            $('html').classList.remove('markdown-theme-html')
+            $('body').classList.remove('markdown-theme')
+            $('html').classList.remove('markdown-body-html')
+            $('body').classList.remove('markdown-body')
+          }
+          else if (state.theme === 'github') {
+            $('html').classList.remove('markdown-theme-html')
+            $('body').classList.remove('markdown-theme')
+            $('html').classList.add('markdown-body-html')
+            $('body').classList.add('markdown-body')
+          }
+          else {
+            $('html').classList.remove('markdown-body-html')
+            $('body').classList.remove('markdown-body')
+            $('html').classList.add('markdown-theme-html')
+            $('body').classList.add('markdown-theme')
+          }
         }
       }
     },
     view: (ctrl) => {
       var state = ctrl.state
+
       var dom = []
 
       if (state.raw) {
+        ctrl.updateStyles()
         dom.push(m('pre#markdown', state.markdown))
       }
       if (state.theme && !state.raw) {
+        ctrl.updateStyles()
         dom.push(m('link#theme [rel="stylesheet"] [type="text/css"]',
           {href: state.getURL()}))
       }

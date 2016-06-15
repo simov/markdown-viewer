@@ -654,24 +654,3 @@
   position: relative;
   border-color: #4078c0;
 }
-
-/*markdown-viewer*/
-.markdown-body {
-  overflow: auto;
-
-  min-width: 200px;
-  max-width: 888px;
-
-  background-color: #fff;
-  border: 1px solid #ddd;
-  /*border-radius: 3px;*/
-
-  padding: 45px;
-  margin: 20px auto;
-}
-.markdown-body #html>*:first-child {
-  margin-top: 0 !important;
-}
-.markdown-body #html>*:last-child {
-  margin-bottom: 0 !important;
-}
