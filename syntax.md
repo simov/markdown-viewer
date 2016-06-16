@@ -65,6 +65,8 @@ _italic_
 table    | col          | col   | col
 ---      | :---         | :---: | ---:
 defaults | left aligned | centered | right aligned
+defaults | left aligned | centered | right aligned
+defaults | left aligned | centered | right aligned
 
 <div style="text-align: center">
   <p><strong>HTML</strong> tags</p>
