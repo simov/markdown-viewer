@@ -65,29 +65,28 @@
 
   "web_accessible_resources": [
     "/themes/github.css",
-    "/themes/avenir-white.css",
+    "/themes/github-dark.css",
+
+    "/themes/godspeed.css",
+    "/themes/new-modern.css",
+    "/themes/torpedo.css",
+    "/themes/vostok.css",
+
+    "/themes/ghostwriter.css",
+    "/themes/radar.css",
     "/themes/foghorn.css",
-    "/themes/jasonm23-dark.css",
-    "/themes/jasonm23-foghorn.css",
-    "/themes/jasonm23-markdown.css",
-    "/themes/jasonm23-swiss.css",
-    "/themes/markdown10.css",
-    "/themes/markdown1.css",
-    "/themes/markdown2.css",
-    "/themes/markdown3.css",
-    "/themes/markdown4.css",
+    "/themes/markdown.css",
+    "/themes/markedapp-byword.css",
+    "/themes/solarized-dark.css",
+    "/themes/solarized-light.css",
+
+    "/themes/screen.css",
     "/themes/markdown5.css",
     "/themes/markdown6.css",
     "/themes/markdown7.css",
     "/themes/markdown8.css",
     "/themes/markdown9.css",
-    "/themes/markdown-alt.css",
-    "/themes/markdown.css",
-    "/themes/markedapp-byword.css",
-    "/themes/screen.css",
-    "/themes/swiss.css",
-    "/themes/thomasf-solarizedcssdark.css",
-    "/themes/thomasf-solarizedcsslight.css"
+    "/themes/markdown-alt.css"
   ],
 
   "icons": {

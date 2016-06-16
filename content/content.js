@@ -58,7 +58,7 @@ window.addEventListener('DOMContentLoaded', () => {
             $('html').classList.remove('markdown-body-html')
             $('body').classList.remove('markdown-body')
           }
-          else if (state.theme === 'github') {
+          else if (/github(-dark)?/.test(state.theme)) {
             $('html').classList.remove('markdown-theme-html')
             $('body').classList.remove('markdown-theme')
             $('html').classList.add('markdown-body-html')

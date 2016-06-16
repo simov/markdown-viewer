@@ -10,7 +10,7 @@
 - Built on top of the [marked][marked] compiler
 - Support for [GitHub Flavored Markdown][gfm]
 - Full control over the [compiler options][compiler-options]
-- 20 themes from [jasonm23][themes1] and [mixu][themes2]
+- css themes from [jasonm23][themes1], [mixu][themes2] and [cobalt][themes3]
 - Syntax highlighted code blocks using [prism][prism]
 - Settings synchronization through google sync
 - Quickly switch between raw markdown and html
@@ -77,6 +77,7 @@ SOFTWARE.
   [compiler-options]: https://github.com/chjj/marked#gfm
   [themes1]: https://github.com/jasonm23/markdown-css-themes
   [themes2]: https://github.com/mixu/markdown-styles
+  [themes3]: https://github.com/nWODT-Cobalt/markown-utilities
   [prism]: http://prismjs.com/
   [event-page]: http://developer.chrome.com/extensions/event_pages.html
   [chrome-store]: https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk
