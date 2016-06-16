@@ -154,9 +154,7 @@ table {
   border-collapse: collapse;
   border-spacing: 0;
 }
-@import url(//fonts.googleapis.com/css?family=Inconsolata);
-@import url(//fonts.googleapis.com/css?family=PT+Sans);
-@import url(//fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700);
+
 html {
   font-family: 'PT Sans', sans-serif;
 }
@@ -179,7 +177,7 @@ html {
   margin: 1em;
 }
 code {
-  background-color: #073642;
+  /*background-color: #073642;*/
   padding: 2px;
 }
 a {
@@ -202,14 +200,14 @@ h6 {
   color: #859900;
 }
 pre {
-  background-color: #002b36;
+  /*background-color: #002b36;*/
   color: #839496;
   border: 1pt solid #586e75;
   padding: 1em;
   box-shadow: 5pt 5pt 8pt #073642;
 }
 pre code {
-  background-color: #002b36;
+  /*background-color: #002b36;*/
 }
 h1 {
   font-size: 2.8em;
@@ -230,7 +228,7 @@ h6 {
   font-size: 1.15em;
 }
 .tag {
-  background-color: #073642;
+  /*background-color: #073642;*/
   color: #d33682;
   padding: 0 0.2em;
 }
