@@ -13,7 +13,7 @@
 - Themes from [jasonm23][themes1], [mixu][themes2] and [cobalt][themes3]
 - Syntax highlighted code blocks using [prism][prism]
 - Settings synchronization through google sync
-- Supports raw markdown view and rendered markdown view
+- Supports raw and rendered markdown views
 - Supported file extensions `markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text`
 - Built as [event page][event-page] - the extension is loaded only when needed
 - Open source
