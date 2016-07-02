@@ -10,12 +10,12 @@
 - Built on top of the [marked][marked] compiler
 - Support for [GitHub Flavored Markdown][gfm]
 - Full control over the [compiler options][compiler-options]
-- css themes from [jasonm23][themes1], [mixu][themes2] and [cobalt][themes3]
+- Themes from [jasonm23][themes1], [mixu][themes2] and [cobalt][themes3]
 - Syntax highlighted code blocks using [prism][prism]
 - Settings synchronization through google sync
-- Quickly switch between raw markdown and html
+- Supports raw markdown view and rendered markdown view
 - Supported file extensions `markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text`
-- Built as [event page][event-page] - the extension is loaded only when it's needed
+- Built as [event page][event-page] - the extension is loaded only when needed
 - Open source
 
 
@@ -32,19 +32,19 @@ Option          | Default | Description
 **smartypants** | `false` | Use "smart" typograhic punctuation for things like quotes and dashes.
 
 
-## Markdown Syntax
-
-- Navigate to this [URL][syntax] and play around with the `Compiler Options`
-- Use the `Markdown/HTML` button to switch between raw markdown and rendered HTML
-- At any point click on the `Defaults` button to reset back the compiler's options
-
-
 ## Local Files
 
 To enable the extensions for local files:
 
 1. Navigate to `chrome://extensions`
 2. Make sure that the `Allow access to file URLs` checkbox is checked for the `Markdown Viewer` extension
+
+
+## Markdown Syntax
+
+- Navigate to this [URL][syntax] and play around with the `Compiler Options`
+- Use the `Markdown/HTML` button to switch between raw markdown and rendered HTML
+- At any point click on the `Defaults` button to reset back the compiler's options
 
 
 ## License
