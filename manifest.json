@@ -45,8 +45,9 @@
         "file:///*/*.text"
       ],
       "exclude_matches": [
-        "*://github.com/*",
         "*://bitbucket.org/*",
+        "*://getcomposer.org/*",
+        "*://github.com/*",
         "*://gitlab.com/*"
       ],
       "css": [
