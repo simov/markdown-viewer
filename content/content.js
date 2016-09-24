@@ -1,6 +1,7 @@
 
 window.addEventListener('DOMContentLoaded', () => {
   var $ = document.querySelector.bind(document)
+  $('pre').style.display = 'none'
 
   m.mount($('body'), {
     controller: function () {
