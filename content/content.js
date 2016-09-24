@@ -7,28 +7,42 @@ window.addEventListener('DOMContentLoaded', () => {
       var state = {
         theme: '',
         html: '',
-        markdown: $('pre').innerText,
+        markdown: '',
         raw: false,
         getURL: () => chrome.extension.getURL('/themes/' + state.theme + '.css')
       }
 
-      setTimeout(() => {
-        chrome.extension.sendMessage({message: 'settings'}, (data) => {
-          state.theme = data.theme
-          state.raw = data.raw
-          m.redraw()
-
-          setTimeout(() => {
-            chrome.extension.sendMessage({
-              message: 'markdown',
-              markdown: state.markdown
-            }, (res) => {
-              state.html = res.marked
-              m.redraw()
-            })
-          }, 0)
+      ;((done) => {
+        if (document.charset === 'UTF-8') {
+          done()
+        }
+        m.request({url: window.location.href,
+          deserialize: (body) => {
+            done(body)
+            return body
+          }
         })
-      }, 0)
+      })((data) => {
+        state.markdown = data || $('pre').innerText
+
+        setTimeout(() => {
+          chrome.extension.sendMessage({message: 'settings'}, (data) => {
+            state.theme = data.theme
+            state.raw = data.raw
+            m.redraw()
+
+            setTimeout(() => {
+              chrome.extension.sendMessage({
+                message: 'markdown',
+                markdown: state.markdown
+              }, (res) => {
+                state.html = res.marked
+                m.redraw()
+              })
+            }, 0)
+          })
+        }, 0)
+      })
 
       chrome.extension.onMessage.addListener((req, sender, sendResponse) => {
         if (req.message === 'reload') {
