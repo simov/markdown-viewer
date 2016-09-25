@@ -36,6 +36,7 @@ window.addEventListener('DOMContentLoaded', () => {
       ;((done) => {
         if (document.charset === 'UTF-8') {
           done()
+          return
         }
         m.request({url: window.location.href,
           deserialize: (body) => {
