@@ -64,7 +64,7 @@ window.addEventListener('DOMContentLoaded', () => {
         html: (element, initialized, context) => {
           if (!initialized) {
             document.body.scrollTop = parseInt(localStorage.getItem('scrolltop'))
-            Prism.highlightAll()
+            setTimeout(() => Prism.highlightAll(), 20)
           }
         }
       }
