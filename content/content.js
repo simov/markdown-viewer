@@ -29,11 +29,22 @@ chrome.extension.onMessage.addListener((req, sender, sendResponse) => {
   }
 })
 
+var oncreate = {
+  markdown: () => {
+    document.body.scrollTop = parseInt(localStorage.getItem('scrolltop'))
+  },
+  html: () => {
+    document.body.scrollTop = parseInt(localStorage.getItem('scrolltop'))
+    setTimeout(() => Prism.highlightAll(), 20)
+  }
+}
+
 function mount () {
   $('pre').style.display = 'none'
+  var md = $('pre').innerText
 
   m.mount($('body'), {
-    controller: function () {
+    oninit: () => {
       ;((done) => {
         if (document.charset === 'UTF-8') {
           done()
@@ -46,7 +57,7 @@ function mount () {
           }
         })
       })((data) => {
-        state.markdown = data || $('pre').innerText
+        state.markdown = data || md
 
         chrome.extension.sendMessage({
           message: 'markdown',
@@ -56,27 +67,13 @@ function mount () {
           m.redraw()
         })
       })
-
-      return {
-        markdown: (element, initialized, context) => {
-          if (!initialized) {
-            document.body.scrollTop = parseInt(localStorage.getItem('scrolltop'))
-          }
-        },
-        html: (element, initialized, context) => {
-          if (!initialized) {
-            document.body.scrollTop = parseInt(localStorage.getItem('scrolltop'))
-            setTimeout(() => Prism.highlightAll(), 20)
-          }
-        }
-      }
     },
-    view: (ctrl) => {
+    view: () => {
       var dom = []
 
       if (state.raw) {
         updateStyles()
-        dom.push(m('pre#markdown', {config: ctrl.markdown}, state.markdown))
+        dom.push(m('pre#markdown', {oncreate: oncreate.markdown}, state.markdown))
       }
       if (state.theme && !state.raw) {
         updateStyles()
@@ -84,7 +81,7 @@ function mount () {
           {href: state.getURL()}))
       }
       if (state.html && !state.raw) {
-        dom.push(m('#html', {config: ctrl.html}, m.trust(state.html)))
+        dom.push(m('#html', {oncreate: oncreate.html}, m.trust(state.html)))
       }
 
       return (dom.length ? dom : m('div'))
