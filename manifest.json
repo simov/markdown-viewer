@@ -10,7 +10,7 @@
       "38" : "/images/icon38.png"
     },
     "default_title": "Markdown Viewer",
-    "default_popup": "/content/options.html"
+    "default_popup": "/content/popup.html"
   },
 
   "background" : {
