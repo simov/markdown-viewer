@@ -12,6 +12,7 @@ var state = {
 chrome.extension.sendMessage({message: 'settings'}, (data) => {
   state.theme = data.theme
   state.raw = data.raw
+  m.redraw()
 })
 
 chrome.extension.onMessage.addListener((req, sender, sendResponse) => {
@@ -28,7 +29,7 @@ chrome.extension.onMessage.addListener((req, sender, sendResponse) => {
   }
 })
 
-window.addEventListener('DOMContentLoaded', () => {
+function mount () {
   $('pre').style.display = 'none'
 
   m.mount($('body'), {
@@ -89,18 +90,29 @@ window.addEventListener('DOMContentLoaded', () => {
       return (dom.length ? dom : m('div'))
     }
   })
-})
+}
 
-window.addEventListener('load', () => setTimeout(() => {
-  var timeout = null
-  window.addEventListener('scroll', () => {
-    clearTimeout(timeout)
-    timeout = setTimeout(() => {
-      localStorage.setItem('scrolltop', document.body.scrollTop)
-    }, 100)
-  })
-  document.body.scrollTop = parseInt(localStorage.getItem('scrolltop'))
-}, 100))
+function scroll () {
+  setTimeout(() => {
+    var timeout = null
+    window.addEventListener('scroll', () => {
+      clearTimeout(timeout)
+      timeout = setTimeout(() => {
+        localStorage.setItem('scrolltop', document.body.scrollTop)
+      }, 100)
+    })
+    document.body.scrollTop = parseInt(localStorage.getItem('scrolltop'))
+  }, 100)
+}
+
+if (document.readyState === 'complete') {
+  mount()
+  scroll()
+}
+else {
+  window.addEventListener('DOMContentLoaded', mount)
+  window.addEventListener('load', scroll)
+}
 
 function updateStyles () {
   if (state.raw) {
