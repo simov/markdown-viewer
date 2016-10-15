@@ -13,6 +13,8 @@
     "default_popup": "/content/popup.html"
   },
 
+  "options_page": "/content/options.html",
+
   "background" : {
     "scripts": [
       "/vendor/marked.js",

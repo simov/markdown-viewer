@@ -12,7 +12,7 @@ chrome.storage.sync.get((sync) => {
   }
   if (!sync.path) {
     chrome.storage.sync.set({path:
-      '/.*\\/.*\\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*)?$/'
+      '.*\\/.*\\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*)?$'
     })
   }
 })

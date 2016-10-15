@@ -14,3 +14,4 @@ select { width: 200px; }
 [type=checkbox] { position: relative; z-index: 1; top: 2px; }
 h4 { clear: both; padding: 10px 0 2px 0; }
 a:nth-child(2) { float: right; }
+ul { padding: 0 0 10px 0; }

@@ -57,6 +57,10 @@ m.mount(document.querySelector('body'), {
           chrome.extension.sendMessage({message: 'settings'}, init)
         })
         return false
+      },
+      advancedOptions: () => {
+        chrome.extension.sendMessage({message: 'advanced'})
+        return false
       }
     }
   },
@@ -84,7 +88,9 @@ m.mount(document.querySelector('body'), {
             ' ' + key
           )
         )
-      ))
+      )),
+
+      m('a[href=""]', {onclick: ctrl.advancedOptions}, 'Advanced Options')
     ])
   }
 })
