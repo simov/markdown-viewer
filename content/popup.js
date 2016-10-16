@@ -12,7 +12,7 @@ var events = {
     chrome.extension.sendMessage({
       message: 'options',
       options: state.options
-    }, (res) => {})
+    })
   },
 
   changeTheme: (e) => {
@@ -20,7 +20,7 @@ var events = {
     chrome.extension.sendMessage({
       message: 'theme',
       theme: state.theme
-    }, (res) => {})
+    })
   },
 
   viewRaw: () => {
@@ -29,8 +29,7 @@ var events = {
       message: 'raw',
       raw: state.raw,
       theme: state.theme
-    }, (res) => {})
-    return false
+    })
   },
 
   setDefaults: () => {
@@ -39,13 +38,21 @@ var events = {
     }, (res) => {
       chrome.extension.sendMessage({message: 'settings'}, init)
     })
-    return false
   },
 
   advancedOptions: () => {
     chrome.extension.sendMessage({message: 'advanced'})
-    return false
   }
+}
+
+var description = {
+  gfm: 'Enable GFM\n(GitHub Flavored Markdown)',
+  tables: 'Enable GFM tables\n(requires the gfm option to be true)',
+  breaks: 'Enable GFM line breaks\n(requires the gfm option to be true)',
+  pedantic: 'Don\'t fix any of the original markdown\nbugs or poor behavior',
+  sanitize: 'Ignore any HTML\nthat has been input',
+  smartLists: 'Use smarter list behavior\nthan the original markdown',
+  smartypants: 'Use "smart" typograhic punctuation\nfor things like quotes and dashes'
 }
 
 function init (res) {
@@ -60,14 +67,21 @@ function init (res) {
   m.redraw()
 }
 
+function oncreate (vnode) {
+  componentHandler.upgradeElements(vnode.dom)
+}
+
+chrome.extension.sendMessage({message: 'settings'}, init)
+
 m.mount(document.querySelector('body'), {
-  oninit: () => {
-    chrome.extension.sendMessage({message: 'settings'}, init)
-  },
-  view: () =>
-    m('#options', [
-      m('a[href=""]', {onclick: events.viewRaw}, (state.raw ? 'Html' : 'Markdown')),
-      m('a[href=""]', {onclick: events.setDefaults}, 'Defaults'),
+  view: (vnode) =>
+    m('#popup', [
+      m('button.mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect',
+        {oncreate, onclick: events.viewRaw},
+        (state.raw ? 'Html' : 'Markdown')),
+      m('button.mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect',
+        {oncreate, onclick: events.setDefaults},
+        'Defaults'),
 
       m('h4', 'Theme'),
       m('select', {onchange: events.changeTheme}, state.themes.map((theme) =>
@@ -75,19 +89,22 @@ m.mount(document.querySelector('body'), {
       )),
 
       m('h4', 'Compiler Options'),
-      m('ul', Object.keys(state.options).map((key) =>
-        m('li',
-          m('label',
-            m('input[type="checkbox"]', {
+      m('.mdl-grid', Object.keys(state.options).map((key, index) =>
+        m('.mdl-cell',
+          m('label.mdl-switch mdl-js-switch mdl-js-ripple-effect',
+            {oncreate, title: description[key]}, [
+            m('input[type="checkbox"].mdl-switch__input', {
               name: key,
               checked: state.options[key],
               onchange: events.changeOptions
             }),
-            ' ' + key
-          )
+            m('span.mdl-switch__label', key)
+          ])
         )
       )),
 
-      m('a[href=""]', {onclick: events.advancedOptions}, 'Advanced Options')
+      m('button.mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect',
+        {oncreate, onclick: events.advancedOptions},
+        'Advanced Options')
     ])
 })
