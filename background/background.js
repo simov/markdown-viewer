@@ -29,7 +29,7 @@ chrome.tabs.onUpdated.addListener((id, info, tab) => {
       chrome.storage.sync.get('path', (res) => {
         if (new RegExp(res.path).test(href)) {
           chrome.tabs.insertCSS(id, {file: 'css/content.css', runAt: 'document_start'})
-          chrome.tabs.insertCSS(id, {file: 'css/prism.css', runAt: 'document_start'})
+          chrome.tabs.insertCSS(id, {file: 'vendor/prism.css', runAt: 'document_start'})
           chrome.tabs.executeScript(id, {file: 'vendor/mithril.min.js', runAt: 'document_start'})
           chrome.tabs.executeScript(id, {file: 'vendor/prism.js', runAt: 'document_start'})
           chrome.tabs.executeScript(id, {file: 'content/content.js', runAt: 'document_start'})

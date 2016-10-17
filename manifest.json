@@ -39,7 +39,7 @@
       ],
       "css": [
         "/css/content.css",
-        "/css/prism.css"
+        "/vendor/prism.css"
       ],
       "js": [
         "/vendor/mithril.min.js",
