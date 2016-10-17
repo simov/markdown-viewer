@@ -84,7 +84,7 @@ m.mount(document.querySelector('body'), {
         'Defaults'),
 
       m('h4', 'Theme'),
-      m('select', {onchange: events.changeTheme}, state.themes.map((theme) =>
+      m('select.mdl-shadow--2dp', {onchange: events.changeTheme}, state.themes.map((theme) =>
         m('option', {selected: state.theme === theme}, theme)
       )),
 

@@ -10,7 +10,10 @@ select {
   font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
   font-size: 14px; line-height: 17px;
   text-transform: uppercase;
-  width: 350px; padding: 5px;
+  background-color: #ececec;
+  border: none; border-radius: 2px;
+  cursor: pointer;
+  width: 350px; padding: 9px 12px;
 }
 
 button:nth-child(2) { float: right; }
