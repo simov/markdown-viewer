@@ -3,9 +3,34 @@
 <head>
   <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
   <title>Markdown Viewer</title>
+  <link href="/vendor/mdl.min.css" rel="stylesheet" type="text/css" media="all" />
+  <link href="/css/icons.css" rel="stylesheet" type="text/css" media="all" />
+  <link href="/css/options.css" rel="stylesheet" type="text/css" media="all" />
+  <script src="/vendor/mdl.min.js" type="text/javascript" charset="utf-8"></script>
   <script src="/vendor/mithril.min.js" type="text/javascript" charset="utf-8"></script>
 </head>
 <body>
+  <div id="wrapper">
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+      <header class="mdl-layout__header">
+        <div>
+          <div class="mdl-layout__header-row">
+            <span class="mdl-layout-title">Markdown Viewer</span>
+          </div>
+        </div>
+      </header>
+    </div>
+    <main class="mdl-layout__content"></main>
+    <div id="footer-push">&nbsp;</div>
+  </div>
+  <footer class="mdl-mega-footer">
+    <div class="mdl-mega-footer__bottom-section">
+      <ul class="mdl-mega-footer__link-list">
+        <li><a href="https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk" class="icon-chrome">Chrome Store</a></li>
+        <li><a href="https://github.com/simov/markdown-viewer" class="icon-github">GitHub</a></li>
+      </ul>
+    </div>
+  </footer>
 </body>
 <script src="/content/options.js" type="text/javascript" charset="utf-8"></script>
 </html>
