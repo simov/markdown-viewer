@@ -70,6 +70,11 @@ function init (res) {
 function oncreate (vnode) {
   componentHandler.upgradeElements(vnode.dom)
 }
+var onupdate = (key) => (vnode) => {
+  if (vnode.dom.classList.contains('is-checked') !== state.options[key]) {
+    vnode.dom.classList.toggle('is-checked')
+  }
+}
 
 chrome.extension.sendMessage({message: 'settings'}, init)
 
@@ -89,10 +94,10 @@ m.mount(document.querySelector('body'), {
       )),
 
       m('h4', 'Compiler Options'),
-      m('.mdl-grid', Object.keys(state.options).map((key, index) =>
+      m('.mdl-grid', Object.keys(state.options).map((key) =>
         m('.mdl-cell',
           m('label.mdl-switch mdl-js-switch mdl-js-ripple-effect',
-            {oncreate, title: description[key]}, [
+            {oncreate, onupdate: onupdate(key), title: description[key]}, [
             m('input[type="checkbox"].mdl-switch__input', {
               name: key,
               checked: state.options[key],
