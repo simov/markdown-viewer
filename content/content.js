@@ -9,9 +9,9 @@ var state = {
   getURL: () => chrome.extension.getURL('/themes/' + state.theme + '.css')
 }
 
-chrome.extension.sendMessage({message: 'settings'}, (data) => {
-  state.theme = data.theme
-  state.raw = data.raw
+chrome.extension.sendMessage({message: 'settings'}, (res) => {
+  state.theme = res.theme
+  state.raw = res.raw
   m.redraw()
 })
 
