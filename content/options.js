@@ -1,65 +1,99 @@
 
 var state = {
-  origins: []
+  origin: '',
+  origins: {},
+  timeout: null
 }
 
 var events = {
   add: () => {
-    chrome.permissions.request({
-      origins: [document.querySelector('input').value]
-    }, (granted) => {
+    var origin = state.origin.replace(/\/$/, '')
+    chrome.permissions.request({origins: [origin + '/*']}, (granted) => {
       if (granted) {
-        get()
-        document.querySelector('input').value = ''
+        chrome.extension.sendMessage({message: 'add', origin}, (res) => {
+          state.origin = ''
+          get()
+        })
       }
     })
   },
 
   remove: (origin) => () => {
-    chrome.permissions.remove({
-      origins: [origin]
-    }, (removed) => {
+    chrome.permissions.remove({origins: [origin + '/*']}, (removed) => {
       if (removed) {
-        var index = state.origins.indexOf(origin)
-        state.origins.splice(index, 1)
-        m.redraw()
+        chrome.extension.sendMessage({message: 'remove', origin}, (res) => {
+          get()
+        })
       }
     })
+  },
+
+  update: (origin) => (e) => {
+    state.origins[origin] = e.target.value
+    clearTimeout(state.timeout)
+    state.timeout = setTimeout(() => {
+      chrome.extension.sendMessage({
+        message: 'update', origin, match: e.target.value
+      }, (res) => {})
+    }, 750)
+  },
+
+  origin: (e) => {
+    state.origin = e.target.value
   }
 }
 
 function get () {
-  chrome.permissions.getAll((res) => {
+  chrome.extension.sendMessage({message: 'origins'}, (res) => {
     state.origins = res.origins
     m.redraw()
   })
 }
 
+get()
+
 function oncreate (vnode) {
   componentHandler.upgradeElements(vnode.dom)
 }
-
-get()
 
 m.mount(document.querySelector('main'), {
   view: () =>
     m('.mdl-grid', [
       m('.mdl-cell mdl-cell--8-col-tablet mdl-cell--12-col-desktop', [
         m('h4', 'Add New Origin'),
-        m('form', [
-          m('input[placeholder="https://raw.githubusercontent.com"]'),
-          m('button[type=button].mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect',
-            {oncreate, onclick: events.add},
-            'Add')
-        ])
       ]),
       m('.mdl-cell mdl-cell--8-col-tablet mdl-cell--12-col-desktop', [
-        m('h4', 'Allowed Origins'),
+        m('.mdl-textfield mdl-js-textfield', {oncreate}, [
+          m('input.mdl-textfield__input', {
+            value: state.origin,
+            onchange: events.origin,
+            placeholder: 'https://raw.githubusercontent.com'
+          }),
+          m('label.mdl-textfield__label')
+        ]),
+        m('button.mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect',
+          {oncreate, onclick: events.add},
+          'Add')
+      ]),
+
+      (Object.keys(state.origins).length || null) &&
+      m('.mdl-cell mdl-cell--8-col-tablet mdl-cell--12-col-desktop',
+        m('h4', 'Allowed Origins')
+      ),
+      (Object.keys(state.origins).length || null) &&
+      m('.mdl-cell mdl-cell--8-col-tablet mdl-cell--12-col-desktop',
         m('table.mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp',
-          state.origins.map((origin) =>
+          Object.keys(state.origins).map((origin) =>
           m('tr', [
             m('td.mdl-data-table__cell--non-numeric', origin),
             m('td.mdl-data-table__cell--non-numeric',
+              m('.mdl-textfield mdl-js-textfield', {oncreate}, [
+                m('input.mdl-textfield__input',
+                  {onkeyup: events.update(origin), value: state.origins[origin]}),
+                m('label.mdl-textfield__label')
+              ])
+            ),
+            m('td',
               m('button.mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon',
                 {oncreate, onclick: events.remove(origin), title: 'Remove'},
                 m('i.material-icons icon-remove')
@@ -67,6 +101,6 @@ m.mount(document.querySelector('main'), {
             )
           ])
         ))
-      ])
+      )
     ])
 })

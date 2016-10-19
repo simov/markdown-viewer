@@ -1,18 +1,15 @@
 
 // chrome.storage.sync.clear()
+// chrome.permissions.getAll((p) => chrome.permissions.remove({origins: p.origins}))
+
 chrome.storage.sync.get((sync) => {
-  if (!sync.options) {
-    chrome.storage.sync.set({options: md.defaults})
-  }
-  if (!sync.theme) {
-    chrome.storage.sync.set({theme: 'github'})
-  }
-  if (sync.raw === undefined) {
-    chrome.storage.sync.set({raw: false})
-  }
-  if (!sync.path) {
-    chrome.storage.sync.set({path:
-      '.*\\/.*\\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*)?$'
+  if (!Object.keys(sync).length) {
+    chrome.storage.sync.set({
+      options: md.defaults,
+      theme: 'github',
+      raw: false,
+      match: '.*\\/.*\\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*)?$',
+      origins: {}
     })
   }
 })
@@ -20,14 +17,15 @@ chrome.storage.sync.get((sync) => {
 chrome.tabs.onUpdated.addListener((id, info, tab) => {
   if (info.status === 'loading') {
     chrome.tabs.executeScript(id, {
-      code: 'document.querySelector("pre").style.display = "none";location.href',
+      code: 'document.querySelector("pre").style.display = "none";JSON.stringify(location)',
       runAt: 'document_start'
-    }, (href) => {
+    }, (location) => {
       if (chrome.runtime.lastError) {
         return
       }
-      chrome.storage.sync.get('path', (res) => {
-        if (new RegExp(res.path).test(href)) {
+      location = JSON.parse(location)
+      chrome.storage.sync.get('origins', (res) => {
+        if (new RegExp(res.origins[location.origin]).test(location.href)) {
           chrome.tabs.insertCSS(id, {file: 'css/content.css', runAt: 'document_start'})
           chrome.tabs.insertCSS(id, {file: 'vendor/prism.css', runAt: 'document_start'})
           chrome.tabs.executeScript(id, {file: 'vendor/mithril.min.js', runAt: 'document_start'})
@@ -50,9 +48,12 @@ chrome.extension.onMessage.addListener((req, sender, sendResponse) => {
     md.compile(req.markdown, sendResponse)
   }
   else if (req.message === 'settings') {
-    chrome.storage.sync.get(['options', 'theme', 'raw'], (data) => {
-      delete data.options.langPrefix
-      sendResponse(data)
+    chrome.storage.sync.get(['options', 'theme', 'raw'], (res) => {
+      delete res.options.langPrefix
+      sendResponse(res)
+    })
+    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+      chrome.pageAction.show(tabs[0].id)
     })
   }
   else if (req.message === 'options') {
@@ -61,9 +62,8 @@ chrome.extension.onMessage.addListener((req, sender, sendResponse) => {
     sendMessage({message: 'reload'})
   }
   else if (req.message === 'defaults') {
-    chrome.storage.sync.set({options: md.defaults}, sendResponse)
-    chrome.storage.sync.set({theme: 'github'})
-    chrome.storage.sync.set({raw: false})
+    chrome.storage.sync.set(
+      {options: md.defaults, theme: 'github', raw: false}, sendResponse)
     sendMessage({message: 'reload'})
   }
   else if (req.message === 'theme') {
@@ -79,12 +79,32 @@ chrome.extension.onMessage.addListener((req, sender, sendResponse) => {
       chrome.tabs.create({url: extension.optionsUrl}, sendResponse)
     })
   }
-
+  else if (req.message === 'origins') {
+    chrome.storage.sync.get('origins', sendResponse)
+  }
+  else if (req.message === 'add') {
+    chrome.storage.sync.get(['match', 'origins'], (res) => {
+      res.origins[req.origin] = res.match
+      chrome.storage.sync.set({origins: res.origins}, sendResponse)
+    })
+  }
+  else if (req.message === 'remove') {
+    chrome.storage.sync.get('origins', (res) => {
+      delete res.origins[req.origin]
+      chrome.storage.sync.set({origins: res.origins}, sendResponse)
+    })
+  }
+  else if (req.message === 'update') {
+    chrome.storage.sync.get('origins', (res) => {
+      res.origins[req.origin] = req.match
+      chrome.storage.sync.set({origins: res.origins}, sendResponse)
+    })
+  }
   return true
 })
 
-function sendMessage (obj) {
+function sendMessage (req) {
   chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-    chrome.tabs.sendMessage(tabs[0].id, obj)
+    chrome.tabs.sendMessage(tabs[0].id, req)
   })
 }
