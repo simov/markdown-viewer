@@ -50,7 +50,7 @@ function mount () {
           done()
           return
         }
-        m.request({url: window.location.href,
+        m.request({method: 'GET', url: window.location.href,
           deserialize: (body) => {
             done(body)
             return body
