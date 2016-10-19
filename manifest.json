@@ -4,7 +4,7 @@
   "version"         : "2.2",
   "description"     : "Markdown Viewer",
 
-  "browser_action": {
+  "page_action": {
     "default_icon": {
       "19" : "/images/icon19.png",
       "38" : "/images/icon38.png"
