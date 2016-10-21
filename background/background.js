@@ -84,9 +84,12 @@ chrome.tabs.onUpdated.addListener((id, info, tab) => {
         return
       }
       if (new RegExp(res.origins[res.location.origin]).test(res.location.href)) {
-        chrome.tabs.insertCSS(id, {code: 'pre {visibility:hidden}', runAt: 'document_start'})
-        chrome.tabs.executeScript(id, {code:
-          'var theme = "' + res.theme + '";var raw = "' + res.raw + '"', runAt: 'document_start'})
+        chrome.tabs.executeScript(id, {
+          code: [
+            'document.querySelector("pre").style.visibility = "hidden"',
+            'var theme = "' + res.theme + '"',
+            'var raw = "' + res.raw + '"'
+          ].join(';'), runAt: 'document_start'})
 
         chrome.tabs.insertCSS(id, {file: 'css/content.css', runAt: 'document_start'})
         chrome.tabs.insertCSS(id, {file: 'vendor/prism.css', runAt: 'document_start'})
