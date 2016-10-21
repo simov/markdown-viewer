@@ -7,6 +7,9 @@ var state = {
 
 var events = {
   add: () => {
+    if (!state.origin) {
+      return
+    }
     var origin = state.origin.replace(/\/$/, '')
     chrome.permissions.request({origins: [origin + '/*']}, (granted) => {
       if (granted) {
