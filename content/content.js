@@ -2,18 +2,20 @@
 var $ = document.querySelector.bind(document)
 
 var state = {
-  theme: '',
+  theme: window['theme'] || '',
   html: '',
   markdown: '',
-  raw: false,
+  raw: window['raw'] ? !window['raw'] : false,
   getURL: () => chrome.extension.getURL('/themes/' + state.theme + '.css')
 }
 
-chrome.extension.sendMessage({message: 'settings'}, (res) => {
-  state.theme = res.theme
-  state.raw = res.raw
-  m.redraw()
-})
+if (!state.theme) { // file://
+  chrome.extension.sendMessage({message: 'settings'}, (res) => {
+    state.theme = res.theme
+    state.raw = res.raw
+    m.redraw()
+  })
+}
 
 chrome.extension.onMessage.addListener((req, sender, sendResponse) => {
   if (req.message === 'reload') {
@@ -77,8 +79,9 @@ function mount () {
       }
       if (state.theme && !state.raw) {
         updateStyles()
-        dom.push(m('link#theme [rel="stylesheet"] [type="text/css"]',
-          {href: state.getURL()}))
+        dom.push(m('link#theme [rel="stylesheet"] [type="text/css"]', {
+          href: state.getURL()
+        }))
       }
       if (state.html && !state.raw) {
         dom.push(m('#html', {oncreate: oncreate.html}, m.trust(state.html)))

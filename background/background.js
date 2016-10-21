@@ -2,8 +2,8 @@
 // chrome.storage.sync.clear()
 // chrome.permissions.getAll((p) => chrome.permissions.remove({origins: p.origins}))
 
-chrome.storage.sync.get((sync) => {
-  if (!Object.keys(sync).length) {
+chrome.storage.sync.get((res) => {
+  if (!Object.keys(res).length) {
     chrome.storage.sync.set({
       options: md.defaults,
       theme: 'github',
@@ -12,33 +12,85 @@ chrome.storage.sync.get((sync) => {
       origins: {}
     })
   }
+  // v2.2 -> v2.3
+  else if (!res.match || !res.origins) {
+    chrome.storage.sync.set({
+      match: '.*\\/.*\\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*)?$',
+      origins: {}
+    })
+  }
 })
+
+function parallel (tasks, done) {
+  var complete = 0, error, result = {}
+  tasks.forEach((task) => task((err, res) => {
+    if (error) {
+      return
+    }
+    if (err) {
+      error = err
+      done(err)
+      return
+    }
+    if (res) {
+      Object.keys(res).forEach((key) => {
+        result[key] = res[key]
+      })
+    }
+    if (++complete === tasks.length) {
+      done(null, result)
+    }
+  }))
+}
 
 chrome.tabs.onUpdated.addListener((id, info, tab) => {
   if (info.status === 'loading') {
-    chrome.tabs.executeScript(id, {
-      code: 'document.querySelector("pre").style.display = "none";JSON.stringify(location)',
-      runAt: 'document_start'
-    }, (location) => {
-      if (chrome.runtime.lastError) {
+    parallel([
+      (done) => {
+        chrome.tabs.executeScript(id, {
+          code: 'JSON.stringify(location)',
+          runAt: 'document_start'
+        }, (location) => {
+          if (chrome.runtime.lastError) {
+            done(new Error('Origin not allowed'))
+            return
+          }
+          try {
+            location = JSON.parse(location)
+          }
+          catch (err) {
+            done(new Error('JSON parse error'))
+            return
+          }
+          done(null, {location})
+        })
+      },
+      (done) => {
+        chrome.storage.sync.get((res) => done(null, res))
+      }
+    ], (err, res) => {
+      if (err) {
         return
       }
-      location = JSON.parse(location)
-      chrome.storage.sync.get('origins', (res) => {
-        if (new RegExp(res.origins[location.origin]).test(location.href)) {
-          chrome.tabs.insertCSS(id, {file: 'css/content.css', runAt: 'document_start'})
-          chrome.tabs.insertCSS(id, {file: 'vendor/prism.css', runAt: 'document_start'})
-          chrome.tabs.executeScript(id, {file: 'vendor/mithril.min.js', runAt: 'document_start'})
-          chrome.tabs.executeScript(id, {file: 'vendor/prism.js', runAt: 'document_start'})
-          chrome.tabs.executeScript(id, {file: 'content/content.js', runAt: 'document_start'})
-        }
-        else {
-          chrome.tabs.executeScript(id, {
-            code: 'document.querySelector("pre").style.display = "block"',
-            runAt: 'document_start'
-          })
-        }
-      })
+      if (!res.origins[res.location.origin]) { // v2.2 -> v2.3
+        return
+      }
+      if (new RegExp(res.origins[res.location.origin]).test(res.location.href)) {
+        chrome.tabs.insertCSS(id, {code: 'pre {visibility:hidden}', runAt: 'document_start'})
+        chrome.tabs.executeScript(id, {code:
+          'var theme = "' + res.theme + '";var raw = "' + res.raw + '"', runAt: 'document_start'})
+
+        chrome.tabs.insertCSS(id, {file: 'css/content.css', runAt: 'document_start'})
+        chrome.tabs.insertCSS(id, {file: 'vendor/prism.css', runAt: 'document_start'})
+
+        chrome.tabs.executeScript(id, {file: 'vendor/mithril.min.js', runAt: 'document_start'})
+        chrome.tabs.executeScript(id, {file: 'vendor/prism.js', runAt: 'document_start'})
+        chrome.tabs.executeScript(id, {file: 'content/content.js', runAt: 'document_start'})
+
+        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+          chrome.pageAction.show(tabs[0].id)
+        })
+      }
     })
   }
 })
