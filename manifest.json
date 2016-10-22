@@ -27,15 +27,15 @@
   "content_scripts": [
     {
       "matches": [
-        "file:///*/*.markdown",
-        "file:///*/*.mdown",
-        "file:///*/*.mkdn",
-        "file:///*/*.md",
-        "file:///*/*.mkd",
-        "file:///*/*.mdwn",
-        "file:///*/*.mdtxt",
-        "file:///*/*.mdtext",
-        "file:///*/*.text"
+        "file:///*.markdown",
+        "file:///*.mdown",
+        "file:///*.mkdn",
+        "file:///*.md",
+        "file:///*.mkd",
+        "file:///*.mdwn",
+        "file:///*.mdtxt",
+        "file:///*.mdtext",
+        "file:///*.text"
       ],
       "css": [
         "/css/content.css",
