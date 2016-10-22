@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'fontello';
-  src: url('icons.ttf?68795376') format('truetype');
+  src: url('icons.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
@@ -10,7 +10,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'fontello';
-    src: url('../font/fontello.svg?68795376#fontello') format('svg');
+    src: url('../font/fontello.svg?96655196#fontello') format('svg');
   }
 }
 */
@@ -51,5 +51,6 @@
 }
 
 .icon-remove:before { content: '\e800'; } /* '' */
+.icon-refresh:before { content: '\e802'; } /* '' */
 .icon-github:before { content: '\f09b'; } /* '' */
 .icon-chrome:before { content: '\f268'; } /* '' */
