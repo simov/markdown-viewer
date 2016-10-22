@@ -41,6 +41,10 @@ var events = {
     }, 750)
   },
 
+  refresh: (origin) => () => {
+    chrome.permissions.request({origins: [origin + '/*']}, (granted) => {})
+  },
+
   origin: (e) => {
     state.origin = e.target.value
   }
@@ -97,6 +101,10 @@ m.mount(document.querySelector('main'), {
               ])
             ),
             m('td',
+              m('button.mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon',
+                {oncreate, onclick: events.refresh(origin), title: 'Refresh'},
+                m('i.material-icons icon-refresh')
+              ),
               m('button.mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon',
                 {oncreate, onclick: events.remove(origin), title: 'Remove'},
                 m('i.material-icons icon-remove')
