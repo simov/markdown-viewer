@@ -16,6 +16,8 @@
 - Supports raw and rendered markdown views
 - Supported file extensions `markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text`
 - Built as [event page][event-page] - the extension is loaded only when needed
+- No special permissions required for file URLs
+- Full control over the allowed origins
 - Open source
 
 
@@ -38,6 +40,12 @@ To enable the extensions for local files:
 
 1. Navigate to `chrome://extensions`
 2. Make sure that the `Allow access to file URLs` checkbox is checked for the `Markdown Viewer` extension
+
+
+## Remote Files
+
+1. Click on the Markdown Viewer icon and select 'Options'
+2. Add the origin that you want enabled for the Markdown Viewer extension
 
 
 ## Markdown Syntax
