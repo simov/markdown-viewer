@@ -44,8 +44,27 @@ To enable the extensions for local files:
 
 ## Remote Files
 
-1. Click on the Markdown Viewer icon and select 'Options'
+1. Click on the Markdown Viewer icon and select `Options`
 2. Add the origin that you want enabled for the Markdown Viewer extension
+
+
+## Advanced Options
+
+![advanced-options]
+
+Markdown Viewer doesn't require any specific permissions in order to render markdown files from local file URLs. For example the `file:///home/s/chrome/markdown-viewer/README.md` on my hard drive will always be rendered without a problem.
+
+1. In case you want the extension to render markdown files from web URLs you have to specify the server's origin. The origin consists of `[protocol]://[domain]` For example adding `https://raw.githubusercontent.com` will allow the extension to render markdown files from that origin.
+
+2. By default the extension renders only URLs ending with a markdown file extension. For example if you add the `https://raw.githubusercontent.com` origin, then the `https://raw.githubusercontent.com/simov/markdown-viewer/master/README.md` URL will be rendered as markdown file.
+
+3. At any point you can remove the allowed origin.
+
+4. In case a custom path matching is needed, for example `https://something.com/some-path` then after adding the `http://something.com` origin you'll have to set the path matching regular expression as well `\/some-path$`.
+
+5. Markdown Viewer synchronizes your preferences across multiple devices so your list of allowed origins is always up to date. However the actual permissions are not being synced automatically. In case you recently added a new origin on one of your computers you'll have to allow it on your other computers as well. Just click on the `Refresh` icon to add the same permission on the computer you are currently on.
+
+6. Markdown Viewer is an Open Source project hosted on GitHub. In case you have any problems with it, questions or other suggestions open up an issue there `https://github.com/simov/markdown-viewer/issues`.
 
 
 ## Markdown Syntax
@@ -91,3 +110,4 @@ SOFTWARE.
   [chrome-store]: https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk
   [gfm-tables]: https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#tables
   [syntax]: https://raw.githubusercontent.com/simov/markdown-viewer/master/syntax.md
+  [advanced-options]: https://raw.githubusercontent.com/simov/markdown-viewer/master/images/advanced-options.png
