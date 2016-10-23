@@ -47,3 +47,6 @@ body.markdown-body #html>*:first-child {
 body.markdown-body #html>*:last-child {
   margin-bottom: 0 !important;
 }
+body.markdown-body img {
+  background-color: transparent;
+}
