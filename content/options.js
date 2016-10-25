@@ -13,7 +13,7 @@ var events = {
     var origin = state.origin.replace(/\/$/, '')
     chrome.permissions.request({origins: [origin + '/*']}, (granted) => {
       if (granted) {
-        chrome.extension.sendMessage({message: 'add', origin}, (res) => {
+        chrome.runtime.sendMessage({message: 'add', origin}, (res) => {
           state.origin = ''
           get()
         })
@@ -24,7 +24,7 @@ var events = {
   remove: (origin) => () => {
     chrome.permissions.remove({origins: [origin + '/*']}, (removed) => {
       if (removed) {
-        chrome.extension.sendMessage({message: 'remove', origin}, (res) => {
+        chrome.runtime.sendMessage({message: 'remove', origin}, (res) => {
           get()
         })
       }
@@ -35,7 +35,7 @@ var events = {
     state.origins[origin] = e.target.value
     clearTimeout(state.timeout)
     state.timeout = setTimeout(() => {
-      chrome.extension.sendMessage({
+      chrome.runtime.sendMessage({
         message: 'update', origin, match: e.target.value
       }, (res) => {})
     }, 750)
@@ -51,7 +51,7 @@ var events = {
 }
 
 function get () {
-  chrome.extension.sendMessage({message: 'origins'}, (res) => {
+  chrome.runtime.sendMessage({message: 'origins'}, (res) => {
     state.origins = res.origins
     m.redraw()
   })

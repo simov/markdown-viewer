@@ -6,18 +6,18 @@ var state = {
   html: '',
   markdown: '',
   raw: window['raw'] ? !window['raw'] : false,
-  getURL: () => chrome.extension.getURL('/themes/' + state.theme + '.css')
+  getURL: () => chrome.runtime.getURL('/themes/' + state.theme + '.css')
 }
 
 if (!state.theme) { // file://
-  chrome.extension.sendMessage({message: 'settings'}, (res) => {
+  chrome.runtime.sendMessage({message: 'settings'}, (res) => {
     state.theme = res.theme
     state.raw = res.raw
     m.redraw()
   })
 }
 
-chrome.extension.onMessage.addListener((req, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
   if (req.message === 'reload') {
     window.location.reload(true)
   }
@@ -61,7 +61,7 @@ function mount () {
       })((data) => {
         state.markdown = data || md
 
-        chrome.extension.sendMessage({
+        chrome.runtime.sendMessage({
           message: 'markdown',
           markdown: state.markdown
         }, (res) => {

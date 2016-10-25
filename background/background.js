@@ -106,7 +106,7 @@ chrome.tabs.onUpdated.addListener((id, info, tab) => {
   }
 })
 
-chrome.extension.onMessage.addListener((req, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
   if (req.message === 'markdown') {
     md.compile(req.markdown, sendResponse)
   }

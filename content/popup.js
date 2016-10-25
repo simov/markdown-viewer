@@ -9,7 +9,7 @@ var state = {
 var events = {
   changeOptions: (e) => {
     state.options[e.target.name] = !state.options[e.target.name]
-    chrome.extension.sendMessage({
+    chrome.runtime.sendMessage({
       message: 'options',
       options: state.options
     })
@@ -17,7 +17,7 @@ var events = {
 
   changeTheme: (e) => {
     state.theme = state.themes[e.target.selectedIndex]
-    chrome.extension.sendMessage({
+    chrome.runtime.sendMessage({
       message: 'theme',
       theme: state.theme
     })
@@ -25,7 +25,7 @@ var events = {
 
   viewRaw: () => {
     state.raw = !state.raw
-    chrome.extension.sendMessage({
+    chrome.runtime.sendMessage({
       message: 'raw',
       raw: state.raw,
       theme: state.theme
@@ -33,15 +33,15 @@ var events = {
   },
 
   setDefaults: () => {
-    chrome.extension.sendMessage({
+    chrome.runtime.sendMessage({
       message: 'defaults'
     }, (res) => {
-      chrome.extension.sendMessage({message: 'settings'}, init)
+      chrome.runtime.sendMessage({message: 'settings'}, init)
     })
   },
 
   advancedOptions: () => {
-    chrome.extension.sendMessage({message: 'advanced'})
+    chrome.runtime.sendMessage({message: 'advanced'})
   }
 }
 
@@ -76,7 +76,7 @@ var onupdate = (key) => (vnode) => {
   }
 }
 
-chrome.extension.sendMessage({message: 'settings'}, init)
+chrome.runtime.sendMessage({message: 'settings'}, init)
 
 m.mount(document.querySelector('body'), {
   view: (vnode) =>
