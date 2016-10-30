@@ -5,7 +5,7 @@ var state = {
   theme: window['theme'] || '',
   html: '',
   markdown: '',
-  raw: window['raw'] ? !window['raw'] : false,
+  raw: window['raw'] || false,
   getURL: () => chrome.runtime.getURL('/themes/' + state.theme + '.css')
 }
 

@@ -88,7 +88,7 @@ chrome.tabs.onUpdated.addListener((id, info, tab) => {
           code: [
             'document.querySelector("pre").style.visibility = "hidden"',
             'var theme = "' + res.theme + '"',
-            'var raw = "' + res.raw + '"'
+            'var raw = ' + res.raw
           ].join(';'), runAt: 'document_start'})
 
         chrome.tabs.insertCSS(id, {file: 'css/content.css', runAt: 'document_start'})
