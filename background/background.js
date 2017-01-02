@@ -25,7 +25,7 @@ chrome.storage.sync.get((res) => {
     }
   }
   // v2.3 -> v2.4
-  else if (options.origins['file://']) {
+  else if (!options.origins['file://']) {
     options.origins['file://'] = match
   }
 
