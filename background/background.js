@@ -68,21 +68,21 @@ chrome.tabs.onUpdated.addListener((id, info, tab) => {
     parallel([
       (done) => {
         chrome.tabs.executeScript(id, {
-          code: 'JSON.stringify(location)',
+          code: 'JSON.stringify({location, state: window.state})',
           runAt: 'document_start'
-        }, (location) => {
+        }, (res) => {
           if (chrome.runtime.lastError) {
             done(new Error('Origin not allowed'))
             return
           }
           try {
-            location = JSON.parse(location)
+            res = JSON.parse(res)
           }
           catch (err) {
             done(new Error('JSON parse error'))
             return
           }
-          done(null, {location})
+          done(null, res)
         })
       },
       (done) => {
@@ -95,7 +95,7 @@ chrome.tabs.onUpdated.addListener((id, info, tab) => {
       if (!res.origins[res.location.origin]) { // v2.2 -> v2.3
         return
       }
-      if (new RegExp(res.origins[res.location.origin]).test(res.location.href)) {
+      if (!res.state && new RegExp(res.origins[res.location.origin]).test(res.location.href)) {
         chrome.tabs.executeScript(id, {
           code: [
             'document.querySelector("pre").style.visibility = "hidden"',
