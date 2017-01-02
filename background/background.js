@@ -127,9 +127,6 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
       delete res.options.langPrefix
       sendResponse(res)
     })
-    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-      chrome.pageAction.show(tabs[0].id)
-    })
   }
   else if (req.message === 'options') {
     req.options.langPrefix = 'language-' // prism

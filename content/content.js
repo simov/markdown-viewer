@@ -9,14 +9,6 @@ var state = {
   getURL: () => chrome.runtime.getURL('/themes/' + state.theme + '.css')
 }
 
-if (!state.theme) { // file://
-  chrome.runtime.sendMessage({message: 'settings'}, (res) => {
-    state.theme = res.theme
-    state.raw = res.raw
-    m.redraw()
-  })
-}
-
 chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
   if (req.message === 'reload') {
     window.location.reload(true)
