@@ -7,7 +7,7 @@ var state = {
 
 var events = {
   add: () => {
-    if (!state.origin) {
+    if (!state.origin || /^file:/.test(state.origin)) {
       return
     }
     var origin = state.origin.replace(/\/$/, '')
@@ -90,7 +90,7 @@ m.mount(document.querySelector('main'), {
       (Object.keys(state.origins).length || null) &&
       m('.mdl-cell mdl-cell--8-col-tablet mdl-cell--12-col-desktop',
         m('table.mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp',
-          Object.keys(state.origins).map((origin) =>
+          Object.keys(state.origins).sort().map((origin) =>
           m('tr', [
             m('td.mdl-data-table__cell--non-numeric', origin),
             m('td.mdl-data-table__cell--non-numeric',
@@ -101,10 +101,12 @@ m.mount(document.querySelector('main'), {
               ])
             ),
             m('td',
+              (origin !== 'file://' || null) &&
               m('button.mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon',
                 {oncreate, onclick: events.refresh(origin), title: 'Refresh'},
                 m('i.material-icons icon-refresh')
               ),
+              (origin !== 'file://' || null) &&
               m('button.mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon',
                 {oncreate, onclick: events.remove(origin), title: 'Remove'},
                 m('i.material-icons icon-remove')
