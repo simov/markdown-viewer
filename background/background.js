@@ -3,22 +3,34 @@
 // chrome.permissions.getAll((p) => chrome.permissions.remove({origins: p.origins}))
 
 chrome.storage.sync.get((res) => {
-  if (!Object.keys(res).length) {
-    chrome.storage.sync.set({
-      options: md.defaults,
-      theme: 'github',
-      raw: false,
-      match: '.*\\/.*\\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*)?$',
-      origins: {}
-    })
+  var match = '.*\\/.*\\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*)?$'
+
+  var defaults = {
+    options: md.defaults,
+    theme: 'github',
+    raw: false,
+    match,
+    origins: {
+      'file://': match
+    }
   }
+
+  var options = !Object.keys(res).length ? defaults : res
+
   // v2.2 -> v2.3
-  else if (!res.match || !res.origins) {
-    chrome.storage.sync.set({
-      match: '.*\\/.*\\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*)?$',
-      origins: {}
-    })
+  if (!options.match || !options.origins) {
+    options.match = match
+    options.origins = {
+      'file://': match
+    }
   }
+  // v2.3 -> v2.4
+  else if (options.origins['file://']) {
+    options.origins['file://'] = match
+  }
+
+  chrome.storage.sync.set(options)
+
   // reload extension bug
   chrome.permissions.getAll((permissions) => {
     var origins = Object.keys(res.origins || {})

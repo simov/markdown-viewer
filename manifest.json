@@ -24,33 +24,6 @@
     "persistent": false
   },
 
-  "content_scripts": [
-    {
-      "matches": [
-        "file:///*.markdown",
-        "file:///*.mdown",
-        "file:///*.mkdn",
-        "file:///*.md",
-        "file:///*.mkd",
-        "file:///*.mdwn",
-        "file:///*.mdtxt",
-        "file:///*.mdtext",
-        "file:///*.text"
-      ],
-      "css": [
-        "/css/content.css",
-        "/vendor/prism.css"
-      ],
-      "js": [
-        "/vendor/mithril.min.js",
-        "/vendor/prism.js",
-        "/content/content.js"
-      ],
-      "run_at": "document_start",
-      "all_frames": true
-    }
-  ],
-
   "web_accessible_resources": [
     "/themes/github.css",
     "/themes/github-dark.css",
@@ -86,7 +59,8 @@
   "homepage_url": "https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk",
 
   "permissions": [
-    "storage"
+    "storage",
+    "file:///*"
   ],
 
   "optional_permissions": [
