@@ -88,25 +88,43 @@ m.mount(document.querySelector('body'), {
         {oncreate, onclick: events.setDefaults},
         'Defaults'),
 
-      m('h4', 'Theme'),
-      m('select.mdl-shadow--2dp', {onchange: events.changeTheme}, state.themes.map((theme) =>
-        m('option', {selected: state.theme === theme}, theme)
-      )),
-
-      m('h4', 'Compiler Options'),
-      m('.mdl-grid', Object.keys(state.options).map((key) =>
-        m('.mdl-cell',
-          m('label.mdl-switch mdl-js-switch mdl-js-ripple-effect',
-            {oncreate, onupdate: onupdate(key), title: description[key]}, [
-            m('input[type="checkbox"].mdl-switch__input', {
-              name: key,
-              checked: state.options[key],
-              onchange: events.changeOptions
-            }),
-            m('span.mdl-switch__label', key)
-          ])
+      m('.mdl-tabs mdl-js-tabs mdl-js-ripple-effect', {oncreate},
+        m('.mdl-tabs__tab-bar',
+          m('a.mdl-tabs__tab', {href: '#tab-theme', class: 'is-active'}, 'Theme')
+        ),
+        m('.mdl-tabs__panel #tab-theme', {class: 'is-active'},
+          m('select.mdl-shadow--2dp', {onchange: events.changeTheme}, state.themes.map((theme) =>
+            m('option', {selected: state.theme === theme}, theme)
+          ))
         )
-      )),
+      ),
+
+      m('.mdl-tabs mdl-js-tabs mdl-js-ripple-effect', {oncreate},
+        m('.mdl-tabs__tab-bar',
+          m('a.mdl-tabs__tab', {href: '#tab-compiler', class: 'is-active'}, 'Compiler'),
+          m('a.mdl-tabs__tab', {href: '#tab-content'}, 'Content')
+        ),
+        m('.mdl-tabs__panel #tab-compiler', {class: 'is-active'},
+          m('.mdl-grid', Object.keys(state.options).map((key) =>
+            m('.mdl-cell',
+              m('label.mdl-switch mdl-js-switch mdl-js-ripple-effect',
+                {oncreate, onupdate: onupdate(key), title: description[key]}, [
+                m('input[type="checkbox"].mdl-switch__input', {
+                  name: key,
+                  checked: state.options[key],
+                  onchange: events.changeOptions
+                }),
+                m('span.mdl-switch__label', key)
+              ])
+            )
+          ))
+        ),
+        m('.mdl-tabs__panel #tab-content',
+          m('.mdl-grid',
+            m('.mdl-cell', 'Content')
+          )
+        )
+      ),
 
       m('button.mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect',
         {oncreate, onclick: events.advancedOptions},

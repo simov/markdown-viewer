@@ -2,10 +2,7 @@
 #popup { width: 350px; padding: 20px; -webkit-user-select: none; }
 #popup:after { content: ''; display: block; clear: both; }
 
-h4 { cursor: default; }
-h4:nth-of-type(1) { margin-bottom: 5px; }
-h4:nth-of-type(2) { margin-bottom: -5px; }
-
+/*theme*/
 select {
   font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
   font-size: 14px; line-height: 17px;
@@ -16,5 +13,27 @@ select {
   width: 350px; padding: 9px 12px;
 }
 
+/*defaults*/
 button:nth-child(2) { float: right; }
+/*advanced options*/
 button:nth-child(2n+3) { float: right; }
+
+/*tabs*/
+.mdl-tabs__tab-bar {
+  justify-content: flex-start;
+  border: 0;
+  height: 36px;
+  margin: 10px 0;
+}
+.mdl-tabs:nth-of-type(2) .mdl-tabs__tab-bar {
+  margin-bottom: 2px;
+}
+.mdl-tabs__tab {
+  line-height: 36px;
+  border-bottom: 1px solid #e0e0e0;
+  height: 36px;
+  padding: 0 16px;
+}
+.mdl-tabs:nth-of-type(2) .mdl-tabs__panel {
+  min-height: 296px;
+}
