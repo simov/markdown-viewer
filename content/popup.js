@@ -1,17 +1,17 @@
 
 var state = {
-  options: [],
+  compiler: {},
   themes: [],
   theme: '',
   raw: false
 }
 
 var events = {
-  changeOptions: (e) => {
-    state.options[e.target.name] = !state.options[e.target.name]
+  changeCompiler: (e) => {
+    state.compiler[e.target.name] = !state.compiler[e.target.name]
     chrome.runtime.sendMessage({
-      message: 'options',
-      options: state.options
+      message: 'compiler',
+      compiler: state.compiler
     })
   },
 
@@ -56,7 +56,7 @@ var description = {
 }
 
 function init (res) {
-  state.options = res.options
+  state.compiler = res.compiler
   state.theme = res.theme
 
   state.themes = chrome.runtime.getManifest().web_accessible_resources
@@ -71,7 +71,7 @@ function oncreate (vnode) {
   componentHandler.upgradeElements(vnode.dom)
 }
 var onupdate = (key) => (vnode) => {
-  if (vnode.dom.classList.contains('is-checked') !== state.options[key]) {
+  if (vnode.dom.classList.contains('is-checked') !== state.compiler[key]) {
     vnode.dom.classList.toggle('is-checked')
   }
 }
@@ -105,14 +105,14 @@ m.mount(document.querySelector('body'), {
           m('a.mdl-tabs__tab', {href: '#tab-content'}, 'Content')
         ),
         m('.mdl-tabs__panel #tab-compiler', {class: 'is-active'},
-          m('.mdl-grid', Object.keys(state.options).map((key) =>
+          m('.mdl-grid', Object.keys(state.compiler).map((key) =>
             m('.mdl-cell',
               m('label.mdl-switch mdl-js-switch mdl-js-ripple-effect',
                 {oncreate, onupdate: onupdate(key), title: description[key]}, [
                 m('input[type="checkbox"].mdl-switch__input', {
                   name: key,
-                  checked: state.options[key],
-                  onchange: events.changeOptions
+                  checked: state.compiler[key],
+                  onchange: events.changeCompiler
                 }),
                 m('span.mdl-switch__label', key)
               ])

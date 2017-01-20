@@ -6,7 +6,7 @@ chrome.storage.sync.get((res) => {
   var match = '.*\\/.*\\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*)?$'
 
   var defaults = {
-    options: md.defaults,
+    compiler: md.defaults,
     theme: 'github',
     raw: false,
     match,
@@ -27,6 +27,10 @@ chrome.storage.sync.get((res) => {
   // v2.3 -> v2.4
   else if (!options.origins['file://']) {
     options.origins['file://'] = match
+  }
+  // v2.4 -> v2.5
+  else if (!options.compiler) {
+    options.compiler = options.options
   }
 
   chrome.storage.sync.set(options)
@@ -123,19 +127,19 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
     md.compile(req.markdown, sendResponse)
   }
   else if (req.message === 'settings') {
-    chrome.storage.sync.get(['options', 'theme', 'raw'], (res) => {
-      delete res.options.langPrefix
+    chrome.storage.sync.get(['compiler', 'theme', 'raw'], (res) => {
+      delete res.compiler.langPrefix
       sendResponse(res)
     })
   }
-  else if (req.message === 'options') {
-    req.options.langPrefix = 'language-' // prism
-    chrome.storage.sync.set({options: req.options}, sendResponse)
+  else if (req.message === 'compiler') {
+    req.compiler.langPrefix = 'language-' // prism
+    chrome.storage.sync.set({compiler: req.compiler}, sendResponse)
     sendMessage({message: 'reload'})
   }
   else if (req.message === 'defaults') {
     chrome.storage.sync.set(
-      {options: md.defaults, theme: 'github', raw: false}, sendResponse)
+      {compiler: md.defaults, theme: 'github', raw: false}, sendResponse)
     sendMessage({message: 'reload'})
   }
   else if (req.message === 'theme') {

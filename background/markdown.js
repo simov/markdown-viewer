@@ -20,8 +20,8 @@ var md = (() => {
   }
 
   function compile (markdown, sendResponse) {
-    chrome.storage.sync.get((sync) => {
-      marked.setOptions(sync.options)
+    chrome.storage.sync.get((res) => {
+      marked.setOptions(res.compiler)
 
       marked(markdown, (err, html) => {
         if (err) throw err
