@@ -25,10 +25,10 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
 
 var oncreate = {
   markdown: () => {
-    document.body.scrollTop = parseInt(localStorage.getItem('scrolltop'))
+    document.body.scrollTop = parseInt(localStorage.getItem('md-' + location.href))
   },
   html: () => {
-    document.body.scrollTop = parseInt(localStorage.getItem('scrolltop'))
+    document.body.scrollTop = parseInt(localStorage.getItem('md-' + location.href))
     setTimeout(() => Prism.highlightAll(), 20)
   }
 }
@@ -90,10 +90,10 @@ function scroll () {
     window.addEventListener('scroll', () => {
       clearTimeout(timeout)
       timeout = setTimeout(() => {
-        localStorage.setItem('scrolltop', document.body.scrollTop)
+        localStorage.setItem('md-' + location.href, document.body.scrollTop)
       }, 100)
     })
-    document.body.scrollTop = parseInt(localStorage.getItem('scrolltop'))
+    document.body.scrollTop = parseInt(localStorage.getItem('md-' + location.href))
   }, 100)
 }
 
