@@ -1,7 +1,7 @@
 
-var md = (() => {
+var md = {
   // marked
-  var defaults = {
+  defaults: {
     gfm: true,
     tables: true,
     breaks: false,
@@ -17,9 +17,8 @@ var md = (() => {
     // headerPrefix: '',
     // renderer:
     // xhtml: false // handle self closing HTML tags
-  }
-
-  function compile (markdown, sendResponse) {
+  },
+  compile: (markdown, sendResponse) => {
     chrome.storage.sync.get((res) => {
       marked.setOptions(res.compiler)
 
@@ -29,9 +28,4 @@ var md = (() => {
       })
     })
   }
-
-  return {
-    defaults: defaults,
-    compile: compile
-  }
-})()
+}
