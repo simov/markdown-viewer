@@ -6,6 +6,7 @@ var state = {
   html: '',
   markdown: '',
   raw: window['raw'] || false,
+  content: window['content'] || {},
   getURL: () => chrome.runtime.getURL('/themes/' + state.theme + '.css')
 }
 
@@ -25,10 +26,14 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
 
 var oncreate = {
   markdown: () => {
-    document.body.scrollTop = parseInt(localStorage.getItem('md-' + location.href))
+    if (state.content.scroll) {
+      document.body.scrollTop = parseInt(localStorage.getItem('md-' + location.href))
+    }
   },
   html: () => {
-    document.body.scrollTop = parseInt(localStorage.getItem('md-' + location.href))
+    if (state.content.scroll) {
+      document.body.scrollTop = parseInt(localStorage.getItem('md-' + location.href))
+    }
     setTimeout(() => Prism.highlightAll(), 20)
   }
 }
@@ -99,11 +104,15 @@ function scroll () {
 
 if (document.readyState === 'complete') {
   mount()
-  scroll()
+  if (state.content.scroll) {
+    scroll()
+  }
 }
 else {
   window.addEventListener('DOMContentLoaded', mount)
-  window.addEventListener('load', scroll)
+  if (state.content.scroll) {
+    window.addEventListener('load', scroll)
+  }
 }
 
 function updateStyles () {

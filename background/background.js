@@ -111,7 +111,8 @@ chrome.tabs.onUpdated.addListener((id, info, tab) => {
           code: [
             'document.querySelector("pre").style.visibility = "hidden"',
             'var theme = "' + res.theme + '"',
-            'var raw = ' + res.raw
+            'var raw = ' + res.raw,
+            'var content = ' + JSON.stringify(res.content)
           ].join(';'), runAt: 'document_start'})
 
         chrome.tabs.insertCSS(id, {file: 'css/content.css', runAt: 'document_start'})
@@ -144,9 +145,13 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
     chrome.storage.sync.set({compiler: req.compiler}, sendResponse)
     sendMessage({message: 'reload'})
   }
+  else if (req.message === 'content') {
+    chrome.storage.sync.set({content: req.content}, sendResponse)
+    sendMessage({message: 'reload'})
+  }
   else if (req.message === 'defaults') {
     chrome.storage.sync.set(
-      {compiler: md.defaults, theme: 'github', raw: false}, sendResponse)
+      {compiler: md.defaults, content: {toc: false, scroll: true}, theme: 'github', raw: false}, sendResponse)
     sendMessage({message: 'reload'})
   }
   else if (req.message === 'theme') {
