@@ -38,7 +38,7 @@ html {
 
 body {
   font-family: 'Open Sans', sans-serif;
-  margin: 3.42rem 1.71rem !important; /* Get margins even if the Markdown rendering app doesn't include any */
+  /*margin: 3.42rem 1.71rem !important;*/ /* Get margins even if the Markdown rendering app doesn't include any */
   background-color: white;
   color: #222;
 }
@@ -339,7 +339,7 @@ blockquote {
   }
 
   body {
-    margin: 4.8em 2.4rem 3.2rem 2.4rem !important;
+    /*margin: 4.8em 2.4rem 3.2rem 2.4rem !important;*/
   }
 
   h1 {
