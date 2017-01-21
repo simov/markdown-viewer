@@ -46,3 +46,41 @@ html, body {
 @media (min-width: 1200px) {
   .markdown-theme { width: 1145px !important; }
 }
+
+/*toc*/
+body {
+  display: flex;
+}
+body._toc-left { padding-left: 300px !important; }
+body._toc-right { padding-right: 300px !important; }
+#_toc {
+  position: fixed;
+  top: 0; bottom: 0; left: 0;
+  width: 300px;
+  height: 100%;
+  background: #fafafa;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+#_toc #_ul {
+  padding: 0 0 0 20px !important;
+  margin: 0 !important;
+}
+#_toc #_ul a {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+  font-size: 14px !important;
+  line-height: 17px !important;
+  color: #364149 !important;
+  font-weight: normal !important;
+  font-style: normal !important;
+  text-decoration: none !important;
+  text-transform: none !important;
+  letter-spacing: 0.2px !important;
+  background: none !important;
+  border: 0 !important;
+  padding: 10px 15px !important;
+  display: block !important;
+}
+#_toc #_ul a:hover {
+  text-decoration: underline !important;
+}

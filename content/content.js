@@ -7,6 +7,7 @@ var state = {
   markdown: '',
   raw: window['raw'] || false,
   content: window['content'] || {},
+  toc: '',
   getURL: () => chrome.runtime.getURL('/themes/' + state.theme + '.css')
 }
 
@@ -33,6 +34,10 @@ var oncreate = {
   html: () => {
     if (state.content.scroll) {
       document.body.scrollTop = parseInt(localStorage.getItem('md-' + location.href))
+    }
+    if (state.content.toc && !state.toc) {
+      state.toc = toc()
+      m.redraw()
     }
     setTimeout(() => Prism.highlightAll(), 20)
   }
@@ -72,6 +77,7 @@ function mount () {
 
       if (state.raw) {
         dom.push(m('pre#markdown', {oncreate: oncreate.markdown}, state.markdown))
+        $('body').classList.remove('_toc-left', '_toc-right')
       }
       if (state.theme && !state.raw) {
         dom.push(m('link#theme [rel="stylesheet"] [type="text/css"]', {
@@ -84,6 +90,11 @@ function mount () {
             class: /github(-dark)?/.test(state.theme) ? 'markdown-body' : 'markdown-theme'},
             m.trust(state.html))
         )
+        if (state.content.toc && state.toc) {
+          dom.push(m.trust(state.toc))
+          // TODO: should be configurable
+          $('body').classList.add('_toc-left')
+        }
       }
 
       return (dom.length ? dom : m('div'))
@@ -115,4 +126,54 @@ else {
   if (state.content.scroll) {
     window.addEventListener('load', scroll)
   }
+}
+
+function toc () {
+  // extract all headers
+
+  var headers = []
+
+  function walk (nodes) {
+    nodes.forEach((node) => {
+      var sub = Array.from(node.childNodes)
+      if (sub.length) {
+        walk(sub)
+      }
+      if (/h[1-6]/i.test(node.tagName)) {
+        headers.push({
+          id: node.getAttribute('id'),
+          level: parseInt(node.tagName.replace('H', '')),
+          title: node.innerText
+        })
+      }
+    })
+  }
+
+  walk(Array.from($('body').childNodes))
+
+  // generate TOC
+
+  var link = (header) =>
+    '<a href="#' + header.id + '">' + header.title + '</a>'
+
+  var html = '<div id="_toc"><div id="_ul">'
+
+  headers.forEach((header, index) => {
+    if (index) {
+      var prev = headers[index - 1]
+    }
+    if (!index || prev.level === header.level) {
+      html += link(header)
+    }
+    else if (prev.level > header.level) {
+      html += '</div>' + link(header)
+    }
+    else if (prev.level < header.level) {
+      html += '<div id="_ul">' + link(header)
+    }
+  })
+
+  html += '</div></div>'
+
+  return html
 }
