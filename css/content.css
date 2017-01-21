@@ -1,38 +1,15 @@
 
-/*all themes*/
-html.markdown-theme-html {
-  width: auto !important;
-  max-width: 100% !important;
-  padding: 0 !important;
-  margin: 0 !important;
-}
-body.markdown-theme {
-  max-width: 100% !important;
-  padding: 20px !important;
-  margin: auto !important;
-}
-
-@media (max-width: 767px) {
-  body.markdown-theme { width: auto !important; }
-}
-@media (min-width: 768px) and (max-width: 992px) {
-  body.markdown-theme { width: 713px !important; }
-}
-@media (min-width: 992px) and (max-width: 1200px) {
-  body.markdown-theme { width: 937px !important; }
-}
-@media (min-width: 1200px) {
-  body.markdown-theme { width: 1145px !important; }
+/*global*/
+html, body {
+  padding: 0 !important; margin: 0 !important;
+  width: auto !important; max-width: 100% !important;
 }
 
 /*github theme*/
-html.markdown-body-html {
-  min-width: 1020px;
-}
-body.markdown-body {
+.markdown-body {
   overflow: auto;
 
-  min-width: 200px;
+  min-width: 888px;
   max-width: 888px;
 
   background-color: #fff;
@@ -41,12 +18,31 @@ body.markdown-body {
   padding: 45px;
   margin: 20px auto;
 }
-body.markdown-body #html>*:first-child {
+.markdown-body #html>*:first-child {
   margin-top: 0 !important;
 }
-body.markdown-body #html>*:last-child {
+.markdown-body #html>*:last-child {
   margin-bottom: 0 !important;
 }
-body.markdown-body img {
+.markdown-body img {
   background-color: transparent;
+}
+
+/*all other themes*/
+.markdown-theme {
+  max-width: 100% !important;
+  padding: 20px !important;
+  margin: auto !important;
+}
+@media (max-width: 767px) {
+  .markdown-theme { width: auto !important; }
+}
+@media (min-width: 768px) and (max-width: 992px) {
+  .markdown-theme { width: 713px !important; }
+}
+@media (min-width: 992px) and (max-width: 1200px) {
+  .markdown-theme { width: 937px !important; }
+}
+@media (min-width: 1200px) {
+  .markdown-theme { width: 1145px !important; }
 }

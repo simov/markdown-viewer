@@ -71,17 +71,19 @@ function mount () {
       var dom = []
 
       if (state.raw) {
-        updateStyles()
         dom.push(m('pre#markdown', {oncreate: oncreate.markdown}, state.markdown))
       }
       if (state.theme && !state.raw) {
-        updateStyles()
         dom.push(m('link#theme [rel="stylesheet"] [type="text/css"]', {
           href: state.getURL()
         }))
       }
       if (state.html && !state.raw) {
-        dom.push(m('#html', {oncreate: oncreate.html}, m.trust(state.html)))
+        dom.push(
+          m('#html', {oncreate: oncreate.html,
+            class: /github(-dark)?/.test(state.theme) ? 'markdown-body' : 'markdown-theme'},
+            m.trust(state.html))
+        )
       }
 
       return (dom.length ? dom : m('div'))
@@ -112,26 +114,5 @@ else {
   window.addEventListener('DOMContentLoaded', mount)
   if (state.content.scroll) {
     window.addEventListener('load', scroll)
-  }
-}
-
-function updateStyles () {
-  if (state.raw) {
-    $('html').classList.remove('markdown-theme-html')
-    $('body').classList.remove('markdown-theme')
-    $('html').classList.remove('markdown-body-html')
-    $('body').classList.remove('markdown-body')
-  }
-  else if (/github(-dark)?/.test(state.theme)) {
-    $('html').classList.remove('markdown-theme-html')
-    $('body').classList.remove('markdown-theme')
-    $('html').classList.add('markdown-body-html')
-    $('body').classList.add('markdown-body')
-  }
-  else {
-    $('html').classList.remove('markdown-body-html')
-    $('body').classList.remove('markdown-body')
-    $('html').classList.add('markdown-theme-html')
-    $('body').classList.add('markdown-theme')
   }
 }
