@@ -7,6 +7,10 @@ chrome.storage.sync.get((res) => {
 
   var defaults = {
     compiler: md.defaults,
+    content: {
+      toc: false,
+      scroll: true
+    },
     theme: 'github',
     raw: false,
     match,
@@ -29,8 +33,11 @@ chrome.storage.sync.get((res) => {
     options.origins['file://'] = match
   }
   // v2.4 -> v2.5
-  else if (!options.compiler) {
+  if (!options.compiler) {
     options.compiler = options.options
+  }
+  if (!options.content) {
+    options.content = defaults.content
   }
 
   chrome.storage.sync.set(options)
@@ -127,7 +134,7 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
     md.compile(req.markdown, sendResponse)
   }
   else if (req.message === 'settings') {
-    chrome.storage.sync.get(['compiler', 'theme', 'raw'], (res) => {
+    chrome.storage.sync.get(['compiler', 'content', 'theme', 'raw'], (res) => {
       delete res.compiler.langPrefix
       sendResponse(res)
     })

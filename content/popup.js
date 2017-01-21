@@ -1,12 +1,19 @@
 
 var state = {
   compiler: {},
+  content: {},
   themes: [],
   theme: '',
-  raw: false
+  raw: false,
+  tab: localStorage.getItem('tab') || 'compiler'
 }
 
 var events = {
+  changeTab: (e) => {
+    state.tab = e.target.parentNode.hash.replace('#tab-', '')
+    localStorage.setItem('tab', state.tab)
+  },
+
   changeCompiler: (e) => {
     state.compiler[e.target.name] = !state.compiler[e.target.name]
     chrome.runtime.sendMessage({
@@ -46,17 +53,24 @@ var events = {
 }
 
 var description = {
-  gfm: 'Enable GFM\n(GitHub Flavored Markdown)',
-  tables: 'Enable GFM tables\n(requires the gfm option to be true)',
-  breaks: 'Enable GFM line breaks\n(requires the gfm option to be true)',
-  pedantic: 'Don\'t fix any of the original markdown\nbugs or poor behavior',
-  sanitize: 'Ignore any HTML\nthat has been input',
-  smartLists: 'Use smarter list behavior\nthan the original markdown',
-  smartypants: 'Use "smart" typograhic punctuation\nfor things like quotes and dashes'
+  compiler: {
+    gfm: 'Enable GFM\n(GitHub Flavored Markdown)',
+    tables: 'Enable GFM tables\n(requires the gfm option to be true)',
+    breaks: 'Enable GFM line breaks\n(requires the gfm option to be true)',
+    pedantic: 'Don\'t fix any of the original markdown\nbugs or poor behavior',
+    sanitize: 'Ignore any HTML\nthat has been input',
+    smartLists: 'Use smarter list behavior\nthan the original markdown',
+    smartypants: 'Use "smart" typograhic punctuation\nfor things like quotes and dashes'
+  },
+  content: {
+    scroll: 'Remember scroll position',
+    toc: 'Generate Table of Contents'
+  }
 }
 
 function init (res) {
   state.compiler = res.compiler
+  state.content = res.content
   state.theme = res.theme
 
   state.themes = chrome.runtime.getManifest().web_accessible_resources
@@ -100,15 +114,18 @@ m.mount(document.querySelector('body'), {
       ),
 
       m('.mdl-tabs mdl-js-tabs mdl-js-ripple-effect', {oncreate},
-        m('.mdl-tabs__tab-bar',
-          m('a.mdl-tabs__tab', {href: '#tab-compiler', class: 'is-active'}, 'Compiler'),
-          m('a.mdl-tabs__tab', {href: '#tab-content'}, 'Content')
+        m('.mdl-tabs__tab-bar', {onclick: events.changeTab},
+          m('a.mdl-tabs__tab', {href: '#tab-compiler',
+            class: state.tab === 'compiler' ? 'is-active' : null}, 'Compiler'),
+          m('a.mdl-tabs__tab', {href: '#tab-content',
+            class: state.tab === 'content' ? 'is-active' : null}, 'Content')
         ),
-        m('.mdl-tabs__panel #tab-compiler', {class: 'is-active'},
+        m('.mdl-tabs__panel #tab-compiler',
+          {class: state.tab === 'compiler' ? 'is-active' : null},
           m('.mdl-grid', Object.keys(state.compiler).map((key) =>
             m('.mdl-cell',
               m('label.mdl-switch mdl-js-switch mdl-js-ripple-effect',
-                {oncreate, onupdate: onupdate(key), title: description[key]}, [
+                {oncreate, onupdate: onupdate(key), title: description.compiler[key]}, [
                 m('input[type="checkbox"].mdl-switch__input', {
                   name: key,
                   checked: state.compiler[key],
@@ -120,9 +137,20 @@ m.mount(document.querySelector('body'), {
           ))
         ),
         m('.mdl-tabs__panel #tab-content',
-          m('.mdl-grid',
-            m('.mdl-cell', 'Content')
-          )
+          {class: state.tab === 'content' ? 'is-active' : null},
+          m('.mdl-grid', Object.keys(state.content).map((key) =>
+            m('.mdl-cell',
+              m('label.mdl-switch mdl-js-switch mdl-js-ripple-effect',
+                {oncreate, onupdate: onupdate(key), title: description.content[key]}, [
+                m('input[type="checkbox"].mdl-switch__input', {
+                  name: key,
+                  checked: state.content[key],
+                  onchange: events.changeContent
+                }),
+                m('span.mdl-switch__label', key)
+              ])
+            )
+          ))
         )
       ),
 
