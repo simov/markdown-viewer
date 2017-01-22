@@ -150,8 +150,11 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
     sendMessage({message: 'reload'})
   }
   else if (req.message === 'defaults') {
-    chrome.storage.sync.set(
-      {compiler: md.defaults, content: {toc: false, scroll: true}, theme: 'github', raw: false}, sendResponse)
+    chrome.storage.sync.set({
+      compiler: md.defaults,
+      content: {toc: false, scroll: true},
+      theme: 'github', raw: false
+    }, sendResponse)
     sendMessage({message: 'reload'})
   }
   else if (req.message === 'theme') {

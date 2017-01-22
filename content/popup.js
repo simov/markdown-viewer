@@ -42,8 +42,7 @@ var events = {
     state.raw = !state.raw
     chrome.runtime.sendMessage({
       message: 'raw',
-      raw: state.raw,
-      theme: state.theme
+      raw: state.raw
     })
   },
 
@@ -68,7 +67,7 @@ var description = {
     pedantic: 'Don\'t fix any of the original markdown\nbugs or poor behavior',
     sanitize: 'Ignore any HTML\nthat has been input',
     smartLists: 'Use smarter list behavior\nthan the original markdown',
-    smartypants: 'Use "smart" typograhic punctuation\nfor things like quotes and dashes'
+    smartypants: 'Use "smart" typographic punctuation\nfor things like quotes and dashes'
   },
   content: {
     scroll: 'Remember scroll position',
@@ -89,6 +88,8 @@ function init (res) {
   m.redraw()
 }
 
+chrome.runtime.sendMessage({message: 'settings'}, init)
+
 function oncreate (vnode) {
   componentHandler.upgradeElements(vnode.dom)
 }
@@ -97,8 +98,6 @@ var onupdate = (tab, key) => (vnode) => {
     vnode.dom.classList.toggle('is-checked')
   }
 }
-
-chrome.runtime.sendMessage({message: 'settings'}, init)
 
 m.mount(document.querySelector('body'), {
   view: (vnode) =>

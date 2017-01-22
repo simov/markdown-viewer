@@ -3,12 +3,11 @@ var $ = document.querySelector.bind(document)
 
 var state = {
   theme: window['theme'] || '',
-  html: '',
-  markdown: '',
   raw: window['raw'] || false,
   content: window['content'] || {},
-  toc: '',
-  getURL: () => chrome.runtime.getURL('/themes/' + state.theme + '.css')
+  html: '',
+  markdown: '',
+  toc: ''
 }
 
 chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
@@ -79,21 +78,21 @@ function mount () {
         dom.push(m('pre#markdown', {oncreate: oncreate.markdown}, state.markdown))
         $('body').classList.remove('_toc-left', '_toc-right')
       }
-      if (state.theme && !state.raw) {
-        dom.push(m('link#theme [rel="stylesheet"] [type="text/css"]', {
-          href: state.getURL()
-        }))
-      }
-      if (state.html && !state.raw) {
-        dom.push(
-          m('#html', {oncreate: oncreate.html,
+      else {
+        if (state.theme) {
+          dom.push(m('link#theme [rel="stylesheet"] [type="text/css"]', {
+            href: chrome.runtime.getURL('/themes/' + state.theme + '.css')
+          }))
+        }
+        if (state.html) {
+          dom.push(m('#html', {oncreate: oncreate.html,
             class: /github(-dark)?/.test(state.theme) ? 'markdown-body' : 'markdown-theme'},
-            m.trust(state.html))
-        )
-        if (state.content.toc && state.toc) {
-          dom.push(m.trust(state.toc))
-          // TODO: should be configurable
-          $('body').classList.add('_toc-left')
+            m.trust(state.html)
+          ))
+          if (state.content.toc && state.toc) {
+            dom.push(m.trust(state.toc))
+            $('body').classList.add('_toc-left')
+          }
         }
       }
 
