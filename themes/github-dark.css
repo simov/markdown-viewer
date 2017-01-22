@@ -683,6 +683,10 @@
 
 /*GitHub Dark*/
 
+body {
+  background: #181818;
+}
+
 .markdown-body {
   color: #c0c0c0 !important;
   background: #181818 !important;

@@ -5,6 +5,11 @@ html, body {
   width: auto !important; max-width: 100% !important;
 }
 
+pre#markdown {
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
 /*github theme*/
 .markdown-body {
   overflow: auto;
@@ -32,7 +37,7 @@ html, body {
 .markdown-theme {
   max-width: 100% !important;
   padding: 20px !important;
-  margin: auto !important;
+  margin: 0 auto !important;
 }
 @media (max-width: 767px) {
   .markdown-theme { width: auto !important; }
