@@ -35,6 +35,7 @@ pre#markdown {
 
 /*all other themes*/
 .markdown-theme {
+  box-sizing: border-box;
   max-width: 100% !important;
   padding: 20px !important;
   margin: 0 auto !important;

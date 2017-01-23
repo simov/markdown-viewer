@@ -2,6 +2,10 @@
 #popup { width: 350px; padding: 20px; -webkit-user-select: none; }
 #popup:after { content: ''; display: block; clear: both; }
 
+#popup,
+#popup .mdl-button,
+select { letter-spacing: 0.2px; }
+
 /*theme*/
 select {
   font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
