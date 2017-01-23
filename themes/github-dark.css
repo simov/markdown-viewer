@@ -692,6 +692,7 @@ body {
   background: #181818 !important;
   border-color: #484848 !important;
 }
+.markdown-body table { color: #c0c0c0 !important; }
 .markdown-body table th { border-color: #343434 !important; }
 .markdown-body table td { border-color: #343434 !important; }
 .markdown-body table tr {
