@@ -5,7 +5,7 @@ var state = {
   themes: [],
   theme: '',
   raw: false,
-  tab: localStorage.getItem('tab') || 'compiler'
+  tab: ''
 }
 
 var events = {
@@ -51,6 +51,7 @@ var events = {
       message: 'defaults'
     }, (res) => {
       chrome.runtime.sendMessage({message: 'settings'}, init)
+      localStorage.removeItem('tab')
     })
   },
 
@@ -85,6 +86,7 @@ function init (res) {
     .map((file) => (file.replace(/\/themes\/(.*)\.css/, '$1')))
 
   state.raw = res.raw
+  state.tab = localStorage.getItem('tab') || 'compiler'
   m.redraw()
 }
 
