@@ -7,17 +7,16 @@
 
 ## Features
 
-- Built on top of the [marked][marked] compiler
-- Support for [GitHub Flavored Markdown][gfm]
-- Full control over the [compiler options][compiler-options]
-- Themes from [jasonm23][themes1], [mixu][themes2] and [cobalt][themes3]
-- Syntax highlighted code blocks using [prism][prism]
-- Settings synchronization through google sync
-- Supports raw and rendered markdown views
-- Supported file extensions `markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text`
-- Built as [event page][event-page] - the extension is loaded only when needed
 - No special permissions required for file URLs
 - Full control over the allowed origins
+- Supports [GitHub Flavored Markdown][gfm]
+- Full control over the [compiler options][compiler-options] ([marked][marked])
+- Themes support (including GitHub theme) ([jasonm23][themes1], [mixu][themes2], [cobalt][themes3])
+- Syntax highlighted code blocks ([prism][prism])
+- Generates Table of Contents (TOC)
+- Remembers scroll position
+- Settings synchronization
+- Raw and rendered markdown views
 - Open source
 
 
