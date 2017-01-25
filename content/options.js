@@ -1,16 +1,27 @@
 
 var state = {
+  protocol: 'https',
+  protocols: ['https', 'http', '*'],
   origin: '',
   origins: {},
   timeout: null
 }
 
 var events = {
+  protocol: (e) => {
+    state.protocol = state.protocols[e.target.selectedIndex]
+  },
+
   add: () => {
-    if (!state.origin || /^file:/.test(state.origin)) {
+    var host = state.origin
+      .replace(/^(file|http(s)?):\/\//, '')
+      .replace(/\/.*$/, '')
+
+    if (!host) {
       return
     }
-    var origin = state.origin.replace(/\/$/, '')
+
+    var origin = state.protocol + '://' + host
     chrome.permissions.request({origins: [origin + '/*']}, (granted) => {
       if (granted) {
         chrome.runtime.sendMessage({message: 'add', origin}, (res) => {
@@ -70,11 +81,15 @@ m.mount(document.querySelector('main'), {
         m('h4', 'Add New Origin')
       ),
       m('.mdl-cell mdl-cell--8-col-tablet mdl-cell--12-col-desktop',
+        m('select.mdl-shadow--2dp', {onchange: events.protocol},
+          state.protocols.map((protocol) =>
+          m('option', {value: protocol}, protocol + '://')
+        )),
         m('.mdl-textfield mdl-js-textfield', {oncreate},
           m('input.mdl-textfield__input', {
             value: state.origin,
             onchange: events.origin,
-            placeholder: 'https://raw.githubusercontent.com'
+            placeholder: 'raw.githubusercontent.com'
           }),
           m('label.mdl-textfield__label')
         ),
@@ -83,16 +98,17 @@ m.mount(document.querySelector('main'), {
           'Add')
       ),
 
-      (Object.keys(state.origins).length || null) &&
       m('.mdl-cell mdl-cell--8-col-tablet mdl-cell--12-col-desktop',
         m('h4', 'Allowed Origins')
       ),
-      (Object.keys(state.origins).length || null) &&
       m('.mdl-cell mdl-cell--8-col-tablet mdl-cell--12-col-desktop',
         m('table.mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp',
           Object.keys(state.origins).sort().map((origin) =>
           m('tr',
-            m('td.mdl-data-table__cell--non-numeric', origin),
+            m('td.mdl-data-table__cell--non-numeric',
+              origin.replace(/^(\*|file|http(s)?).*/, '$1')),
+            m('td.mdl-data-table__cell--non-numeric',
+              origin.replace(/^(\*|file|http(s)?):\/\//, '')),
             m('td.mdl-data-table__cell--non-numeric',
               m('.mdl-textfield mdl-js-textfield', {oncreate},
                 m('input.mdl-textfield__input',

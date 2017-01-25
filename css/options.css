@@ -43,11 +43,20 @@ footer, #footer-push {
 
 
 /*form*/
+select {
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  font-size: 14px; line-height: 17px;
+  text-transform: uppercase;
+  background-color: #ececec;
+  border: none; border-radius: 2px;
+  cursor: pointer;
+  width: 110px; padding: 9px 12px;
+}
 .mdl-js-textfield:nth-of-type(1) {
   width: 400px;
   position: relative; top: 5px;
   padding: 0;
-  margin: 0 10px 0 0;
+  margin: 0 10px;
 }
 .mdl-textfield:nth-of-type(1) .mdl-textfield__label:after { bottom: 0; }
 
@@ -62,9 +71,10 @@ footer, #footer-push {
 }
 .mdl-data-table tr:hover { background: #eee; }
 .mdl-data-table td { font-size: 16px; line-height: 17px; }
-.mdl-data-table td:nth-of-type(1) { width: 20%; }
-.mdl-data-table td:nth-of-type(2) { width: 75%; }
-.mdl-data-table td:nth-of-type(3) { width: 5%; }
+.mdl-data-table td:nth-of-type(1) { width: 5%; }
+.mdl-data-table td:nth-of-type(2) { width: 20%; }
+.mdl-data-table td:nth-of-type(3) { width: 70%; }
+.mdl-data-table td:nth-of-type(4) { width: 5%; }
 .mdl-data-table i { font-size: 10px; }
 .mdl-data-table .mdl-textfield {
   width: 100%; color: #a9a9a9;

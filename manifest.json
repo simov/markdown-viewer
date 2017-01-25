@@ -64,7 +64,8 @@
   ],
 
   "optional_permissions": [
+    "https://*/",
     "http://*/",
-    "https://*/"
+    "*://*/"
   ]
 }

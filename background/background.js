@@ -103,10 +103,17 @@ chrome.tabs.onUpdated.addListener((id, info, tab) => {
       if (err) {
         return
       }
-      if (!res.origins[res.location.origin]) { // v2.2 -> v2.3
+
+      var path =
+        res.origins[res.location.origin] ||
+        res.origins['*://' + res.location.host] ||
+        res.origins['*://*']
+
+      if (!path) { // v2.2 -> v2.3
         return
       }
-      if (!res.state && new RegExp(res.origins[res.location.origin]).test(res.location.href)) {
+
+      if (!res.state && new RegExp(path).test(res.location.href)) {
         chrome.tabs.executeScript(id, {
           code: [
             'document.querySelector("pre").style.visibility = "hidden"',
