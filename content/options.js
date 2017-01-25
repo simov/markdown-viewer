@@ -65,23 +65,23 @@ function oncreate (vnode) {
 
 m.mount(document.querySelector('main'), {
   view: () =>
-    m('.mdl-grid', [
-      m('.mdl-cell mdl-cell--8-col-tablet mdl-cell--12-col-desktop', [
-        m('h4', 'Add New Origin'),
-      ]),
-      m('.mdl-cell mdl-cell--8-col-tablet mdl-cell--12-col-desktop', [
-        m('.mdl-textfield mdl-js-textfield', {oncreate}, [
+    m('.mdl-grid',
+      m('.mdl-cell mdl-cell--8-col-tablet mdl-cell--12-col-desktop',
+        m('h4', 'Add New Origin')
+      ),
+      m('.mdl-cell mdl-cell--8-col-tablet mdl-cell--12-col-desktop',
+        m('.mdl-textfield mdl-js-textfield', {oncreate},
           m('input.mdl-textfield__input', {
             value: state.origin,
             onchange: events.origin,
             placeholder: 'https://raw.githubusercontent.com'
           }),
           m('label.mdl-textfield__label')
-        ]),
+        ),
         m('button.mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect',
           {oncreate, onclick: events.add},
           'Add')
-      ]),
+      ),
 
       (Object.keys(state.origins).length || null) &&
       m('.mdl-cell mdl-cell--8-col-tablet mdl-cell--12-col-desktop',
@@ -91,14 +91,14 @@ m.mount(document.querySelector('main'), {
       m('.mdl-cell mdl-cell--8-col-tablet mdl-cell--12-col-desktop',
         m('table.mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp',
           Object.keys(state.origins).sort().map((origin) =>
-          m('tr', [
+          m('tr',
             m('td.mdl-data-table__cell--non-numeric', origin),
             m('td.mdl-data-table__cell--non-numeric',
-              m('.mdl-textfield mdl-js-textfield', {oncreate}, [
+              m('.mdl-textfield mdl-js-textfield', {oncreate},
                 m('input.mdl-textfield__input',
                   {onkeyup: events.update(origin), value: state.origins[origin]}),
                 m('label.mdl-textfield__label')
-              ])
+              )
             ),
             m('td',
               (origin !== 'file://' || null) &&
@@ -112,8 +112,8 @@ m.mount(document.querySelector('main'), {
                 m('i.material-icons icon-remove')
               )
             )
-          ])
+          )
         ))
       )
-    ])
+    )
 })

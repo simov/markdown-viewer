@@ -103,7 +103,7 @@ var onupdate = (tab, key) => (vnode) => {
 
 m.mount(document.querySelector('body'), {
   view: (vnode) =>
-    m('#popup', [
+    m('#popup',
       m('button.mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect',
         {oncreate, onclick: events.viewRaw},
         (state.raw ? 'Html' : 'Markdown')),
@@ -134,14 +134,14 @@ m.mount(document.querySelector('body'), {
           m('.mdl-grid', Object.keys(state.compiler).map((key) =>
             m('.mdl-cell',
               m('label.mdl-switch mdl-js-switch mdl-js-ripple-effect',
-                {oncreate, onupdate: onupdate('compiler', key), title: description.compiler[key]}, [
+                {oncreate, onupdate: onupdate('compiler', key), title: description.compiler[key]},
                 m('input[type="checkbox"].mdl-switch__input', {
                   name: key,
                   checked: state.compiler[key],
                   onchange: events.changeCompiler
                 }),
                 m('span.mdl-switch__label', key)
-              ])
+              )
             )
           ))
         ),
@@ -150,14 +150,14 @@ m.mount(document.querySelector('body'), {
           m('.mdl-grid', Object.keys(state.content).map((key) =>
             m('.mdl-cell',
               m('label.mdl-switch mdl-js-switch mdl-js-ripple-effect',
-                {oncreate, onupdate: onupdate('content', key), title: description.content[key]}, [
+                {oncreate, onupdate: onupdate('content', key), title: description.content[key]},
                 m('input[type="checkbox"].mdl-switch__input', {
                   name: key,
                   checked: state.content[key],
                   onchange: events.changeContent
                 }),
                 m('span.mdl-switch__label', key)
-              ])
+              )
             )
           ))
         )
@@ -166,5 +166,5 @@ m.mount(document.querySelector('body'), {
       m('button.mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect',
         {oncreate, onclick: events.advancedOptions},
         'Advanced Options')
-    ])
+    )
 })
