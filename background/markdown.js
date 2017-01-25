@@ -7,16 +7,9 @@ var md = {
     breaks: false,
     pedantic: false,
     sanitize: false,
-    // sanitizer: null,
-    // mangle: true, // mangling of email addresses
     smartLists: false,
-    // silent: false, // report errors
-    // highlight: null,
     langPrefix: 'language-', // prism
     smartypants: false
-    // headerPrefix: '',
-    // renderer:
-    // xhtml: false // handle self closing HTML tags
   },
   compile: (markdown, sendResponse) => {
     chrome.storage.sync.get((res) => {
