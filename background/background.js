@@ -3,7 +3,7 @@
 // chrome.permissions.getAll((p) => chrome.permissions.remove({origins: p.origins}))
 
 chrome.storage.sync.get((res) => {
-  var match = '.*\\/.*\\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*)?$'
+  var match = '\\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*)?$'
 
   var defaults = {
     compiler: md.defaults,
