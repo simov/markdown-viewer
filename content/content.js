@@ -26,14 +26,10 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
 
 var oncreate = {
   markdown: () => {
-    if (state.content.scroll) {
-      document.body.scrollTop = parseInt(localStorage.getItem('md-' + location.href))
-    }
+    scroll()
   },
   html: () => {
-    if (state.content.scroll) {
-      document.body.scrollTop = parseInt(localStorage.getItem('md-' + location.href))
-    }
+    scroll()
     if (state.content.toc && !state.toc) {
       state.toc = toc()
       m.redraw()
@@ -102,7 +98,18 @@ function mount () {
 }
 
 function scroll () {
-  setTimeout(() => {
+  if (state.content.scroll) {
+    document.body.scrollTop = parseInt(localStorage.getItem('md-' + location.href))
+  }
+  else if (location.hash) {
+    document.body.scrollTop = $(location.hash) && $(location.hash).offsetTop
+    setTimeout(() => {
+      document.body.scrollTop = $(location.hash) && $(location.hash).offsetTop
+    }, 100)
+  }
+}
+scroll.init = () => {
+  if (state.content.scroll) {
     var timeout = null
     window.addEventListener('scroll', () => {
       clearTimeout(timeout)
@@ -110,21 +117,17 @@ function scroll () {
         localStorage.setItem('md-' + location.href, document.body.scrollTop)
       }, 100)
     })
-    document.body.scrollTop = parseInt(localStorage.getItem('md-' + location.href))
-  }, 100)
+  }
+  setTimeout(scroll, 100)
 }
 
 if (document.readyState === 'complete') {
   mount()
-  if (state.content.scroll) {
-    scroll()
-  }
+  scroll.init()
 }
 else {
   window.addEventListener('DOMContentLoaded', mount)
-  if (state.content.scroll) {
-    window.addEventListener('load', scroll)
-  }
+  window.addEventListener('load', scroll.init)
 }
 
 function toc () {
