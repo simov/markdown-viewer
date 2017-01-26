@@ -20,6 +20,18 @@
 - Open source
 
 
+## Local Files
+
+1. Navigate to `chrome://extensions`
+2. Make sure that the `Allow access to file URLs` checkbox is checked for the `Markdown Viewer` extension
+
+
+## Remote Files
+
+1. Click on the Markdown Viewer icon and select `Options`
+2. Add the origin that you want enabled for the Markdown Viewer extension
+
+
 ## Compiler Options
 
 Option          | Default | Description
@@ -33,44 +45,67 @@ Option          | Default | Description
 **smartypants** | `false` | Use "smart" typograhic punctuation for things like quotes and dashes.
 
 
-## Local Files
+## Content Options
 
-To enable the extensions for local files:
+Option          | Default | Description
+:---            | :---    | :---
+**scroll**      | `true`  | Remember scroll position
+**toc**         | `false` | Generate Table of Contents
 
-1. Navigate to `chrome://extensions`
-2. Make sure that the `Allow access to file URLs` checkbox is checked for the `Markdown Viewer` extension
+Enable the `scroll` option while you are working on a markdown document and you are frequently refreshing the page. Also useful when you are reading long document and you want to continue from where you left off.
 
-
-## Remote Files
-
-1. Click on the Markdown Viewer icon and select `Options`
-2. Add the origin that you want enabled for the Markdown Viewer extension
+Disable the `scroll` option if you want the page rendered at the top or scrolled down to a certain header if a hash URL fragment is present.
 
 
 ## Advanced Options
 
-![advanced-options]
-
 Markdown Viewer doesn't require any specific permissions in order to render markdown files from local file URLs. For example the `file:///home/s/chrome/markdown-viewer/README.md` on my hard drive will always be rendered without a problem.
 
-1. In case you want the extension to render markdown files from web URLs you have to specify the server's origin. The origin consists of `[protocol]://[domain]` For example adding `https://raw.githubusercontent.com` will allow the extension to render markdown files from that origin.
+### Add Origin
 
-2. By default the extension renders only URLs ending with a markdown file extension. For example if you add the `https://raw.githubusercontent.com` origin, then the `https://raw.githubusercontent.com/simov/markdown-viewer/master/README.md` URL will be rendered as markdown file.
+In case you want the extension to render markdown files from web URLs you have to specify the server's origin. The origin consists of `protocol` and `domain`. You can choouse either `https`, `http` or a `*` for both protocols.
 
-3. At any point you can remove the allowed origin.
+For example here is how you can enable the extension for the `https://raw.githubusercontent.com` origin:
 
-4. In case a custom path matching is needed, for example `https://something.com/some-path` then after adding the `http://something.com` origin you'll have to set the path matching regular expression as well `\/some-path$`.
+![add-origin]
 
-5. Markdown Viewer synchronizes your preferences across multiple devices so your list of allowed origins is always up to date. However the actual permissions are not being synced automatically. In case you recently added a new origin on one of your computers you'll have to allow it on your other computers as well. Just click on the `Refresh` icon to add the same permission on the computer you are currently on.
+After that you can navigate to this [URL][syntax] and play around with the compiler options.
 
-6. Markdown Viewer is an Open Source project hosted on GitHub. In case you have any problems with it, questions or other suggestions open up an issue there `https://github.com/simov/markdown-viewer/issues`.
+### Add All Origins
+
+In case you really want to you can enable the extension for **all** origins:
+
+![all-origins]
+
+### Specify Path RegExp
+
+By default the extension renders only URLs ending with a markdown file extension:
+
+![path-regexp]
+
+It's a really simple regular expression that matches URLs ending in `.md` or `.md#some-header`. It also uses non capturing groups `(?:)`
+
+You can change this regular expression to whatever suits your needs. The settings are being updated as you type.
+
+### Remove Origin
+
+At any point click on the small `x` button next to the origin that you want to remove. This actually removes the permission itself so that the extension is no longer able to inject scripts to that origin.
+
+Note that the Chrome's consent popup shows up only when you add the origin for the first time. In case you re-add it you'll no longer see that popup. That's a Chrome thing and it's not controllable from the extension.
+
+### Refresh Origin
+
+The extension synchronizes your preferences across all your devices using Google Sync. The list of your allowed origins is being synced too, but the actual permissions that you give using the Chrome's consent popup are not being synced.
+
+In case you recently added a new origin on one of your devices you'll have to explicitly allow it on your other devices. The little refresh button next to each origin is used for that.
 
 
 ## Markdown Syntax
 
+- Add the `raw.githubusercontent.com` origin through the Advanced Options
 - Navigate to this [URL][syntax] and play around with the `Compiler Options`
 - Use the `Markdown/HTML` button to switch between raw markdown and rendered HTML
-- At any point click on the `Defaults` button to reset back the compiler's options
+- At any point click on the `Defaults` button to reset back the compiler options
 
 
 ## License
@@ -109,4 +144,6 @@ SOFTWARE.
   [chrome-store]: https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk
   [gfm-tables]: https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#tables
   [syntax]: https://raw.githubusercontent.com/simov/markdown-viewer/master/syntax.md
-  [advanced-options]: https://raw.githubusercontent.com/simov/markdown-viewer/master/images/advanced-options.png
+  [add-origin]: http://i.imgur.com/56zWesT.png
+  [all-origins]: http://i.imgur.com/GiLeftR.png
+  [path-regexp]: http://i.imgur.com/IJuNA63.png
