@@ -2,9 +2,9 @@
 var $ = document.querySelector.bind(document)
 
 var state = {
-  theme: window['theme'] || '',
-  raw: window['raw'] || false,
-  content: window['content'] || {},
+  theme,
+  raw,
+  content,
   html: '',
   markdown: '',
   toc: ''
@@ -12,7 +12,7 @@ var state = {
 
 chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
   if (req.message === 'reload') {
-    window.location.reload(true)
+    location.reload(true)
   }
   else if (req.message === 'theme') {
     state.theme = req.theme
@@ -49,7 +49,7 @@ function mount () {
           done()
           return
         }
-        m.request({method: 'GET', url: window.location.href,
+        m.request({method: 'GET', url: location.href,
           deserialize: (body) => {
             done(body)
             return body
@@ -99,12 +99,12 @@ function mount () {
 
 function scroll () {
   if (state.content.scroll) {
-    document.body.scrollTop = parseInt(localStorage.getItem('md-' + location.href))
+    $('body').scrollTop = parseInt(localStorage.getItem('md-' + location.href))
   }
   else if (location.hash) {
-    document.body.scrollTop = $(location.hash) && $(location.hash).offsetTop
+    $('body').scrollTop = $(location.hash) && $(location.hash).offsetTop
     setTimeout(() => {
-      document.body.scrollTop = $(location.hash) && $(location.hash).offsetTop
+      $('body').scrollTop = $(location.hash) && $(location.hash).offsetTop
     }, 100)
   }
 }
@@ -114,7 +114,7 @@ scroll.init = () => {
     window.addEventListener('scroll', () => {
       clearTimeout(timeout)
       timeout = setTimeout(() => {
-        localStorage.setItem('md-' + location.href, document.body.scrollTop)
+        localStorage.setItem('md-' + location.href, $('body').scrollTop)
       }, 100)
     })
   }

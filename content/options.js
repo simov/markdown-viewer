@@ -12,6 +12,10 @@ var events = {
     state.protocol = state.protocols[e.target.selectedIndex]
   },
 
+  origin: (e) => {
+    state.origin = e.target.value
+  },
+
   add: () => {
     var host = state.origin
       .replace(/^(file|http(s)?):\/\//, '')
@@ -54,10 +58,6 @@ var events = {
 
   refresh: (origin) => () => {
     chrome.permissions.request({origins: [origin + '/*']}, (granted) => {})
-  },
-
-  origin: (e) => {
-    state.origin = e.target.value
   }
 }
 

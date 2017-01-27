@@ -9,12 +9,12 @@ var state = {
 }
 
 var events = {
-  changeTab: (e) => {
+  tab: (e) => {
     state.tab = e.target.parentNode.hash.replace('#tab-', '')
     localStorage.setItem('tab', state.tab)
   },
 
-  changeCompiler: (e) => {
+  compiler: (e) => {
     state.compiler[e.target.name] = !state.compiler[e.target.name]
     chrome.runtime.sendMessage({
       message: 'compiler',
@@ -22,7 +22,7 @@ var events = {
     })
   },
 
-  changeContent: (e) => {
+  content: (e) => {
     state.content[e.target.name] = !state.content[e.target.name]
     chrome.runtime.sendMessage({
       message: 'content',
@@ -30,7 +30,7 @@ var events = {
     })
   },
 
-  changeTheme: (e) => {
+  theme: (e) => {
     state.theme = state.themes[e.target.selectedIndex]
     chrome.runtime.sendMessage({
       message: 'theme',
@@ -38,7 +38,7 @@ var events = {
     })
   },
 
-  viewRaw: () => {
+  raw: () => {
     state.raw = !state.raw
     chrome.runtime.sendMessage({
       message: 'raw',
@@ -46,7 +46,7 @@ var events = {
     })
   },
 
-  setDefaults: () => {
+  defaults: () => {
     chrome.runtime.sendMessage({
       message: 'defaults'
     }, (res) => {
@@ -55,7 +55,7 @@ var events = {
     })
   },
 
-  advancedOptions: () => {
+  advanced: () => {
     chrome.runtime.sendMessage({message: 'advanced'})
   }
 }
@@ -105,10 +105,10 @@ m.mount(document.querySelector('body'), {
   view: (vnode) =>
     m('#popup',
       m('button.mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect',
-        {oncreate, onclick: events.viewRaw},
+        {oncreate, onclick: events.raw},
         (state.raw ? 'Html' : 'Markdown')),
       m('button.mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect',
-        {oncreate, onclick: events.setDefaults},
+        {oncreate, onclick: events.defaults},
         'Defaults'),
 
       m('.mdl-tabs mdl-js-tabs mdl-js-ripple-effect', {oncreate},
@@ -116,14 +116,14 @@ m.mount(document.querySelector('body'), {
           m('a.mdl-tabs__tab', {href: '#tab-theme', class: 'is-active'}, 'Theme')
         ),
         m('.mdl-tabs__panel #tab-theme', {class: 'is-active'},
-          m('select.mdl-shadow--2dp', {onchange: events.changeTheme}, state.themes.map((theme) =>
+          m('select.mdl-shadow--2dp', {onchange: events.theme}, state.themes.map((theme) =>
             m('option', {selected: state.theme === theme}, theme)
           ))
         )
       ),
 
       m('.mdl-tabs mdl-js-tabs mdl-js-ripple-effect', {oncreate},
-        m('.mdl-tabs__tab-bar', {onclick: events.changeTab},
+        m('.mdl-tabs__tab-bar', {onclick: events.tab},
           m('a.mdl-tabs__tab', {href: '#tab-compiler',
             class: state.tab === 'compiler' ? 'is-active' : null}, 'Compiler'),
           m('a.mdl-tabs__tab', {href: '#tab-content',
@@ -138,7 +138,7 @@ m.mount(document.querySelector('body'), {
                 m('input[type="checkbox"].mdl-switch__input', {
                   name: key,
                   checked: state.compiler[key],
-                  onchange: events.changeCompiler
+                  onchange: events.compiler
                 }),
                 m('span.mdl-switch__label', key)
               )
@@ -154,7 +154,7 @@ m.mount(document.querySelector('body'), {
                 m('input[type="checkbox"].mdl-switch__input', {
                   name: key,
                   checked: state.content[key],
-                  onchange: events.changeContent
+                  onchange: events.content
                 }),
                 m('span.mdl-switch__label', key)
               )
@@ -164,7 +164,7 @@ m.mount(document.querySelector('body'), {
       ),
 
       m('button.mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect',
-        {oncreate, onclick: events.advancedOptions},
+        {oncreate, onclick: events.advanced},
         'Advanced Options')
     )
 })
