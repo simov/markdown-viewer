@@ -130,37 +130,14 @@ else {
   window.addEventListener('load', scroll.init)
 }
 
-function toc () {
-  // extract all headers
-
-  var headers = []
-
-  function walk (nodes) {
-    nodes.forEach((node) => {
-      var sub = Array.from(node.childNodes)
-      if (sub.length) {
-        walk(sub)
-      }
-      if (/h[1-6]/i.test(node.tagName)) {
-        headers.push({
-          id: node.getAttribute('id'),
-          level: parseInt(node.tagName.replace('H', '')),
-          title: node.innerText
-        })
-      }
-    })
-  }
-
-  walk(Array.from($('body').childNodes))
-
-  // generate TOC
-
-  var link = (header) =>
-    '<a href="#' + header.id + '">' + header.title + '</a>'
-
-  var html = '<div id="_toc"><div id="_ul">'
-
-  headers.forEach((header, index) => {
+var toc = ((link) => () => Array.from($('#html').childNodes)
+  .filter((node) => /h[1-6]/i.test(node.tagName))
+  .map((node) => ({
+    id: node.getAttribute('id'),
+    level: parseInt(node.tagName.replace('H', '')),
+    title: node.innerText
+  }))
+  .reduce((html, header, index, headers) => {
     if (index) {
       var prev = headers[index - 1]
     }
@@ -173,9 +150,6 @@ function toc () {
     else if (prev.level < header.level) {
       html += '<div id="_ul">' + link(header)
     }
-  })
-
-  html += '</div></div>'
-
-  return html
-}
+    return html
+  }, '<div id="_toc"><div id="_ul">') + '</div></div>'
+)((header) => '<a href="#' + header.id + '">' + header.title + '</a>')
