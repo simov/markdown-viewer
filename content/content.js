@@ -130,7 +130,9 @@ else {
   window.addEventListener('load', scroll.init)
 }
 
-var toc = ((link) => () => Array.from($('#html').childNodes)
+var toc = (
+  link = (header) => '<a href="#' + header.id + '">' + header.title + '</a>') =>
+  Array.from($('#html').childNodes)
   .filter((node) => /h[1-6]/i.test(node.tagName))
   .map((node) => ({
     id: node.getAttribute('id'),
@@ -152,4 +154,3 @@ var toc = ((link) => () => Array.from($('#html').childNodes)
     }
     return html
   }, '<div id="_toc"><div id="_ul">') + '</div></div>'
-)((header) => '<a href="#' + header.id + '">' + header.title + '</a>')
