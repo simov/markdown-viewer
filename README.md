@@ -23,7 +23,9 @@
 ## Local Files
 
 1. Navigate to `chrome://extensions`
-2. Make sure that the `Allow access to file URLs` checkbox is checked for the `Markdown Viewer` extension
+2. Make sure that the `Allow access to file URLs` checkbox is checked for the Markdown Viewer extension
+
+![file-urls]
 
 
 ## Remote Files
@@ -147,3 +149,4 @@ SOFTWARE.
   [add-origin]: http://i.imgur.com/56zWesT.png
   [all-origins]: http://i.imgur.com/GiLeftR.png
   [path-regexp]: http://i.imgur.com/IJuNA63.png
+  [file-urls]: http://i.imgur.com/eqiwzEz.png

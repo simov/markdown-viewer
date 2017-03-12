@@ -4,10 +4,15 @@ var state = {
   protocols: ['https', 'http', '*'],
   origin: '',
   origins: {},
-  timeout: null
+  timeout: null,
+  file: true
 }
 
 var events = {
+  file: () => {
+    chrome.tabs.create({url: 'chrome://extensions/?id=' + chrome.runtime.id})
+  },
+
   protocol: (e) => {
     state.protocol = state.protocols[e.target.selectedIndex]
   },
@@ -61,6 +66,11 @@ var events = {
   }
 }
 
+chrome.extension.isAllowedFileSchemeAccess((isAllowedAccess) => {
+  state.file = isAllowedAccess
+  m.redraw()
+})
+
 function get () {
   chrome.runtime.sendMessage({message: 'origins'}, (res) => {
     state.origins = res.origins
@@ -77,6 +87,18 @@ function oncreate (vnode) {
 m.mount(document.querySelector('main'), {
   view: () =>
     m('.mdl-grid',
+      (!state.file || null) &&
+      m('.mdl-cell mdl-cell--8-col-tablet mdl-cell--12-col-desktop',
+        m('.bs-callout bs-callout-danger',
+          m('h4', 'Access to file:// URLs is Disabled'),
+          m('img.mdl-shadow--2dp', {src: '/images/file-urls.png'}),
+          m('button.mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect',
+            {oncreate, onclick: events.file},
+            'Enable Access to file:// URLs'
+          )
+        )
+      ),
+
       m('.mdl-cell mdl-cell--8-col-tablet mdl-cell--12-col-desktop',
         m('h4', 'Add New Origin')
       ),
