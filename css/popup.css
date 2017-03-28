@@ -1,4 +1,6 @@
 
+html, body { height: auto; min-height: auto; }
+
 #popup { width: 350px; padding: 20px; -webkit-user-select: none; }
 #popup:after { content: ''; display: block; clear: both; }
 
@@ -6,7 +8,6 @@
 #popup .mdl-button,
 select { letter-spacing: 0.2px; }
 
-/*theme*/
 select {
   font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
   font-size: 14px; line-height: 17px;
@@ -15,29 +16,64 @@ select {
   border: none; border-radius: 2px;
   cursor: pointer;
   width: 350px; padding: 9px 12px;
+  margin: 20px 0 0 0;
 }
 
-/*defaults*/
+/*defaults button*/
 button:nth-child(2) { float: right; }
-/*advanced options*/
-button:nth-child(2n+3) { float: right; }
+/*advanced options button*/
+button:nth-child(2n+4) { float: right; margin-top: 20px; }
 
 /*tabs*/
 .mdl-tabs__tab-bar {
   justify-content: flex-start;
   border: 0;
   height: 36px;
-  margin: 10px 0;
+  margin: 20px 0 0 0;
 }
-.mdl-tabs:nth-of-type(2) .mdl-tabs__tab-bar {
-  margin-bottom: 2px;
-}
+/*tab buttons*/
 .mdl-tabs__tab {
   line-height: 36px;
   border-bottom: 1px solid #e0e0e0;
   height: 36px;
-  padding: 0 16px;
+  padding: 0 12px;
 }
-.mdl-tabs:nth-of-type(2) .mdl-tabs__panel {
-  min-height: 296px;
+/*switch label*/
+.mdl-switch__label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  width: 261px;
+}
+/*options scroll*/
+.scroll {
+  margin-top: 15px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.scroll.showdown {
+  height: 324px;
+}
+.scroll .mdl-grid { padding: 0 0 8px 0; }
+
+/*custom scrollbars in WebKit*/
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track-piece {
+  background: #ececec;
+  -webkit-border-radius: 8px;
+}
+::-webkit-scrollbar-thumb {
+  height: 50px;
+  background: rgba(96,125,139,.5);
+  -webkit-border-radius: 8px;
+  outline: 2px solid #333;
+  outline-offset: -2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  height: 50px;
+  background-color: #607d8b;
+  -webkit-border-radius: 8px;
 }

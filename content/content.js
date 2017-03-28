@@ -5,6 +5,7 @@ var state = {
   theme,
   raw,
   content,
+  compiler,
   html: '',
   markdown: '',
   toc: ''
@@ -60,9 +61,10 @@ function mount () {
 
         chrome.runtime.sendMessage({
           message: 'markdown',
+          compiler: state.compiler,
           markdown: state.markdown
         }, (res) => {
-          state.html = res.marked
+          state.html = res.html
           m.redraw()
         })
       })

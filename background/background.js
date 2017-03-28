@@ -6,7 +6,7 @@ chrome.storage.sync.get((res) => {
   var match = '\\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*)?$'
 
   var defaults = {
-    compiler: md.defaults,
+    compiler: md.showdown.defaults,
     content: {
       toc: false,
       scroll: true
@@ -38,6 +38,10 @@ chrome.storage.sync.get((res) => {
   }
   if (!options.content) {
     options.content = defaults.content
+  }
+  // v2.7 -> v2.8
+  if (!options.compiler.name && !options.compiler.options) {
+    options.compiler = md.showdown.defaults
   }
 
   chrome.storage.sync.set(options)
@@ -119,7 +123,8 @@ chrome.tabs.onUpdated.addListener((id, info, tab) => {
             'document.querySelector("pre").style.visibility = "hidden"',
             'var theme = "' + res.theme + '"',
             'var raw = ' + res.raw,
-            'var content = ' + JSON.stringify(res.content)
+            'var content = ' + JSON.stringify(res.content),
+            'var compiler = "' + res.compiler.name + '"'
           ].join(';'), runAt: 'document_start'})
 
         chrome.tabs.insertCSS(id, {file: 'css/content.css', runAt: 'document_start'})
@@ -139,16 +144,21 @@ chrome.tabs.onUpdated.addListener((id, info, tab) => {
 
 chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
   if (req.message === 'markdown') {
-    md.compile(req.markdown, sendResponse)
+    md[req.compiler].compile(req.markdown, sendResponse)
   }
   else if (req.message === 'settings') {
-    chrome.storage.sync.get(['compiler', 'content', 'theme', 'raw'], (res) => {
-      delete res.compiler.langPrefix
-      sendResponse(res)
-    })
+    chrome.storage.sync.get(['compiler', 'content', 'theme', 'raw'], sendResponse)
   }
-  else if (req.message === 'compiler') {
-    req.compiler.langPrefix = 'language-' // prism
+  else if (req.message === 'compiler.name') {
+    chrome.storage.sync.set({compiler: md[req.compiler.name].defaults}, sendResponse)
+    sendMessage({message: 'reload'})
+  }
+  else if (req.message === 'compiler.options') {
+    chrome.storage.sync.set({compiler: req.compiler}, sendResponse)
+    sendMessage({message: 'reload'})
+  }
+  else if (req.message === 'compiler.flavor') {
+    req.compiler.options = md.showdown.flavor(req.compiler.flavor)
     chrome.storage.sync.set({compiler: req.compiler}, sendResponse)
     sendMessage({message: 'reload'})
   }
@@ -158,7 +168,7 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
   }
   else if (req.message === 'defaults') {
     chrome.storage.sync.set({
-      compiler: md.defaults,
+      compiler: md.showdown.defaults,
       content: {toc: false, scroll: true},
       theme: 'github', raw: false
     }, sendResponse)

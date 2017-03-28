@@ -18,7 +18,9 @@
   "background" : {
     "scripts": [
       "/vendor/marked.js",
-      "/background/markdown.js",
+      "/vendor/showdown.min.js",
+      "/background/marked.js",
+      "/background/showdown.js",
       "/background/background.js"
     ],
     "persistent": false
