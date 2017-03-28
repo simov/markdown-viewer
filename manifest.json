@@ -17,7 +17,7 @@
 
   "background" : {
     "scripts": [
-      "/vendor/marked.js",
+      "/vendor/marked.min.js",
       "/vendor/showdown.min.js",
       "/background/marked.js",
       "/background/showdown.js",
