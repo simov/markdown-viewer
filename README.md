@@ -9,10 +9,10 @@
 
 - No special permissions required for file URLs
 - Full control over the allowed origins
-- Supports [GitHub Flavored Markdown][gfm]
-- Multiple markdown parsers
+- Supports multiple markdown parsers
 - Full control over the [compiler options][compiler-options] ([marked][marked] or [showdown][showdown])
 - Themes support (including [GitHub theme][themes0]) ([jasonm23][themes1], [mixu][themes2], [cobalt][themes3])
+- Supports [GitHub Flavored Markdown][gfm]
 - Syntax highlighted code blocks ([prism][prism])
 - Generates Table of Contents (TOC)
 - Remembers scroll position
