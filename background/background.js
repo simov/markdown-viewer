@@ -6,7 +6,7 @@ chrome.storage.sync.get((res) => {
   var match = '\\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*)?$'
 
   var defaults = {
-    compiler: md.showdown.defaults,
+    compiler: md.marked.defaults,
     content: {
       toc: false,
       scroll: true
@@ -41,7 +41,7 @@ chrome.storage.sync.get((res) => {
   }
   // v2.7 -> v2.8
   if (!options.compiler.name && !options.compiler.options) {
-    options.compiler = md.showdown.defaults
+    options.compiler = md.marked.defaults
   }
 
   chrome.storage.sync.set(options)
@@ -168,7 +168,7 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
   }
   else if (req.message === 'defaults') {
     chrome.storage.sync.set({
-      compiler: md.showdown.defaults,
+      compiler: md.marked.defaults,
       content: {toc: false, scroll: true},
       theme: 'github', raw: false
     }, sendResponse)
