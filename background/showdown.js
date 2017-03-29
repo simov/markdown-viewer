@@ -1,10 +1,6 @@
 
 md.showdown = {
-  defaults: {
-    name: 'showdown',
-    options: null, // see below
-    flavor: 'github'
-  },
+  defaults: null, // see below,
   flavor: (name) => {
     var options = showdown.getDefaultOptions()
     var flavor = showdown.getFlavorOptions(name)
@@ -15,12 +11,12 @@ md.showdown = {
     return result
   },
   compile: (markdown, sendResponse) => {
-    chrome.storage.sync.get('compiler', (res) => {
-      var converter = new showdown.Converter(res.compiler.options)
+    chrome.storage.sync.get('showdown', (res) => {
+      var converter = new showdown.Converter(res.showdown)
       var html = converter.makeHtml(markdown)
       sendResponse({message: 'html', html})
     })
   }
 }
 
-md.showdown.defaults.options = md.showdown.flavor('github')
+md.showdown.defaults = md.showdown.flavor('github')

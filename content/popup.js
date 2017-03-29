@@ -1,9 +1,10 @@
 
 var state = {
-  compiler: {},
+  compiler: '',
+  options: {},
   content: {},
-  themes: [],
   theme: '',
+  themes: [],
   raw: false,
   tab: ''
 }
@@ -16,7 +17,7 @@ var events = {
 
   compiler: {
     name: (e) => {
-      state.compiler.name = ui.compilers[e.target.selectedIndex]
+      state.compiler = ui.compilers[e.target.selectedIndex]
       chrome.runtime.sendMessage({
         message: 'compiler.name',
         compiler: state.compiler
@@ -25,19 +26,11 @@ var events = {
       })
     },
     options: (e) => {
-      state.compiler.options[e.target.name] = !state.compiler.options[e.target.name]
+      state.options[e.target.name] = !state.options[e.target.name]
       chrome.runtime.sendMessage({
         message: 'compiler.options',
-        compiler: state.compiler
-      })
-    },
-    flavor: (e) => {
-      state.compiler.flavor = ui.flavors[e.target.selectedIndex]
-      chrome.runtime.sendMessage({
-        message: 'compiler.flavor',
-        compiler: state.compiler
-      }, () => {
-        chrome.runtime.sendMessage({message: 'settings'}, init)
+        compiler: state.compiler,
+        options: state.options
       })
     }
   },
@@ -132,6 +125,7 @@ var ui = {
 
 function init (res) {
   state.compiler = res.compiler
+  state.options = res.options
   state.content = res.content
   state.theme = res.theme
 
@@ -150,8 +144,8 @@ function oncreate (vnode) {
   componentHandler.upgradeElements(vnode.dom)
 }
 var onupdate = (tab, key) => (vnode) => {
-  var value = tab === 'compiler' ? state[tab].options[key]
-    : tab === 'content' ? state[tab][key]
+  var value = tab === 'compiler' ? state.options[key]
+    : tab === 'content' ? state.content[key]
     : null
 
   if (vnode.dom.classList.contains('is-checked') !== value) {
@@ -189,19 +183,19 @@ m.mount(document.querySelector('body'), {
         // compiler
         m('.mdl-tabs__panel #tab-compiler', {class: state.tab === 'compiler' ? 'is-active' : null},
           m('select.mdl-shadow--2dp', {onchange: events.compiler.name}, ui.compilers.map((name) =>
-            m('option', {selected: state.compiler.name === name}, name)
+            m('option', {selected: state.compiler === name}, name)
           )),
-          m('.scroll', {class: state.compiler.name},
-            m('.mdl-grid', Object.keys(state.compiler.options || [])
-              .filter((key) => typeof state.compiler.options[key] === 'boolean')
+          m('.scroll', {class: state.compiler},
+            m('.mdl-grid', Object.keys(state.options || [])
+              .filter((key) => typeof state.options[key] === 'boolean')
               .map((key) =>
               m('.mdl-cell',
                 m('label.mdl-switch mdl-js-switch mdl-js-ripple-effect',
                   {oncreate, onupdate: onupdate('compiler', key),
-                  title: ui.description.compiler[state.compiler.name][key]},
+                  title: ui.description.compiler[state.compiler][key]},
                   m('input[type="checkbox"].mdl-switch__input', {
                     name: key,
-                    checked: state.compiler.options[key],
+                    checked: state.options[key],
                     onchange: events.compiler.options
                   }),
                   m('span.mdl-switch__label', key)
