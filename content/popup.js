@@ -21,9 +21,6 @@ var events = {
         message: 'compiler.name',
         compiler: state.compiler
       }, () => {
-        // preserve options order
-        state.compiler.options = []
-        m.redraw()
         chrome.runtime.sendMessage({message: 'settings'}, init)
       })
     },
@@ -85,13 +82,10 @@ var events = {
 
 var ui = {
   tabs: [
-    'theme', 'compiler', 'options', 'content'
+    'theme', 'compiler', 'content'
   ],
   compilers: [
     'showdown', 'marked'
-  ],
-  flavors: [
-    'github', 'original'
   ],
   description: {
     compiler: {
@@ -196,15 +190,6 @@ m.mount(document.querySelector('body'), {
         m('.mdl-tabs__panel #tab-compiler', {class: state.tab === 'compiler' ? 'is-active' : null},
           m('select.mdl-shadow--2dp', {onchange: events.compiler.name}, ui.compilers.map((name) =>
             m('option', {selected: state.compiler.name === name}, name)
-          ))
-        ),
-
-        // options
-        m('.mdl-tabs__panel #tab-options',
-          {class: state.tab === 'options' ? 'is-active' : null}, [
-          (state.compiler.name === 'showdown' || null) &&
-          m('select.mdl-shadow--2dp', {onchange: events.compiler.flavor}, ui.flavors.map((name) =>
-            m('option', {selected: state.compiler.flavor === name}, name)
           )),
           m('.scroll', {class: state.compiler.name},
             m('.mdl-grid', Object.keys(state.compiler.options || [])
@@ -224,7 +209,7 @@ m.mount(document.querySelector('body'), {
               ))
             )
           )
-        ]),
+        ),
 
         // content
         m('.mdl-tabs__panel #tab-content',

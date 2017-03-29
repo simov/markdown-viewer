@@ -26,7 +26,6 @@ button:nth-child(2n+4) { float: right; margin-top: 20px; }
 
 /*tabs*/
 .mdl-tabs__tab-bar {
-  justify-content: flex-start;
   border: 0;
   height: 36px;
   margin: 20px 0 0 0;
@@ -36,7 +35,6 @@ button:nth-child(2n+4) { float: right; margin-top: 20px; }
   line-height: 36px;
   border-bottom: 1px solid #e0e0e0;
   height: 36px;
-  padding: 0 12px;
 }
 /*switch label*/
 .mdl-switch__label {
