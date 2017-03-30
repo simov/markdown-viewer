@@ -5,7 +5,7 @@ html, body {
   width: auto !important; max-width: 100% !important;
 }
 
-pre#markdown {
+pre#_markdown {
   word-wrap: break-word;
   white-space: pre-wrap;
 }
@@ -23,10 +23,10 @@ pre#markdown {
   padding: 45px;
   margin: 20px auto;
 }
-.markdown-body #html>*:first-child {
+.markdown-body #_html>*:first-child {
   margin-top: 0 !important;
 }
-.markdown-body #html>*:last-child {
+.markdown-body #_html>*:last-child {
   margin-bottom: 0 !important;
 }
 .markdown-body img {

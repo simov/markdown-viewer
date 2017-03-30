@@ -73,17 +73,17 @@ function mount () {
       var dom = []
 
       if (state.raw) {
-        dom.push(m('pre#markdown', {oncreate: oncreate.markdown}, state.markdown))
+        dom.push(m('pre#_markdown', {oncreate: oncreate.markdown}, state.markdown))
         $('body').classList.remove('_toc-left', '_toc-right')
       }
       else {
         if (state.theme) {
-          dom.push(m('link#theme [rel="stylesheet"] [type="text/css"]', {
+          dom.push(m('link#_theme [rel="stylesheet"] [type="text/css"]', {
             href: chrome.runtime.getURL('/themes/' + state.theme + '.css')
           }))
         }
         if (state.html) {
-          dom.push(m('#html', {oncreate: oncreate.html,
+          dom.push(m('#_html', {oncreate: oncreate.html,
             class: /github(-dark)?/.test(state.theme) ? 'markdown-body' : 'markdown-theme'},
             m.trust(state.html)
           ))
@@ -134,7 +134,7 @@ else {
 
 var toc = (
   link = (header) => '<a href="#' + header.id + '">' + header.title + '</a>') =>
-  Array.from($('#html').childNodes)
+  Array.from($('#_html').childNodes)
   .filter((node) => /h[1-6]/i.test(node.tagName))
   .map((node) => ({
     id: node.getAttribute('id'),
