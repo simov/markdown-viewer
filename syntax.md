@@ -1,10 +1,13 @@
 
+# h1
+
 h1
 ===
 
-# h1
-
 ## h2
+
+h2
+---
 
 ### h3
 
@@ -26,61 +29,202 @@ h1
 
 ######h6
 
+# 测试一
+## 测试二
+### 测试三
+
+# a/b c-d
+
+
+# Horizontal Line
+
 ---
+
+***
+
+
+# List
 
 - ul
   - ul
     - ul
 
+
+* ul
+  * ul
+    * ul
+
+
++ ul
+  + ul
+    + ul
+
+
 1. ol
   1. ol
     1. ol
 
+# Text Formatting
+
 **bold**
+
+__bold__
 
 *italic*
 
 _italic_
 
-[link with inline URL](https://github.com/simov/markdown-viewer)
-
-[link index][1]
-
-[named link][some-url]
-
-![image][2]
-
-[![image link][2]][some-url]
-
 `inline code`
 
-<kbd>keyboard keys like Ctrl+P</kbd>
-
-<mailto@gmail.com>
+<kbd>the kbd tag</kbd>
 
 > blockquote
 
-~~line through~~
+~~strikethrough~~
 
-table    | col          | col   | col
----      | :---         | :---: | ---:
-defaults | left aligned | centered | right aligned
-defaults | left aligned | centered | right aligned
-defaults | left aligned | centered | right aligned
 
-<div style="text-align: center">
+## Combinations
+
+**_bold italic_**
+
+
+**`inline code + bold`**
+
+*`inline code + italic`*
+
+***`inline code + bold + italic`***
+
+~~`inline code strikethrough`~~
+
+> `multi line blockquote + inline code`
+
+> **`multi line blockquote + inline code + bold`**
+
+> **_`multi line blockquote + inline code + bold + italic`_**
+
+> ~~**_`multi line blockquote + inline code + bold + italic + strikethrough`_**~~
+
+
+# Link
+
+[link with inline URL](https://github.com/simov/markdown-viewer)
+
+[link with index][1]
+
+[named link][some-url]
+
+[some-url]
+
+[some-url][]
+
+<someone@gmail.com>
+
+<https://github.com/simov/markdown-viewer>
+
+https://github.com/simov/markdown-viewer
+
+
+# Image
+
+![named-image]
+
+![2]
+
+![2][]
+
+![][2]
+
+[![3]][some-url]
+
+[![named-image]][some-url]
+
+[![Alt Text](http://i.imgur.com/rKYxW.jpg)](https://github.com/simov/markdown-viewer)
+
+  [1]: https://github.com/simov/markdown-viewer
+  [2]: http://i.imgur.com/rKYxW.jpg (Image Index)
+  [3]: http://i.imgur.com/rKYxW.jpg (Image Index with Link)
+  [named-image]: http://i.imgur.com/rKYxW.jpg "Named Image"
+  [some-url]: https://github.com/simov/markdown-viewer
+
+
+# Table
+
+table   | col        | col      | col
+---     | :---       | :---:    | ---:
+default | align left | centered | align right
+default | align left | centered | align right
+default | align left | centered | align right
+
+
+# Code Block
+
+    code block using indentation
+
+```
+fenced code block using backtick
+```
+
+~~~
+fenced code block using tilde
+~~~
+
+
+# HTML
+
+<div style="text-decoration: underline;">
   <p><strong>HTML</strong> tags</p>
 </div>
 
 
-```
-fenced code block
+## Details/Summary
+
+<details>
+<summary>Click to Expand</summary>
+
+```js
+var code = 'block'
 ```
 
-    code block using
-    indentation
+### Inner Header
 
----
+[link](https://github.com/simov/markdown-viewer)
+</details>
+
+
+## Definition List
+
+<dl>
+  <dt>Name</dt>
+  <dd>Godzilla</dd>
+  <dt>Born</dt>
+  <dd>1952</dd>
+  <dt>Birthplace</dt>
+  <dd>Japan</dd>
+  <dt>Color</dt>
+  <dd>Green</dd>
+</dl>
+
+
+# GFM
+
+## Task List
+
+- [x] task
+- [ ] task
+- [] task
+
+
+## Mention
+
+@simov
+
+
+# Emoji
+
+:wave: ![](https://assets-cdn.github.com/images/icons/emoji/unicode/1f44b.png)
+
+
+# Syntax Highlighting
 
 ```actionscript
 var some = new actionscript();
@@ -135,7 +279,7 @@ MAINTAINER docker
 ```
 
 ```erlang
-module(erlang)
+module(erlang).
 ```
 
 ```go
@@ -182,7 +326,7 @@ check: makefile
 `some` **markdown**
 ```
 
-```markup
+```html
 <p>some <strong>markup</strong></p>
 ```
 
@@ -253,8 +397,3 @@ var some: string = "typescript";
 ```yaml
 - language: yaml
 ```
-
-
-  [1]: https://github.com/simov/markdown-viewer
-  [2]: http://i.imgur.com/rKYxW.jpg (Image Title)
-  [some-url]: https://github.com/simov/markdown-viewer
