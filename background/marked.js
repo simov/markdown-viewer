@@ -14,11 +14,8 @@ md.marked = {
   },
   compile: (markdown, sendResponse) => {
     chrome.storage.sync.get('marked', (res) => {
-      marked.setOptions(res.marked)
-      marked(markdown, (err, html) => {
-        if (err) throw err
-        sendResponse({message: 'html', html})
-      })
+      var html = marked(markdown, res.marked)
+      sendResponse({message: 'html', html})
     })
   }
 }
