@@ -60,9 +60,25 @@ h2
     + ul
 
 
++ ul
+  - ul
+    * ul
+
+
+- ul
+    - ul
+        - ul
+
+
 1. ol
   1. ol
     1. ol
+
+
+1. ol
+    1. ol
+        1. ol
+
 
 # Text Formatting
 
@@ -76,33 +92,41 @@ _italic_
 
 `inline code`
 
-<kbd>the kbd tag</kbd>
-
 > blockquote
-
-~~strikethrough~~
 
 
 ## Combinations
 
-**_bold italic_**
+> first
+>> second
+> > > third
+> blockquote
 
+*`something`*
 
-**`inline code + bold`**
+**`something`**
 
-*`inline code + italic`*
+_`something`_
 
-***`inline code + bold + italic`***
+__`something`__
 
-~~`inline code strikethrough`~~
+***`something`***
 
-> `multi line blockquote + inline code`
+___`something`___
 
-> **`multi line blockquote + inline code + bold`**
+__*`something`*__
 
-> **_`multi line blockquote + inline code + bold + italic`_**
+*__`something`__*
 
-> ~~**_`multi line blockquote + inline code + bold + italic + strikethrough`_**~~
+**_`something`_**
+
+_**`something`**_
+
+> `blockquote`
+
+> **`blockquote`**
+
+> ***`blockquote`***
 
 
 # Link
@@ -145,15 +169,6 @@ https://github.com/simov/markdown-viewer
   [3]: http://i.imgur.com/rKYxW.jpg (Image Index with Link)
   [named-image]: http://i.imgur.com/rKYxW.jpg "Named Image"
   [some-url]: https://github.com/simov/markdown-viewer
-
-
-# Table
-
-table   | col        | col      | col
----     | :---       | :---:    | ---:
-default | align left | centered | align right
-default | align left | centered | align right
-default | align left | centered | align right
 
 
 # Code Block
@@ -205,26 +220,80 @@ var code = 'block'
 </dl>
 
 
+## KBD
+
+<kbd>the kbd tag</kbd>
+
+
+## Supscript/subscript
+
+- 19<sup>th</sup>
+- H<sub>2</sub>O
+
+
 # GFM
+
+
+## Table
+
+table        | col             | col                | col
+---          | :---            | :---:              | ---:
+default      | align left      | centered           | align right
+default left | align left left | something centered | something align right
+default      | align left      | centered           | align right
+
+
+## Strikethrough
+
+~~strikethrough~~
+
+~~`something`~~
+
+~~**`something`**~~
+
+~~***`something`***~~
+
+~~__`something`__~~
+
+~~___`something`___~~
+
+~~__*`something`*__~~
+
+~~*__`something`__*~~
+
+~~**_`something`_**~~
+
+~~_**`something`**_~~
+
+> ~~**_`something`_**~~
+
 
 ## Task List
 
 - [x] task
 - [ ] task
-- [] task
 
+
+# Extras
 
 ## Mention
 
 @simov
 
 
-# Emoji
+## Emoji
 
 :wave: ![](https://assets-cdn.github.com/images/icons/emoji/unicode/1f44b.png)
 
 
-# Syntax Highlighting
+## Footnotes
+
+Something [^1]
+
+  [^1]: https://github.com/simov/markdown-viewer
+
+
+## Syntax Highlighting
 
 ```actionscript
 var some = new actionscript();
@@ -397,3 +466,16 @@ var some: string = "typescript";
 ```yaml
 - language: yaml
 ```
+
+
+# Quirks
+
+1. item 1
+
+```
+code block
+```
+
+2. item 2
+
+3. item 3
