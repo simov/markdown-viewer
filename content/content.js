@@ -155,7 +155,10 @@ var toc = (
       html += link(header)
     }
     else if (prev.level < header.level) {
-      html += '<div id="_ul">' + link(header)
+      while (prev.level++ < header.level) {
+        html += '<div id="_ul">'
+      }
+      html += link(header)
     }
     return html
   }, '<div id="_toc"><div id="_ul">') + '</div></div>'
