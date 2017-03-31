@@ -78,7 +78,7 @@ var ui = {
     'theme', 'compiler', 'content'
   ],
   compilers: [
-    'showdown', 'marked'
+    'marked', 'remark', 'showdown'
   ],
   description: {
     compiler: {
@@ -90,6 +90,15 @@ var ui = {
         sanitize: 'Ignore any HTML\nthat has been input',
         smartLists: 'Use smarter list behavior\nthan the original markdown',
         smartypants: 'Use "smart" typographic punctuation\nfor things like quotes and dashes'
+      },
+      remark: {
+        gfm: 'Toggle GFM (GitHub Flavored Markdown)',
+        yaml: 'Enables raw YAML front matter to be detected at the top',
+        commonmark: 'Toggle CommonMark mode',
+        footnotes: 'Toggle reference footnotes and inline footnotes',
+        pedantic: 'Don\'t fix any of the original markdown\nbugs or poor behavior',
+        breaks: 'Exposes newline characters inside paragraphs as breaks',
+        sanitize: 'Toggle HTML tag rendering'
       },
       showdown: {
         disableForced4SpacesIndentedSublists: "Disables the requirement of indenting nested sublists by 4 spaces",
