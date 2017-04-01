@@ -23,10 +23,12 @@
       "/vendor/remark-slug.min.js",
       "/vendor/showdown.min.js",
       "/vendor/markdown-it.min.js",
+      "/vendor/remarkable.min.js",
       "/background/marked.js",
       "/background/remark.js",
       "/background/showdown.js",
       "/background/markdown-it.js",
+      "/background/remarkable.js",
       "/background/background.js"
     ],
     "persistent": false
