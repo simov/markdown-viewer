@@ -178,19 +178,19 @@ m.mount(document.querySelector('body'), {
         m('.mdl-tabs__tab-bar', {onclick: events.tab}, ui.tabs.map((tab) =>
           m('a.mdl-tabs__tab', {
             href: '#tab-' + tab,
-            class: state.tab === tab ? 'is-active' : null
+            class: state.tab === tab ? 'is-active' : undefined
           }, tab))
         ),
 
         // theme
-        m('.mdl-tabs__panel #tab-theme', {class: state.tab === 'theme' ? 'is-active' : null},
+        m('.mdl-tabs__panel #tab-theme', {class: state.tab === 'theme' ? 'is-active' : undefined},
           m('select.mdl-shadow--2dp', {onchange: events.theme}, state.themes.map((theme) =>
             m('option', {selected: state.theme === theme}, theme)
           ))
         ),
 
         // compiler
-        m('.mdl-tabs__panel #tab-compiler', {class: state.tab === 'compiler' ? 'is-active' : null},
+        m('.mdl-tabs__panel #tab-compiler', {class: state.tab === 'compiler' ? 'is-active' : undefined},
           m('select.mdl-shadow--2dp', {onchange: events.compiler.name}, ui.compilers.map((name) =>
             m('option', {selected: state.compiler === name}, name)
           )),
@@ -216,7 +216,7 @@ m.mount(document.querySelector('body'), {
 
         // content
         m('.mdl-tabs__panel #tab-content',
-          {class: state.tab === 'content' ? 'is-active' : null},
+          {class: state.tab === 'content' ? 'is-active' : undefined},
           m('.scroll',
             m('.mdl-grid', Object.keys(state.content).map((key) =>
               m('.mdl-cell',
