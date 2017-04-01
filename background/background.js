@@ -55,6 +55,12 @@ chrome.storage.sync.get((res) => {
     options.compiler = 'remark'
   }
 
+  Object.keys(md).forEach((compiler) => {
+    if (!options[compiler]) {
+      options[compiler] = md[compiler].defaults
+    }
+  })
+
   chrome.storage.sync.set(options)
 
   // reload extension bug
