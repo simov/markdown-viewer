@@ -6,7 +6,8 @@ var state = {
   theme: '',
   themes: [],
   raw: false,
-  tab: ''
+  tab: '',
+  compilers: {}
 }
 
 var events = {
@@ -17,7 +18,7 @@ var events = {
 
   compiler: {
     name: (e) => {
-      state.compiler = ui.compilers[e.target.selectedIndex]
+      state.compiler = Object.keys(state.compilers)[e.target.selectedIndex]
       chrome.runtime.sendMessage({
         message: 'compiler.name',
         compiler: state.compiler
@@ -77,30 +78,7 @@ var ui = {
   tabs: [
     'theme', 'compiler', 'content'
   ],
-  compilers: [
-    'marked', 'remark'
-  ],
   description: {
-    compiler: {
-      marked: {
-        breaks: 'Enable GFM line breaks\n(requires the gfm option to be true)',
-        gfm: 'Enable GFM\n(GitHub Flavored Markdown)',
-        pedantic: 'Don\'t fix any of the original markdown\nbugs or poor behavior',
-        sanitize: 'Ignore any HTML\nthat has been input',
-        smartLists: 'Use smarter list behavior\nthan the original markdown',
-        smartypants: 'Use "smart" typographic punctuation\nfor things like quotes and dashes',
-        tables: 'Enable GFM tables\n(requires the gfm option to be true)'
-      },
-      remark: {
-        breaks: 'Exposes newline characters inside paragraphs as breaks',
-        commonmark: 'Toggle CommonMark mode',
-        footnotes: 'Toggle reference footnotes and inline footnotes',
-        gfm: 'Toggle GFM (GitHub Flavored Markdown)',
-        pedantic: 'Don\'t fix any of the original markdown\nbugs or poor behavior',
-        sanitize: 'Toggle HTML tag rendering',
-        yaml: 'Enables raw YAML front matter to be detected at the top'
-      }
-    },
     content: {
       scroll: 'Remember scroll position',
       toc: 'Generate Table of Contents'
@@ -120,6 +98,8 @@ function init (res) {
 
   state.raw = res.raw
   state.tab = localStorage.getItem('tab') || 'theme'
+  state.compilers = res.compilers
+
   m.redraw()
 }
 
@@ -167,7 +147,7 @@ m.mount(document.querySelector('body'), {
 
         // compiler
         m('.mdl-tabs__panel #tab-compiler', {class: state.tab === 'compiler' ? 'is-active' : undefined},
-          m('select.mdl-shadow--2dp', {onchange: events.compiler.name}, ui.compilers.map((name) =>
+          m('select.mdl-shadow--2dp', {onchange: events.compiler.name}, Object.keys(state.compilers).map((name) =>
             m('option', {selected: state.compiler === name}, name)
           )),
           m('.scroll', {class: state.compiler},
@@ -177,7 +157,7 @@ m.mount(document.querySelector('body'), {
               m('.mdl-cell',
                 m('label.mdl-switch mdl-js-switch mdl-js-ripple-effect',
                   {oncreate, onupdate: onupdate('compiler', key),
-                  title: ui.description.compiler[state.compiler][key]},
+                  title: state.compilers[state.compiler].description[key]},
                   m('input[type="checkbox"].mdl-switch__input', {
                     name: key,
                     checked: state.options[key],

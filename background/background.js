@@ -2,25 +2,26 @@
 // chrome.storage.sync.clear()
 // chrome.permissions.getAll((p) => chrome.permissions.remove({origins: p.origins}))
 
-chrome.storage.sync.get((res) => {
-  var match = '\\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*)?$'
+var match = '\\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*)?$'
 
-  var defaults = {
-    theme: 'github',
-    compiler: 'marked',
-    marked: md.marked.defaults,
-    remark: md.remark.defaults,
-    content: {
-      toc: false,
-      scroll: true
-    },
-    raw: false,
-    match,
-    origins: {
-      'file://': match
-    }
+var defaults = {
+  theme: 'github',
+  compiler: 'marked',
+  content: {
+    toc: false,
+    scroll: true
+  },
+  raw: false,
+  match,
+  origins: {
+    'file://': match
   }
+}
+Object.keys(md).forEach((compiler) => {
+  defaults[compiler] = md[compiler].defaults
+})
 
+chrome.storage.sync.get((res) => {
   var options = !Object.keys(res).length ? defaults : res
 
   // v2.2 -> v2.3
@@ -160,7 +161,8 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
     chrome.storage.sync.get((res) => {
       sendResponse({
         compiler: res.compiler, options: res[res.compiler],
-        content: res.content, theme: res.theme, raw: res.raw
+        content: res.content, theme: res.theme, raw: res.raw,
+        compilers: md
       })
     })
   }
@@ -177,14 +179,7 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
     sendMessage({message: 'reload'})
   }
   else if (req.message === 'defaults') {
-    chrome.storage.sync.set({
-      theme: 'github',
-      compiler: 'marked',
-      marked: md.marked.defaults,
-      remark: md.remark.defaults,
-      content: {toc: false, scroll: true},
-      raw: false
-    }, sendResponse)
+    chrome.storage.sync.set(defaults, sendResponse)
     sendMessage({message: 'reload'})
   }
   else if (req.message === 'theme') {
