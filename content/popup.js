@@ -7,7 +7,12 @@ var state = {
   themes: [],
   raw: false,
   tab: '',
-  compilers: {}
+  tabs: ['theme', 'compiler', 'content'],
+  compilers: {},
+  description: {
+    scroll: 'Remember scroll position',
+    toc: 'Generate Table of Contents'
+  }
 }
 
 var events = {
@@ -74,18 +79,6 @@ var events = {
   }
 }
 
-var ui = {
-  tabs: [
-    'theme', 'compiler', 'content'
-  ],
-  description: {
-    content: {
-      scroll: 'Remember scroll position',
-      toc: 'Generate Table of Contents'
-    }
-  }
-}
-
 function init (res) {
   state.compiler = res.compiler
   state.options = res.options
@@ -131,7 +124,7 @@ m.mount(document.querySelector('body'), {
 
       // tabs
       m('.mdl-tabs mdl-js-tabs mdl-js-ripple-effect', {oncreate},
-        m('.mdl-tabs__tab-bar', {onclick: events.tab}, ui.tabs.map((tab) =>
+        m('.mdl-tabs__tab-bar', {onclick: events.tab}, state.tabs.map((tab) =>
           m('a.mdl-tabs__tab', {
             href: '#tab-' + tab,
             class: state.tab === tab ? 'is-active' : undefined
@@ -177,7 +170,7 @@ m.mount(document.querySelector('body'), {
             m('.mdl-grid', Object.keys(state.content).map((key) =>
               m('.mdl-cell',
                 m('label.mdl-switch mdl-js-switch mdl-js-ripple-effect',
-                  {oncreate, onupdate: onupdate('content', key), title: ui.description.content[key]},
+                  {oncreate, onupdate: onupdate('content', key), title: state.description[key]},
                   m('input[type="checkbox"].mdl-switch__input', {
                     name: key,
                     checked: state.content[key],
