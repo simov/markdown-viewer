@@ -143,7 +143,7 @@ m.mount(document.querySelector('body'), {
           m('select.mdl-shadow--2dp', {onchange: events.compiler.name}, Object.keys(state.compilers).map((name) =>
             m('option', {selected: state.compiler === name}, name)
           )),
-          m('.scroll', {class: state.compiler},
+          m('.scroll', {class: Object.keys(state.options).length > 8 ? 'max' : undefined},
             m('.mdl-grid', Object.keys(state.options || [])
               .filter((key) => typeof state.options[key] === 'boolean')
               .map((key) =>

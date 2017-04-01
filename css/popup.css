@@ -50,7 +50,7 @@ button:nth-child(2n+4) { float: right; margin-top: 20px; }
   overflow-y: auto;
   overflow-x: hidden;
 }
-.scroll.showdown {
+.scroll.max {
   height: 324px;
 }
 .scroll .mdl-grid { padding: 0 0 8px 0; }
