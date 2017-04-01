@@ -83,22 +83,22 @@ var ui = {
   description: {
     compiler: {
       marked: {
-        gfm: 'Enable GFM\n(GitHub Flavored Markdown)',
-        tables: 'Enable GFM tables\n(requires the gfm option to be true)',
         breaks: 'Enable GFM line breaks\n(requires the gfm option to be true)',
+        gfm: 'Enable GFM\n(GitHub Flavored Markdown)',
         pedantic: 'Don\'t fix any of the original markdown\nbugs or poor behavior',
         sanitize: 'Ignore any HTML\nthat has been input',
         smartLists: 'Use smarter list behavior\nthan the original markdown',
-        smartypants: 'Use "smart" typographic punctuation\nfor things like quotes and dashes'
+        smartypants: 'Use "smart" typographic punctuation\nfor things like quotes and dashes',
+        tables: 'Enable GFM tables\n(requires the gfm option to be true)'
       },
       remark: {
-        gfm: 'Toggle GFM (GitHub Flavored Markdown)',
-        yaml: 'Enables raw YAML front matter to be detected at the top',
+        breaks: 'Exposes newline characters inside paragraphs as breaks',
         commonmark: 'Toggle CommonMark mode',
         footnotes: 'Toggle reference footnotes and inline footnotes',
+        gfm: 'Toggle GFM (GitHub Flavored Markdown)',
         pedantic: 'Don\'t fix any of the original markdown\nbugs or poor behavior',
-        breaks: 'Exposes newline characters inside paragraphs as breaks',
-        sanitize: 'Toggle HTML tag rendering'
+        sanitize: 'Toggle HTML tag rendering',
+        yaml: 'Enables raw YAML front matter to be detected at the top'
       }
     },
     content: {
