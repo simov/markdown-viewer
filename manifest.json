@@ -21,8 +21,10 @@
       "/vendor/remark.min.js",
       "/vendor/remark-html.min.js",
       "/vendor/remark-slug.min.js",
+      "/vendor/showdown.min.js",
       "/background/marked.js",
       "/background/remark.js",
+      "/background/showdown.js",
       "/background/background.js"
     ],
     "persistent": false
