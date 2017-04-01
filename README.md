@@ -41,13 +41,25 @@
 
 Option          | Default | Description
 :---            | :---    | :---
-**gfm**         | `true`  | Enable GFM [GitHub Flavored Markdown][gfm].
-**tables**      | `true`  | Enable GFM [tables][gfm-tables]. This option requires the gfm option to be true.
 **breaks**      | `false` | Enable GFM [line breaks][gfm]. This option requires the gfm option to be true.
+**gfm**         | `true`  | Enable GFM [GitHub Flavored Markdown][gfm].
 **pedantic**    | `false` | Conform to obscure parts of markdown.pl as much as possible. Don't fix any of the original markdown bugs or poor behavior.
 **sanitize**    | `false` | Sanitize the output. Ignore any HTML that has been input.
 **smartLists**  | `false` | Use smarter list behavior than the original markdown. May eventually be default with the old behavior moved into pedantic.
 **smartypants** | `false` | Use "smart" typograhic punctuation for things like quotes and dashes.
+**tables**      | `true`  | Enable GFM [tables][gfm-tables]. This option requires the gfm option to be true.
+
+### Remark
+
+Option          | Default | Description
+:---            | :---    | :---
+**breaks**      | `false` | Enable GFM [line breaks][gfm]. This option requires the gfm option to be true.
+**commonmark**  | `false` | Toggle CommonMark mode.
+**footnotes**   | `false` | Toggle reference footnotes and inline footnotes.
+**gfm**         | `true`  | Enable GFM [GitHub Flavored Markdown][gfm].
+**pedantic**    | `false` | Conform to obscure parts of markdown.pl as much as possible. Don't fix any of the original markdown bugs or poor behavior.
+**sanitize**    | `false` | Sanitize the output. Ignore any HTML that has been input.
+**yaml**        | `true`  | Enables raw YAML front matter to be detected at the top.
 
 
 ## Content Options
