@@ -10,7 +10,6 @@ chrome.storage.sync.get((res) => {
     compiler: 'marked',
     marked: md.marked.defaults,
     remark: md.remark.defaults,
-    showdown: md.showdown.defaults,
     content: {
       toc: false,
       scroll: true
@@ -43,14 +42,16 @@ chrome.storage.sync.get((res) => {
     options.content = defaults.content
   }
   // v2.7 -> v2.8
-  if (!options.marked && !options.showdown) {
+  if (!options.marked) {
     options.compiler = 'marked'
     options.marked = md.marked.defaults
-    options.showdown = md.showdown.defaults
   }
   // v2.8 -> v2.9
   if (!options.remark) {
     options.remark = md.remark.defaults
+  }
+  if (options.compiler === 'showdown') {
+    options.compiler = 'remark'
   }
 
   chrome.storage.sync.set(options)
@@ -181,7 +182,6 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
       compiler: 'marked',
       marked: md.marked.defaults,
       remark: md.remark.defaults,
-      showdown: md.showdown.defaults,
       content: {toc: false, scroll: true},
       raw: false
     }, sendResponse)

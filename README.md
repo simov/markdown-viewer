@@ -10,7 +10,7 @@
 - No special permissions required for file URLs
 - Full control over the allowed origins
 - Supports multiple markdown parsers
-- Full control over the [compiler options][compiler-options] ([marked][marked] or [showdown][showdown])
+- Full control over the [compiler options][compiler-options] ([marked][marked] or [remark][remark])
 - Themes support (including [GitHub theme][themes0]) ([jasonm23][themes1], [mixu][themes2], [cobalt][themes3])
 - Supports [GitHub Flavored Markdown][gfm]
 - Syntax highlighted code blocks ([prism][prism])
@@ -48,32 +48,6 @@ Option          | Default | Description
 **sanitize**    | `false` | Sanitize the output. Ignore any HTML that has been input.
 **smartLists**  | `false` | Use smarter list behavior than the original markdown. May eventually be default with the old behavior moved into pedantic.
 **smartypants** | `false` | Use "smart" typograhic punctuation for things like quotes and dashes.
-
-### Showdown
-
-Option          | Default | Description
-:---            | :---    | :---
-**disableForced4SpacesIndentedSublists** | `true` | Disables the requirement of indenting nested sublists by 4 spaces
-**encodeEmails** | `true` | Encode e-mail addresses through the use of Character Entities, transforming ASCII e-mail addresses into its equivalent decimal entities
-**excludeTrailingPunctuationFromURLs** | `true` | Excludes trailing punctuation from links generated with autoLinking
-**ghCodeBlocks** | `true` | Turn on/off GFM fenced code blocks support
-**ghCompatibleHeaderId** | `true` | Generate header ids compatible with github style (spaces are replaced with dashes, a bunch of non alphanumeric chars are removed)
-**ghMentions** | `true` | Enables github @mentions
-**headerLevelStart** | `false` | The header blocks level start
-**literalMidWordUnderscores** | `true` | Parse midword underscores as literal underscores
-**noHeaderId** | `false` | Turn on/off generated header id
-**omitExtraWLInCodeBlocks** | `true` | Omit the default extra whiteline added to code blocks
-**parseImgDimensions** | `false` | Turn on/off image dimension parsing
-**prefixHeaderId** | `false` | Specify a prefix to generated header ids
-**requireSpaceBeforeHeadingText** | `true` | Makes adding a space between `#` and the header text mandatory (GFM Style)
-**simpleLineBreaks** | `true` | Parses simple line breaks as <br> (GFM Style)
-**simplifiedAutoLink** | `true` | Turn on/off GFM autolink style
-**smartIndentationFix** | `false` | Tries to smartly fix indentation in es6 strings
-**smoothLivePreview** | `false` | Prevents weird effects in live previews due to incomplete input
-**strikethrough** | `true` | Turn on/off strikethrough support
-**tables** | `true` | Turn on/off tables support
-**tablesHeaderId** | `true` | Add an id to table headers
-**tasklists** | `true` | Turn on/off GFM tasklist support
 
 
 ## Content Options
@@ -165,7 +139,7 @@ SOFTWARE.
 
 
   [marked]: https://github.com/chjj/marked
-  [showdown]: https://github.com/showdownjs/showdown
+  [remark]: https://github.com/wooorm/remark
   [gfm]: https://guides.github.com/features/mastering-markdown/#GitHub-flavored-markdown
   [compiler-options]: #compiler-options
   [themes0]: https://github.com/sindresorhus/github-markdown-css
