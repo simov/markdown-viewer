@@ -31,10 +31,12 @@ var oncreate = {
   },
   html: () => {
     scroll()
+
     if (state.content.toc && !state.toc) {
       state.toc = toc()
       m.redraw()
     }
+
     setTimeout(() => Prism.highlightAll(), 20)
   }
 }
@@ -100,36 +102,52 @@ function mount () {
 }
 
 function scroll () {
-  if (state.content.scroll) {
-    $('body').scrollTop = parseInt(localStorage.getItem('md-' + location.href))
-  }
-  else if (location.hash) {
-    $('body').scrollTop = $(location.hash) && $(location.hash).offsetTop
-    setTimeout(() => {
-      $('body').scrollTop = $(location.hash) && $(location.hash).offsetTop
-    }, 100)
-  }
-}
-scroll.init = () => {
-  if (state.content.scroll) {
-    var timeout = null
-    window.addEventListener('scroll', () => {
-      clearTimeout(timeout)
-      timeout = setTimeout(() => {
-        localStorage.setItem('md-' + location.href, $('body').scrollTop)
-      }, 100)
+  function race (done) {
+    var images = Array.from(document.querySelectorAll('img'))
+    if (!images.length) {
+      done()
+    }
+    var loaded = 0
+    images.forEach((img) => {
+      img.addEventListener('load', () => {
+        if (++loaded === images.length) {
+          done()
+        }
+      }, {once: true})
     })
+    setTimeout(done, 100)
   }
-  setTimeout(scroll, 100)
+  function init () {
+    if (state.content.scroll) {
+      var key = 'md-' + location.origin + location.pathname
+      $('body').scrollTop = parseInt(localStorage.getItem(key))
+
+      var timeout = null
+      window.addEventListener('scroll', () => {
+        clearTimeout(timeout)
+        timeout = setTimeout(() => {
+          localStorage.setItem(key, $('body').scrollTop)
+        }, 100)
+      })
+    }
+    else if (location.hash && $(location.hash)) {
+      $('body').scrollTop =  $(location.hash).offsetTop
+    }
+  }
+  var loaded
+  race(() => {
+    if (!loaded) {
+      init()
+      loaded = true
+    }
+  })
 }
 
 if (document.readyState === 'complete') {
   mount()
-  scroll.init()
 }
 else {
   window.addEventListener('DOMContentLoaded', mount)
-  window.addEventListener('load', scroll.init)
 }
 
 var toc = (
