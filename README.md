@@ -46,7 +46,7 @@ Option          | Default | Description
 **pedantic**    | `false` | Conform to obscure parts of markdown.pl as much as possible. Don't fix any of the original markdown bugs or poor behavior.
 **sanitize**    | `false` | Sanitize the output. Ignore any HTML that has been input.
 **smartLists**  | `false` | Use smarter list behavior than the original markdown. May eventually be default with the old behavior moved into pedantic.
-**smartypants** | `false` | Use "smart" typograhic punctuation for things like quotes and dashes.
+**smartypants** | `false` | Use "smart" typographic punctuation for things like quotes and dashes.
 **tables**      | `true`  | Enable GFM [tables][gfm-tables]. This option requires the gfm option to be true.
 
 ### Remark
@@ -76,17 +76,17 @@ Disable the `scroll` option if you want the page rendered at the top or scrolled
 
 ## Advanced Options
 
-Markdown Viewer doesn't require any specific permissions in order to render markdown files from local file URLs. For example the `file:///home/s/chrome/markdown-viewer/README.md` on my hard drive will always be rendered without a problem.
+Markdown Viewer doesn't require any specific permissions in order to render markdown files from local file URLs. For example the `file:///home/s/chrome/markdown-viewer/README.md` on my hard drive will always be rendered as long as the `Allow access to file URLs` is enabled for the extension.
 
 ### Add Origin
 
-In case you want the extension to render markdown files from web URLs you have to specify the server's origin. The origin consists of `protocol` and `domain`. You can choouse either `https`, `http` or a `*` for both protocols.
+In case you want the extension to render markdown files from web URLs you have to specify the server's origin. The origin consists of `protocol` and `domain`. You can choose either `https`, `http` or a `*` for both protocols.
 
-For example here is how you can enable the extension for the `https://raw.githubusercontent.com` origin:
+Here is how you can enable the extension for the `https://raw.githubusercontent.com` origin:
 
 ![add-origin]
 
-After that you can navigate to this [URL][syntax] and play around with the compiler options.
+Then you can navigate to this [URL][syntax] and play around with the compiler options.
 
 ### Add All Origins
 
@@ -94,7 +94,7 @@ In case you really want to you can enable the extension for **all** origins:
 
 ![all-origins]
 
-### Specify Path RegExp
+### Path Matching
 
 By default the extension renders only URLs ending with a markdown file extension:
 
@@ -102,13 +102,13 @@ By default the extension renders only URLs ending with a markdown file extension
 
 It's a really simple regular expression that matches URLs ending in `.md` or `.md#some-header`. It also uses non capturing groups `(?:)`
 
-You can change this regular expression to whatever suits your needs. The settings are being updated as you type.
+You can modify this regular expression to whatever suits your needs. The settings are being updated as you type.
 
 ### Remove Origin
 
-At any point click on the small `x` button next to the origin that you want to remove. This actually removes the permission itself so that the extension is no longer able to inject scripts to that origin.
+At any point click on the small `x` button next to the origin that you want to remove. This actually removes the permission itself so that the extension is no longer able to inject scripts into that origin.
 
-Note that the Chrome's consent popup shows up only when you add the origin for the first time. In case you re-add it you'll no longer see that popup. That's a Chrome thing and it's not controllable from the extension.
+Note that the Chrome's consent popup shows up only when you add the origin for the first time. In case you re-add it you'll no longer see that popup. That's a Chrome thing and it's not controllable through the extension.
 
 ### Refresh Origin
 
@@ -124,6 +124,16 @@ In case you recently added a new origin on one of your devices you'll have to ex
 - Use the `Markdown/HTML` button to switch between raw markdown and rendered HTML
 - At any point click on the `Defaults` button to reset back the compiler options
 
+
+## More Compilers
+
+Markdown Viewer can be used with any markdown parser/compiler. Currently the following compilers are implemented: [marked], [remark], [showdown], [markdown-it], [remarkable], [commonmark], [markdown-js].
+
+1. Clone the [compilers][compilers] branch
+2. Navigate to `chrome://extensions`
+3. Make sure that the `Developer mode` checkbox is checked at the top
+4. Disable the Markdown Viewer extension downloaded from the Chrome Store
+5. Click on the `Load unpacked extension...` button and select the cloned directory
 
 ## License
 
@@ -150,8 +160,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
+  [chrome-store]: https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk
+
   [marked]: https://github.com/chjj/marked
   [remark]: https://github.com/wooorm/remark
+  [showdown]: https://github.com/showdownjs/showdown
+  [markdown-it]: https://github.com/markdown-it/markdown-it
+  [remarkable]: https://github.com/jonschlinkert/remarkable
+  [commonmark]: https://github.com/jgm/commonmark.js
+  [markdown-js]: https://github.com/evilstreak/markdown-js
+
   [gfm]: https://guides.github.com/features/mastering-markdown/#GitHub-flavored-markdown
   [compiler-options]: #compiler-options
   [themes0]: https://github.com/sindresorhus/github-markdown-css
@@ -159,11 +177,11 @@ SOFTWARE.
   [themes2]: https://github.com/mixu/markdown-styles
   [themes3]: https://github.com/nWODT-Cobalt/markown-utilities
   [prism]: http://prismjs.com/
-  [event-page]: http://developer.chrome.com/extensions/event_pages.html
-  [chrome-store]: https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk
   [gfm-tables]: https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#tables
   [syntax]: https://raw.githubusercontent.com/simov/markdown-viewer/master/syntax.md
+  [compilers]: https://github.com/simov/markdown-viewer/tree/compilers
+
+  [file-urls]: http://i.imgur.com/eqiwzEz.png
   [add-origin]: http://i.imgur.com/56zWesT.png
   [all-origins]: http://i.imgur.com/GiLeftR.png
   [path-regexp]: http://i.imgur.com/IJuNA63.png
-  [file-urls]: http://i.imgur.com/eqiwzEz.png
