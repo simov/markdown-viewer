@@ -41,6 +41,8 @@ var oncreate = {
     }
 
     setTimeout(() => Prism.highlightAll(), 20)
+
+    anchors()
   }
 }
 
@@ -146,11 +148,17 @@ function scroll () {
   })
 }
 
-if (document.readyState === 'complete') {
-  mount()
-}
-else {
-  window.addEventListener('DOMContentLoaded', mount)
+function anchors () {
+  Array.from($('#_html').childNodes)
+  .filter((node) => /h[1-6]/i.test(node.tagName))
+  .forEach((node) => {
+    var a = document.createElement('a')
+    a.className = 'anchor'
+    a.name = node.id
+    a.href = '#' + node.id
+    a.innerHTML = '<span class="octicon octicon-link"></span>'
+    node.prepend(a)
+  })
 }
 
 var toc = (
@@ -183,3 +191,10 @@ var toc = (
     }
     return html
   }, '<div id="_toc"><div id="_ul">') + '</div></div>'
+
+if (document.readyState === 'complete') {
+  mount()
+}
+else {
+  window.addEventListener('DOMContentLoaded', mount)
+}
