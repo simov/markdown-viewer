@@ -127,23 +127,23 @@ m.mount(document.querySelector('body'), {
         m('.mdl-tabs__tab-bar', {onclick: events.tab}, state.tabs.map((tab) =>
           m('a.mdl-tabs__tab', {
             href: '#tab-' + tab,
-            class: state.tab === tab ? 'is-active' : undefined
+            class: state.tab === tab ? 'is-active' : ''
           }, tab))
         ),
 
         // theme
-        m('.mdl-tabs__panel #tab-theme', {class: state.tab === 'theme' ? 'is-active' : undefined},
+        m('.mdl-tabs__panel #tab-theme', {class: state.tab === 'theme' ? 'is-active' : ''},
           m('select.mdl-shadow--2dp', {onchange: events.theme}, state.themes.map((theme) =>
             m('option', {selected: state.theme === theme}, theme)
           ))
         ),
 
         // compiler
-        m('.mdl-tabs__panel #tab-compiler', {class: state.tab === 'compiler' ? 'is-active' : undefined},
+        m('.mdl-tabs__panel #tab-compiler', {class: state.tab === 'compiler' ? 'is-active' : ''},
           m('select.mdl-shadow--2dp', {onchange: events.compiler.name}, Object.keys(state.compilers).map((name) =>
             m('option', {selected: state.compiler === name}, name)
           )),
-          m('.scroll', {class: Object.keys(state.options).length > 8 ? 'max' : undefined},
+          m('.scroll', {class: Object.keys(state.options).length > 8 ? 'max' : ''},
             m('.mdl-grid', Object.keys(state.options || [])
               .filter((key) => typeof state.options[key] === 'boolean')
               .map((key) =>
@@ -165,7 +165,7 @@ m.mount(document.querySelector('body'), {
 
         // content
         m('.mdl-tabs__panel #tab-content',
-          {class: state.tab === 'content' ? 'is-active' : undefined},
+          {class: state.tab === 'content' ? 'is-active' : ''},
           m('.scroll',
             m('.mdl-grid', Object.keys(state.content).map((key) =>
               m('.mdl-cell',
