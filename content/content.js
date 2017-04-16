@@ -71,7 +71,7 @@ function mount () {
           compiler: state.compiler,
           markdown: state.markdown
         }, (res) => {
-          state.html = res.html
+          state.html = state.content.emoji ? emojinator(res.html) : res.html
           m.redraw()
         })
       })

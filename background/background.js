@@ -8,8 +8,9 @@ var defaults = {
   theme: 'github',
   compiler: 'marked',
   content: {
-    toc: false,
-    scroll: true
+    emoji: false,
+    scroll: true,
+    toc: false
   },
   raw: false,
   match,
@@ -53,6 +54,10 @@ chrome.storage.sync.get((res) => {
   }
   if (options.compiler === 'showdown') {
     options.compiler = 'remark'
+  }
+  // v2.9 -> v3.0
+  if (options.content.emoji === undefined) {
+    options.content.emoji = false
   }
 
   Object.keys(md).forEach((compiler) => {
@@ -149,6 +154,7 @@ chrome.tabs.onUpdated.addListener((id, info, tab) => {
 
         chrome.tabs.executeScript(id, {file: 'vendor/mithril.min.js', runAt: 'document_start'})
         chrome.tabs.executeScript(id, {file: 'vendor/prism.js', runAt: 'document_start'})
+        chrome.tabs.executeScript(id, {file: 'content/emoji.js', runAt: 'document_start'})
         chrome.tabs.executeScript(id, {file: 'content/content.js', runAt: 'document_start'})
       }
     })

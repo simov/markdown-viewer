@@ -10,6 +10,7 @@ var state = {
   tabs: ['theme', 'compiler', 'content'],
   compilers: {},
   description: {
+    emoji: 'Convert emoji :shortnames: into EmojiOne images',
     scroll: 'Remember scroll position',
     toc: 'Generate Table of Contents'
   }
