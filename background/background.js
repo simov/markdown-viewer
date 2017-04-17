@@ -8,8 +8,9 @@ var defaults = {
   theme: 'github',
   compiler: 'marked',
   content: {
-    toc: false,
-    scroll: true
+    emoji: false,
+    scroll: true,
+    toc: false
   },
   raw: false,
   match,
@@ -53,6 +54,10 @@ chrome.storage.sync.get((res) => {
   }
   if (options.compiler === 'showdown') {
     options.compiler = 'remark'
+  }
+  // v2.9 -> v3.0
+  if (options.content.emoji === undefined) {
+    options.content.emoji = false
   }
 
   Object.keys(md).forEach((compiler) => {
@@ -149,11 +154,8 @@ chrome.tabs.onUpdated.addListener((id, info, tab) => {
 
         chrome.tabs.executeScript(id, {file: 'vendor/mithril.min.js', runAt: 'document_start'})
         chrome.tabs.executeScript(id, {file: 'vendor/prism.js', runAt: 'document_start'})
+        chrome.tabs.executeScript(id, {file: 'content/emoji.js', runAt: 'document_start'})
         chrome.tabs.executeScript(id, {file: 'content/content.js', runAt: 'document_start'})
-
-        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-          chrome.pageAction.show(tabs[0].id)
-        })
       }
     })
   }
@@ -162,6 +164,9 @@ chrome.tabs.onUpdated.addListener((id, info, tab) => {
 chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
   if (req.message === 'markdown') {
     md[req.compiler].compile(req.markdown, sendResponse)
+  }
+  else if (req.message === 'ping') {
+    sendMessage({message: 'ping'}, sendResponse)
   }
   else if (req.message === 'settings') {
     chrome.storage.sync.get((res) => {
@@ -225,8 +230,8 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
   return true
 })
 
-function sendMessage (req) {
+function sendMessage (req, res) {
   chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-    chrome.tabs.sendMessage(tabs[0].id, req)
+    chrome.tabs.sendMessage(tabs[0].id, req, res)
   })
 }

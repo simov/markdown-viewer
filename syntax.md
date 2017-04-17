@@ -42,6 +42,8 @@ h2
 
 ***
 
+___
+
 
 # List
 
@@ -162,7 +164,9 @@ https://github.com/simov/markdown-viewer
 
 [![named-image]][some-url]
 
-[![Alt Text](http://i.imgur.com/rKYxW.jpg)](https://github.com/simov/markdown-viewer)
+![](http://i.imgur.com/rKYxW.jpg "Inline Alt Text")
+
+[![](http://i.imgur.com/rKYxW.jpg)](https://github.com/simov/markdown-viewer)
 
   [1]: https://github.com/simov/markdown-viewer
   [2]: http://i.imgur.com/rKYxW.jpg (Image Index)
@@ -283,7 +287,9 @@ default      | align left      | centered           | align right
 
 ## Emoji
 
-:wave: ![](https://assets-cdn.github.com/images/icons/emoji/unicode/1f44b.png)
+- shortname: :wave: :alien:
+- unicode: 👋 👽
+- ascii: :D :/
 
 
 ## Footnotes

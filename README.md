@@ -16,6 +16,7 @@
 - Syntax highlighted code blocks ([prism][prism])
 - Generates Table of Contents (TOC)
 - Remembers scroll position
+- Emoji support (Icons provided free by [EmojiOne][emojione])
 - Settings synchronization
 - Raw and rendered markdown views
 - Open source
@@ -66,6 +67,7 @@ Option          | Default | Description
 
 Option          | Default | Description
 :---            | :---    | :---
+**emoji**       | `false` | Convert emoji :shortnames: into EmojiOne images
 **scroll**      | `true`  | Remember scroll position
 **toc**         | `false` | Generate Table of Contents
 
@@ -169,6 +171,8 @@ SOFTWARE.
   [remarkable]: https://github.com/jonschlinkert/remarkable
   [commonmark]: https://github.com/jgm/commonmark.js
   [markdown-js]: https://github.com/evilstreak/markdown-js
+
+  [emojione]: https://emojione.com
 
   [gfm]: https://guides.github.com/features/mastering-markdown/#GitHub-flavored-markdown
   [compiler-options]: #compiler-options
