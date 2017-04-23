@@ -52,9 +52,6 @@ chrome.storage.sync.get((res) => {
   if (!options.remark) {
     options.remark = md.remark.defaults
   }
-  if (options.compiler === 'showdown') {
-    options.compiler = 'remark'
-  }
   // v2.9 -> v3.0
   if (options.content.emoji === undefined) {
     options.content.emoji = false
