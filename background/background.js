@@ -22,6 +22,13 @@ Object.keys(md).forEach((compiler) => {
   defaults[compiler] = md[compiler].defaults
 })
 
+var state
+
+function set (options) {
+  chrome.storage.sync.set(options)
+  Object.assign(state, options)
+}
+
 chrome.storage.sync.get((res) => {
   var options = !Object.keys(res).length ? defaults : res
 
@@ -64,6 +71,7 @@ chrome.storage.sync.get((res) => {
   })
 
   chrome.storage.sync.set(options)
+  state = JSON.parse(JSON.stringify(options))
 
   // reload extension bug
   chrome.permissions.getAll((permissions) => {
@@ -75,75 +83,37 @@ chrome.storage.sync.get((res) => {
   })
 })
 
-function parallel (tasks, done) {
-  var complete = 0, error, result = {}
-  tasks.forEach((task) => task((err, res) => {
-    if (error) {
-      return
-    }
-    if (err) {
-      error = err
-      done(err)
-      return
-    }
-    if (res) {
-      Object.keys(res).forEach((key) => {
-        result[key] = res[key]
-      })
-    }
-    if (++complete === tasks.length) {
-      done(null, result)
-    }
-  }))
-}
-
 chrome.tabs.onUpdated.addListener((id, info, tab) => {
   if (info.status === 'loading') {
-    parallel([
-      (done) => {
-        chrome.tabs.executeScript(id, {
-          code: 'JSON.stringify({location, state: window.state})',
-          runAt: 'document_start'
-        }, (res) => {
-          if (chrome.runtime.lastError) {
-            done(new Error('Origin not allowed'))
-            return
-          }
-          try {
-            res = JSON.parse(res)
-          }
-          catch (err) {
-            done(new Error('JSON parse error'))
-            return
-          }
-          done(null, res)
-        })
-      },
-      (done) => {
-        chrome.storage.sync.get((res) => done(null, res))
+    chrome.tabs.executeScript(id, {
+      code: 'JSON.stringify({location, loaded: window.state})',
+      runAt: 'document_start'
+    }, (res) => {
+      if (chrome.runtime.lastError) {
+        // Origin not allowed
+        return
       }
-    ], (err, res) => {
-      if (err) {
+      try {
+        var win = JSON.parse(res)
+      }
+      catch (err) {
+        // JSON parse error
         return
       }
 
       var path =
-        res.origins[res.location.origin] ||
-        res.origins['*://' + res.location.host] ||
-        res.origins['*://*']
+        state.origins[win.location.origin] ||
+        state.origins['*://' + win.location.host] ||
+        state.origins['*://*']
 
-      if (!path) { // v2.2 -> v2.3
-        return
-      }
-
-      if (!res.state && new RegExp(path).test(res.location.href)) {
+      if (!win.loaded && new RegExp(path).test(win.location.href)) {
         chrome.tabs.executeScript(id, {
           code: [
             'document.querySelector("pre").style.visibility = "hidden"',
-            'var theme = "' + res.theme + '"',
-            'var raw = ' + res.raw,
-            'var content = ' + JSON.stringify(res.content),
-            'var compiler = "' + res.compiler + '"'
+            'var theme = "' + state.theme + '"',
+            'var raw = ' + state.raw,
+            'var content = ' + JSON.stringify(state.content),
+            'var compiler = "' + state.compiler + '"'
           ].join(';'), runAt: 'document_start'})
 
         chrome.tabs.insertCSS(id, {file: 'css/content.css', runAt: 'document_start'})
@@ -160,74 +130,67 @@ chrome.tabs.onUpdated.addListener((id, info, tab) => {
 
 chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
   if (req.message === 'markdown') {
-    md[req.compiler].compile(req.markdown, sendResponse)
-  }
-  else if (req.message === 'ping') {
-    sendMessage({message: 'ping'}, sendResponse)
+    md[state.compiler].compile(req.markdown, sendResponse)
   }
   else if (req.message === 'settings') {
-    chrome.storage.sync.get((res) => {
-      sendResponse({
-        compiler: res.compiler, options: res[res.compiler],
-        content: res.content, theme: res.theme, raw: res.raw,
-        compilers: md
-      })
-    })
+    sendResponse(Object.assign({}, state, {
+      options: state[state.compiler],
+      description: md[state.compiler].description,
+      compilers: Object.keys(md)
+    }))
   }
   else if (req.message === 'compiler.name') {
-    chrome.storage.sync.set({compiler: req.compiler}, sendResponse)
-    sendMessage({message: 'reload'})
+    set({compiler: req.compiler})
+    sendResponse()
+    notifyContent({message: 'reload'})
   }
   else if (req.message === 'compiler.options') {
-    chrome.storage.sync.set({[req.compiler]: req.options}, sendResponse)
-    sendMessage({message: 'reload'})
+    set({[req.compiler]: req.options})
+    notifyContent({message: 'reload'})
   }
   else if (req.message === 'content') {
-    chrome.storage.sync.set({content: req.content}, sendResponse)
-    sendMessage({message: 'reload'})
+    set({content: req.content})
+    notifyContent({message: 'reload'})
   }
   else if (req.message === 'defaults') {
-    chrome.storage.sync.set(defaults, sendResponse)
-    sendMessage({message: 'reload'})
+    set(defaults)
+    sendResponse()
+    notifyContent({message: 'reload'})
   }
   else if (req.message === 'theme') {
-    chrome.storage.sync.set({theme: req.theme}, sendResponse)
-    sendMessage({message: 'theme', theme: req.theme})
+    set({theme: req.theme})
+    notifyContent({message: 'theme', theme: req.theme})
   }
   else if (req.message === 'raw') {
-    chrome.storage.sync.set({raw: req.raw}, sendResponse)
-    sendMessage({message: 'raw', raw: req.raw})
+    set({raw: req.raw})
+    notifyContent({message: 'raw', raw: req.raw})
   }
   else if (req.message === 'advanced') {
     chrome.management.getSelf((extension) => {
-      chrome.tabs.create({url: extension.optionsUrl}, sendResponse)
+      chrome.tabs.create({url: extension.optionsUrl})
     })
   }
   else if (req.message === 'origins') {
-    chrome.storage.sync.get('origins', sendResponse)
+    sendResponse({origins: state.origins})
   }
   else if (req.message === 'add') {
-    chrome.storage.sync.get(['match', 'origins'], (res) => {
-      res.origins[req.origin] = res.match
-      chrome.storage.sync.set({origins: res.origins}, sendResponse)
-    })
+    state.origins[req.origin] = match
+    set({origins: state.origins})
+    sendResponse()
   }
   else if (req.message === 'remove') {
-    chrome.storage.sync.get('origins', (res) => {
-      delete res.origins[req.origin]
-      chrome.storage.sync.set({origins: res.origins}, sendResponse)
-    })
+    delete state.origins[req.origin]
+    set({origins: state.origins})
+    sendResponse()
   }
   else if (req.message === 'update') {
-    chrome.storage.sync.get('origins', (res) => {
-      res.origins[req.origin] = req.match
-      chrome.storage.sync.set({origins: res.origins}, sendResponse)
-    })
+    state.origins[req.origin] = req.match
+    set({origins: state.origins})
   }
   return true
 })
 
-function sendMessage (req, res) {
+function notifyContent (req, res) {
   chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
     chrome.tabs.sendMessage(tabs[0].id, req, res)
   })

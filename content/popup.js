@@ -8,11 +8,14 @@ var state = {
   raw: false,
   tab: '',
   tabs: ['theme', 'compiler', 'content'],
-  compilers: {},
+  compilers: [],
   description: {
-    emoji: 'Convert emoji :shortnames: into EmojiOne images',
-    scroll: 'Remember scroll position',
-    toc: 'Generate Table of Contents'
+    compiler: {},
+    content: {
+      emoji: 'Convert emoji :shortnames: into EmojiOne images',
+      scroll: 'Remember scroll position',
+      toc: 'Generate Table of Contents'
+    }
   }
 }
 
@@ -93,6 +96,7 @@ var init = (res) => {
   state.raw = res.raw
   state.tab = localStorage.getItem('tab') || 'theme'
   state.compilers = res.compilers
+  state.description.compiler = res.description
 
   m.redraw()
 }
@@ -141,7 +145,7 @@ m.mount(document.querySelector('body'), {
 
         // compiler
         m('.mdl-tabs__panel #tab-compiler', {class: state.tab === 'compiler' ? 'is-active' : ''},
-          m('select.mdl-shadow--2dp', {onchange: events.compiler.name}, Object.keys(state.compilers).map((name) =>
+          m('select.mdl-shadow--2dp', {onchange: events.compiler.name}, state.compilers.map((name) =>
             m('option', {selected: state.compiler === name}, name)
           )),
           m('.scroll', {class: Object.keys(state.options).length > 8 ? 'max' : ''},
@@ -151,7 +155,7 @@ m.mount(document.querySelector('body'), {
               m('.mdl-cell',
                 m('label.mdl-switch mdl-js-switch mdl-js-ripple-effect',
                   {oncreate, onupdate: onupdate('compiler', key),
-                  title: state.compilers[state.compiler].description[key]},
+                  title: state.description.compiler[key]},
                   m('input[type="checkbox"].mdl-switch__input', {
                     name: key,
                     checked: state.options[key],
@@ -171,7 +175,7 @@ m.mount(document.querySelector('body'), {
             m('.mdl-grid', Object.keys(state.content).map((key) =>
               m('.mdl-cell',
                 m('label.mdl-switch mdl-js-switch mdl-js-ripple-effect',
-                  {oncreate, onupdate: onupdate('content', key), title: state.description[key]},
+                  {oncreate, onupdate: onupdate('content', key), title: state.description.content[key]},
                   m('input[type="checkbox"].mdl-switch__input', {
                     name: key,
                     checked: state.content[key],
