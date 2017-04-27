@@ -47,6 +47,18 @@ var events = {
     })
   },
 
+  all: () => {
+    var origin = '*://*'
+    chrome.permissions.request({origins: [origin + '/*']}, (granted) => {
+      if (granted) {
+        chrome.runtime.sendMessage({message: 'add', origin}, (res) => {
+          state.origin = ''
+          get()
+        })
+      }
+    })
+  },
+
   remove: (origin) => () => {
     chrome.permissions.remove({origins: [origin + '/*']}, (removed) => {
       if (removed) {
@@ -129,7 +141,10 @@ m.mount(document.querySelector('main'), {
         ),
         m('button.mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect',
           {oncreate, onclick: events.add},
-          'Add')
+          'Add'),
+        m('button.mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect',
+          {oncreate, onclick: events.all},
+          'Allow All')
       ),
 
       m('.mdl-cell mdl-cell--8-col-tablet mdl-cell--12-col-desktop',

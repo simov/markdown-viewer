@@ -62,6 +62,7 @@ select {
   margin: 0 10px;
 }
 .mdl-textfield:nth-of-type(1) .mdl-textfield__label:after { bottom: 0; }
+.mdl-textfield + button + button { float: right; }
 
 /*table*/
 .mdl-data-table {
