@@ -4,6 +4,7 @@ var state = {
   protocols: ['https', 'http', '*'],
   origin: '',
   origins: {},
+  header: false,
   timeout: null,
   file: true
 }
@@ -19,6 +20,11 @@ var events = {
 
   origin: (e) => {
     state.origin = e.target.value
+  },
+
+  header: (e) => {
+    state.header = !state.header
+    chrome.runtime.sendMessage({message: 'header', header: state.header})
   },
 
   add: () => {
@@ -74,6 +80,7 @@ chrome.extension.isAllowedFileSchemeAccess((isAllowedAccess) => {
 function get () {
   chrome.runtime.sendMessage({message: 'origins'}, (res) => {
     state.origins = res.origins
+    state.header = res.header
     m.redraw()
   })
 }
@@ -82,6 +89,11 @@ get()
 
 function oncreate (vnode) {
   componentHandler.upgradeElements(vnode.dom)
+}
+function onupdate (vnode) {
+  if (vnode.dom.classList.contains('is-checked') !== state.header) {
+    vnode.dom.classList.toggle('is-checked')
+  }
 }
 
 m.mount(document.querySelector('main'), {
@@ -122,6 +134,19 @@ m.mount(document.querySelector('main'), {
 
       m('.mdl-cell mdl-cell--8-col-tablet mdl-cell--12-col-desktop',
         m('h4', 'Allowed Origins')
+      ),
+      m('.mdl-cell mdl-cell--8-col-tablet mdl-cell--12-col-desktop',
+        m('label.mdl-switch mdl-js-switch mdl-js-ripple-effect',
+          {oncreate, onupdate,
+          title: 'Toggle header detection'},
+          m('input[type="checkbox"].mdl-switch__input', {
+            checked: state.header,
+            onchange: events.header
+          }),
+          m('span.mdl-switch__label', 'Detect ',
+            m('code', 'text/markdown'), ' and ', m('code', 'text/x-markdown'),
+            ' content type')
+        )
       ),
       m('.mdl-cell mdl-cell--8-col-tablet mdl-cell--12-col-desktop',
         m('table.mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp',

@@ -13,6 +13,7 @@ var defaults = {
     toc: false
   },
   raw: false,
+  header: true,
   match,
   origins: {
     'file://': match
@@ -63,6 +64,10 @@ chrome.storage.sync.get((res) => {
   if (options.content.emoji === undefined) {
     options.content.emoji = false
   }
+  // v3.0 -> v3.1
+  if (options.header === undefined) {
+    options.header = true
+  }
 
   Object.keys(md).forEach((compiler) => {
     if (!options[compiler]) {
@@ -83,16 +88,40 @@ chrome.storage.sync.get((res) => {
   })
 })
 
+function inject (id) {
+  chrome.tabs.executeScript(id, {
+    code: [
+      'document.querySelector("pre").style.visibility = "hidden"',
+      'var theme = "' + state.theme + '"',
+      'var raw = ' + state.raw,
+      'var content = ' + JSON.stringify(state.content),
+      'var compiler = "' + state.compiler + '"'
+    ].join(';'), runAt: 'document_start'})
+
+  chrome.tabs.insertCSS(id, {file: 'css/content.css', runAt: 'document_start'})
+  chrome.tabs.insertCSS(id, {file: 'vendor/prism.css', runAt: 'document_start'})
+
+  chrome.tabs.executeScript(id, {file: 'vendor/mithril.min.js', runAt: 'document_start'})
+  chrome.tabs.executeScript(id, {file: 'vendor/prism.js', runAt: 'document_start'})
+  chrome.tabs.executeScript(id, {file: 'content/emoji.js', runAt: 'document_start'})
+  chrome.tabs.executeScript(id, {file: 'content/content.js', runAt: 'document_start'})
+}
+
 chrome.tabs.onUpdated.addListener((id, info, tab) => {
   if (info.status === 'loading') {
     chrome.tabs.executeScript(id, {
-      code: 'JSON.stringify({location, loaded: window.state})',
+      code: 'JSON.stringify({' +
+        'location: window.location,' +
+        'contentType: document.contentType,' +
+        'loaded: !!window.state' +
+      '})',
       runAt: 'document_start'
     }, (res) => {
       if (chrome.runtime.lastError) {
         // Origin not allowed
         return
       }
+
       try {
         var win = JSON.parse(res)
       }
@@ -101,28 +130,22 @@ chrome.tabs.onUpdated.addListener((id, info, tab) => {
         return
       }
 
-      var path =
-        state.origins[win.location.origin] ||
-        state.origins['*://' + win.location.host] ||
-        state.origins['*://*']
+      if (win.loaded) {
+        return
+      }
 
-      if (!win.loaded && new RegExp(path).test(win.location.href)) {
-        chrome.tabs.executeScript(id, {
-          code: [
-            'document.querySelector("pre").style.visibility = "hidden"',
-            'var theme = "' + state.theme + '"',
-            'var raw = ' + state.raw,
-            'var content = ' + JSON.stringify(state.content),
-            'var compiler = "' + state.compiler + '"'
-          ].join(';'), runAt: 'document_start'})
+      if (state.header && /text\/(?:x-)?markdown/i.test(win.contentType)) {
+        inject(id)
+      }
+      else {
+        var path =
+          state.origins[win.location.origin] ||
+          state.origins['*://' + win.location.host] ||
+          state.origins['*://*']
 
-        chrome.tabs.insertCSS(id, {file: 'css/content.css', runAt: 'document_start'})
-        chrome.tabs.insertCSS(id, {file: 'vendor/prism.css', runAt: 'document_start'})
-
-        chrome.tabs.executeScript(id, {file: 'vendor/mithril.min.js', runAt: 'document_start'})
-        chrome.tabs.executeScript(id, {file: 'vendor/prism.js', runAt: 'document_start'})
-        chrome.tabs.executeScript(id, {file: 'content/emoji.js', runAt: 'document_start'})
-        chrome.tabs.executeScript(id, {file: 'content/content.js', runAt: 'document_start'})
+        if (new RegExp(path).test(win.location.href)) {
+          inject(id)
+        }
       }
     })
   }
@@ -171,7 +194,10 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
     })
   }
   else if (req.message === 'origins') {
-    sendResponse({origins: state.origins})
+    sendResponse({origins: state.origins, header: state.header})
+  }
+  else if (req.message === 'header') {
+    set({header: req.header})
   }
   else if (req.message === 'add') {
     state.origins[req.origin] = match
