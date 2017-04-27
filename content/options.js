@@ -113,7 +113,7 @@ m.mount(document.querySelector('main'), {
     m('.mdl-grid',
       (!state.file || null) &&
       m('.mdl-cell mdl-cell--8-col-tablet mdl-cell--12-col-desktop',
-        m('.bs-callout bs-callout-danger',
+        m('.bs-callout',
           m('h4', 'Access to file:// URLs is Disabled'),
           m('img.mdl-shadow--2dp', {src: '/images/file-urls.png'}),
           m('button.mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect',
@@ -124,74 +124,72 @@ m.mount(document.querySelector('main'), {
       ),
 
       m('.mdl-cell mdl-cell--8-col-tablet mdl-cell--12-col-desktop',
-        m('h4', 'Add New Origin')
-      ),
-      m('.mdl-cell mdl-cell--8-col-tablet mdl-cell--12-col-desktop',
-        m('select.mdl-shadow--2dp', {onchange: events.protocol},
-          state.protocols.map((protocol) =>
-          m('option', {value: protocol}, protocol + '://')
-        )),
-        m('.mdl-textfield mdl-js-textfield', {oncreate},
-          m('input.mdl-textfield__input', {
-            value: state.origin,
-            onchange: events.origin,
-            placeholder: 'raw.githubusercontent.com'
-          }),
-          m('label.mdl-textfield__label')
-        ),
-        m('button.mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect',
-          {oncreate, onclick: events.add},
-          'Add'),
-        m('button.mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect',
-          {oncreate, onclick: events.all},
-          'Allow All')
+        m('.bs-callout',
+          m('h4', 'Add New Origin'),
+          m('select.mdl-shadow--2dp', {onchange: events.protocol},
+            state.protocols.map((protocol) =>
+            m('option', {value: protocol}, protocol + '://')
+          )),
+          m('.mdl-textfield mdl-js-textfield', {oncreate},
+            m('input.mdl-textfield__input', {
+              value: state.origin,
+              onchange: events.origin,
+              placeholder: 'raw.githubusercontent.com'
+            }),
+            m('label.mdl-textfield__label')
+          ),
+          m('button.mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect',
+            {oncreate, onclick: events.add},
+            'Add'),
+          m('button.mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect',
+            {oncreate, onclick: events.all},
+            'Allow All')
+        )
       ),
 
       m('.mdl-cell mdl-cell--8-col-tablet mdl-cell--12-col-desktop',
-        m('h4', 'Allowed Origins')
-      ),
-      m('.mdl-cell mdl-cell--8-col-tablet mdl-cell--12-col-desktop',
-        m('label.mdl-switch mdl-js-switch mdl-js-ripple-effect',
-          {oncreate, onupdate,
-          title: 'Toggle header detection'},
-          m('input[type="checkbox"].mdl-switch__input', {
-            checked: state.header,
-            onchange: events.header
-          }),
-          m('span.mdl-switch__label', 'Detect ',
-            m('code', 'text/markdown'), ' and ', m('code', 'text/x-markdown'),
-            ' content type')
-        )
-      ),
-      m('.mdl-cell mdl-cell--8-col-tablet mdl-cell--12-col-desktop',
-        m('table.mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp',
-          Object.keys(state.origins).sort().map((origin) =>
-          m('tr',
-            m('td.mdl-data-table__cell--non-numeric',
-              origin.replace(/^(\*|file|http(s)?).*/, '$1')),
-            m('td.mdl-data-table__cell--non-numeric',
-              origin.replace(/^(\*|file|http(s)?):\/\//, '')),
-            m('td.mdl-data-table__cell--non-numeric',
-              m('.mdl-textfield mdl-js-textfield', {oncreate},
-                m('input.mdl-textfield__input',
-                  {onkeyup: events.update(origin), value: state.origins[origin]}),
-                m('label.mdl-textfield__label')
-              )
-            ),
-            m('td',
-              (origin !== 'file://' || null) &&
-              m('button.mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon',
-                {oncreate, onclick: events.refresh(origin), title: 'Refresh'},
-                m('i.material-icons icon-refresh')
+        m('.bs-callout',
+          m('h4', 'Allowed Origins'),
+          m('label.mdl-switch mdl-js-switch mdl-js-ripple-effect',
+            {oncreate, onupdate,
+            title: 'Toggle header detection'},
+            m('input[type="checkbox"].mdl-switch__input', {
+              checked: state.header,
+              onchange: events.header
+            }),
+            m('span.mdl-switch__label', 'Detect ',
+              m('code', 'text/markdown'), ' and ', m('code', 'text/x-markdown'),
+              ' content type')
+          ),
+          m('table.mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp',
+            Object.keys(state.origins).sort().map((origin) =>
+            m('tr',
+              m('td.mdl-data-table__cell--non-numeric',
+                origin.replace(/^(\*|file|http(s)?).*/, '$1')),
+              m('td.mdl-data-table__cell--non-numeric',
+                origin.replace(/^(\*|file|http(s)?):\/\//, '')),
+              m('td.mdl-data-table__cell--non-numeric',
+                m('.mdl-textfield mdl-js-textfield', {oncreate},
+                  m('input.mdl-textfield__input',
+                    {onkeyup: events.update(origin), value: state.origins[origin]}),
+                  m('label.mdl-textfield__label')
+                )
               ),
-              (origin !== 'file://' || null) &&
-              m('button.mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon',
-                {oncreate, onclick: events.remove(origin), title: 'Remove'},
-                m('i.material-icons icon-remove')
+              m('td',
+                (origin !== 'file://' || null) &&
+                m('button.mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon',
+                  {oncreate, onclick: events.refresh(origin), title: 'Refresh'},
+                  m('i.material-icons icon-refresh')
+                ),
+                (origin !== 'file://' || null) &&
+                m('button.mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon',
+                  {oncreate, onclick: events.remove(origin), title: 'Remove'},
+                  m('i.material-icons icon-remove')
+                )
               )
             )
-          )
-        ))
+          ))
+        )
       )
     )
 })
