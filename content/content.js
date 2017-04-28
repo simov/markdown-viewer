@@ -23,9 +23,6 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
     state.raw = req.raw
     m.redraw()
   }
-  else if (req.message === 'ping') {
-    sendResponse({message: 'pong'})
-  }
 })
 
 var oncreate = {

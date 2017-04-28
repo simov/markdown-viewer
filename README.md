@@ -96,9 +96,17 @@ In case you really want to you can enable the extension for **all** origins:
 
 ![all-origins]
 
+Alternatively you can use the `Allow All` button.
+
+### Header Detection
+
+When this option is enabled the extension will check for the `text/markdown` and `text/x-markdown` content-type header before trying to match the path:
+
+![header-detection]
+
 ### Path Matching
 
-By default the extension renders only URLs ending with a markdown file extension:
+If the header detection is disabled or a proper content-type header is missing, the extension will check if the URL is ending with a markdown file extension:
 
 ![path-regexp]
 
@@ -114,7 +122,7 @@ Note that the Chrome's consent popup shows up only when you add the origin for t
 
 ### Refresh Origin
 
-The extension synchronizes your preferences across all your devices using Google Sync. The list of your allowed origins is being synced too, but the actual permissions that you give using the Chrome's consent popup are not being synced.
+The extension synchronizes your preferences across all your devices using Google Sync. The list of your allowed origins is being synced too, but the actual permissions that you give using the Chrome's consent popup cannot be synced.
 
 In case you recently added a new origin on one of your devices you'll have to explicitly allow it on your other devices. The little refresh button next to each origin is used for that.
 
@@ -188,4 +196,5 @@ SOFTWARE.
   [file-urls]: http://i.imgur.com/eqiwzEz.png
   [add-origin]: http://i.imgur.com/56zWesT.png
   [all-origins]: http://i.imgur.com/GiLeftR.png
+  [header-detection]: http://i.imgur.com/EYdmbSd.png
   [path-regexp]: http://i.imgur.com/IJuNA63.png

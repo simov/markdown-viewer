@@ -62,6 +62,7 @@ select {
   margin: 0 10px;
 }
 .mdl-textfield:nth-of-type(1) .mdl-textfield__label:after { bottom: 0; }
+.mdl-textfield + button + button { float: right; }
 
 /*table*/
 .mdl-data-table {
@@ -87,36 +88,22 @@ select {
 .mdl-data-table .mdl-textfield.is-focused { color: #272727; }
 .mdl-data-table .mdl-textfield__label:after { bottom: 0; }
 
-
-/*file url*/
-.bs-callout { background: #fcfcfc; }
-.bs-callout img { display: block; margin-bottom: 20px; }
-.bs-callout button { background: #d9534f; color: #fff; }
-.bs-callout button:hover { background: #e57471; }
-
 /*bootstrap callout*/
 .bs-callout {
   padding: 20px;
   margin: 20px 0 0;
   border: 1px solid #eee;
   border-left-width: 5px;
+  border-left-color: #607d8b;
   border-radius: 3px;
+  background: #fcfcfc;
 }
 .bs-callout h4 {
   margin-top: 0;
 }
-.bs-callout p:last-child {
-  margin-bottom: 0;
+.bs-callout img {
+  display: block; margin-bottom: 20px;
 }
-.bs-callout code {
-  border-radius: 3px;
-}
-.bs-callout+.bs-callout {
-  margin-top: -5px;
-}
-.bs-callout-danger {
-  border-left-color: #d9534f;
-}
-.bs-callout-danger h4 {
-  color: #d9534f;
+.bs-callout .mdl-switch {
+  margin-bottom: 20px;
 }
