@@ -77,15 +77,6 @@ chrome.storage.sync.get((res) => {
 
   chrome.storage.sync.set(options)
   state = JSON.parse(JSON.stringify(options))
-
-  // reload extension bug
-  chrome.permissions.getAll((permissions) => {
-    var origins = Object.keys(res.origins || {})
-    chrome.permissions.remove({
-      origins: permissions.origins
-        .filter((origin) => (origins.indexOf(origin.slice(0, -2)) === -1))
-    })
-  })
 })
 
 function inject (id) {
