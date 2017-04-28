@@ -27,7 +27,7 @@ var events = {
 
   compiler: {
     name: (e) => {
-      state.compiler = Object.keys(state.compilers)[e.target.selectedIndex]
+      state.compiler = state.compilers[e.target.selectedIndex]
       chrome.runtime.sendMessage({
         message: 'compiler.name',
         compiler: state.compiler
