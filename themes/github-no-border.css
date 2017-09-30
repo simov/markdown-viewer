@@ -12,7 +12,7 @@
   font-size: 16px;
   line-height: 1.5;
   word-wrap: break-word;
-  /*border-width: 0px;*/
+  border-width: 0px;
 }
 
 .markdown-body .pl-c {
@@ -708,55 +708,5 @@
   border-bottom-color: #eee;
 }
 
-
-/*GitHub Dark*/
-
-body {
-  background: #181818;
-}
-
-.markdown-body {
-  color: #c0c0c0 !important;
-  background: #181818 !important;
-  border-color: #484848 !important;
-}
-.markdown-body table { color: #c0c0c0 !important; }
-.markdown-body table th { border-color: #343434 !important; }
-.markdown-body table td { border-color: #343434 !important; }
-.markdown-body table tr {
-  background: #141414 !important;
-  border-color: #343434 !important;
-}
-.markdown-body table tr:nth-child(2n) { background: #181818 !important; }
-.markdown-body hr { background: #383838 !important; }
-.markdown-body h1,
-.markdown-body h2 { border-color: #343434 !important;  }
-.markdown-body h1, .markdown-body h2,
-.markdown-body h3, .markdown-body h4,
-.markdown-body .octicon-link { color: #e0e0e0 !important; }
-.markdown-body blockquote strong { color: #808080 !important; }
-.markdown-body blockquote { border-color: #343434 !important; }
-.markdown-body blockquote,
-.markdown-body blockquote code { color: #666 !important; }
-.markdown-body code, .markdown-body tt, .markdown-body pre,
-.markdown-body .highlight pre, body.blog pre {
-  border: 1px solid rgba(255,255,255,.1) !important;
-}
-.markdown-body code, .markdown-body tt { background: #202020 !important; }
-.markdown-body pre {
-  background: #141414 !important; color: #ccc !important;
-}
-.markdown-body pre code { background: none !important; border: 0 !important; }
-.markdown-body code[class*="language-"] {
-  color: #c0c0c0 !important;
-  text-shadow: none !important;
-}
-.markdown-body code[class*="language-"] .operator,
-.markdown-body code[class*="language-"] .string {
-  background: none !important;
-}
-.markdown-body a[href*="/labels/"],
-.markdown-body a:not([href*="/labels/"]),
-.markdown-body blockquote a code { color: #4183C4 !important; }
-
+/*Markdown Viewer*/
 .markdown-body summary:hover { cursor: pointer; }
