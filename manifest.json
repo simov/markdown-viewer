@@ -31,6 +31,7 @@
   "web_accessible_resources": [
     "/themes/github.css",
     "/themes/github-dark.css",
+    "/themes/github-no-border.css",
 
     "/themes/godspeed.css",
     "/themes/new-modern.css",
