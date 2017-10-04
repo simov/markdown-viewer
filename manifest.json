@@ -21,6 +21,7 @@
       "/vendor/remark.min.js",
       "/vendor/remark-html.min.js",
       "/vendor/remark-slug.min.js",
+      "/vendor/remark-frontmatter.min.js",
       "/vendor/showdown.min.js",
       "/vendor/markdown-it.min.js",
       "/vendor/remarkable.min.js",

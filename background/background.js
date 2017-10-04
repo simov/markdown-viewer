@@ -68,6 +68,10 @@ chrome.storage.sync.get((res) => {
   if (options.header === undefined) {
     options.header = true
   }
+  // v3.1 -> v3.2
+  if (options.remark && options.remark.yaml) {
+    delete options.remark.yaml
+  }
 
   Object.keys(md).forEach((compiler) => {
     if (!options[compiler]) {
