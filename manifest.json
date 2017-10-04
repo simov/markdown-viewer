@@ -21,6 +21,7 @@
       "/vendor/remark.min.js",
       "/vendor/remark-html.min.js",
       "/vendor/remark-slug.min.js",
+      "/vendor/remark-frontmatter.min.js",
       "/background/marked.js",
       "/background/remark.js",
       "/background/background.js"
