@@ -39,13 +39,9 @@ md.showdown = {
     }
     return result
   },
-  compile: (markdown, sendResponse) => {
-    chrome.storage.sync.get('showdown', (res) => {
-      var converter = new showdown.Converter(res.showdown)
-      var html = converter.makeHtml(markdown)
-      sendResponse({message: 'html', html})
-    })
-  }
+  compile: (markdown) =>
+    new showdown.Converter(state.showdown)
+      .makeHtml(markdown)
 }
 
 md.showdown.defaults = md.showdown.flavor('github')

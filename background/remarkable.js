@@ -17,11 +17,7 @@ md.remarkable = {
     typographer: 'Enable some language-neutral replacement + quotes beautification',
     xhtmlOut: 'Use / to close single tags (<br />)'
   },
-  compile: (markdown, sendResponse) => {
-    chrome.storage.sync.get('remarkable', (res) => {
-      var md = new Remarkable('full', res.remarkable)
-      var html = md.render(markdown)
-      sendResponse({message: 'html', html})
-    })
-  }
+  compile: (markdown) =>
+    new Remarkable('full', state.remarkable)
+      .render(markdown)
 }

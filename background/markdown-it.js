@@ -17,11 +17,7 @@ md['markdown-it'] = {
     typographer: 'Enable some language-neutral replacement + quotes beautification',
     xhtmlOut: 'Use / to close single tags (<br />)'
   },
-  compile: (markdown, sendResponse) => {
-    chrome.storage.sync.get('markdown-it', (res) => {
-      var md = window.markdownit(res['markdown-it'])
-      var html = md.render(markdown)
-      sendResponse({message: 'html', html})
-    })
-  }
+  compile: (markdown) =>
+    markdownit(state['markdown-it'])
+      .render(markdown)
 }
