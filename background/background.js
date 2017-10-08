@@ -10,7 +10,8 @@ var defaults = {
   content: {
     emoji: false,
     scroll: true,
-    toc: false
+    toc: false,
+    mathjax: false,
   },
   raw: false,
   header: true,
@@ -71,6 +72,9 @@ chrome.storage.sync.get((res) => {
   // v3.1 -> v3.2
   if (options.remark && options.remark.yaml) {
     delete options.remark.yaml
+  }
+  if (options.content.mathjax === undefined) {
+    options.content.mathjax = false
   }
 
   Object.keys(md).forEach((compiler) => {
@@ -148,7 +152,20 @@ chrome.tabs.onUpdated.addListener((id, info, tab) => {
 
 chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
   if (req.message === 'markdown') {
-    md[state.compiler].compile(req.markdown, sendResponse)
+    var markdown = req.markdown
+
+    if (state.content.mathjax) {
+      var m = mathjax()
+      markdown = m.tokenize(markdown)
+    }
+
+    var html = md[state.compiler].compile(markdown)
+
+    if (state.content.mathjax) {
+      html = m.detokenize(html)
+    }
+
+    sendResponse({message: 'html', html})
   }
   else if (req.message === 'settings') {
     sendResponse(Object.assign({}, state, {

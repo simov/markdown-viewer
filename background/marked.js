@@ -21,10 +21,6 @@ md.marked = {
     smartypants: 'Use "smart" typographic punctuation\nfor things like quotes and dashes',
     tables: 'Enable GFM tables\n(requires the gfm option to be true)'
   },
-  compile: (markdown, sendResponse) => {
-    chrome.storage.sync.get('marked', (res) => {
-      var html = marked(markdown, res.marked)
-      sendResponse({message: 'html', html})
-    })
-  }
+  compile: (markdown) =>
+    marked(markdown, state.marked)
 }
