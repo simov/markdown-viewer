@@ -102,7 +102,9 @@ function inject (id) {
 
   chrome.tabs.executeScript(id, {file: 'vendor/mithril.min.js', runAt: 'document_start'})
   chrome.tabs.executeScript(id, {file: 'vendor/prism.js', runAt: 'document_start'})
-  chrome.tabs.executeScript(id, {file: 'content/emoji.js', runAt: 'document_start'})
+  if (state.content.emoji) {
+    chrome.tabs.executeScript(id, {file: 'content/emoji.js', runAt: 'document_start'})
+  }
   chrome.tabs.executeScript(id, {file: 'content/content.js', runAt: 'document_start'})
 }
 
