@@ -27,6 +27,7 @@
       "/vendor/remarkable.min.js",
       "/vendor/commonmark.min.js",
       "/vendor/markdown-js.min.js",
+      "/background/mathjax.js",
       "/background/marked.js",
       "/background/remark.js",
       "/background/showdown.js",

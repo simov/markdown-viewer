@@ -17,17 +17,13 @@ md.remark = {
     pedantic: 'Don\'t fix any of the original markdown\nbugs or poor behavior',
     sanitize: 'Disable HTML tag rendering',
   },
-  compile: (markdown, sendResponse) => {
-    chrome.storage.sync.get('remark', (res) => {
-      var html = remark.unified()
-        .use(remark.parse, res.remark)
-        .use(remark.stringify)
-        .use(remarkSlug)
-        .use(remarkFrontmatter, ['yaml', 'toml'])
-        .use(remarkHTML, res.remark) // sanitize
-        .processSync(markdown)
-        .contents
-      sendResponse({message: 'html', html})
-    })
-  }
+  compile: (markdown) =>
+    remark.unified()
+      .use(remark.parse, state.remark)
+      .use(remark.stringify)
+      .use(remarkSlug)
+      .use(remarkFrontmatter, ['yaml', 'toml'])
+      .use(remarkHTML, state.remark) // sanitize
+      .processSync(markdown)
+      .contents
 }
