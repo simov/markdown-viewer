@@ -120,12 +120,10 @@ function mount () {
                 tex2jax: {
                   inlineMath: [
                     ['$', '$'],
-                    ['\\(', '\\)'],
                     ['\\\\(', '\\\\)'],
                   ],
                   displayMath: [
                     ['$$', '$$'],
-                    ['\\[', '\\]'],
                     ['\\\\[', '\\\\]'],
                   ],
                   processEscapes: true
@@ -209,7 +207,7 @@ var toc = (
   .map((node) => ({
     id: node.getAttribute('id'),
     level: parseInt(node.tagName.replace('H', '')),
-    title: node.innerText
+    title: node.innerHTML
   }))
   .reduce((html, header, index, headers) => {
     if (index) {
