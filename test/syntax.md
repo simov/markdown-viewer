@@ -143,6 +143,10 @@ _**`something`**_
 
 [some-url][]
 
+[parentheses in URL](https://en.wikipedia.org/wiki/Scheme_(programming_language))
+
+[escaped parentheses in URL](https://en.wikipedia.org/wiki/Scheme_\(programming_language\))
+
 <someone@gmail.com>
 
 <https://github.com/simov/markdown-viewer>
@@ -280,6 +284,23 @@ default      | align left      | centered           | align right
 
 # Extras
 
+## Escapes
+
+<em\>HTML tags</em\>
+
+\\ \` \* \_ \{ \} \# \+ \- \. \!
+
+\[ mathjax \]
+
+\( mathjax \)
+
+````
+```
+fenced code block
+```
+````
+
+
 ## Mention
 
 @simov
@@ -294,9 +315,18 @@ default      | align left      | centered           | align right
 
 ## Footnotes
 
-Something [^1]
 
-  [^1]: https://github.com/simov/markdown-viewer
+Something something[^named]
+
+And something else[^1], and a link[^2]
+
+
+[^1]: This reference footnote contains a paragraph...
+
+    * ...and a list
+
+[^2]: https://github.com/simov/markdown-viewer
+[^named]: https://github.com/simov/markdown-viewer
 
 
 ## Syntax Highlighting
@@ -474,6 +504,130 @@ var some: string = "typescript";
 ```
 
 
+# MathJax
+
+## Delimiters
+
+Delimiter                         | Format      | Expression                  | Result                    | Support
+:---                              | :---:       | :---                        | :---:                     | :---:
+No delimiters                     | `str`       | `\sqrt{3x-1}+(1+x)^2`       | \sqrt{3x-1}+(1+x)^2       | no
+Bracket without backslash         | `[str]`     | `[\sqrt{3x-1}+(1+x)^2]`     | [\sqrt{3x-1}+(1+x)^2]     | no
+Single backslash with bracket     | `\[str\]`   | `\[\sqrt{3x-1}+(1+x)^2\]`   | \[\sqrt{3x-1}+(1+x)^2\]   | **yes**
+Double backslash with bracket     | `\\[str\\]` | `\\[\sqrt{3x-1}+(1+x)^2\\]` | \\[\sqrt{3x-1}+(1+x)^2\\] | no
+Parentheses without backslash     | `(str)`     | `(\sqrt{3x-1}+(1+x)^2)`     | (\sqrt{3x-1}+(1+x)^2)     | no
+Single backslash with parentheses | `\(str\)`   | `\(\sqrt{3x-1}+(1+x)^2\)`   | \(\sqrt{3x-1}+(1+x)^2\)   | **yes**
+Double backslash with parentheses | `\\(str\\)` | `\\(\sqrt{3x-1}+(1+x)^2\\)` | \\(\sqrt{3x-1}+(1+x)^2\\) | no
+Single dollar sign                | `$str$`     | `$\sqrt{3x-1}+(1+x)^2$`     | $\sqrt{3x-1}+(1+x)^2$     | **yes**
+Double dollar sign                | `$$str$$`   | `$$\sqrt{3x-1}+(1+x)^2$$`   | $$\sqrt{3x-1}+(1+x)^2$$   | **yes**
+
+## Markdown
+
+Expressions containing underscore `_`:
+
+### `\(` single line `\)`
+
+`\(x_i = x_\gamma\)` \(x_i = x_\gamma\)
+
+### `\(` multiline `\)`
+
+```
+\(
+x_i = x_\gamma
+\)
+```
+
+\(
+x_i = x_\gamma
+\)
+
+---
+
+### `\[` single line `\]`
+
+`\[x_i = x_\gamma\]` \[x_i = x_\gamma\]
+
+### `\[` multiline `\]`
+
+```
+\[
+x_i = x_\gamma
+\]
+```
+
+\[
+x_i = x_\gamma
+\]
+
+---
+
+### `$` single line `$`
+
+`$x_i = x_\gamma$` $x_i = x_\gamma$
+
+### `$` multiline `$`
+
+**Not supported!**
+
+```
+$
+x_i = x_\gamma
+$
+```
+
+$
+x_i = x_\gamma
+$
+
+---
+
+### `$$` single line `$$`
+
+`$$x_i = x_\gamma$$` $$x_i = x_\gamma$$
+
+### `$$` multiline `$$`
+
+```
+$$
+x_i = x_\gamma
+$$
+```
+
+$$
+x_i = x_\gamma
+$$
+
+---
+
+### `\begin{}` multiline `\end{}`
+
+```
+\begin{align}
+x_i = x_\gamma
+\end{align}
+```
+
+\begin{align}
+x_i = x_\gamma
+\end{align}
+
+
+## HTML
+
+`<`, `>` and `&` symbols
+
+- `\(x<y\)` \(x<y\)
+- `\(x>y\)` \(x>y\)
+- `\(x&a\)` \(x&a\)
+
+## **Money**
+
+\$6.20 and \$0.5
+
+$4.40
+
+---
+
+
 # Quirks
 
 1. item 1
@@ -485,3 +639,29 @@ code block
 2. item 2
 
 3. item 3
+
+# Nested tables in lists
+
+case 0: a table at indentation level 0, after a paragraph (at level 0) -- this should render the table not-indented
+
+|A|B|
+|---|---|
+|1|2|
+
+* case 1: a table at indentation level 1, after a list item at level 1 -- this should render the table indented once
+
+    |A|B|
+    |---|---|
+    |1|2|
+
+    * case 2: a table at indentation level 2, after a list item at level 2 -- this should render the table indented twice
+
+        |A|B|
+        |---|---|
+        |1|2|
+
+case 3: a table at indentation level 1, after a a paragraph (at level 0) -- this should render the raw text into a code block
+
+    |A|B|
+    |---|---|
+    |1|2|
