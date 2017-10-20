@@ -294,6 +294,8 @@ default      | align left      | centered           | align right
 
 \( mathjax \)
 
+`` `\(` ``
+
 ````
 ```
 fenced code block
