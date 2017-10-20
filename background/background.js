@@ -2,7 +2,7 @@
 // chrome.storage.sync.clear()
 // chrome.permissions.getAll((p) => chrome.permissions.remove({origins: p.origins}))
 
-var match = '\\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*)?$'
+var match = '\\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\\?.*)?$'
 
 var defaults = {
   theme: 'github',
