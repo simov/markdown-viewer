@@ -131,7 +131,12 @@ function mount () {
                 showMathMenu: false,
                 showProcessingMessages: false,
                 messageStyle: 'none',
+                skipStartupTypeset: true, // disable initial rendering
               })
+              // set specific container to render, can be delayed too
+              MathJax.Hub.Queue(
+                ['Typeset', MathJax.Hub, '_html']
+              )
             `))
             dom.push(m('script', {
               src: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js'
@@ -207,7 +212,7 @@ var toc = (
   .map((node) => ({
     id: node.getAttribute('id'),
     level: parseInt(node.tagName.replace('H', '')),
-    title: node.innerHTML
+    title: node.innerText
   }))
   .reduce((html, header, index, headers) => {
     if (index) {
