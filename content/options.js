@@ -89,7 +89,7 @@ chrome.extension.isAllowedFileSchemeAccess((isAllowedAccess) => {
   m.redraw()
 })
 
-function get () {
+var get = () => {
   chrome.runtime.sendMessage({message: 'origins'}, (res) => {
     state.origins = res.origins
     state.header = res.header
@@ -99,96 +99,127 @@ function get () {
 
 get()
 
-function oncreate (vnode) {
-  componentHandler.upgradeElements(vnode.dom)
+var oncreate = {
+  ripple: (vnode) => {
+    mdc.ripple.MDCRipple.attachTo(vnode.dom)
+  }
 }
-function onupdate (vnode) {
-  if (vnode.dom.classList.contains('is-checked') !== state.header) {
-    vnode.dom.classList.toggle('is-checked')
+
+var onupdate = {
+  switch: (vnode) => {
+    if (vnode.dom.classList.contains('is-checked') !== state.header) {
+      vnode.dom.classList.toggle('is-checked')
+    }
   }
 }
 
 m.mount(document.querySelector('main'), {
   view: () =>
-    m('.mdl-grid',
+    m('#options',
+
+      // file access is disabled
       (!state.file || null) &&
-      m('.mdl-cell mdl-cell--8-col-tablet mdl-cell--12-col-desktop',
-        m('.bs-callout',
-          m('h4', 'Access to file:// URLs is Disabled'),
-          m('img.mdl-shadow--2dp', {src: '/images/file-urls.png'}),
-          m('button.mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect',
-            {oncreate, onclick: events.file},
-            'Enable Access to file:// URLs'
+      m('.bs-callout m-file-access',
+        m('h4.mdc-typography--headline', 'Access to file:// URLs is Disabled'),
+        m('img.mdc-elevation--z2', {src: '/images/file-urls.png'}),
+        m('button.mdc-button mdc-button--raised m-button', {
+          oncreate: oncreate.ripple,
+          onclick: events.file
+          },
+          'Enable Access to file:// URLs'
+        )
+      ),
+
+      // add new origin
+      m('.bs-callout m-add-new-origin',
+        m('h4.mdc-typography--headline', 'Add New Origin'),
+        m('select.mdc-elevation--z2 m-select', {
+          onchange: events.protocol
+          },
+          state.protocols.map((protocol) =>
+          m('option', {
+            value: protocol
+            },
+            protocol + '://'
           )
+        )),
+        m('.mdc-textfield m-textfield',
+          m('input.mdc-textfield__input', {
+            type: 'text',
+            value: state.origin,
+            onchange: events.origin,
+            placeholder: 'raw.githubusercontent.com'
+          })
+        ),
+        m('button.mdc-button mdc-button--raised m-button', {
+          oncreate: oncreate.ripple,
+          onclick: events.add
+          },
+          'Add'
+        ),
+        m('button.mdc-button mdc-button--raised m-button', {
+          oncreate: oncreate.ripple,
+          onclick: events.all
+          },
+          'Allow All'
         )
       ),
 
-      m('.mdl-cell mdl-cell--8-col-tablet mdl-cell--12-col-desktop',
-        m('.bs-callout',
-          m('h4', 'Add New Origin'),
-          m('select.mdl-shadow--2dp', {onchange: events.protocol},
-            state.protocols.map((protocol) =>
-            m('option', {value: protocol}, protocol + '://')
-          )),
-          m('.mdl-textfield mdl-js-textfield', {oncreate},
-            m('input.mdl-textfield__input', {
-              value: state.origin,
-              onchange: events.origin,
-              placeholder: 'raw.githubusercontent.com'
-            }),
-            m('label.mdl-textfield__label')
-          ),
-          m('button.mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect',
-            {oncreate, onclick: events.add},
-            'Add'),
-          m('button.mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect',
-            {oncreate, onclick: events.all},
-            'Allow All')
-        )
-      ),
+      // allowed origins
+      m('.bs-callout m-allowed-origins',
+        m('h4.mdc-typography--headline', 'Allowed Origins'),
+        m('label.mdc-switch m-switch', {
+          onupdate: onupdate.switch,
+          title: 'Toggle header detection'
+          },
+          m('input.mdc-switch__native-control', {
+            type: 'checkbox',
+            checked: state.header,
+            onchange: events.header
+          }),
+          m('.mdc-switch__background', m('.mdc-switch__knob')),
+          m('span.mdc-switch-label',
+            'Detect ',
+            m('code', 'text/markdown'),
+            ' and ',
+            m('code', 'text/x-markdown'),
+            ' content type'
+          )
+        ),
 
-      m('.mdl-cell mdl-cell--8-col-tablet mdl-cell--12-col-desktop',
-        m('.bs-callout',
-          m('h4', 'Allowed Origins'),
-          m('label.mdl-switch mdl-js-switch mdl-js-ripple-effect',
-            {oncreate, onupdate,
-            title: 'Toggle header detection'},
-            m('input[type="checkbox"].mdl-switch__input', {
-              checked: state.header,
-              onchange: events.header
-            }),
-            m('span.mdl-switch__label', 'Detect ',
-              m('code', 'text/markdown'), ' and ', m('code', 'text/x-markdown'),
-              ' content type')
-          ),
-          m('table.mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp',
-            Object.keys(state.origins).sort().map((origin) =>
-            m('tr',
-              m('td.mdl-data-table__cell--non-numeric',
-                origin.replace(/^(\*|file|http(s)?).*/, '$1')),
-              m('td.mdl-data-table__cell--non-numeric',
-                origin.replace(/^(\*|file|http(s)?):\/\//, '')),
-              m('td.mdl-data-table__cell--non-numeric',
-                m('.mdl-textfield mdl-js-textfield', {oncreate},
-                  m('input.mdl-textfield__input',
-                    {onkeyup: events.update(origin), value: state.origins[origin]}),
-                  m('label.mdl-textfield__label')
-                )
+        m('ul.mdc-elevation--z2 m-list',
+          Object.keys(state.origins).sort().map((origin) =>
+            m('li',
+              m('span', origin.replace(/^(\*|file|http(s)?).*/, '$1')),
+              m('span', origin.replace(/^(\*|file|http(s)?):\/\//, '')),
+              m('.mdc-textfield m-textfield', {
+                oncreate: oncreate.textfield
+                },
+                m('input.mdc-textfield__input', {
+                  type: 'text',
+                  onkeyup: events.update(origin),
+                  value: state.origins[origin],
+                })
               ),
-              m('td',
-                (origin !== 'file://' || null) &&
-                m('button.mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon',
-                  {oncreate, onclick: events.refresh(origin), title: 'Refresh'},
+              (origin !== 'file://' || null) &&
+              m('span',
+                m('button.mdc-button', {
+                  oncreate: oncreate.ripple,
+                  onclick: events.refresh(origin),
+                  title: 'Refresh'
+                  },
                   m('i.material-icons icon-refresh')
                 ),
-                (origin !== 'file://' || null) &&
-                m('button.mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon',
-                  {oncreate, onclick: events.remove(origin), title: 'Remove'},
+                m('button.mdc-button', {
+                  oncreate: oncreate.ripple,
+                  onclick: events.remove(origin),
+                  title: 'Remove'
+                  },
                   m('i.material-icons icon-remove')
                 )
               )
             )
-          ))
+          )
         )
       )
     )

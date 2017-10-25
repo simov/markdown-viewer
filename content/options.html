@@ -2,39 +2,36 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Markdown Viewer</title>
-  <link href="/vendor/mdl.min.css" rel="stylesheet" type="text/css" media="all" />
+  <link href="/vendor/mdc.min.css" rel="stylesheet" type="text/css" media="all" />
   <link href="/css/icons.css" rel="stylesheet" type="text/css" media="all" />
   <link href="/css/options.css" rel="stylesheet" type="text/css" media="all" />
-  <script src="/vendor/mdl.min.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/vendor/mdc.min.js" type="text/javascript" charset="utf-8"></script>
   <script src="/vendor/mithril.min.js" type="text/javascript" charset="utf-8"></script>
 </head>
-<body>
+<body class="mdc-typography">
   <div id="wrapper">
-    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-      <header class="mdl-layout__header">
-        <div>
-          <div class="mdl-layout__header-row">
-            <span class="mdl-layout-title">Markdown Viewer</span>
-            <div class="mdl-layout-spacer"></div>
-            <nav class="mdl-navigation">
-              <a href="https://github.com/simov/markdown-viewer#advanced-options" class="mdl-navigation__link">Help</a>
-            </nav>
-          </div>
-        </div>
-      </header>
-    </div>
-    <main class="mdl-layout__content"></main>
+    <header class="mdc-toolbar mdc-toolbar--fixed mdc-elevation--z2">
+      <div class="mdc-toolbar__row">
+        <section class="mdc-toolbar__section mdc-toolbar__section--align-start">
+          <span class="mdc-toolbar__title">Markdown Viewer</span>
+        </section>
+        <section class="mdc-toolbar__section mdc-toolbar__section--align-end">
+          <nav class="mdc-tab-bar">
+            <a class="mdc-tab" href="https://github.com/simov/markdown-viewer#advanced-options">Help</a>
+          </nav>
+        </section>
+      </div>
+    </header>
+    <main></main>
     <div id="footer-push">&nbsp;</div>
   </div>
-  <footer class="mdl-mega-footer">
-    <div class="mdl-mega-footer__bottom-section">
-      <ul class="mdl-mega-footer__link-list">
-        <li><a href="https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk" class="icon-chrome">Chrome Store</a></li>
-        <li><a href="https://github.com/simov/markdown-viewer" class="icon-github">GitHub</a></li>
-      </ul>
-    </div>
+  <footer>
+    <nav>
+      <a href="https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk" class="icon-chrome">Chrome Store</a>
+      <a href="https://github.com/simov/markdown-viewer" class="icon-github">GitHub</a>
+    </nav>
   </footer>
 </body>
 <script src="/content/options.js" type="text/javascript" charset="utf-8"></script>
