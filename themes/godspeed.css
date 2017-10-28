@@ -216,8 +216,7 @@ figcaption {
 
 h1, /* White-space mentions in order to force wrapping */
 h2,
-a:link,
-pre {
+a:link {
   white-space:      pre;      /* CSS 2.0 */
   white-space:      pre-wrap; /* CSS 2.1 */
   white-space:      pre-line; /* CSS 3.0 */
