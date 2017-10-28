@@ -77,6 +77,15 @@ chrome.storage.sync.get((res) => {
     options.content.mathjax = false
   }
 
+  // reload extension bug
+  chrome.permissions.getAll((permissions) => {
+    var origins = Object.keys(res.origins || {})
+    chrome.permissions.remove({
+      origins: permissions.origins
+        .filter((origin) => origins.indexOf(origin.slice(0, -2)) === -1)
+    })
+  })
+
   Object.keys(md).forEach((compiler) => {
     if (!options[compiler]) {
       options[compiler] = md[compiler].defaults
