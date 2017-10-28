@@ -144,7 +144,7 @@ chrome.tabs.onUpdated.addListener((id, info, tab) => {
           state.origins['*://' + win.location.host] ||
           state.origins['*://*']
 
-        if (new RegExp(path).test(win.location.href)) {
+        if (path && new RegExp(path).test(win.location.href)) {
           inject(id)
         }
       }
