@@ -710,3 +710,4 @@
 
 /*Markdown Viewer*/
 .markdown-body summary:hover { cursor: pointer; }
+.markdown-body ul li p { margin: 0; }
