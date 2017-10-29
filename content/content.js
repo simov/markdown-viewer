@@ -132,6 +132,7 @@ function mount () {
                 showProcessingMessages: false,
                 messageStyle: 'none',
                 skipStartupTypeset: true, // disable initial rendering
+                positionToHash: false
               })
               // set specific container to render, can be delayed too
               MathJax.Hub.Queue(
@@ -180,7 +181,7 @@ function scroll () {
       })
     }
     else if (location.hash && $(location.hash)) {
-      $('body').scrollTop =  $(location.hash).offsetTop
+      $('body').scrollTop = $(location.hash).offsetTop
     }
   }
   var loaded
