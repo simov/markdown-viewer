@@ -204,7 +204,9 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
     notifyContent({message: 'reload'})
   }
   else if (req.message === 'defaults') {
-    set(defaults)
+    var options = Object.assign({}, defaults)
+    options.origins = state.origins
+    set(options)
     sendResponse()
     notifyContent({message: 'reload'})
   }
