@@ -77,6 +77,15 @@ chrome.storage.sync.get((res) => {
     options.content.mathjax = false
   }
 
+  // reload extension bug
+  chrome.permissions.getAll((permissions) => {
+    var origins = Object.keys(res.origins || {})
+    chrome.permissions.remove({
+      origins: permissions.origins
+        .filter((origin) => origins.indexOf(origin.slice(0, -2)) === -1)
+    })
+  })
+
   Object.keys(md).forEach((compiler) => {
     if (!options[compiler]) {
       options[compiler] = md[compiler].defaults
@@ -89,13 +98,15 @@ chrome.storage.sync.get((res) => {
 
 function inject (id) {
   chrome.tabs.executeScript(id, {
-    code: [
-      'document.querySelector("pre").style.visibility = "hidden"',
-      'var theme = "' + state.theme + '"',
-      'var raw = ' + state.raw,
-      'var content = ' + JSON.stringify(state.content),
-      'var compiler = "' + state.compiler + '"'
-    ].join(';'), runAt: 'document_start'})
+    code: `
+      document.querySelector('pre').style.visibility = 'hidden'
+      var theme = '${state.theme}'
+      var raw = ${state.raw}
+      var content = ${JSON.stringify(state.content)}
+      var compiler = '${state.compiler}'
+    `,
+    runAt: 'document_start'
+  })
 
   chrome.tabs.insertCSS(id, {file: 'css/content.css', runAt: 'document_start'})
   chrome.tabs.insertCSS(id, {file: 'vendor/prism.css', runAt: 'document_start'})
@@ -111,15 +122,17 @@ function inject (id) {
 chrome.tabs.onUpdated.addListener((id, info, tab) => {
   if (info.status === 'loading') {
     chrome.tabs.executeScript(id, {
-      code: 'JSON.stringify({' +
-        'location: window.location,' +
-        'contentType: document.contentType,' +
-        'loaded: !!window.state' +
-      '})',
+      code: `
+        JSON.stringify({
+          location: window.location,
+          contentType: document.contentType,
+          loaded: !!window.state
+        })
+      `,
       runAt: 'document_start'
     }, (res) => {
       if (chrome.runtime.lastError) {
-        // Origin not allowed
+        // origin not allowed
         return
       }
 
@@ -132,6 +145,7 @@ chrome.tabs.onUpdated.addListener((id, info, tab) => {
       }
 
       if (win.loaded) {
+        // anchor
         return
       }
 
@@ -144,7 +158,7 @@ chrome.tabs.onUpdated.addListener((id, info, tab) => {
           state.origins['*://' + win.location.host] ||
           state.origins['*://*']
 
-        if (new RegExp(path).test(win.location.href)) {
+        if (path && new RegExp(path).test(win.location.href)) {
           inject(id)
         }
       }
@@ -190,7 +204,9 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
     notifyContent({message: 'reload'})
   }
   else if (req.message === 'defaults') {
-    set(defaults)
+    var options = Object.assign({}, defaults)
+    options.origins = state.origins
+    set(options)
     sendResponse()
     notifyContent({message: 'reload'})
   }

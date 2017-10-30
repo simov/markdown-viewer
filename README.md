@@ -1,7 +1,7 @@
 
 # Markdown Viewer / Chrome Extension
 
-**Available at [Chrome Store][chrome-store]**
+**Install: [Chrome Store][chrome-store]** / **Donate: [PayPal][paypal]**
 
 
 # Features
@@ -19,7 +19,7 @@
 - [MathJax][mathjax] support
 - Settings synchronization
 - Raw and rendered markdown views
-- Open source
+- Free and Open Source
 
 
 # Table of Contents
@@ -99,8 +99,8 @@ Option          | Default | Description
 
 ## Scroll
 
-- Enable the `scroll` option while you are working on a markdown document and you are frequently refreshing the page. Also useful when you are reading long document and you want to continue from where you left off.
-- Disable the `scroll` option if you want the page rendered at the top or scrolled down to a certain header if a hash URL fragment is present.
+- When enabled, the `scroll` option remembers the current scroll position and scrolls back to it after page load.
+- When disabled, the `scroll` option either scrolls to the top of the document or to a certain header (anchor) if a hash URL fragment is present.
 
 ## TOC
 
@@ -118,17 +118,21 @@ The following rules apply to your content when `mathjax` is enabled:
 - Regular dollar sign `$` in text that is not part of a math formula should be escaped: `\$`
 - Regular markdown escaping for parentheses: `\(` and `\)`, and brackets: `\[` and `\]` is not supported. MathJax will convert anything between these delimiters to math formulas, unless they are wrapped in backticks: `` `\(` `` or fenced code blocks.
 
+> The MathJax support currently works only for local file URLs and remote origins without strict *Content Security Policy (CSP)* set. For example it won't work for files hosted on GitHub.
+
 ## Emoji
 
 - Emoji shortnames like: `:sparkles:` will be converted to :sparkles: using [EmojiOne][emojione] images.
 - Currently unicode symbols like `✨` and ASCII emoji like `:D` are not supported.
 
+> The Emoji support currently works only for local file URLs and remote origins without strict *Content Security Policy (CSP)* set. For example it won't work for files hosted on GitHub.
+
 
 # Advanced Options
 
-Detecting and rendering [local file URLs](#local-files) can be enabled easily using the `Allow access to file URLs` option for the extension.
+Detecting and rendering [local file URLs](#local-files) can be enabled by using the `Allow access to file URLs` option for the extension.
 
-Access to remote URLs however, should be enabled manually.
+Access to remote URLs however, needs to be enabled manually.
 
 
 ## Add Origin
@@ -139,9 +143,7 @@ Here is how you can enable the extension for the `https://raw.githubusercontent.
 
 The origin consists of *protocol* part and *domain* part. The *protocol* can be either `https`, `http`, or a `*` to match both `https` and `http`.
 
-Enable the above origin and play around with the extension [here][syntax].
-
-> Note that the remote origins should either provide a valid HTTP header (see [Header Detection](#header-detection)) and/or valid URL path (see [Path Matching](#path-matching)). Otherwise you'll have to add the origin explicitly and modify its [Path Matching](#path-matching) regular expression.
+Enable the above origin and play around with the extension options [here][syntax].
 
 ## Add All Origins
 
@@ -150,6 +152,8 @@ In case you really want to you can enable the extension for **all** origins:
 ![all-origins]
 
 Alternatively you can use the `Allow All` button.
+
+> Note that the remote origins should either provide a valid HTTP header (see [Header Detection](#header-detection)) and/or valid URL path (see [Path Matching](#path-matching)). Otherwise you'll have to add the origin explicitly and set its [Path Matching](#path-matching) regular expression.
 
 ## Header Detection
 
@@ -182,7 +186,7 @@ Note that the Chrome's consent popup shows up only when you add the origin for t
 
 The extension synchronizes your preferences across all your devices using Google Sync. The list of your allowed origins is being synced too, but the actual permissions that you give using the Chrome's consent popup cannot be synced.
 
-In case you recently added a new origin on one of your devices you'll have to explicitly allow it on your other devices. The little refresh button next to each origin is used for that.
+In case you've recently added a new origin on one of your devices you'll have to explicitly allow it on your other devices. The little refresh button next to each origin is used for that.
 
 
 # Markdown Syntax and Features
@@ -231,6 +235,8 @@ SOFTWARE.
 
 
   [chrome-store]: https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk
+  [donate]: https://img.shields.io/badge/paypal-donate-blue.svg?style=flat-square (Donate on Paypal)
+  [paypal]: https://www.paypal.me/simeonvelichkov
 
   [marked]: https://github.com/chjj/marked
   [remark]: https://github.com/wooorm/remark
@@ -260,8 +266,8 @@ SOFTWARE.
   [test-yaml]: https://raw.githubusercontent.com/simov/markdown-viewer/master/test/yaml.md
   [test-toml]: https://raw.githubusercontent.com/simov/markdown-viewer/master/test/toml.md
 
-  [file-urls]: https://i.imgur.com/eqiwzEz.png
-  [add-origin]: https://i.imgur.com/56zWesT.png
-  [all-origins]: https://i.imgur.com/GiLeftR.png
-  [header-detection]: https://i.imgur.com/EYdmbSd.png
-  [path-regexp]: https://i.imgur.com/e06U6J2.png
+  [file-urls]: https://i.imgur.com/rNS9ADW.png
+  [add-origin]: https://i.imgur.com/GnKmkRG.png
+  [all-origins]: https://i.imgur.com/4GH3EuP.png
+  [header-detection]: https://i.imgur.com/bdz3Reg.png
+  [path-regexp]: https://i.imgur.com/jSrLDAM.png

@@ -14,15 +14,17 @@ var state = {
     content: {
       emoji: 'Convert emoji :shortnames: into EmojiOne images',
       scroll: 'Remember scroll position',
-      toc: 'Generate Table of Contents'
+      toc: 'Generate Table of Contents',
+      mathjax: 'Render MathJax formulas',
     }
   }
 }
 
 var events = {
   tab: (e) => {
-    state.tab = e.target.parentNode.hash.replace('#tab-', '')
+    state.tab = e.target.hash.replace('#tab-', '')
     localStorage.setItem('tab', state.tab)
+    return false
   },
 
   compiler: {
@@ -75,6 +77,7 @@ var events = {
     }, () => {
       chrome.runtime.sendMessage({message: 'settings'}, init)
       localStorage.removeItem('tab')
+      state._tabs.activeTabIndex = 0
     })
   },
 
@@ -90,8 +93,8 @@ var init = (res) => {
   state.theme = res.theme
 
   state.themes = chrome.runtime.getManifest().web_accessible_resources
-    .filter((file) => (file.indexOf('/themes/') === 0))
-    .map((file) => (file.replace(/\/themes\/(.*)\.css/, '$1')))
+    .filter((file) => file.indexOf('/themes/') === 0)
+    .map((file) => file.replace(/\/themes\/(.*)\.css/, '$1'))
 
   state.raw = res.raw
   state.tab = localStorage.getItem('tab') || 'theme'
@@ -103,9 +106,18 @@ var init = (res) => {
 
 chrome.runtime.sendMessage({message: 'settings'}, init)
 
-var oncreate = (vnode) => {
-  componentHandler.upgradeElements(vnode.dom)
+var oncreate = {
+  ripple: (vnode) => {
+    mdc.ripple.MDCRipple.attachTo(vnode.dom)
+  },
+  tabs: (vnode) => {
+    state._tabs = mdc.tabs.MDCTabBar.attachTo(vnode.dom)
+    setTimeout(() => {
+      state._tabs.activeTabIndex = state.tabs.indexOf(state.tab)
+    }, 100)
+  }
 }
+
 var onupdate = (tab, key) => (vnode) => {
   var value = tab === 'compiler' ? state.options[key]
     : tab === 'content' ? state.content[key]
@@ -119,79 +131,111 @@ var onupdate = (tab, key) => (vnode) => {
 m.mount(document.querySelector('body'), {
   view: (vnode) =>
     m('#popup',
+      // raw
+      m('button.mdc-button mdc-button--raised m-button', {
+        oncreate: oncreate.ripple,
+        onclick: events.raw
+        },
+        (state.raw ? 'Html' : 'Markdown')
+      ),
       // defaults
-      m('button.mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect',
-        {oncreate, onclick: events.raw},
-        (state.raw ? 'Html' : 'Markdown')),
-      m('button.mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect',
-        {oncreate, onclick: events.defaults},
-        'Defaults'),
+      m('button.mdc-button mdc-button--raised m-button', {
+        oncreate: oncreate.ripple,
+        onclick: events.defaults
+        },
+        'Defaults'
+      ),
 
       // tabs
-      m('.mdl-tabs mdl-js-tabs mdl-js-ripple-effect', {oncreate},
-        m('.mdl-tabs__tab-bar', {onclick: events.tab}, state.tabs.map((tab) =>
-          m('a.mdl-tabs__tab', {
-            href: '#tab-' + tab,
-            class: state.tab === tab ? 'is-active' : ''
-          }, tab))
-        ),
-
+      m('nav.mdc-tab-bar m-tabs', {
+        oncreate: oncreate.tabs,
+        onclick: events.tab
+        },
+        state.tabs.map((tab) =>
+        m('a.mdc-tab', {
+          href: '#tab-' + tab,
+          },
+          tab
+        )),
+        m('span.mdc-tab-bar__indicator')
+      ),
+      m('.m-panels',
         // theme
-        m('.mdl-tabs__panel #tab-theme', {class: state.tab === 'theme' ? 'is-active' : ''},
-          m('select.mdl-shadow--2dp', {onchange: events.theme}, state.themes.map((theme) =>
-            m('option', {selected: state.theme === theme}, theme)
-          ))
-        ),
-
-        // compiler
-        m('.mdl-tabs__panel #tab-compiler', {class: state.tab === 'compiler' ? 'is-active' : ''},
-          m('select.mdl-shadow--2dp', {onchange: events.compiler.name}, state.compilers.map((name) =>
-            m('option', {selected: state.compiler === name}, name)
-          )),
-          m('.scroll', {class: Object.keys(state.options).length > 8 ? 'max' : ''},
-            m('.mdl-grid', Object.keys(state.options || [])
-              .filter((key) => typeof state.options[key] === 'boolean')
-              .map((key) =>
-              m('.mdl-cell',
-                m('label.mdl-switch mdl-js-switch mdl-js-ripple-effect',
-                  {oncreate, onupdate: onupdate('compiler', key),
-                  title: state.description.compiler[key]},
-                  m('input[type="checkbox"].mdl-switch__input', {
-                    name: key,
-                    checked: state.options[key],
-                    onchange: events.compiler.options
-                  }),
-                  m('span.mdl-switch__label', key)
-                )
-              ))
+        m('.m-panel', {
+          class: state.tab === 'theme' ? 'is-active' : ''
+          },
+          m('select.mdc-elevation--z2 m-select', {
+            onchange: events.theme
+            },
+            state.themes.map((theme) =>
+              m('option', {selected: state.theme === theme}, theme)
             )
           )
         ),
-
-        // content
-        m('.mdl-tabs__panel #tab-content',
-          {class: state.tab === 'content' ? 'is-active' : ''},
-          m('.scroll',
-            m('.mdl-grid', Object.keys(state.content).map((key) =>
-              m('.mdl-cell',
-                m('label.mdl-switch mdl-js-switch mdl-js-ripple-effect',
-                  {oncreate, onupdate: onupdate('content', key), title: state.description.content[key]},
-                  m('input[type="checkbox"].mdl-switch__input', {
-                    name: key,
-                    checked: state.content[key],
-                    onchange: events.content
-                  }),
-                  m('span.mdl-switch__label', key)
-                )
+        // compiler
+        m('.m-panel', {
+          class: state.tab === 'compiler' ? 'is-active' : ''
+          },
+          m('select.mdc-elevation--z2 m-select', {
+            onchange: events.compiler.name
+            },
+            state.compilers.map((name) =>
+              m('option', {selected: state.compiler === name}, name)
+            )
+          ),
+          m('.scroll', {
+            class: Object.keys(state.options)
+              .filter((key) => typeof state.options[key] === 'boolean')
+              .length > 8
+              ? 'max' : ''
+            },
+            Object.keys(state.options)
+            .filter((key) => typeof state.options[key] === 'boolean')
+            .map((key) =>
+              m('label.mdc-switch m-switch', {
+                onupdate: onupdate('compiler', key),
+                title: state.description.compiler[key]
+                },
+                m('input.mdc-switch__native-control', {
+                  type: 'checkbox',
+                  name: key,
+                  checked: state.options[key],
+                  onchange: events.compiler.options
+                }),
+                m('.mdc-switch__background', m('.mdc-switch__knob')),
+                m('span.mdc-switch-label', key)
               )
+            )
+          )
+        ),
+        // content
+        m('.m-panel', {
+          class: state.tab === 'content' ? 'is-active' : ''
+          },
+          m('.scroll', Object.keys(state.content).map((key) =>
+            m('label.mdc-switch m-switch', {
+              onupdate: onupdate('content', key),
+              title: state.description.content[key]
+              },
+              m('input.mdc-switch__native-control', {
+                type: 'checkbox',
+                name: key,
+                checked: state.content[key],
+                onchange: events.content
+              }),
+              m('.mdc-switch__background', m('.mdc-switch__knob')),
+              m('span.mdc-switch-label', key)
             ))
           )
         )
       ),
 
       // advanced options
-      m('button.mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect',
-        {oncreate, onclick: events.advanced},
-        'Advanced Options')
+      m('button.mdc-button mdc-button--raised m-button', {
+        oncreate: oncreate.ripple,
+        onclick: events.advanced
+        },
+        'Advanced Options'
+      )
     )
 })
