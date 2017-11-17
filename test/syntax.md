@@ -461,6 +461,10 @@ some('prolog', 1972)
 some = 'python'
 ```
 
+```r
+R = function(n=23, t='text', b=TRUE) # comment
+```
+
 ```ruby
 some = "ruby"
 ```
