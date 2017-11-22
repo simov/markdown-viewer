@@ -227,24 +227,3 @@ footer a:nth-of-type(2):before {
 .m-origins .m-list li > *:nth-child(2) { width: 30%; }
 .m-origins .m-list li > *:nth-child(3) { width: 54%; }
 .m-origins .m-list li > *:nth-child(4) { width: 9%; text-align: right; }
-
-
-/*excluded domains*/
-.m-exclude h4 {
-  line-height: 36px;
-  float: left;
-  margin: 0 180px 20px 0 !important;
-}
-.m-exclude .m-textfield {
-  float: left;
-  width: 400px;
-  margin: 0 10px 0 0 !important;
-}
-.m-exclude > .m-button {
-  float: left;
-}
-.m-exclude button:nth-of-type(2) {
-  float: right;
-}
-.m-exclude .m-list li > *:nth-child(1) { width: 95% !important; }
-.m-exclude .m-list li > *:nth-child(2) { width: 5%; text-align: right; }

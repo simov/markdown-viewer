@@ -19,12 +19,6 @@ var defaults = {
   origins: {
     'file://': match
   },
-  exclude: [
-    'bitbucket.org',
-    'getcomposer.org',
-    'github.com',
-    'gitlab.com',
-  ]
 }
 Object.keys(md).forEach((compiler) => {
   defaults[compiler] = md[compiler].defaults
@@ -81,10 +75,6 @@ chrome.storage.sync.get((res) => {
   }
   if (options.content.mathjax === undefined) {
     options.content.mathjax = false
-  }
-  // v3.2 -> v3.3
-  if (options.exclude === undefined) {
-    options.exclude = defaults.exclude
   }
 
   // reload extension bug
@@ -156,12 +146,6 @@ chrome.tabs.onUpdated.addListener((id, info, tab) => {
 
       if (win.loaded) {
         // anchor
-        return
-      }
-
-      if (state.origins['*://*'] &&
-        state.exclude.some((domain) => domain === win.location.host)) {
-        // excluded domain
         return
       }
 
@@ -275,23 +259,6 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
   else if (req.message === 'origin.update') {
     state.origins[req.origin] = req.match
     set({origins: state.origins})
-    sendResponse()
-  }
-
-  // options domains
-  else if (req.message === 'domain.add') {
-    state.exclude.push(req.domain)
-    set({exclude: state.exclude})
-    sendResponse()
-  }
-  else if (req.message === 'domain.remove') {
-    state.exclude.splice(req.index, 1)
-    set({exclude: state.exclude})
-    sendResponse()
-  }
-  else if (req.message === 'domain.defaults') {
-    state.exclude = defaults.exclude.slice()
-    set({exclude: state.exclude})
     sendResponse()
   }
 

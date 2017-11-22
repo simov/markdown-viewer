@@ -3,13 +3,11 @@ var defaults = {
   // storage
   origins: {},
   header: false,
-  exclude: [],
   // static
   protocols: ['https', 'http', '*'],
   // UI
   protocol: 'https',
   origin: '',
-  domain: '',
   timeout: null,
   file: true,
 }
@@ -79,39 +77,6 @@ var events = {
 
     refresh: (origin) => () => {
       chrome.permissions.request({origins: [origin + '/*']})
-    },
-  },
-
-  domain: {
-    name: (e) => {
-      state.domain = e.target.value
-    },
-
-    add: () => {
-      var domain = state.domain.replace(/.*:\/\/([^/]+).*/i, '$1')
-      if (!domain) {
-        return
-      }
-      if (state.exclude.includes(domain)) {
-        return
-      }
-      chrome.runtime.sendMessage({
-        message: 'domain.add',
-        domain,
-      }, init)
-    },
-
-    remove: (domain) => () => {
-      chrome.runtime.sendMessage({
-        message: 'domain.remove',
-        index: state.exclude.indexOf(domain),
-      }, init)
-    },
-
-    defaults: () => {
-      chrome.runtime.sendMessage({
-        message: 'domain.defaults',
-      }, init)
     },
   },
 }
@@ -254,50 +219,5 @@ m.mount(document.querySelector('main'), {
           )
         )
       ),
-
-      // excluded domains
-      (state.origins['*://*'] || null) &&
-      m('.bs-callout m-exclude',
-        m('h4.mdc-typography--headline', 'Excluded Domains'),
-
-        m('.mdc-textfield m-textfield',
-          m('input.mdc-textfield__input', {
-            type: 'text',
-            value: state.domain,
-            onchange: events.domain.name,
-            placeholder: 'github.com'
-          })
-        ),
-        m('button.mdc-button mdc-button--raised m-button', {
-          oncreate: oncreate.ripple,
-          onclick: events.domain.add
-          },
-          'Add'
-        ),
-        m('button.mdc-button mdc-button--raised m-button', {
-          oncreate: oncreate.ripple,
-          onclick: events.domain.defaults
-          },
-          'Defaults'
-        ),
-
-        m('ul.mdc-elevation--z2 m-list',
-          state.exclude.sort().map((domain) =>
-            m('li',
-              m('span', domain),
-              (origin !== 'file://' || null) &&
-              m('span',
-                m('button.mdc-button', {
-                  oncreate: oncreate.ripple,
-                  onclick: events.domain.remove(domain),
-                  title: 'Remove'
-                  },
-                  m('i.material-icons icon-remove')
-                )
-              )
-            )
-          )
-        ),
-      )
     )
 })

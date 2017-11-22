@@ -38,7 +38,6 @@
 - [Advanced Options](#advanced-options)
   - [Add Origin](#add-origin)
   - [Add All Origins](#add-all-origins)
-  - [Exclude Domains](#exclude-domains)
   - [Header Detection](#header-detection)
   - [Path Matching](#path-matching)
   - [Remove Origin](#remove-origin)
@@ -155,16 +154,6 @@ In case you really want to you can enable the extension for **all** origins:
 Alternatively you can use the `Allow All` button.
 
 > Note that the remote origins should either provide a valid HTTP header (see [Header Detection](#header-detection)) and/or valid URL path (see [Path Matching](#path-matching)). Otherwise you'll have to add the origin explicitly and set its [Path Matching](#path-matching) regular expression.
-
-## Exclude Domains
-
-When you enable the extension for all origins, a new `Excluded Domains` section will become available in the options page.
-
-When the extension is enabled for all origins, it will try to inject itself into all pages with URLs ending with markdown file extension using the [Path Matching](#path-matching) for the `*://*` origin.
-
-However a few websites are known to serve pages with URLs ending with markdown file extension, but instead of a raw markdown they serve a rendered HTML there. For example: https://github.com/simov/markdown-viewer/blob/master/README.md
-
-When you enable the extension for all origins you get a list of domains excluded by default: `bitbucket.org`, `getcomposer.org`, `github.com`, `gitlab.com`, however you can extend/modify that list as you want.
 
 ## Header Detection
 
