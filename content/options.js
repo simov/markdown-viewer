@@ -138,7 +138,8 @@ m.mount(document.querySelector('main'), {
           },
           state.protocols.map((protocol) =>
           m('option', {
-            value: protocol
+            value: protocol,
+            selected: protocol === state.protocol
             },
             protocol + '://'
           )
