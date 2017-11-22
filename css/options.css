@@ -223,7 +223,8 @@ footer a:nth-of-type(2):before {
 .m-origins .m-list {
   clear: both;
 }
+.m-origins .m-list li > * { overflow: hidden; text-overflow: ellipsis; }
 .m-origins .m-list li > *:nth-child(1) { width: 7%; }
-.m-origins .m-list li > *:nth-child(2) { width: 30%; }
-.m-origins .m-list li > *:nth-child(3) { width: 54%; }
+.m-origins .m-list li > *:nth-child(2) { width: 22%; }
+.m-origins .m-list li > *:nth-child(3) { width: 62%; }
 .m-origins .m-list li > *:nth-child(4) { width: 9%; text-align: right; }
