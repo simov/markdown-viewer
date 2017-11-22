@@ -117,7 +117,9 @@ var events = {
 }
 
 chrome.extension.isAllowedFileSchemeAccess((isAllowedAccess) => {
-  state.file = isAllowedAccess
+  state.file = /Firefox/.test(navigator.userAgent)
+    ? true // Allow access to file URLs options isn't working on FF
+    : isAllowedAccess
   m.redraw()
 })
 
