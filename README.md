@@ -1,7 +1,7 @@
 
-# Markdown Viewer / Chrome Extension
+# Markdown Viewer / Browser Extension
 
-**Install: [Chrome Store][chrome-store]** / **Donate: [PayPal][paypal]**
+**Install: [Chrome][chrome-store]** / **[Firefox][amo]** / **Donate: [PayPal][paypal]**
 
 
 # Features
@@ -37,7 +37,7 @@
   - [Emoji](#emoji)
 - [Advanced Options](#advanced-options)
   - [Add Origin](#add-origin)
-  - [Add All Origins](#add-all-origins)
+  - [Allow All Origins](#allow-all-origins)
   - [Header Detection](#header-detection)
   - [Path Matching](#path-matching)
   - [Remove Origin](#remove-origin)
@@ -134,7 +134,6 @@ Detecting and rendering [local file URLs](#local-files) can be enabled by using 
 
 Access to remote URLs however, needs to be enabled manually.
 
-
 ## Add Origin
 
 Here is how you can enable the extension for the `https://raw.githubusercontent.com` origin:
@@ -145,7 +144,7 @@ The origin consists of *protocol* part and *domain* part. The *protocol* can be 
 
 Enable the above origin and play around with the extension options [here][syntax].
 
-## Add All Origins
+## Allow All Origins
 
 In case you really want to you can enable the extension for **all** origins:
 
@@ -153,7 +152,34 @@ In case you really want to you can enable the extension for **all** origins:
 
 Alternatively you can use the `Allow All` button.
 
-> Note that the remote origins should either provide a valid HTTP header (see [Header Detection](#header-detection)) and/or valid URL path (see [Path Matching](#path-matching)). Otherwise you'll have to add the origin explicitly and set its [Path Matching](#path-matching) regular expression.
+**Important:** Note that all remote origins should either serve its markdown content with valid `content-type` header (see [Header Detection](#header-detection)) or valid URL path (see [Path Matching](#path-matching)). Otherwise the following rules take place:
+
+Consider this example:
+
+![allow-all]
+
+1. In this example the user have enabled all origins `*://*` (the first entry), but as you can see all origins are going to match only on those URLs ending with markdown file extension.<br>
+For example this is going to match: https://raw.githubusercontent.com/simov/markdown-viewer/master/README.md<br>
+However it's important to note that the `*://*` (Allow All) RegExp serves as a **fallback** match. It matches only if any other explicitly added origins fail to match, meaning that all other explicitly added origins **override** the `*://*` (Allow All) path matching RegExp!
+
+2. For example let's assume that our imaginary origin `asite.com` (the second entry) serves markdown files on a custom path: `https://asite.com/some/custom/path/to/serve/markdown/`<br>
+In this case we'll have to **explicitly add** an entry for `asite.com` and modify its path matching RegExp even if the extension was enabled for all origins!
+
+3. Now take a look at the third entry. GitHub is a good example of a website that serves rendered HTML content on URLs ending with markdown file extension.<br>
+For example we would like the extension to render:<br>
+https://raw.githubusercontent.com/simov/markdown-viewer/master/README.md<br>
+but not:<br>
+https://github.com/simov/markdown-viewer/blob/master/README.md<br>
+In this case we want to **exclude** the `github.com` origin althogether. To **exclude** an origin you have to set its path matching RegExp to something that's **impossible to match**!
+
+4. Moving on to the forth entry. What if we want to match things like:<br>
+https://gitlab.com/gitlab-org/gitlab-ce/raw/master/README.md<br>
+but not:<br>
+https://gitlab.com/gitlab-org/gitlab-ce/blob/master/README.md<br>
+Notice the subtle difference between the two URLs - the first one contains the `raw` word in its path. Now take a closer look at the screenshot above and you'll notice that the `gitlab.com` entry have a slightly modified path matching RegExp too - it have the `.*\/raw\/.*` string prepended in front of the default RegExp that matched every path ending with markdown file extension.<br>
+The result is as you might expect, the first URL:<br>
+https://gitlab.com/gitlab-org/gitlab-ce/raw/master/README.md is going to be matched and rendered by Markdown Viewer, however the second one:<br>
+https://gitlab.com/gitlab-org/gitlab-ce/blob/master/README.md will be **excluded**!
 
 ## Header Detection
 
@@ -235,6 +261,7 @@ SOFTWARE.
 
 
   [chrome-store]: https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk
+  [amo]: https://addons.mozilla.org/en-US/firefox/addon/markdown-viewer-chrome/
   [donate]: https://img.shields.io/badge/paypal-donate-blue.svg?style=flat-square (Donate on Paypal)
   [paypal]: https://www.paypal.me/simeonvelichkov
 
@@ -271,3 +298,4 @@ SOFTWARE.
   [all-origins]: https://i.imgur.com/4GH3EuP.png
   [header-detection]: https://i.imgur.com/bdz3Reg.png
   [path-regexp]: https://i.imgur.com/jSrLDAM.png
+  [allow-all]: https://i.imgur.com/rwonwKe.png
