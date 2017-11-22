@@ -303,3 +303,26 @@ function notifyContent (req, res) {
     chrome.tabs.sendMessage(tabs[0].id, req, res)
   })
 }
+
+chrome.webRequest &&
+chrome.webRequest.onHeadersReceived.addListener(({responseHeaders}) => ({
+  responseHeaders: responseHeaders
+    .filter(({name}) => name.toLowerCase() !== 'content-security-policy')
+    // ff only
+    .map((header) => {
+      if (
+        /Firefox/.test(navigator.userAgent) &&
+        header.name.toLowerCase() === 'content-type' &&
+        /text\/(?:x-)?markdown/.test(header.value)
+      ) {
+        header.value = 'text/plain; charset=utf-8'
+      }
+      return header
+    })
+  }),
+  {
+    urls: ['<all_urls>'],
+    types: ['main_frame', 'sub_frame']
+  },
+  ['blocking', 'responseHeaders']
+)
