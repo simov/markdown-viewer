@@ -83,7 +83,7 @@ var events = {
 
 chrome.extension.isAllowedFileSchemeAccess((isAllowedAccess) => {
   state.file = /Firefox/.test(navigator.userAgent)
-    ? true // Allow access to file URLs options isn't working on FF
+    ? true // Allow access to file URLs option isn't working on FF
     : isAllowedAccess
   m.redraw()
 })
@@ -166,6 +166,7 @@ m.mount(document.querySelector('main'), {
         ),
 
         // header detection
+        (!/Firefox/.test(navigator.userAgent) || null) &&
         m('label.mdc-switch m-switch', {
           onupdate: onupdate.switch,
           title: 'Toggle header detection'

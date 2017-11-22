@@ -218,10 +218,11 @@ footer a:nth-of-type(2):before {
 .m-origins button:nth-of-type(2) { float: right; }
 .m-origins .m-select { width: 110px; }
 .m-origins .m-switch {
-  margin: 20px 0 20px 0;
+  margin: 20px 0 0 0;
 }
 .m-origins .m-list {
   clear: both;
+  margin: 20px 0 0 0;
 }
 .m-origins .m-list li > * { overflow: hidden; text-overflow: ellipsis; }
 .m-origins .m-list li > *:nth-child(1) { width: 7%; }
