@@ -31,18 +31,18 @@ var events = {
     name: (e) => {
       state.compiler = state.compilers[e.target.selectedIndex]
       chrome.runtime.sendMessage({
-        message: 'compiler.name',
-        compiler: state.compiler
+        message: 'popup.compiler.name',
+        compiler: state.compiler,
       }, () => {
-        chrome.runtime.sendMessage({message: 'settings'}, init)
+        chrome.runtime.sendMessage({message: 'popup'}, init)
       })
     },
     options: (e) => {
       state.options[e.target.name] = !state.options[e.target.name]
       chrome.runtime.sendMessage({
-        message: 'compiler.options',
+        message: 'popup.compiler.options',
         compiler: state.compiler,
-        options: state.options
+        options: state.options,
       })
     }
   },
@@ -50,15 +50,15 @@ var events = {
   content: (e) => {
     state.content[e.target.name] = !state.content[e.target.name]
     chrome.runtime.sendMessage({
-      message: 'content',
-      content: state.content
+      message: 'popup.content',
+      content: state.content,
     })
   },
 
   theme: (e) => {
     state.theme = state.themes[e.target.selectedIndex]
     chrome.runtime.sendMessage({
-      message: 'theme',
+      message: 'popup.theme',
       theme: state.theme
     })
   },
@@ -66,23 +66,23 @@ var events = {
   raw: () => {
     state.raw = !state.raw
     chrome.runtime.sendMessage({
-      message: 'raw',
+      message: 'popup.raw',
       raw: state.raw
     })
   },
 
   defaults: () => {
     chrome.runtime.sendMessage({
-      message: 'defaults'
+      message: 'popup.defaults'
     }, () => {
-      chrome.runtime.sendMessage({message: 'settings'}, init)
+      chrome.runtime.sendMessage({message: 'popup'}, init)
       localStorage.removeItem('tab')
       state._tabs.activeTabIndex = 0
     })
   },
 
   advanced: () => {
-    chrome.runtime.sendMessage({message: 'advanced'})
+    chrome.runtime.sendMessage({message: 'popup.advanced'})
   }
 }
 
@@ -104,7 +104,7 @@ var init = (res) => {
   m.redraw()
 }
 
-chrome.runtime.sendMessage({message: 'settings'}, init)
+chrome.runtime.sendMessage({message: 'popup'}, init)
 
 var oncreate = {
   ripple: (vnode) => {
@@ -114,7 +114,7 @@ var oncreate = {
     state._tabs = mdc.tabs.MDCTabBar.attachTo(vnode.dom)
     setTimeout(() => {
       state._tabs.activeTabIndex = state.tabs.indexOf(state.tab)
-    }, 100)
+    }, 250)
   }
 }
 

@@ -1,87 +1,119 @@
 
-var state = {
-  protocol: 'https',
-  protocols: ['https', 'http', '*'],
-  origin: '',
+var defaults = {
+  // storage
   origins: {},
   header: false,
+  exclude: [],
+  // static
+  protocols: ['https', 'http', '*'],
+  // UI
+  protocol: 'https',
+  origin: '',
+  domain: '',
   timeout: null,
-  file: true
+  file: true,
 }
+var state = Object.assign({}, defaults)
 
 var events = {
   file: () => {
     chrome.tabs.create({url: 'chrome://extensions/?id=' + chrome.runtime.id})
   },
 
-  protocol: (e) => {
-    state.protocol = state.protocols[e.target.selectedIndex]
-  },
-
-  origin: (e) => {
-    state.origin = e.target.value
-  },
-
   header: (e) => {
     state.header = !state.header
-    chrome.runtime.sendMessage({message: 'header', header: state.header})
-  },
-
-  add: () => {
-    var host = state.origin
-      .replace(/^(file|http(s)?):\/\//, '')
-      .replace(/\/.*$/, '')
-
-    if (!host) {
-      return
-    }
-
-    var origin = state.protocol + '://' + host
-    chrome.permissions.request({origins: [origin + '/*']}, (granted) => {
-      if (granted) {
-        chrome.runtime.sendMessage({message: 'add', origin}, (res) => {
-          state.origin = ''
-          get()
-        })
-      }
+    chrome.runtime.sendMessage({
+      message: 'options.header',
+      header: state.header,
     })
   },
 
-  all: () => {
-    var origin = '*://*'
-    chrome.permissions.request({origins: [origin + '/*']}, (granted) => {
-      if (granted) {
-        chrome.runtime.sendMessage({message: 'add', origin}, (res) => {
-          state.origin = ''
-          get()
-        })
+  origin: {
+    protocol: (e) => {
+      state.protocol = state.protocols[e.target.selectedIndex]
+    },
+
+    name: (e) => {
+      state.origin = e.target.value
+    },
+
+    add: () => {
+      var domain = state.origin.replace(/.*:\/\/([^/]+).*/i, '$1')
+      if (!domain) {
+        return
       }
-    })
+      var origin = state.protocol + '://' + domain
+      chrome.permissions.request({origins: [origin + '/*']}, (granted) => {
+        if (granted) {
+          chrome.runtime.sendMessage({message: 'origin.add', origin}, init)
+        }
+      })
+    },
+
+    all: () => {
+      var origin = '*://*'
+      chrome.permissions.request({origins: [origin + '/*']}, (granted) => {
+        if (granted) {
+          chrome.runtime.sendMessage({message: 'origin.add', origin}, init)
+        }
+      })
+    },
+
+    remove: (origin) => () => {
+      chrome.permissions.remove({origins: [origin + '/*']}, (removed) => {
+        if (removed) {
+          chrome.runtime.sendMessage({message: 'origin.remove', origin}, init)
+        }
+      })
+    },
+
+    update: (origin) => (e) => {
+      state.origins[origin] = e.target.value
+      clearTimeout(state.timeout)
+      state.timeout = setTimeout(() => {
+        chrome.runtime.sendMessage({
+          message: 'origin.update', origin, match: e.target.value
+        })
+      }, 750)
+    },
+
+    refresh: (origin) => () => {
+      chrome.permissions.request({origins: [origin + '/*']})
+    },
   },
 
-  remove: (origin) => () => {
-    chrome.permissions.remove({origins: [origin + '/*']}, (removed) => {
-      if (removed) {
-        chrome.runtime.sendMessage({message: 'remove', origin}, (res) => {
-          get()
-        })
-      }
-    })
-  },
+  domain: {
+    name: (e) => {
+      state.domain = e.target.value
+    },
 
-  update: (origin) => (e) => {
-    state.origins[origin] = e.target.value
-    clearTimeout(state.timeout)
-    state.timeout = setTimeout(() => {
+    add: () => {
+      var domain = state.domain.replace(/.*:\/\/([^/]+).*/i, '$1')
+      if (!domain) {
+        return
+      }
+      if (state.exclude.includes(domain)) {
+        return
+      }
       chrome.runtime.sendMessage({
-        message: 'update', origin, match: e.target.value
-      }, (res) => {})
-    }, 750)
-  },
+        message: 'domain.add',
+        domain,
+      }, init)
+    },
 
-  refresh: (origin) => () => {
-    chrome.permissions.request({origins: [origin + '/*']}, (granted) => {})
-  }
+    remove: (domain) => () => {
+      chrome.runtime.sendMessage({
+        message: 'domain.remove',
+        index: state.exclude.indexOf(domain),
+      }, init)
+    },
+
+    defaults: () => {
+      chrome.runtime.sendMessage({
+        message: 'domain.defaults',
+      }, init)
+    },
+  },
 }
 
 chrome.extension.isAllowedFileSchemeAccess((isAllowedAccess) => {
@@ -89,15 +121,14 @@ chrome.extension.isAllowedFileSchemeAccess((isAllowedAccess) => {
   m.redraw()
 })
 
-var get = () => {
-  chrome.runtime.sendMessage({message: 'origins'}, (res) => {
-    state.origins = res.origins
-    state.header = res.header
+var init = () => {
+  chrome.runtime.sendMessage({message: 'options'}, (res) => {
+    state = Object.assign({}, defaults, {file: state.file}, res)
     m.redraw()
   })
 }
 
-get()
+init()
 
 var oncreate = {
   ripple: (vnode) => {
@@ -119,7 +150,7 @@ m.mount(document.querySelector('main'), {
 
       // file access is disabled
       (!state.file || null) &&
-      m('.bs-callout m-file-access',
+      m('.bs-callout m-file',
         m('h4.mdc-typography--headline', 'Access to file:// URLs is Disabled'),
         m('img.mdc-elevation--z2', {src: '/images/file-urls.png'}),
         m('button.mdc-button mdc-button--raised m-button', {
@@ -130,11 +161,13 @@ m.mount(document.querySelector('main'), {
         )
       ),
 
-      // add new origin
-      m('.bs-callout m-add-new-origin',
-        m('h4.mdc-typography--headline', 'Add New Origin'),
+      // allowed origins
+      m('.bs-callout m-origins',
+        m('h4.mdc-typography--headline', 'Allowed Origins'),
+
+        // add origin
         m('select.mdc-elevation--z2 m-select', {
-          onchange: events.protocol
+          onchange: events.origin.protocol
           },
           state.protocols.map((protocol) =>
           m('option', {
@@ -147,27 +180,24 @@ m.mount(document.querySelector('main'), {
           m('input.mdc-textfield__input', {
             type: 'text',
             value: state.origin,
-            onchange: events.origin,
+            onchange: events.origin.name,
             placeholder: 'raw.githubusercontent.com'
           })
         ),
         m('button.mdc-button mdc-button--raised m-button', {
           oncreate: oncreate.ripple,
-          onclick: events.add
+          onclick: events.origin.add
           },
           'Add'
         ),
         m('button.mdc-button mdc-button--raised m-button', {
           oncreate: oncreate.ripple,
-          onclick: events.all
+          onclick: events.origin.all
           },
           'Allow All'
-        )
-      ),
+        ),
 
-      // allowed origins
-      m('.bs-callout m-allowed-origins',
-        m('h4.mdc-typography--headline', 'Allowed Origins'),
+        // header detection
         m('label.mdc-switch m-switch', {
           onupdate: onupdate.switch,
           title: 'Toggle header detection'
@@ -197,7 +227,7 @@ m.mount(document.querySelector('main'), {
                 },
                 m('input.mdc-textfield__input', {
                   type: 'text',
-                  onkeyup: events.update(origin),
+                  onkeyup: events.origin.update(origin),
                   value: state.origins[origin],
                 })
               ),
@@ -205,14 +235,14 @@ m.mount(document.querySelector('main'), {
               m('span',
                 m('button.mdc-button', {
                   oncreate: oncreate.ripple,
-                  onclick: events.refresh(origin),
+                  onclick: events.origin.refresh(origin),
                   title: 'Refresh'
                   },
                   m('i.material-icons icon-refresh')
                 ),
                 m('button.mdc-button', {
                   oncreate: oncreate.ripple,
-                  onclick: events.remove(origin),
+                  onclick: events.origin.remove(origin),
                   title: 'Remove'
                   },
                   m('i.material-icons icon-remove')
@@ -221,6 +251,51 @@ m.mount(document.querySelector('main'), {
             )
           )
         )
+      ),
+
+      // excluded domains
+      (state.origins['*://*'] || null) &&
+      m('.bs-callout m-exclude',
+        m('h4.mdc-typography--headline', 'Excluded Domains'),
+
+        m('.mdc-textfield m-textfield',
+          m('input.mdc-textfield__input', {
+            type: 'text',
+            value: state.domain,
+            onchange: events.domain.name,
+            placeholder: 'github.com'
+          })
+        ),
+        m('button.mdc-button mdc-button--raised m-button', {
+          oncreate: oncreate.ripple,
+          onclick: events.domain.add
+          },
+          'Add'
+        ),
+        m('button.mdc-button mdc-button--raised m-button', {
+          oncreate: oncreate.ripple,
+          onclick: events.domain.defaults
+          },
+          'Defaults'
+        ),
+
+        m('ul.mdc-elevation--z2 m-list',
+          state.exclude.sort().map((domain) =>
+            m('li',
+              m('span', domain),
+              (origin !== 'file://' || null) &&
+              m('span',
+                m('button.mdc-button', {
+                  oncreate: oncreate.ripple,
+                  onclick: events.domain.remove(domain),
+                  title: 'Remove'
+                  },
+                  m('i.material-icons icon-remove')
+                )
+              )
+            )
+          )
+        ),
       )
     )
 })
