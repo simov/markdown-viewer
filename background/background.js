@@ -18,7 +18,7 @@ var defaults = {
   match,
   origins: {
     'file://': match
-  }
+  },
 }
 Object.keys(md).forEach((compiler) => {
   defaults[compiler] = md[compiler].defaults
@@ -126,7 +126,7 @@ chrome.tabs.onUpdated.addListener((id, info, tab) => {
         JSON.stringify({
           location: window.location,
           contentType: document.contentType,
-          loaded: !!window.state
+          loaded: !!window.state,
         })
       `,
       runAt: 'document_start'
@@ -167,6 +167,7 @@ chrome.tabs.onUpdated.addListener((id, info, tab) => {
 })
 
 chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
+  // content
   if (req.message === 'markdown') {
     var markdown = req.markdown
 
@@ -183,66 +184,84 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
 
     sendResponse({message: 'html', html})
   }
-  else if (req.message === 'settings') {
+
+  // popup
+  else if (req.message === 'popup') {
     sendResponse(Object.assign({}, state, {
       options: state[state.compiler],
       description: md[state.compiler].description,
       compilers: Object.keys(md)
     }))
   }
-  else if (req.message === 'compiler.name') {
-    set({compiler: req.compiler})
+  else if (req.message === 'popup.theme') {
+    set({theme: req.theme})
+    notifyContent({message: 'theme', theme: req.theme})
     sendResponse()
-    notifyContent({message: 'reload'})
   }
-  else if (req.message === 'compiler.options') {
-    set({[req.compiler]: req.options})
-    notifyContent({message: 'reload'})
+  else if (req.message === 'popup.raw') {
+    set({raw: req.raw})
+    notifyContent({message: 'raw', raw: req.raw})
+    sendResponse()
   }
-  else if (req.message === 'content') {
-    set({content: req.content})
-    notifyContent({message: 'reload'})
-  }
-  else if (req.message === 'defaults') {
+  else if (req.message === 'popup.defaults') {
     var options = Object.assign({}, defaults)
     options.origins = state.origins
     set(options)
-    sendResponse()
     notifyContent({message: 'reload'})
+    sendResponse()
   }
-  else if (req.message === 'theme') {
-    set({theme: req.theme})
-    notifyContent({message: 'theme', theme: req.theme})
+  else if (req.message === 'popup.compiler.name') {
+    set({compiler: req.compiler})
+    notifyContent({message: 'reload'})
+    sendResponse()
   }
-  else if (req.message === 'raw') {
-    set({raw: req.raw})
-    notifyContent({message: 'raw', raw: req.raw})
+  else if (req.message === 'popup.compiler.options') {
+    set({[req.compiler]: req.options})
+    notifyContent({message: 'reload'})
+    sendResponse()
   }
-  else if (req.message === 'advanced') {
+  else if (req.message === 'popup.content') {
+    set({content: req.content})
+    notifyContent({message: 'reload'})
+    sendResponse()
+  }
+  else if (req.message === 'popup.advanced') {
     chrome.management.getSelf((extension) => {
       chrome.tabs.create({url: extension.optionsUrl})
     })
+    sendResponse()
   }
-  else if (req.message === 'origins') {
-    sendResponse({origins: state.origins, header: state.header})
+
+  // options
+  else if (req.message === 'options') {
+    sendResponse({
+      origins: state.origins,
+      header: state.header,
+      exclude: state.exclude,
+    })
   }
-  else if (req.message === 'header') {
+  else if (req.message === 'options.header') {
     set({header: req.header})
+    sendResponse()
   }
-  else if (req.message === 'add') {
+
+  // options origins
+  else if (req.message === 'origin.add') {
     state.origins[req.origin] = match
     set({origins: state.origins})
     sendResponse()
   }
-  else if (req.message === 'remove') {
+  else if (req.message === 'origin.remove') {
     delete state.origins[req.origin]
     set({origins: state.origins})
     sendResponse()
   }
-  else if (req.message === 'update') {
+  else if (req.message === 'origin.update') {
     state.origins[req.origin] = req.match
     set({origins: state.origins})
+    sendResponse()
   }
+
   return true
 })
 
@@ -251,3 +270,26 @@ function notifyContent (req, res) {
     chrome.tabs.sendMessage(tabs[0].id, req, res)
   })
 }
+
+chrome.webRequest &&
+chrome.webRequest.onHeadersReceived.addListener(({responseHeaders}) => ({
+  responseHeaders: responseHeaders
+    .filter(({name}) => name.toLowerCase() !== 'content-security-policy')
+    // ff only
+    .map((header) => {
+      if (
+        /Firefox/.test(navigator.userAgent) &&
+        header.name.toLowerCase() === 'content-type' &&
+        /text\/(?:x-)?markdown/.test(header.value)
+      ) {
+        header.value = 'text/plain; charset=utf-8'
+      }
+      return header
+    })
+  }),
+  {
+    urls: ['<all_urls>'],
+    types: ['main_frame', 'sub_frame']
+  },
+  ['blocking', 'responseHeaders']
+)
