@@ -83,7 +83,7 @@ var events = {
 
 chrome.extension.isAllowedFileSchemeAccess((isAllowedAccess) => {
   state.file = /Firefox/.test(navigator.userAgent)
-    ? true // Allow access to file URLs option isn't working on FF
+    ? true // ff: `Allow access to file URLs` option isn't available
     : isAllowedAccess
   m.redraw()
 })
@@ -165,7 +165,7 @@ m.mount(document.querySelector('main'), {
           'Allow All'
         ),
 
-        // header detection
+        // header detection - ff: disabled
         (!/Firefox/.test(navigator.userAgent) || null) &&
         m('label.mdc-switch m-switch', {
           onupdate: onupdate.switch,
@@ -188,6 +188,12 @@ m.mount(document.querySelector('main'), {
 
         m('ul.mdc-elevation--z2 m-list',
           Object.keys(state.origins).sort().map((origin) =>
+            // ff: access to file:// URLs is not allowed
+            (
+              !/Firefox/.test(navigator.userAgent) ||
+              (/Firefox/.test(navigator.userAgent) && origin !== 'file://') ||
+              null
+            ) &&
             m('li',
               m('span', origin.replace(/^(\*|file|http(s)?).*/, '$1')),
               m('span', origin.replace(/^(\*|file|http(s)?):\/\//, '')),
