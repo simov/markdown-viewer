@@ -158,6 +158,14 @@ chrome.tabs.onUpdated.addListener((id, info, tab) => {
           state.origins['*://' + win.location.host] ||
           state.origins['*://*']
 
+        // ff: webRequest bug - does not match on `hostname:port`
+        if (!path && /Firefox/.test(navigator.userAgent)) {
+          var path =
+            state.origins[win.location.protocol + '//' + win.location.hostname] ||
+            state.origins['*://' + win.location.hostname] ||
+            state.origins['*://*']
+        }
+
         if (path && new RegExp(path).test(win.location.href)) {
           inject(id)
         }
@@ -275,7 +283,7 @@ chrome.webRequest &&
 chrome.webRequest.onHeadersReceived.addListener(({responseHeaders}) => ({
   responseHeaders: responseHeaders
     .filter(({name}) => name.toLowerCase() !== 'content-security-policy')
-    // ff only
+    // ff: markdown `content-type` is not allowed
     .map((header) => {
       if (
         /Firefox/.test(navigator.userAgent) &&
