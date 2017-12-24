@@ -13,12 +13,7 @@
     "default_popup": "/content/popup.html"
   },
 
-  // chrome
   "options_page": "/content/options.html",
-  // firefox
-  // "options_ui": {
-  //   "page": "content/options.html"
-  // },
 
   "background" : {
     "scripts": [
@@ -31,9 +26,8 @@
       "/background/marked.js",
       "/background/remark.js",
       "/background/background.js"
-    ]
-    // chrome
-    , "persistent": false
+    ],
+    "persistent": false
   },
 
   "web_accessible_resources": [
@@ -73,9 +67,6 @@
   "permissions": [
     "storage",
     "file:///*"
-    // firefox
-    // , "webRequest"
-    // , "webRequestBlocking"
   ],
 
   "optional_permissions": [
@@ -83,12 +74,4 @@
     "http://*/",
     "*://*/"
   ]
-
-  // firefox
-  // , "applications": {
-  //   "gecko": {
-  //     "id": "markdown-viewer@outofindex.com",
-  //     "strict_min_version": "57.0"
-  //   }
-  // }
 }
