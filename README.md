@@ -239,7 +239,7 @@ Markdown Viewer can be used with any markdown parser/compiler. Currently the fol
 
 The MIT License (MIT)
 
-Copyright (c) 2013-2017 Simeon Velichkov <simeonvelichkov@gmail.com>
+Copyright (c) 2013-2018 Simeon Velichkov <simeonvelichkov@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -284,14 +284,14 @@ SOFTWARE.
   [themes3]: https://github.com/nWODT-Cobalt/markown-utilities
   [prism]: http://prismjs.com/
   [gfm-tables]: https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#tables
-  [syntax]: https://raw.githubusercontent.com/simov/markdown-viewer/master/test/syntax.md
+  [syntax]: https://raw.githubusercontent.com/simov/markdown-viewer/master/test/syntax/syntax.md
   [compilers]: https://github.com/simov/markdown-viewer/tree/compilers
   [test]: https://github.com/simov/markdown-viewer/tree/master/test
 
-  [test-syntax]: https://raw.githubusercontent.com/simov/markdown-viewer/master/test/syntax.md
-  [test-mathjax]: https://raw.githubusercontent.com/simov/markdown-viewer/master/test/mathjax.md
-  [test-yaml]: https://raw.githubusercontent.com/simov/markdown-viewer/master/test/yaml.md
-  [test-toml]: https://raw.githubusercontent.com/simov/markdown-viewer/master/test/toml.md
+  [test-syntax]: https://raw.githubusercontent.com/simov/markdown-viewer/master/test/syntax/syntax.md
+  [test-mathjax]: https://raw.githubusercontent.com/simov/markdown-viewer/master/test/syntax/mathjax.md
+  [test-yaml]: https://raw.githubusercontent.com/simov/markdown-viewer/master/test/syntax/yaml.md
+  [test-toml]: https://raw.githubusercontent.com/simov/markdown-viewer/master/test/syntax/toml.md
 
   [file-urls]: https://i.imgur.com/rNS9ADW.png
   [add-origin]: https://i.imgur.com/GnKmkRG.png
