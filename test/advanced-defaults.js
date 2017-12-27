@@ -4,6 +4,10 @@ var t = require('assert')
 
 module.exports = ({advanced}) => {
 
+  before(async () => {
+    await advanced.bringToFront()
+  })
+
   it('access to file URLs', async () => {
     t.strictEqual(
       await advanced.evaluate(() =>

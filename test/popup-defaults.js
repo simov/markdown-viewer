@@ -4,6 +4,10 @@ var t = require('assert')
 
 module.exports = ({popup}) => {
 
+  before(async () => {
+    await popup.bringToFront()
+  })
+
   it('button - raw', async () => {
     t.strictEqual(
       await popup.evaluate(() =>
@@ -22,7 +26,7 @@ module.exports = ({popup}) => {
   })
 
   it('tabs', async () => {
-    t.strictEqual(
+    t.equal(
       await popup.evaluate(() =>
         state.tab
       ),
@@ -49,7 +53,7 @@ module.exports = ({popup}) => {
   })
 
   it('tab - theme', async () => {
-    t.strictEqual(
+    t.equal(
       await popup.evaluate(() =>
         state.theme
       ),
@@ -92,7 +96,8 @@ module.exports = ({popup}) => {
 
   it('tab - compiler', async () => {
     await popup.click('.m-tabs a:nth-of-type(2)')
-    t.strictEqual(
+
+    t.equal(
       await popup.evaluate(() =>
         state.tab
       ),
@@ -157,7 +162,8 @@ module.exports = ({popup}) => {
 
   it('tab - content', async () => {
     await popup.click('.m-tabs a:nth-of-type(3)')
-    t.strictEqual(
+
+    t.equal(
       await popup.evaluate(() =>
         state.tab
       ),

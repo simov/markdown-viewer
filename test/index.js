@@ -39,6 +39,8 @@ describe('markdown-viewer', () => {
     var advanced = await browser.newPage()
     await advanced.goto(`chrome-extension://${id}/content/options.html`)
 
+    var content = await browser.newPage()
+
     await new Promise((resolve, reject) => {
       server = http.createServer()
       server.on('request', (req, res) => {
@@ -62,13 +64,28 @@ describe('markdown-viewer', () => {
           res.setHeader('Content-Type', 'text/x-markdown')
           res.end('- [ ] task')
         }
+        else if (/content-options-toc/.test(req.url)) {
+          res.setHeader('Content-Type', 'text/markdown')
+          res.end('# h1\n# h2\n# h3')
+        }
+        else if (/content-options-scroll/.test(req.url)) {
+          res.setHeader('Content-Type', 'text/markdown')
+          res.end([
+            '# h1',
+            Array(500).fill('lorem ipsum').join(' '),
+            '## h2',
+            Array(500).fill('lorem ipsum').join(' '),
+            '### h3',
+            Array(500).fill('lorem ipsum').join(' '),
+          ].join('\n\n'))
+        }
       })
       server.listen(3000, resolve)
     })
 
     tests.forEach((file) => {
       describe(file, () => {
-        require(`./${file}.js`)({puppeteer, browser, popup, advanced})
+        require(`./${file}.js`)({puppeteer, browser, popup, advanced, content})
       })
     })
 

@@ -2,17 +2,18 @@
 var t = require('assert')
 
 
-module.exports = ({browser, advanced}) => {
+module.exports = ({browser, content, advanced}) => {
+
+  before(async () => {
+    // add origin
+    await advanced.bringToFront()
+    await advanced.select('.m-select', 'http')
+    await advanced.type('[type=text]', 'localhost:3000')
+    await advanced.click('button')
+    await advanced.waitFor(() => document.querySelectorAll('.m-list li').length === 2)
+  })
 
   describe('add origin', () => {
-    before(async () => {
-      // add
-      await advanced.select('.m-select', 'http')
-      await advanced.type('[type=text]', 'localhost:3000')
-      await advanced.click('button')
-      await advanced.waitFor(() => document.querySelectorAll('.m-list li').length === 2)
-    })
-
     it('localhost:3000', async () => {
       t.equal(
         await advanced.evaluate(() =>
@@ -39,14 +40,8 @@ module.exports = ({browser, advanced}) => {
   })
 
   describe('disabled header detection + disabled path matching', () => {
-    var content
-
     before(async () => {
-      // add origin
-      await advanced.select('.m-select', 'http')
-      await advanced.type('[type=text]', 'localhost:3000')
-      await advanced.click('button')
-      await advanced.waitFor(() => document.querySelectorAll('.m-list li').length === 2)
+      await advanced.bringToFront()
 
       // disable header detection
       if (await advanced.evaluate(() => state.header)) {
@@ -55,19 +50,21 @@ module.exports = ({browser, advanced}) => {
 
       // disable path matching
       await advanced.evaluate(() => {
-        document.querySelector('.m-list li:nth-of-type(2) input').value = ''
         document.querySelector('.m-list li:nth-of-type(2) input')
-          .dispatchEvent(new Event('keyup', {bubbles: true}))
+          .value = ''
+        document.querySelector('.m-list li:nth-of-type(2) input')
+          .dispatchEvent(new Event('keyup'))
       })
-
-      // go to page serving markdown as text/markdown
-      content = await browser.newPage()
-      await content.goto('http://localhost:3000/correct-content-type')
-      await content.bringToFront()
-      await content.waitFor('pre')
+      // there is debounce timeout of 750ms in the options UI
+      await advanced.waitFor(800)
     })
 
     it('text/markdown', async () => {
+      // go to page serving markdown as text/markdown
+      await content.goto('http://localhost:3000/correct-content-type')
+      await content.bringToFront()
+      await content.waitFor('pre')
+
       t.equal(
         await content.evaluate(() =>
           document.querySelector('pre').innerText
@@ -76,22 +73,11 @@ module.exports = ({browser, advanced}) => {
         'markdown should not be rendered'
       )
     })
-
-    after(async () => {
-      await content.close()
-    })
   })
 
   describe('enabled header detection + disabled path matching', () => {
-    var content
-
     before(async () => {
-      // add origin
       await advanced.bringToFront()
-      await advanced.select('.m-select', 'http')
-      await advanced.type('[type=text]', 'localhost:3000')
-      await advanced.click('button')
-      await advanced.waitFor(() => document.querySelectorAll('.m-list li').length === 2)
 
       // enable header detection
       if (!await advanced.evaluate(() => state.header)) {
@@ -100,20 +86,21 @@ module.exports = ({browser, advanced}) => {
 
       // disable path matching
       await advanced.evaluate(() => {
-        document.querySelector('.m-list li:nth-of-type(2) input').value = ''
         document.querySelector('.m-list li:nth-of-type(2) input')
-          .dispatchEvent(new Event('keyup', {bubbles: true}))
+          .value = ''
+        document.querySelector('.m-list li:nth-of-type(2) input')
+          .dispatchEvent(new Event('keyup'))
       })
-
-      // open up new page
-      content = await browser.newPage()
-      await content.bringToFront()
+      // there is debounce timeout of 750ms in the options UI
+      await advanced.waitFor(800)
     })
 
     it('text/markdown', async () => {
       // go to page serving markdown as text/markdown
       await content.goto('http://localhost:3000/correct-content-type')
+      await content.bringToFront()
       await content.waitFor('#_html')
+
       t.equal(
         await content.evaluate(() =>
           document.querySelector('#_html p strong').innerText
@@ -126,7 +113,9 @@ module.exports = ({browser, advanced}) => {
     it('text/x-markdown', async () => {
       // go to page serving markdown as text/x-markdown
       await content.goto('http://localhost:3000/correct-content-type-variation')
+      await content.bringToFront()
       await content.waitFor('#_html')
+
       t.equal(
         await content.evaluate(() =>
           document.querySelector('#_html p strong').innerText
@@ -135,21 +124,11 @@ module.exports = ({browser, advanced}) => {
         'markdown should be rendered'
       )
     })
-
-    after(async () => {
-      await content.close()
-    })
   })
 
   describe('enabled header detection + enabled path matching', () => {
-    var content
-
     before(async () => {
-      // add origin
-      await advanced.select('.m-select', 'http')
-      await advanced.type('[type=text]', 'localhost:3000')
-      await advanced.click('button')
-      await advanced.waitFor(() => document.querySelectorAll('.m-list li').length === 2)
+      await advanced.bringToFront()
 
       // enable header detection
       if (!await advanced.evaluate(() => state.header)) {
@@ -158,22 +137,21 @@ module.exports = ({browser, advanced}) => {
 
       // enable path matching
       await advanced.evaluate(() => {
-        document.querySelector('.m-list li:nth-of-type(2) input').value = 'wrong-content-type'
         document.querySelector('.m-list li:nth-of-type(2) input')
-          .dispatchEvent(new Event('keyup', {bubbles: true}))
+          .value = 'wrong-content-type'
+        document.querySelector('.m-list li:nth-of-type(2) input')
+          .dispatchEvent(new Event('keyup'))
       })
-      // TODO: figure out why is this needed
-      await advanced.waitFor(600)
-
-      // open up new page
-      content = await browser.newPage()
-      await content.bringToFront()
+      // there is debounce timeout of 750ms in the options UI
+      await advanced.waitFor(800)
     })
 
     it('text/plain', async () => {
       // go to page serving markdown as text/plain
       await content.goto('http://localhost:3000/wrong-content-type')
+      await content.bringToFront()
       await content.waitFor('#_html')
+
       t.equal(
         await content.evaluate(() =>
           document.querySelector('#_html p strong').innerText
@@ -181,10 +159,6 @@ module.exports = ({browser, advanced}) => {
         'bold',
         'markdown should be rendered'
       )
-    })
-
-    after(async () => {
-      await content.close()
     })
   })
 
