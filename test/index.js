@@ -17,6 +17,7 @@ var tests = [
   'advanced-defaults',
   'advanced-origins',
   'popup-options',
+  'advanced-csp', // should be last - destroys popup and advanced
 ]
 
 
@@ -26,10 +27,10 @@ describe('markdown-viewer', () => {
   it('test suite', async () => {
     browser = await puppeteer.launch(options)
 
-    var page = await browser.newPage()
-    await page.goto('chrome://extensions')
-    await page.waitForSelector('.extension-id')
-    var id = await page.evaluate(() =>
+    var extensions = await browser.newPage()
+    await extensions.goto('chrome://extensions')
+    await extensions.waitForSelector('.extension-id')
+    var id = await extensions.evaluate(() =>
       document.querySelector('.extension-id').innerText.trim()
     )
 
@@ -79,13 +80,18 @@ describe('markdown-viewer', () => {
             Array(500).fill('lorem ipsum').join(' '),
           ].join('\n\n'))
         }
+        else if (/csp/.test(req.url)) {
+          res.setHeader('Content-Security-Policy',
+            `default-src 'none'; style-src 'unsafe-inline'; sandbox`)
+          res.end('# h1')
+        }
       })
       server.listen(3000, resolve)
     })
 
     tests.forEach((file) => {
       describe(file, () => {
-        require(`./${file}.js`)({puppeteer, browser, popup, advanced, content})
+        require(`./${file}.js`)({puppeteer, browser, extensions, popup, advanced, content})
       })
     })
 

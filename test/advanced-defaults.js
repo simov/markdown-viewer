@@ -28,6 +28,16 @@ module.exports = ({advanced}) => {
     )
   })
 
+  it('csp option', async () => {
+    t.strictEqual(
+      await advanced.evaluate(() =>
+        state.csp
+      ),
+      false,
+      'state.csp should be false'
+    )
+  })
+
   it('allowed origins', async () => {
     t.deepStrictEqual(
       await advanced.evaluate(() =>

@@ -2,7 +2,7 @@
 var t = require('assert')
 
 
-module.exports = ({browser, content, advanced}) => {
+module.exports = ({browser, advanced, content}) => {
 
   before(async () => {
     // add origin
