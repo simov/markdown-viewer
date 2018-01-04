@@ -72,6 +72,8 @@
   "optional_permissions": [
     "https://*/",
     "http://*/",
-    "*://*/"
+    "*://*/",
+    "webRequest",
+    "webRequestBlocking"
   ]
 }

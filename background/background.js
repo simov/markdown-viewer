@@ -15,6 +15,7 @@ var defaults = {
   },
   raw: false,
   header: true,
+  csp: false,
   match,
   origins: {
     'file://': match
@@ -25,6 +26,8 @@ Object.keys(md).forEach((compiler) => {
 })
 
 var state
+
+var onwakeup = true
 
 function set (options) {
   chrome.storage.sync.set(options)
@@ -76,6 +79,10 @@ chrome.storage.sync.get((res) => {
   if (options.content.mathjax === undefined) {
     options.content.mathjax = false
   }
+  // v3.3 -> v3.4
+  if (options.csp === undefined) {
+    options.csp = false
+  }
 
   // reload extension bug
   chrome.permissions.getAll((permissions) => {
@@ -97,6 +104,11 @@ chrome.storage.sync.get((res) => {
 })
 
 function inject (id) {
+  if (onwakeup && state.csp) {
+    onwakeup = false
+    chrome.tabs.reload(id)
+  }
+
   chrome.tabs.executeScript(id, {
     code: `
       document.querySelector('pre').style.visibility = 'hidden'
@@ -245,11 +257,18 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
     sendResponse({
       origins: state.origins,
       header: state.header,
+      csp: state.csp,
       exclude: state.exclude,
     })
   }
   else if (req.message === 'options.header') {
     set({header: req.header})
+    sendResponse()
+  }
+  else if (req.message === 'options.csp') {
+    chrome.webRequest.onHeadersReceived
+      [`${req.csp ? 'add' : 'remove'}Listener`](...onHeaderArgs)
+    set({csp: req.csp})
     sendResponse()
   }
 
@@ -279,25 +298,28 @@ function notifyContent (req, res) {
   })
 }
 
+var onHeaderArgs = [
+  ({responseHeaders}) => ({
+    responseHeaders: responseHeaders
+      .filter(({name}) => name.toLowerCase() !== 'content-security-policy')
+      // ff: markdown `content-type` is not allowed
+      .map((header) => {
+        if (
+          /Firefox/.test(navigator.userAgent) &&
+          header.name.toLowerCase() === 'content-type' &&
+          /text\/(?:x-)?markdown/.test(header.value)
+        ) {
+          header.value = 'text/plain; charset=utf-8'
+        }
+        return header
+      })
+    }),
+    {
+      urls: ['<all_urls>'],
+      types: ['main_frame', 'sub_frame']
+    },
+    ['blocking', 'responseHeaders']
+]
+
 chrome.webRequest &&
-chrome.webRequest.onHeadersReceived.addListener(({responseHeaders}) => ({
-  responseHeaders: responseHeaders
-    .filter(({name}) => name.toLowerCase() !== 'content-security-policy')
-    // ff: markdown `content-type` is not allowed
-    .map((header) => {
-      if (
-        /Firefox/.test(navigator.userAgent) &&
-        header.name.toLowerCase() === 'content-type' &&
-        /text\/(?:x-)?markdown/.test(header.value)
-      ) {
-        header.value = 'text/plain; charset=utf-8'
-      }
-      return header
-    })
-  }),
-  {
-    urls: ['<all_urls>'],
-    types: ['main_frame', 'sub_frame']
-  },
-  ['blocking', 'responseHeaders']
-)
+chrome.webRequest.onHeadersReceived.addListener(...onHeaderArgs)

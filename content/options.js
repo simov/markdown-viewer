@@ -3,6 +3,7 @@ var defaults = {
   // storage
   origins: {},
   header: false,
+  csp: false,
   // static
   protocols: ['https', 'http', '*'],
   // UI
@@ -23,6 +24,19 @@ var events = {
     chrome.runtime.sendMessage({
       message: 'options.header',
       header: state.header,
+    })
+  },
+
+  csp: (e) => {
+    var action = state.csp ? 'remove' : 'request'
+    state.csp = !state.csp
+    chrome.permissions[action]({
+      permissions: ['webRequest', 'webRequestBlocking']
+    }, () => {
+      chrome.runtime.sendMessage({
+        message: 'options.csp',
+        csp: state.csp,
+      })
     })
   },
 
@@ -104,8 +118,13 @@ var oncreate = {
 }
 
 var onupdate = {
-  switch: (vnode) => {
+  header: (vnode) => {
     if (vnode.dom.classList.contains('is-checked') !== state.header) {
+      vnode.dom.classList.toggle('is-checked')
+    }
+  },
+  csp: (vnode) => {
+    if (vnode.dom.classList.contains('is-checked') !== state.csp) {
       vnode.dom.classList.toggle('is-checked')
     }
   }
@@ -168,7 +187,7 @@ m.mount(document.querySelector('main'), {
         // header detection - ff: disabled
         (!/Firefox/.test(navigator.userAgent) || null) &&
         m('label.mdc-switch m-switch', {
-          onupdate: onupdate.switch,
+          onupdate: onupdate.header,
           title: 'Toggle header detection'
           },
           m('input.mdc-switch__native-control', {
@@ -183,6 +202,24 @@ m.mount(document.querySelector('main'), {
             ' and ',
             m('code', 'text/x-markdown'),
             ' content type'
+          )
+        ),
+
+        // csp - ff: disabled
+        (!/Firefox/.test(navigator.userAgent) || null) &&
+        m('label.mdc-switch m-switch', {
+          onupdate: onupdate.csp,
+          title: 'Disable Content Security Policy (CSP)'
+          },
+          m('input.mdc-switch__native-control', {
+            type: 'checkbox',
+            checked: state.csp,
+            onchange: events.csp
+          }),
+          m('.mdc-switch__background', m('.mdc-switch__knob')),
+          m('span.mdc-switch-label',
+            'Disable ',
+            m('code', 'Content Security Policy'),
           )
         ),
 
