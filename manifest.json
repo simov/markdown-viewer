@@ -22,10 +22,18 @@
       "/vendor/remark-html.min.js",
       "/vendor/remark-slug.min.js",
       "/vendor/remark-frontmatter.min.js",
+
+      "/background/compilers/marked.js",
+      "/background/compilers/remark.js",
+
+      "/background/storage.js",
+      "/background/headers.js",
+      "/background/detect.js",
+      "/background/inject.js",
+      "/background/messages.js",
       "/background/mathjax.js",
-      "/background/marked.js",
-      "/background/remark.js",
-      "/background/background.js"
+
+      "/background/index.js"
     ],
     "persistent": false
   },

@@ -1,8 +1,8 @@
 
-var md = {}
+var md = {compilers: {}}
 
-md.marked = {
-  defaults: {
+md.compilers.marked = (() => {
+  var defaults = {
     breaks: false,
     gfm: true,
     pedantic: false,
@@ -11,8 +11,9 @@ md.marked = {
     smartypants: false,
     tables: true,
     langPrefix: 'language-' // prism
-  },
-  description: {
+  }
+
+  var description = {
     breaks: 'Enable GFM line breaks\n(requires the gfm option to be true)',
     gfm: 'Enable GFM\n(GitHub Flavored Markdown)',
     pedantic: 'Don\'t fix any of the original markdown\nbugs or poor behavior',
@@ -20,7 +21,14 @@ md.marked = {
     smartLists: 'Use smarter list behavior\nthan the original markdown',
     smartypants: 'Use "smart" typographic punctuation\nfor things like quotes and dashes',
     tables: 'Enable GFM tables\n(requires the gfm option to be true)'
-  },
-  compile: (markdown) =>
-    marked(markdown, state.marked)
-}
+  }
+
+  var ctor = ({storage: {state}}) => ({
+    defaults,
+    description,
+    compile: (markdown) =>
+      marked(markdown, state.marked)
+  })
+
+  return Object.assign(ctor, {defaults, description})
+})()
