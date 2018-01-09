@@ -232,11 +232,13 @@ m.mount(document.querySelector('main'), {
 
         m('ul.mdc-elevation--z2 m-list',
           Object.keys(state.origins).sort().map((origin) =>
-            // ff: access to file:// URLs is not allowed
             (
-              !/Firefox/.test(navigator.userAgent) ||
-              (/Firefox/.test(navigator.userAgent) && origin !== 'file://') ||
-              null
+              (
+                state.file && origin === 'file://' &&
+                // ff: access to file:// URLs is not allowed
+                !/Firefox/.test(navigator.userAgent)
+              )
+              || origin !== 'file://' || null
             ) &&
             m('li',
               m('span', origin.replace(/^(\*|file|http(s)?).*/, '$1')),
