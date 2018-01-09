@@ -81,7 +81,10 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, headers}) =
       sendResponse()
     }
     else if (req.message === 'options.csp') {
-      headers[req.csp ? 'add' : 'remove']()
+      // ff: onHeadersReceived is enabled by default
+      if (!/Firefox/.test(navigator.userAgent)) {
+        headers[req.csp ? 'add' : 'remove']()
+      }
       set({csp: req.csp})
       sendResponse()
     }

@@ -28,11 +28,19 @@ var events = {
   },
 
   csp: (e) => {
-    var action = state.csp ? 'remove' : 'request'
-    state.csp = !state.csp
-    chrome.permissions[action]({
-      permissions: ['webRequest', 'webRequestBlocking']
-    }, () => {
+    ;((done) => {
+      // ff: webRequest is required permission
+      if (/Firefox/.test(navigator.userAgent)) {
+        done()
+      }
+      else {
+        var action = state.csp ? 'remove' : 'request'
+        chrome.permissions[action]({
+          permissions: ['webRequest', 'webRequestBlocking']
+        }, done)
+      }
+    })(() => {
+      state.csp = !state.csp
       chrome.runtime.sendMessage({
         message: 'options.csp',
         csp: state.csp,
@@ -205,8 +213,7 @@ m.mount(document.querySelector('main'), {
           )
         ),
 
-        // csp - ff: disabled
-        (!/Firefox/.test(navigator.userAgent) || null) &&
+        // csp
         m('label.mdc-switch m-switch', {
           onupdate: onupdate.csp,
           title: 'Disable Content Security Policy (CSP)'
