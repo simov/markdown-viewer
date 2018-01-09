@@ -1,9 +1,9 @@
 
 var storage = md.storage(md)
 
-var headers = md.headers({storage})
 var inject = md.inject({storage})
 var detect = md.detect({storage, inject})
+var headers = md.headers({storage, detect})
 var mathjax = md.mathjax()
 
 var compilers = Object.keys(md.compilers)
@@ -15,7 +15,7 @@ var compilers = Object.keys(md.compilers)
 var messages = md.messages({storage, compilers, mathjax, headers})
 
 
-chrome.tabs.onUpdated.addListener(detect)
+chrome.tabs.onUpdated.addListener(detect.tab)
 
 chrome.runtime.onMessage.addListener(messages)
 

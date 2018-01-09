@@ -20,7 +20,7 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
     // enable path matching
     await advanced.evaluate(() => {
       document.querySelector('.m-list li:nth-of-type(2) input')
-        .value = 'csp'
+        .value = 'csp-match-path'
       document.querySelector('.m-list li:nth-of-type(2) input')
         .dispatchEvent(new Event('keyup'))
     })
@@ -68,6 +68,34 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
     })
   })
 
+  describe('strip csp header only on matching content type or url', () => {
+    it('non matching urls should be skipped', async () => {
+      await advanced.bringToFront()
+      // enable csp
+      if (!await advanced.evaluate(() => state.csp)) {
+        await advanced.click('.m-switch:nth-of-type(2)')
+      }
+
+      // go to page serving content with strict csp
+      await content.goto('http://localhost:3000/csp-wrong-path')
+      await content.bringToFront()
+      await content.waitFor('pre')
+
+      t.strictEqual(
+        await content.evaluate(() => {
+          try {
+            window.localStorage
+          }
+          catch (err) {
+            return err.message.split(':')[1].trim()
+          }
+        }),
+        `The document is sandboxed and lacks the 'allow-same-origin' flag.`,
+        'localStorage should not be accessible'
+      )
+    })
+  })
+
   describe('enable csp', () => {
     it('webRequest.onHeadersReceived event is enabled', async () => {
       await advanced.bringToFront()
@@ -77,7 +105,7 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
       }
 
       // go to page serving content with strict csp
-      await content.goto('http://localhost:3000/csp')
+      await content.goto('http://localhost:3000/csp-match-path')
       await content.bringToFront()
       await content.waitFor('#_html')
 
@@ -100,7 +128,7 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
       }
 
       // go to page serving content with strict csp
-      await content.goto('http://localhost:3000/csp')
+      await content.goto('http://localhost:3000/csp-match-path')
       await content.bringToFront()
       await content.waitFor('#_html')
 
@@ -144,7 +172,7 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
       )
 
       // go to page serving content with strict csp
-      await content.goto('http://localhost:3000/csp')
+      await content.goto('http://localhost:3000/csp-match-path')
       await content.bringToFront()
       await content.waitFor('#_html')
 

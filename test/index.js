@@ -80,7 +80,12 @@ describe('markdown-viewer', () => {
             Array(500).fill('lorem ipsum').join(' '),
           ].join('\n\n'))
         }
-        else if (/csp/.test(req.url)) {
+        else if (/csp-match-path/.test(req.url)) {
+          res.setHeader('Content-Security-Policy',
+            `default-src 'none'; style-src 'unsafe-inline'; sandbox`)
+          res.end('# h1')
+        }
+        else if (/csp-wrong-path/.test(req.url)) {
           res.setHeader('Content-Security-Policy',
             `default-src 'none'; style-src 'unsafe-inline'; sandbox`)
           res.end('# h1')

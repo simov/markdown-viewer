@@ -1,21 +1,38 @@
 
-md.headers = ({storage: {state}}) => {
+md.headers = ({storage: {state}, detect}) => {
 
-  var callback = ({responseHeaders}) => ({
-    responseHeaders: responseHeaders
-      .filter(({name}) => !state.csp || !/content-security-policy/i.test(name))
-      // ff: markdown `content-type` is not allowed
-      .map((header) => {
-        if (
-          /Firefox/.test(navigator.userAgent) &&
-          header.name.toLowerCase() === 'content-type' &&
-          /text\/(?:x-)?markdown/.test(header.value)
-        ) {
-          header.value = 'text/plain; charset=utf-8'
-        }
-        return header
-      })
-    })
+  var callback = ({method, url, responseHeaders}) => {
+    if (method !== 'GET') {
+      return {responseHeaders}
+    }
+
+    var header = responseHeaders.find(({name}) => /content-type/i.test(name))
+
+    if (!detect.match(header, url)) {
+      return {responseHeaders}
+    }
+
+    if (state.csp) {
+      responseHeaders = responseHeaders
+        .filter(({name}) => !/content-security-policy/i.test(name))
+    }
+
+    if (/Firefox/.test(navigator.userAgent)) {
+      responseHeaders = responseHeaders
+        // ff: markdown `content-type` is not allowed
+        .map((header) => {
+          if (
+            /content-type/i.test(header.name) &&
+            /text\/(?:x-)?markdown/.test(header.value)
+          ) {
+            header.value = 'text/plain; charset=utf-8'
+          }
+          return header
+        })
+    }
+
+    return {responseHeaders}
+  }
 
   var filter = {
     urls: ['<all_urls>'],
