@@ -61,9 +61,7 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, headers}) =
       sendResponse()
     }
     else if (req.message === 'popup.advanced') {
-      chrome.management.getSelf((extension) => {
-        chrome.tabs.create({url: extension.optionsUrl})
-      })
+      chrome.runtime.openOptionsPage()
       sendResponse()
     }
 
