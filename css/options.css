@@ -108,10 +108,8 @@ footer a:nth-of-type(2):before {
 /*switch*/
 .m-switch {
   cursor: pointer;
+  display: table;
   margin: 7px 0;
-}
-.m-switch:last-child {
-  margin-bottom: 16px;
 }
 .m-switch .mdc-switch__background {
   display: inline-block;
