@@ -276,3 +276,8 @@ m.mount(document.querySelector('main'), {
       ),
     )
 })
+
+// ff: set appropriate footer icon
+document.querySelector('.icon-' + (
+  /Firefox/.test(navigator.userAgent) ? 'firefox' : 'chrome'
+)).classList.remove('icon-hidden')
