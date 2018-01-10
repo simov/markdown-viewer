@@ -22,10 +22,10 @@ html, body {
   color: #000 !important;
 }
 .m-button:before {
-  background-color: rgba(96, 125, 139, 0.16) !important;
+  background-color: rgba(96, 125, 139, 0.56) !important;
 }
 .m-button:after {
-  background-color: rgba(96, 125, 139, 0.16) !important;
+  background-color: rgba(96, 125, 139, 0.56) !important;
 }
 
 

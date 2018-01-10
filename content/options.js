@@ -172,8 +172,8 @@ m.mount(document.querySelector('main'), {
             protocol + '://'
           )
         )),
-        m('.mdc-textfield m-textfield',
-          m('input.mdc-textfield__input', {
+        m('.mdc-text-field m-textfield',
+          m('input.mdc-text-field__input', {
             type: 'text',
             value: state.origin,
             onchange: events.origin.name,
@@ -244,10 +244,10 @@ m.mount(document.querySelector('main'), {
             m('li',
               m('span', origin.replace(/^(\*|file|http(s)?).*/, '$1')),
               m('span', origin.replace(/^(\*|file|http(s)?):\/\//, '')),
-              m('.mdc-textfield m-textfield', {
+              m('.mdc-text-field m-textfield', {
                 oncreate: oncreate.textfield
                 },
-                m('input.mdc-textfield__input', {
+                m('input.mdc-text-field__input', {
                   type: 'text',
                   onkeyup: events.origin.update(origin),
                   value: state.origins[origin],
