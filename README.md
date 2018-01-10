@@ -19,6 +19,9 @@
 - [MathJax][mathjax] support
 - Settings synchronization
 - Raw and rendered markdown views
+- Detects markdown by header and path
+- Toggle Content Security Policy
+- Built as [event page][event-page]
 - Free and Open Source
 
 
@@ -42,6 +45,7 @@
   - [Path Matching](#path-matching)
   - [Remove Origin](#remove-origin)
   - [Refresh Origin](#refresh-origin)
+  - [Disable CSP](#disable-content-security-policy)
 - [Markdown Syntax and Features](#markdown-syntax-and-features)
 - [More Compilers](#more-compilers)
 
@@ -55,6 +59,7 @@
 
 ![file-urls]
 
+> Navigate to `file:///` in your browser and locate the markdown files that you want to read
 
 ## Remote Files
 
@@ -118,14 +123,14 @@ The following rules apply to your content when `mathjax` is enabled:
 - Regular dollar sign `$` in text that is not part of a math formula should be escaped: `\$`
 - Regular markdown escaping for parentheses: `\(` and `\)`, and brackets: `\[` and `\]` is not supported. MathJax will convert anything between these delimiters to math formulas, unless they are wrapped in backticks: `` `\(` `` or fenced code blocks.
 
-> The MathJax support currently works only for local file URLs and remote origins without strict *Content Security Policy (CSP)* set. For example it won't work for files hosted on GitHub.
+> The MathJax support currently works only on local file URLs and remote origins without strict *Content Security Policy (CSP)* set. For example it won't work for files hosted on the GitHub's `raw.githubusercontent.com` origin. However you can bypass this by enabling the [Disable CSP](#disable-content-security-policy) option.
 
 ## Emoji
 
 - Emoji shortnames like: `:sparkles:` will be converted to :sparkles: using [EmojiOne][emojione] images.
 - Currently unicode symbols like `✨` and ASCII emoji like `:D` are not supported.
 
-> The Emoji support currently works only for local file URLs and remote origins without strict *Content Security Policy (CSP)* set. For example it won't work for files hosted on GitHub.
+> The Emoji support currently works only on local file URLs and remote origins without strict *Content Security Policy (CSP)* set. For example it won't work for files hosted on the GitHub's `raw.githubusercontent.com` origin. However you can bypass this by enabling the [Disable CSP](#disable-content-security-policy) option.
 
 
 # Advanced Options
@@ -152,15 +157,15 @@ In case you really want to you can enable the extension for **all** origins:
 
 Alternatively you can use the `Allow All` button.
 
-**Important:** Note that all remote origins should either serve its markdown content with valid `content-type` header (see [Header Detection](#header-detection)) or valid URL path (see [Path Matching](#path-matching)). Otherwise the following rules take place:
+**Important:** Note that all remote origins should either serve their markdown content with valid `content-type` header (see [Header Detection](#header-detection)) or valid URL path (see [Path Matching](#path-matching)). Otherwise the following rules take place:
 
 Consider this example:
 
 ![allow-all]
 
-1. In this example the user have enabled all origins `*://*` (the first entry), but as you can see all origins are going to match only on those URLs ending with markdown file extension.<br>
+1. In this example we have allowed all origins `*://*` (the first entry) with the default Path Matching RegExp, meaning that all origins are going to match **only** on those URLs ending with markdown file extension.<br>
 For example this is going to match: https://raw.githubusercontent.com/simov/markdown-viewer/master/README.md<br>
-However it's important to note that the `*://*` (Allow All) RegExp serves as a **fallback** match. It matches only if any other explicitly added origins fail to match, meaning that all other explicitly added origins **override** the `*://*` (Allow All) path matching RegExp!
+However it's important to note that the `*://*` (Allow All) origin serves as a **fallback**. Its Path Matching RegExp will be used only if any other explicitly added (more specific) origins fail to match, meaning that all other explicitly added origins **override** the `*://*` (Allow All) origin and therefore its Path Matching RegExp!
 
 2. For example let's assume that our imaginary origin `asite.com` (the second entry) serves markdown files on a custom path: `https://asite.com/some/custom/path/to/serve/markdown/`<br>
 In this case we'll have to **explicitly add** an entry for `asite.com` and modify its path matching RegExp even if the extension was enabled for all origins!
@@ -183,7 +188,7 @@ https://gitlab.com/gitlab-org/gitlab-ce/blob/master/README.md will be **excluded
 
 ## Header Detection
 
-When this option is enabled the extension will check for the `text/markdown` and `text/x-markdown` *content-type* header before trying to match the path:
+When this option is enabled the extension will check for the presence of the `text/markdown` and `text/x-markdown` *content-type* header before trying to match the path:
 
 ![header-detection]
 
@@ -215,6 +220,18 @@ The extension synchronizes your preferences across all your devices using Google
 In case you've recently added a new origin on one of your devices you'll have to explicitly allow it on your other devices. The little refresh button next to each origin is used for that.
 
 
+## Disable Content Security Policy
+
+Some remote origins may serve its content with a `content-security-policy` header set that prevents the extension from executing certain JavaScript code inside the content of the page. For example on `raw.githubusercontent.com` certain things such as remembering your scroll position, generating TOC, displaying MathJax or Emojis won't work.
+
+Using the `Disable Content Security Policy` switch you can optionally tell the extension to strip that header from the incoming request and therefore allow its full functionality to work:
+
+![disable-csp]
+
+It's important to note that even if you enable this option, the Content Security Policy header will be stripped **only** for those requests that either have a correct [Markdown Content Type](#header-detection) or URL that matches any of your explicitly allowed origins and their corresponding [Path Matching](#path-matching) regexes.
+
+Even if you have [Allowed All Origins](#allow-all-origins) and disabled the Content Security Policy at the same time, the header will be stripped **only** for those requests that either have a correct [Markdown Content Type](#header-detection) or URL that matches your explicitly set [Path Matching](#path-matching) regex for the Allow All origin `* *`.
+
 # Markdown Syntax and Features
 
 A few files located in the [test] folder of this repo can be used to test what's possible with Markdown Viewer:
@@ -224,6 +241,7 @@ A few files located in the [test] folder of this repo can be used to test what's
 - Use the `Markdown/HTML` button to switch between raw markdown and rendered HTML
 - At any point click on the `Defaults` button to reset back the compiler options
 
+> Note that in order for the extension to fully function on the `raw.githubusercontent.com` origin you have to enable the [Disable CSP](#disable-content-security-policy) option.
 
 # More Compilers
 
@@ -240,6 +258,7 @@ Markdown Viewer can be used with any markdown parser/compiler. Currently the fol
 The MIT License (MIT)
 
 Copyright (c) 2013-2018 Simeon Velichkov <simeonvelichkov@gmail.com>
+(https://github.com/simov/markdown-viewer)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -286,7 +305,8 @@ SOFTWARE.
   [gfm-tables]: https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#tables
   [syntax]: https://raw.githubusercontent.com/simov/markdown-viewer/master/test/syntax/syntax.md
   [compilers]: https://github.com/simov/markdown-viewer/tree/compilers
-  [test]: https://github.com/simov/markdown-viewer/tree/master/test
+  [test]: https://github.com/simov/markdown-viewer/tree/master/test/syntax
+  [event-page]: https://developer.chrome.com/extensions/event_pages
 
   [test-syntax]: https://raw.githubusercontent.com/simov/markdown-viewer/master/test/syntax/syntax.md
   [test-mathjax]: https://raw.githubusercontent.com/simov/markdown-viewer/master/test/syntax/mathjax.md
@@ -297,5 +317,6 @@ SOFTWARE.
   [add-origin]: https://i.imgur.com/GnKmkRG.png
   [all-origins]: https://i.imgur.com/4GH3EuP.png
   [header-detection]: https://i.imgur.com/bdz3Reg.png
+  [disable-csp]: https://i.imgur.com/3Qbez1l.png
   [path-regexp]: https://i.imgur.com/jSrLDAM.png
-  [allow-all]: https://i.imgur.com/rwonwKe.png
+  [allow-all]: https://i.imgur.com/1PecYgH.png
