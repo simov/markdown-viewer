@@ -45,6 +45,7 @@ var events = {
         message: 'options.csp',
         csp: state.csp,
       })
+      m.redraw()
     })
   },
 

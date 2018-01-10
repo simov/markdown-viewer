@@ -82,7 +82,8 @@ function mount () {
       }
       else {
         if (state.theme) {
-          dom.push(m('link#_theme [rel="stylesheet"] [type="text/css"]', {
+          dom.push(m('link#_theme', {
+            rel: 'stylesheet', type: 'text/css',
             href: chrome.runtime.getURL('/themes/' + state.theme + '.css')
           }))
         }
