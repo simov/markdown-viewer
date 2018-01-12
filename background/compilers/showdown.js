@@ -1,7 +1,8 @@
 
-md.showdown = {
-  defaults: null, // see below,
-  description: {
+md.compilers.showdown = (() => {
+  var defaults = null // see below
+
+  var description = {
     disableForced4SpacesIndentedSublists: "Disables the requirement of indenting nested sublists by 4 spaces",
     encodeEmails: "Encode e-mail addresses through the use of Character Entities, transforming ASCII e-mail addresses into its equivalent decimal entities",
     excludeTrailingPunctuationFromURLs: "Excludes trailing punctuation from links generated with autoLinking",
@@ -29,8 +30,9 @@ md.showdown = {
     tablesHeaderId: "Adds an id property to table headers tags",
     openLinksInNewWindow: "Open all links in new windows",
     backslashEscapesHTMLTags: "Support for HTML Tag escaping",
-  },
-  flavor: (name) => {
+  }
+
+  var flavor = (name) => {
     var options = showdown.getDefaultOptions()
     var flavor = showdown.getFlavorOptions(name)
     var result = {}
@@ -38,10 +40,17 @@ md.showdown = {
       result[key] = (flavor[key] !== undefined) ? flavor[key] : options[key]
     }
     return result
-  },
-  compile: (markdown) =>
-    new showdown.Converter(state.showdown)
-      .makeHtml(markdown)
-}
+  }
 
-md.showdown.defaults = md.showdown.flavor('github')
+  defaults = flavor('github')
+
+  var ctor = ({storage: {state}}) => ({
+    defaults,
+    description,
+    compile: (markdown) =>
+      new showdown.Converter(state.showdown)
+        .makeHtml(markdown)
+  })
+
+  return Object.assign(ctor, {defaults, description})
+})()

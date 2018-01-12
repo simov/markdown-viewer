@@ -1,6 +1,6 @@
 
-md['markdown-it'] = {
-  defaults: {
+md.compilers.remarkable = (() => {
+  var defaults = {
     breaks: true,
     html: true,
     linkify: true,
@@ -9,15 +9,23 @@ md['markdown-it'] = {
     langPrefix: 'language-',
     quotes: '“”‘’'
     // highlight: (str, lang) => ''
-  },
-  description: {
+  }
+
+  var description = {
     breaks: 'Convert \\n in paragraphs into <br>',
     html: 'Enable HTML tags in source',
     linkify: 'Autoconvert URL-like text to links',
     typographer: 'Enable some language-neutral replacement + quotes beautification',
     xhtmlOut: 'Use / to close single tags (<br />)'
-  },
-  compile: (markdown) =>
-    markdownit(state['markdown-it'])
-      .render(markdown)
-}
+  }
+
+  var ctor = ({storage: {state}}) => ({
+    defaults,
+    description,
+    compile: (markdown) =>
+      new Remarkable('full', state.remarkable)
+        .render(markdown)
+  })
+
+  return Object.assign(ctor, {defaults, description})
+})()
