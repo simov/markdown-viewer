@@ -13,7 +13,9 @@
     "default_popup": "/content/popup.html"
   },
 
-  "options_page": "/content/options.html",
+  "options_ui": {
+    "page": "content/options.html"
+  },
 
   "background" : {
     "scripts": [
@@ -23,20 +25,8 @@
       "/vendor/remark-slug.min.js",
       "/vendor/remark-frontmatter.min.js",
 
-      "/vendor/showdown.min.js",
-      "/vendor/markdown-it.min.js",
-      "/vendor/remarkable.min.js",
-      "/vendor/commonmark.min.js",
-      "/vendor/markdown-js.min.js",
-
       "/background/compilers/marked.js",
       "/background/compilers/remark.js",
-
-      "/background/compilers/showdown.js",
-      "/background/compilers/markdown-it.js",
-      "/background/compilers/remarkable.js",
-      "/background/compilers/commonmark.js",
-      "/background/compilers/markdown-js.js",
 
       "/background/storage.js",
       "/background/headers.js",
@@ -46,8 +36,7 @@
       "/background/mathjax.js",
 
       "/background/index.js"
-    ],
-    "persistent": false
+    ]
   },
 
   "web_accessible_resources": [
@@ -82,18 +71,25 @@
     "128": "/images/icon128.png"
   },
 
-  "homepage_url": "https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk",
+  "homepage_url": "https://addons.mozilla.org/en-US/firefox/addon/markdown-viewer-chrome/",
 
   "permissions": [
     "storage",
-    "file:///*"
+    "file:///*",
+    "webRequest",
+    "webRequestBlocking"
   ],
 
   "optional_permissions": [
     "https://*/",
     "http://*/",
-    "*://*/",
-    "webRequest",
-    "webRequestBlocking"
-  ]
+    "*://*/"
+  ],
+
+  "applications": {
+    "gecko": {
+      "id": "markdown-viewer@outofindex.com",
+      "strict_min_version": "57.0"
+    }
+  }
 }

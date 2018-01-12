@@ -23,20 +23,8 @@
       "/vendor/remark-slug.min.js",
       "/vendor/remark-frontmatter.min.js",
 
-      "/vendor/showdown.min.js",
-      "/vendor/markdown-it.min.js",
-      "/vendor/remarkable.min.js",
-      "/vendor/commonmark.min.js",
-      "/vendor/markdown-js.min.js",
-
       "/background/compilers/marked.js",
       "/background/compilers/remark.js",
-
-      "/background/compilers/showdown.js",
-      "/background/compilers/markdown-it.js",
-      "/background/compilers/remarkable.js",
-      "/background/compilers/commonmark.js",
-      "/background/compilers/markdown-js.js",
 
       "/background/storage.js",
       "/background/headers.js",
@@ -86,7 +74,8 @@
 
   "permissions": [
     "storage",
-    "file:///*"
+    "file:///*",
+    "http://localhost:3000/*"
   ],
 
   "optional_permissions": [

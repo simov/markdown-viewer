@@ -3,6 +3,7 @@ var defaults = {
   // storage
   origins: {},
   header: false,
+  csp: false,
   // static
   protocols: ['https', 'http', '*'],
   // UI
@@ -23,6 +24,28 @@ var events = {
     chrome.runtime.sendMessage({
       message: 'options.header',
       header: state.header,
+    })
+  },
+
+  csp: (e) => {
+    ;((done) => {
+      // ff: webRequest is required permission
+      if (/Firefox/.test(navigator.userAgent)) {
+        done()
+      }
+      else {
+        var action = state.csp ? 'remove' : 'request'
+        chrome.permissions[action]({
+          permissions: ['webRequest', 'webRequestBlocking']
+        }, done)
+      }
+    })(() => {
+      state.csp = !state.csp
+      chrome.runtime.sendMessage({
+        message: 'options.csp',
+        csp: state.csp,
+      })
+      m.redraw()
     })
   },
 
@@ -83,7 +106,7 @@ var events = {
 
 chrome.extension.isAllowedFileSchemeAccess((isAllowedAccess) => {
   state.file = /Firefox/.test(navigator.userAgent)
-    ? true // Allow access to file URLs option isn't working on FF
+    ? true // ff: `Allow access to file URLs` option isn't available
     : isAllowedAccess
   m.redraw()
 })
@@ -104,8 +127,13 @@ var oncreate = {
 }
 
 var onupdate = {
-  switch: (vnode) => {
+  header: (vnode) => {
     if (vnode.dom.classList.contains('is-checked') !== state.header) {
+      vnode.dom.classList.toggle('is-checked')
+    }
+  },
+  csp: (vnode) => {
+    if (vnode.dom.classList.contains('is-checked') !== state.csp) {
       vnode.dom.classList.toggle('is-checked')
     }
   }
@@ -144,8 +172,8 @@ m.mount(document.querySelector('main'), {
             protocol + '://'
           )
         )),
-        m('.mdc-textfield m-textfield',
-          m('input.mdc-textfield__input', {
+        m('.mdc-text-field m-textfield',
+          m('input.mdc-text-field__input', {
             type: 'text',
             value: state.origin,
             onchange: events.origin.name,
@@ -165,10 +193,10 @@ m.mount(document.querySelector('main'), {
           'Allow All'
         ),
 
-        // header detection
+        // header detection - ff: disabled
         (!/Firefox/.test(navigator.userAgent) || null) &&
         m('label.mdc-switch m-switch', {
-          onupdate: onupdate.switch,
+          onupdate: onupdate.header,
           title: 'Toggle header detection'
           },
           m('input.mdc-switch__native-control', {
@@ -186,15 +214,40 @@ m.mount(document.querySelector('main'), {
           )
         ),
 
+        // csp
+        m('label.mdc-switch m-switch', {
+          onupdate: onupdate.csp,
+          title: 'Disable Content Security Policy (CSP)'
+          },
+          m('input.mdc-switch__native-control', {
+            type: 'checkbox',
+            checked: state.csp,
+            onchange: events.csp
+          }),
+          m('.mdc-switch__background', m('.mdc-switch__knob')),
+          m('span.mdc-switch-label',
+            'Disable ',
+            m('code', 'Content Security Policy'),
+          )
+        ),
+
         m('ul.mdc-elevation--z2 m-list',
           Object.keys(state.origins).sort().map((origin) =>
+            (
+              (
+                state.file && origin === 'file://' &&
+                // ff: access to file:// URLs is not allowed
+                !/Firefox/.test(navigator.userAgent)
+              )
+              || origin !== 'file://' || null
+            ) &&
             m('li',
               m('span', origin.replace(/^(\*|file|http(s)?).*/, '$1')),
               m('span', origin.replace(/^(\*|file|http(s)?):\/\//, '')),
-              m('.mdc-textfield m-textfield', {
+              m('.mdc-text-field m-textfield', {
                 oncreate: oncreate.textfield
                 },
-                m('input.mdc-textfield__input', {
+                m('input.mdc-text-field__input', {
                   type: 'text',
                   onkeyup: events.origin.update(origin),
                   value: state.origins[origin],
@@ -223,3 +276,8 @@ m.mount(document.querySelector('main'), {
       ),
     )
 })
+
+// ff: set appropriate footer icon
+document.querySelector('.icon-' + (
+  /Firefox/.test(navigator.userAgent) ? 'firefox' : 'chrome'
+)).classList.remove('icon-hidden')
