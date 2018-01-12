@@ -1,0 +1,58 @@
+{
+  "name": "markdown-viewer",
+  "version": "0.0.0",
+  "description": "Markdown Viewer / Browser Extension",
+  "private": true,
+  "keywords": [],
+  "license": "MIT",
+  "homepage": "https://github.com/simov/markdown-viewer",
+  "author": "Simeon Velichkov <simeonvelichkov@gmail.com> (https://simov.github.io)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/simov/markdown-viewer.git"
+  },
+  "dependencies": {
+    "@material/button": "^0.28.0",
+    "@material/elevation": "^0.28.0",
+    "@material/list": "^0.28.0",
+    "@material/ripple": "^0.28.0",
+    "@material/switch": "^0.28.0",
+    "@material/tabs": "^0.28.0",
+    "@material/textfield": "^0.28.0",
+    "@material/theme": "^0.28.0",
+    "@material/toolbar": "^0.28.0",
+    "@material/typography": "^0.28.0",
+    "marked": "^0.3.12",
+    "mithril": "^1.1.6",
+    "prismjs": "^1.9.0",
+    "remark": "^8.0.0",
+    "remark-frontmatter": "^1.2.0",
+    "remark-html": "^7.0.0",
+    "remark-slug": "^5.0.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "csso": "^3.4.0",
+    "mocha": "^4.1.0",
+    "node-sass": "^4.7.2",
+    "puppeteer": "^0.13.0",
+    "rollup": "^0.53.4",
+    "rollup-plugin-commonjs": "^8.2.6",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "uglify-js": "^3.3.5"
+  },
+  "bin": {},
+  "main": "",
+  "files": [],
+  "scripts": {
+    "test": "mocha --timeout 100000000 --slow 150",
+    "debug": "mocha --inspect-brk --timeout 100000000",
+    "build:mdc": "node build/mdc/",
+    "build:prism": "node build/prism/"
+  },
+  "engines": {
+    "node": ">=8.0.0",
+    "npm": ">=5.0.0"
+  }
+}
