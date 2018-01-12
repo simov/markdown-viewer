@@ -61,7 +61,15 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, headers}) =
       sendResponse()
     }
     else if (req.message === 'popup.advanced') {
-      chrome.runtime.openOptionsPage()
+      // ff: opens up about:addons with openOptionsPage
+      if (/Firefox/.test(navigator.userAgent)) {
+        chrome.management.getSelf((extension) => {
+          chrome.tabs.create({url: extension.optionsUrl})
+        })
+      }
+      else {
+        chrome.runtime.openOptionsPage()
+      }
       sendResponse()
     }
 
