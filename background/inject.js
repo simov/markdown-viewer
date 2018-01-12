@@ -13,10 +13,10 @@ md.inject = ({storage: {state}}) => (id) => {
   })
 
   chrome.tabs.insertCSS(id, {file: 'css/content.css', runAt: 'document_start'})
-  chrome.tabs.insertCSS(id, {file: 'vendor/prism.css', runAt: 'document_start'})
+  chrome.tabs.insertCSS(id, {file: 'vendor/prism.min.css', runAt: 'document_start'})
 
   chrome.tabs.executeScript(id, {file: 'vendor/mithril.min.js', runAt: 'document_start'})
-  chrome.tabs.executeScript(id, {file: 'vendor/prism.js', runAt: 'document_start'})
+  chrome.tabs.executeScript(id, {file: 'vendor/prism.min.js', runAt: 'document_start'})
   if (state.content.emoji) {
     chrome.tabs.executeScript(id, {file: 'content/emoji.js', runAt: 'document_start'})
   }
