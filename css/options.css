@@ -33,7 +33,7 @@ main { padding: 90px 0 30px 0; }
 /*header*/
 header .mdc-toolbar__title { margin: 0; }
 header nav { float: right; margin: 0 !important; }
-header nav a { min-width: auto !important; }
+header nav a { color: #fff !important; min-width: auto !important; }
 
 
 /*footer*/
