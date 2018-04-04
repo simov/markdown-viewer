@@ -29,9 +29,19 @@ describe('markdown-viewer', () => {
 
     var extensions = await browser.newPage()
     await extensions.goto('chrome://extensions')
-    await extensions.waitForSelector('.extension-id')
+    // enable developer mode
+    await extensions.evaluate(() => {
+      document.querySelector('extensions-manager').shadowRoot
+        .querySelector('extensions-toolbar').shadowRoot
+        .querySelector('cr-toggle').click()
+    })
+    // get extension id
     var id = await extensions.evaluate(() =>
-      document.querySelector('.extension-id').innerText.trim()
+      Array.from(
+        document.querySelector('extensions-manager').shadowRoot
+          .querySelector('extensions-item-list').shadowRoot
+          .querySelectorAll('extensions-item')
+      )[0].id
     )
 
     var popup = await browser.newPage()

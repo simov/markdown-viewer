@@ -10,7 +10,8 @@ module.exports = ({browser, popup, advanced, content}) => {
     await advanced.select('.m-select', 'http')
     await advanced.type('[type=text]', 'localhost:3000')
     await advanced.click('button')
-    await advanced.waitFor(() => document.querySelectorAll('.m-list li').length === 2)
+    // await advanced.waitFor(() => document.querySelectorAll('.m-list li').length === 2)
+    await advanced.waitFor(200)
 
     // enable header detection
     if (!await advanced.evaluate(() => state.header)) {
@@ -143,7 +144,10 @@ module.exports = ({browser, popup, advanced, content}) => {
       // reload popup
       await popup.bringToFront()
       await popup.reload()
-      await popup.waitFor('#popup')
+
+      // TODO: wait for https://github.com/GoogleChrome/puppeteer/pull/2289
+      // await popup.waitFor('#popup')
+      await popup.waitFor(200)
 
       t.equal(
         await popup.evaluate(() =>
@@ -211,7 +215,10 @@ module.exports = ({browser, popup, advanced, content}) => {
       // reload popup
       await popup.bringToFront()
       await popup.reload()
-      await popup.waitFor('#popup')
+
+      // TODO: wait for https://github.com/GoogleChrome/puppeteer/pull/2289
+      // await popup.waitFor('#popup')
+      await popup.waitFor(200)
 
       t.equal(
         await popup.evaluate(() =>
@@ -301,7 +308,10 @@ module.exports = ({browser, popup, advanced, content}) => {
       // redraw popup
       await popup.bringToFront()
       await popup.reload()
-      await popup.waitFor('#popup')
+
+      // TODO: wait for https://github.com/GoogleChrome/puppeteer/pull/2289
+      // await popup.waitFor('#popup')
+      await popup.waitFor(200)
 
       // disable gfm
       await content.bringToFront()
@@ -309,7 +319,9 @@ module.exports = ({browser, popup, advanced, content}) => {
       await popup.click('.m-panel:nth-of-type(2) .m-switch:nth-of-type(4)')
       // content auto reloads
       await content.waitFor(100)
-      await content.waitFor('#_html')
+      // TODO: wait for https://github.com/GoogleChrome/puppeteer/pull/2289
+      // await content.waitFor('#_html')
+      await content.waitFor(200)
 
       t.equal(
         await content.evaluate(() =>
@@ -324,7 +336,11 @@ module.exports = ({browser, popup, advanced, content}) => {
       // reload popup
       await popup.bringToFront()
       await popup.reload()
-      await popup.waitFor('#popup')
+
+      // TODO: wait for https://github.com/GoogleChrome/puppeteer/pull/2289
+      // await popup.waitFor('#popup')
+      await popup.waitFor(200)
+
       await popup.waitFor(100)
 
       t.equal(
@@ -482,7 +498,7 @@ module.exports = ({browser, popup, advanced, content}) => {
 
       t.strictEqual(
         await content.evaluate(() =>
-          document.querySelector('body').scrollTop + 2
+          document.querySelector('body').scrollTop + 1
         ),
         await content.evaluate(() =>
           document.querySelector('h2').offsetTop
@@ -498,7 +514,7 @@ module.exports = ({browser, popup, advanced, content}) => {
 
       t.strictEqual(
         await content.evaluate(() =>
-          document.querySelector('body').scrollTop + 2
+          document.querySelector('body').scrollTop + 1
         ),
         await content.evaluate(() =>
           document.querySelector('h2').offsetTop + 200

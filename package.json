@@ -36,7 +36,7 @@
     "csso": "^3.4.0",
     "mocha": "^4.1.0",
     "node-sass": "^4.7.2",
-    "puppeteer": "^0.13.0",
+    "puppeteer": "^1.2.0",
     "rollup": "^0.53.4",
     "rollup-plugin-commonjs": "^8.2.6",
     "rollup-plugin-node-resolve": "^3.0.0",

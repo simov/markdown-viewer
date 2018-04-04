@@ -10,7 +10,10 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
     await advanced.select('.m-select', 'http')
     await advanced.type('[type=text]', 'localhost:3000')
     await advanced.click('button')
-    await advanced.waitFor(() => document.querySelectorAll('.m-list li').length === 2)
+
+    // TODO: wait for https://github.com/GoogleChrome/puppeteer/pull/2289
+    // await advanced.waitFor(() => document.querySelectorAll('.m-list li').length === 2)
+    await advanced.waitFor(200)
 
     // disable csp
     if (await advanced.evaluate(() => state.csp)) {
@@ -37,8 +40,11 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
         await advanced.click('.m-switch:nth-of-type(2)')
       }
       await advanced.reload()
-      await advanced.waitFor('#options')
-      await advanced.waitFor(100)
+
+      // TODO: wait for https://github.com/GoogleChrome/puppeteer/pull/2289
+      // await advanced.waitFor('#options')
+      // await advanced.waitFor(100)
+      await advanced.waitFor(200)
 
       t.strictEqual(
         await advanced.evaluate(() =>
@@ -54,8 +60,10 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
         await advanced.click('.m-switch:nth-of-type(2)')
       }
       await advanced.reload()
-      await advanced.waitFor('#options')
-      await advanced.waitFor(100)
+      // TODO: wait for https://github.com/GoogleChrome/puppeteer/pull/2289
+      // await advanced.waitFor('#options')
+      // await advanced.waitFor(100)
+      await advanced.waitFor(200)
 
       t.strictEqual(
         await advanced.evaluate(() =>
@@ -79,7 +87,9 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
       // go to page serving content with strict csp
       await content.goto('http://localhost:3000/csp-wrong-path')
       await content.bringToFront()
-      await content.waitFor('pre')
+      // TODO: wait for https://github.com/GoogleChrome/puppeteer/pull/2289
+      // await content.waitFor('pre')
+      await advanced.waitFor(200)
 
       t.strictEqual(
         await content.evaluate(() => {
@@ -130,7 +140,10 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
       // go to page serving content with strict csp
       await content.goto('http://localhost:3000/csp-match-path')
       await content.bringToFront()
-      await content.waitFor('#_html')
+
+      // TODO: wait for https://github.com/GoogleChrome/puppeteer/pull/2289
+      // await content.waitFor('#_html')
+      await advanced.waitFor(200)
 
       t.strictEqual(
         await content.evaluate(() => {
@@ -156,25 +169,43 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
       }
 
       await extensions.bringToFront()
+
       // enable developer mode
-      await extensions.click('#dev-toggle label')
+      await extensions.evaluate(() => {
+        Array.from(
+          document.querySelector('extensions-manager').shadowRoot
+            .querySelector('extensions-item-list').shadowRoot
+            .querySelectorAll('extensions-item'))[0].shadowRoot
+            .querySelector('#enable-toggle').click()
+      })
       // disable the extension
-      await extensions.click('.enable-checkbox label')
-      // enable the extension
-      await extensions.click('.enable-checkbox label')
+      await extensions.evaluate(() => {
+        Array.from(
+          document.querySelector('extensions-manager').shadowRoot
+            .querySelector('extensions-item-list').shadowRoot
+            .querySelectorAll('extensions-item'))[0].shadowRoot
+            .querySelector('#enable-toggle').click()
+      })
       // check
       t.equal(
         await extensions.evaluate(() =>
-          document.querySelector('.active-views a').innerText
+          Array.from(
+            document.querySelector('extensions-manager').shadowRoot
+              .querySelector('extensions-item-list').shadowRoot
+              .querySelectorAll('extensions-item'))[0].shadowRoot
+              .querySelector('#inspect-views a').innerText
         ),
         'background page (Inactive)',
-        'background page should be disabled'
+        'background page should be inactive'
       )
 
       // go to page serving content with strict csp
       await content.goto('http://localhost:3000/csp-match-path')
       await content.bringToFront()
-      await content.waitFor('#_html')
+
+      // TODO: wait for https://github.com/GoogleChrome/puppeteer/pull/2289
+      // await content.waitFor('#_html')
+      await content.waitFor(200)
 
       t.strictEqual(
         await content.evaluate(() =>
