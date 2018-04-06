@@ -165,38 +165,134 @@ footer .icon-hidden {
 .m-list {
   list-style: none;
   clear: both;
-  background: #fff;
   padding: 0;
   margin: 0;
 }
+
 .m-list li {
+  background: #fff;
   transition-duration: .28s;
   transition-timing-function: cubic-bezier(.4,0,.2,1);
   transition-property: background-color box-shadow;
-  height: auto;
-  min-height: 36px;
   border-bottom: 1px solid #ececec;
-  padding: 10px 20px;
 }
-.m-list li:last-child { border: 0; }
-.m-list li:hover { background: #eee; }
+.m-list li:first-child {
+
+}
+.m-list li:last-child {
+  margin-bottom: 0 !important;
+}
+.m-list li:hover:not(.m-expanded) { background: #ececec; }
 .m-list li:after { content: ''; display: block; clear: both; }
-.m-list li > * { display: inline-block; }
-.m-list li span {
-  font-size: 1rem;
-  line-height: 36px;
+.m-list li.m-expanded {
+  border: 0;
+  margin: 20px 0;
 }
-.m-list .m-textfield input { color: #a9a9a9; }
-.m-list .m-textfield input:focus { color: #1b1b1b; }
-.m-list button {
-  transition-duration: .28s;
-  transition-timing-function: cubic-bezier(.4,0,.2,1);
-  transition-property: background-color;
-  min-width: auto;
-  padding: 0 9px;
-  border-radius: 50%;
+
+.m-list .m-summary {
+  display: block;
+  height: 36px;
+  padding: 10px 20px 0 20px;
+  cursor: pointer;
+  position: relative;
 }
-.m-list button:hover { background: #cacaca; }
+.m-list .m-summary:after { content: ''; display: block; clear: both; }
+.m-list .m-summary .m-origin {
+  float: left;
+  font-family: monospace;
+  font-size: 16px;
+  line-height: 28px;
+}
+.m-list .m-summary .m-options {
+  float: right;
+  padding: 6px 25px 0 0;
+}
+.m-list .m-summary .m-options span {
+  background: #ececec;
+  font-size: 12px;
+  line-height: 15px;
+  padding: 2px 5px;
+  border-radius: 3px;
+  margin: 0 5px 0 0;
+}
+.m-list .m-summary i {
+  position: absolute;
+  top: 17px;
+  right: 17px;
+}
+
+.m-list .m-content {
+  /*TEST*/
+  display: none;
+  background: #fff;
+  padding: 0 20px 12px 20px;
+  position: relative;
+}
+.m-list .m-expanded .m-summary {
+  background: #ececec;
+}
+.m-list .m-expanded .m-origin {}
+.m-list .m-expanded .m-content {
+  display: block;
+}
+
+.m-list .m-content .m-option {
+  min-height: 50px;
+}
+.m-list .m-content .m-option:after { content: ''; display: block; clear: both; }
+.m-list .m-content .m-option .m-name {
+  float: left;
+  width: 10%;
+  font-size: 14px;
+  line-height: 50px;
+  text-align: right;
+}
+.m-list .m-content .m-option .m-name span {
+  font-size: 12px;
+  line-height: 15px;
+  text-transform: uppercase;
+  letter-spacing: .2px;
+}
+.m-list .m-content .m-option .m-control {
+  float: left;
+  width: 90%;
+}
+
+.m-list .m-content .m-option.m-match {}
+.m-list .m-content .m-option.m-match .m-control {
+  width: 80%;
+  margin: 0 0 0 15px;
+}
+.m-list .m-content .m-option.m-match .m-textfield {
+  width: 100%;
+  height: 43px;
+  margin: 0 0 7px 10px;
+  /*margin: 0;*/
+}
+.m-list .m-content .m-option.m-match input {
+  border-bottom: 1px solid #ececec !important;
+  padding: 15px 0 8px 0;
+}
+
+.m-list .m-content .m-option.m-csp {}
+.m-list .m-content .m-option.m-csp label {
+  margin: 12px 0 0 10px;
+}
+.m-list .m-content .m-option.m-encoding {}
+.m-list .m-content .m-option.m-encoding select {
+  width: 200px;
+  margin: 6px 0 0 25px;
+}
+
+.m-list .m-footer {
+  text-align: right;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+}
+.m-list .m-footer .m-button:first-child {
+  margin: 0 20px 0 0;
+}
 
 
 /*file access*/
@@ -218,7 +314,11 @@ footer .icon-hidden {
 }
 .m-origins > .m-textfield:first-of-type {
   width: 400px;
+  height: auto !important;
   margin: 0 10px !important;
+}
+.m-origins > .m-textfield:first-of-type input {
+  padding-top: 10px;
 }
 .m-origins button:nth-of-type(2) { float: right; }
 .m-origins .m-select { width: 110px; }
@@ -229,8 +329,3 @@ footer .icon-hidden {
   clear: both;
   margin: 20px 0 0 0;
 }
-.m-origins .m-list li > * { overflow: hidden; text-overflow: ellipsis; }
-.m-origins .m-list li > *:nth-child(1) { width: 7%; }
-.m-origins .m-list li > *:nth-child(2) { width: 22%; }
-.m-origins .m-list li > *:nth-child(3) { width: 62%; }
-.m-origins .m-list li > *:nth-child(4) { width: 9%; text-align: right; }

@@ -6,29 +6,26 @@ md.headers = ({storage: {state}, detect}) => {
       return {responseHeaders}
     }
 
-    var header = responseHeaders.find(({name}) => /content-type/i.test(name))
+    var header = responseHeaders.find(({name}) => /content-type/i.test(name)) || {}
+    var origin = detect.match(url)
 
-    if (!detect.match(header, url)) {
+    if (!detect.header(header.value) && !origin) {
       return {responseHeaders}
     }
 
-    if (state.csp) {
+    if (origin.csp) {
       responseHeaders = responseHeaders
         .filter(({name}) => !/content-security-policy/i.test(name))
     }
 
-    if (/Firefox/.test(navigator.userAgent)) {
-      responseHeaders = responseHeaders
-        // ff: markdown `content-type` is not allowed
-        .map((header) => {
-          if (
-            /content-type/i.test(header.name) &&
-            /text\/(?:x-)?markdown/.test(header.value)
-          ) {
-            header.value = 'text/plain; charset=utf-8'
-          }
-          return header
-        })
+    // ff: markdown `content-type` is not allowed
+    if (/Firefox/.test(navigator.userAgent) && detect.header(header.value)) {
+      header.value = 'text/plain'
+    }
+
+    if (origin.encoding && header.name) {
+      var [media] = header.value.split(';')
+      header.value = `${media}; charset=${origin.encoding}`
     }
 
     return {responseHeaders}
