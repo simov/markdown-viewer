@@ -34,7 +34,7 @@ md.detect = ({storage: {state}, inject}) => {
         }
 
         if (header(win.header) || match(win.url)) {
-          if (onwakeup && state.intercept) {
+          if (onwakeup && chrome.webRequest) {
             onwakeup = false
             chrome.tabs.reload(id)
           }

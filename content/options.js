@@ -3,7 +3,6 @@ var defaults = {
   // storage
   origins: {},
   header: false,
-  intercept: false,
   // static
   protocols: ['https', 'http', '*'],
   // UI
@@ -112,10 +111,7 @@ var events = {
         origin,
         options: {match, csp, encoding},
       })
-      webRequest.update()
-      webRequest.permission(() => {
-        webRequest.register()
-      })
+      webRequest()
     },
 
     encoding: (origin) => (e) => {
@@ -126,41 +122,33 @@ var events = {
         origin,
         options: {match, csp, encoding},
       })
-      webRequest.update()
-      webRequest.permission(() => {
-        webRequest.register()
-      })
+      webRequest()
     },
   },
 }
 
-var webRequest = {
-  update: () => {
-    state.intercept = false
-    for (var key in state.origins) {
-      if (state.origins[key].csp || state.origins[key].encoding) {
-        state.intercept = true
-        break
-      }
+function webRequest () {
+  // ff: webRequest is required permission
+  if (/Firefox/.test(navigator.userAgent)) {
+    return
+  }
+
+  var intercept = false
+  for (var key in state.origins) {
+    if (state.origins[key].csp || state.origins[key].encoding) {
+      intercept = true
+      break
     }
-  },
-  permission: (done) => {
-    // ff: webRequest is required permission
-    if (/Firefox/.test(navigator.userAgent)) {
-      done()
-    }
-    else {
-      chrome.permissions[state.intercept ? 'request' : 'remove']({
-        permissions: ['webRequest', 'webRequestBlocking']
-      }, done)
-    }
-  },
-  register: () => {
+  }
+
+  chrome.permissions[intercept ? 'request' : 'remove']({
+    permissions: ['webRequest', 'webRequestBlocking']
+  }, () => {
     chrome.runtime.sendMessage({
       message: 'options.intercept',
-      intercept: state.intercept,
+      intercept,
     })
-  }
+  })
 }
 
 chrome.extension.isAllowedFileSchemeAccess((isAllowedAccess) => {

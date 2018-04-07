@@ -78,7 +78,6 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, headers}) =
       sendResponse({
         origins: state.origins,
         header: state.header,
-        intercept: state.intercept,
         match: state.match,
       })
     }
@@ -89,11 +88,8 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, headers}) =
     else if (req.message === 'options.intercept') {
       // ff: onHeadersReceived is enabled by default
       if (!/Firefox/.test(navigator.userAgent)) {
-        if (req.intercept !== state.intercept) {
-          headers[req.intercept ? 'add' : 'remove']()
-        }
+        headers[req.intercept ? 'add' : 'remove']()
       }
-      set({intercept: req.intercept})
       sendResponse()
     }
 

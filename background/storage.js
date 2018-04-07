@@ -16,7 +16,6 @@ md.storage = ({compilers}) => {
     },
     raw: false,
     header: true,
-    intercept: false,
     match,
     origins: {
       'file://': {
@@ -83,10 +82,6 @@ md.storage = ({compilers}) => {
     if (options.content.mathjax === undefined) {
       options.content.mathjax = false
     }
-    // v3.3 -> v3.4
-    if (options.csp === undefined) {
-      options.csp = false
-    }
     // v3.4 -> v3.5
     if (typeof options.origins['file://'] === 'string') {
       options.origins = Object.keys(options.origins)
@@ -97,7 +92,6 @@ md.storage = ({compilers}) => {
       }, all), {})
     }
     if (typeof options.csp === 'boolean') {
-      options.intercept = options.csp
       delete options.csp
     }
 

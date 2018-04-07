@@ -39,7 +39,9 @@ md.headers = ({storage: {state}, detect}) => {
   var options = ['blocking', 'responseHeaders']
 
   var add = () => {
-    chrome.webRequest.onHeadersReceived.addListener(callback, filter, options)
+    if (!chrome.webRequest.onHeadersReceived.hasListeners()) {
+      chrome.webRequest.onHeadersReceived.addListener(callback, filter, options)
+    }
   }
 
   var remove = () => {
