@@ -27,17 +27,10 @@ module.exports = ({browser, advanced, content}) => {
       )
       t.equal(
         await advanced.evaluate(() =>
-          document.querySelector('.m-list li:nth-of-type(2) span:nth-of-type(1)').innerText
+          document.querySelector('.m-list li:nth-of-type(2) .m-origin').innerText
         ),
-        'http',
-        'protocol should be http'
-      )
-      t.equal(
-        await advanced.evaluate(() =>
-          document.querySelector('.m-list li:nth-of-type(2) span:nth-of-type(2)').innerText
-        ),
-        'localhost:3000',
-        'hostname should be localhost:3000'
+        'http://localhost:3000',
+        'origin name should be http://localhost:3000'
       )
     })
   })
@@ -49,6 +42,14 @@ module.exports = ({browser, advanced, content}) => {
       // disable header detection
       if (await advanced.evaluate(() => state.header)) {
         await advanced.click('.m-switch')
+      }
+
+      // expand origin
+      if (!await advanced.evaluate(() =>
+        document.querySelector('.m-list li:nth-of-type(2)')
+          .classList.contains('m-exapanded')))
+      {
+        await advanced.click('.m-list li:nth-of-type(2)')
       }
 
       // disable path matching
@@ -85,6 +86,14 @@ module.exports = ({browser, advanced, content}) => {
       // enable header detection
       if (!await advanced.evaluate(() => state.header)) {
         await advanced.click('.m-switch')
+      }
+
+      // expand origin
+      if (!await advanced.evaluate(() =>
+        document.querySelector('.m-list li:nth-of-type(2)')
+          .classList.contains('m-exapanded')))
+      {
+        await advanced.click('.m-list li:nth-of-type(2)')
       }
 
       // disable path matching
@@ -136,6 +145,14 @@ module.exports = ({browser, advanced, content}) => {
       // enable header detection
       if (!await advanced.evaluate(() => state.header)) {
         await advanced.click('.m-switch')
+      }
+
+      // expand origin
+      if (!await advanced.evaluate(() =>
+        document.querySelector('.m-list li:nth-of-type(2)')
+          .classList.contains('m-exapanded')))
+      {
+        await advanced.click('.m-list li:nth-of-type(2)')
       }
 
       // enable path matching

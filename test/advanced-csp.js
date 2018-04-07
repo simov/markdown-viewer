@@ -15,9 +15,17 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
     // await advanced.waitFor(() => document.querySelectorAll('.m-list li').length === 2)
     await advanced.waitFor(200)
 
+    // expand origin
+    if (!await advanced.evaluate(() =>
+      document.querySelector('.m-list li:nth-of-type(2)')
+        .classList.contains('m-exapanded')))
+    {
+      await advanced.click('.m-list li:nth-of-type(2)')
+    }
+
     // disable csp
-    if (await advanced.evaluate(() => state.csp)) {
-      await advanced.click('.m-switch:nth-of-type(2)')
+    if (await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
+      await advanced.click('.m-list li:nth-of-type(2) .m-switch')
     }
 
     // enable path matching
@@ -36,8 +44,8 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
       await advanced.bringToFront()
 
       // enable csp
-      if (!await advanced.evaluate(() => state.csp)) {
-        await advanced.click('.m-switch:nth-of-type(2)')
+      if (!await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
+        await advanced.click('.m-list li:nth-of-type(2) .m-switch')
       }
       await advanced.reload()
 
@@ -46,9 +54,12 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
       // await advanced.waitFor(100)
       await advanced.waitFor(200)
 
+      // expand origin
+      await advanced.click('.m-list li:nth-of-type(2)')
+
       t.strictEqual(
         await advanced.evaluate(() =>
-          document.querySelector('.m-switch:nth-of-type(2)')
+          document.querySelector('.m-list li:nth-of-type(2) .m-switch')
             .classList.contains('is-checked')
         ),
         true,
@@ -56,8 +67,8 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
       )
 
       // disable csp
-      if (await advanced.evaluate(() => state.csp)) {
-        await advanced.click('.m-switch:nth-of-type(2)')
+      if (await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
+        await advanced.click('.m-list li:nth-of-type(2) .m-switch')
       }
       await advanced.reload()
       // TODO: wait for https://github.com/GoogleChrome/puppeteer/pull/2289
@@ -65,9 +76,12 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
       // await advanced.waitFor(100)
       await advanced.waitFor(200)
 
+      // expand origin
+      await advanced.click('.m-list li:nth-of-type(2)')
+
       t.strictEqual(
         await advanced.evaluate(() =>
-          document.querySelector('.m-switch:nth-of-type(2)')
+          document.querySelector('.m-list li:nth-of-type(2) .m-switch')
             .classList.contains('is-checked')
         ),
         false,
@@ -79,9 +93,18 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
   describe('strip csp header only on matching content type or url', () => {
     it('non matching urls should be skipped', async () => {
       await advanced.bringToFront()
+
+      // expand origin
+      if (!await advanced.evaluate(() =>
+        document.querySelector('.m-list li:nth-of-type(2)')
+          .classList.contains('m-exapanded')))
+      {
+        await advanced.click('.m-list li:nth-of-type(2)')
+      }
+
       // enable csp
-      if (!await advanced.evaluate(() => state.csp)) {
-        await advanced.click('.m-switch:nth-of-type(2)')
+      if (!await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
+        await advanced.click('.m-list li:nth-of-type(2) .m-switch')
       }
 
       // go to page serving content with strict csp
@@ -109,9 +132,18 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
   describe('enable csp', () => {
     it('webRequest.onHeadersReceived event is enabled', async () => {
       await advanced.bringToFront()
+
+      // expand origin
+      if (!await advanced.evaluate(() =>
+        document.querySelector('.m-list li:nth-of-type(2)')
+          .classList.contains('m-exapanded')))
+      {
+        await advanced.click('.m-list li:nth-of-type(2)')
+      }
+
       // enable csp
-      if (!await advanced.evaluate(() => state.csp)) {
-        await advanced.click('.m-switch:nth-of-type(2)')
+      if (!await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
+        await advanced.click('.m-list li:nth-of-type(2) .m-switch')
       }
 
       // go to page serving content with strict csp
@@ -132,9 +164,18 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
   describe('disable csp', () => {
     it('webRequest.onHeadersReceived event is disabled', async () => {
       await advanced.bringToFront()
+
+      // expand origin
+      if (!await advanced.evaluate(() =>
+        document.querySelector('.m-list li:nth-of-type(2)')
+          .classList.contains('m-exapanded')))
+      {
+        await advanced.click('.m-list li:nth-of-type(2)')
+      }
+
       // disable csp
-      if (await advanced.evaluate(() => state.csp)) {
-        await advanced.click('.m-switch:nth-of-type(2)')
+      if (await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
+        await advanced.click('.m-list li:nth-of-type(2) .m-switch')
       }
 
       // go to page serving content with strict csp
@@ -163,9 +204,18 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
   describe('enable csp + suspend the event page', () => {
     it('the tab is reloaded on event page wakeup', async () => {
       await advanced.bringToFront()
+
+      // expand origin
+      if (!await advanced.evaluate(() =>
+        document.querySelector('.m-list li:nth-of-type(2)')
+          .classList.contains('m-exapanded')))
+      {
+        await advanced.click('.m-list li:nth-of-type(2)')
+      }
+
       // enable csp
-      if (!await advanced.evaluate(() => state.csp)) {
-        await advanced.click('.m-switch:nth-of-type(2)')
+      if (!await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
+        await advanced.click('.m-list li:nth-of-type(2) .m-switch')
       }
 
       await extensions.bringToFront()

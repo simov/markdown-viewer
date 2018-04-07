@@ -66,7 +66,7 @@ md.detect = ({storage: {state}, inject}) => {
         state.origins['*://*']
     }
 
-    if (origin && new RegExp(origin.match).test(location.href)) {
+    if (origin && origin.match && new RegExp(origin.match).test(location.href)) {
       return origin
     }
   }
