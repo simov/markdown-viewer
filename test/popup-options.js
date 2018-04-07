@@ -2,11 +2,23 @@
 var t = require('assert')
 
 
-module.exports = ({browser, popup, advanced, content}) => {
+module.exports = ({popup, advanced, content}) => {
 
   before(async () => {
-    // add origin
     await advanced.bringToFront()
+
+    // remove origin
+    if (await advanced.evaluate(() => Object.keys(state.origins).length > 1)) {
+      // expand origin
+      if (!await advanced.evaluate(() =>
+        document.querySelector('.m-list li:nth-of-type(2)')
+          .classList.contains('m-expanded'))) {
+        await advanced.click('.m-list li:nth-of-type(2)')
+      }
+      await advanced.click('.m-list li:nth-of-type(2) .m-footer .m-button:nth-of-type(2)')
+    }
+
+    // add origin
     await advanced.select('.m-select', 'http')
     await advanced.type('[type=text]', 'localhost:3000')
     await advanced.click('button')

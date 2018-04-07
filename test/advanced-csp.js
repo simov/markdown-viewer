@@ -2,15 +2,26 @@
 var t = require('assert')
 
 
-module.exports = ({browser, extensions, popup, advanced, content}) => {
+module.exports = ({extensions, advanced, content}) => {
 
   before(async () => {
-    // add origin
     await advanced.bringToFront()
+
+    // remove origin
+    if (await advanced.evaluate(() => Object.keys(state.origins).length > 1)) {
+      // expand origin
+      if (!await advanced.evaluate(() =>
+        document.querySelector('.m-list li:nth-of-type(2)')
+          .classList.contains('m-expanded'))) {
+        await advanced.click('.m-list li:nth-of-type(2)')
+      }
+      await advanced.click('.m-list li:nth-of-type(2) .m-footer .m-button:nth-of-type(2)')
+    }
+
+    // add origin
     await advanced.select('.m-select', 'http')
     await advanced.type('[type=text]', 'localhost:3000')
     await advanced.click('button')
-
     // TODO: wait for https://github.com/GoogleChrome/puppeteer/pull/2289
     // await advanced.waitFor(() => document.querySelectorAll('.m-list li').length === 2)
     await advanced.waitFor(200)
@@ -18,14 +29,8 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
     // expand origin
     if (!await advanced.evaluate(() =>
       document.querySelector('.m-list li:nth-of-type(2)')
-        .classList.contains('m-exapanded')))
-    {
+        .classList.contains('m-expanded'))) {
       await advanced.click('.m-list li:nth-of-type(2)')
-    }
-
-    // disable csp
-    if (await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
-      await advanced.click('.m-list li:nth-of-type(2) .m-switch')
     }
 
     // enable path matching
@@ -40,7 +45,7 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
   })
 
   describe('preserve state', () => {
-    it('options page', async () => {
+    it('enable csp', async () => {
       await advanced.bringToFront()
 
       // enable csp
@@ -48,10 +53,8 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
         await advanced.click('.m-list li:nth-of-type(2) .m-switch')
       }
       await advanced.reload()
-
       // TODO: wait for https://github.com/GoogleChrome/puppeteer/pull/2289
       // await advanced.waitFor('#options')
-      // await advanced.waitFor(100)
       await advanced.waitFor(200)
 
       // expand origin
@@ -65,6 +68,9 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
         true,
         'csp checkbox should be enabled'
       )
+    })
+    it('disable csp', async () => {
+      await advanced.bringToFront()
 
       // disable csp
       if (await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
@@ -73,7 +79,6 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
       await advanced.reload()
       // TODO: wait for https://github.com/GoogleChrome/puppeteer/pull/2289
       // await advanced.waitFor('#options')
-      // await advanced.waitFor(100)
       await advanced.waitFor(200)
 
       // expand origin
@@ -91,14 +96,13 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
   })
 
   describe('strip csp header only on matching content type or url', () => {
-    it('non matching urls should be skipped', async () => {
+    before(async () => {
       await advanced.bringToFront()
 
       // expand origin
       if (!await advanced.evaluate(() =>
         document.querySelector('.m-list li:nth-of-type(2)')
-          .classList.contains('m-exapanded')))
-      {
+          .classList.contains('m-expanded'))) {
         await advanced.click('.m-list li:nth-of-type(2)')
       }
 
@@ -112,8 +116,9 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
       await content.bringToFront()
       // TODO: wait for https://github.com/GoogleChrome/puppeteer/pull/2289
       // await content.waitFor('pre')
-      await advanced.waitFor(200)
-
+      await content.waitFor(200)
+    })
+    it('non matching urls should be skipped', async () => {
       t.strictEqual(
         await content.evaluate(() => {
           try {
@@ -130,14 +135,13 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
   })
 
   describe('enable csp', () => {
-    it('webRequest.onHeadersReceived event is enabled', async () => {
+    before(async () => {
       await advanced.bringToFront()
 
       // expand origin
       if (!await advanced.evaluate(() =>
         document.querySelector('.m-list li:nth-of-type(2)')
-          .classList.contains('m-exapanded')))
-      {
+          .classList.contains('m-expanded'))) {
         await advanced.click('.m-list li:nth-of-type(2)')
       }
 
@@ -150,7 +154,8 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
       await content.goto('http://localhost:3000/csp-match-path')
       await content.bringToFront()
       await content.waitFor('#_html')
-
+    })
+    it('webRequest.onHeadersReceived event is enabled', async () => {
       t.strictEqual(
         await content.evaluate(() =>
           window.localStorage.toString()
@@ -162,14 +167,13 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
   })
 
   describe('disable csp', () => {
-    it('webRequest.onHeadersReceived event is disabled', async () => {
+    before(async () => {
       await advanced.bringToFront()
 
       // expand origin
       if (!await advanced.evaluate(() =>
         document.querySelector('.m-list li:nth-of-type(2)')
-          .classList.contains('m-exapanded')))
-      {
+          .classList.contains('m-expanded'))) {
         await advanced.click('.m-list li:nth-of-type(2)')
       }
 
@@ -181,11 +185,11 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
       // go to page serving content with strict csp
       await content.goto('http://localhost:3000/csp-match-path')
       await content.bringToFront()
-
       // TODO: wait for https://github.com/GoogleChrome/puppeteer/pull/2289
       // await content.waitFor('#_html')
-      await advanced.waitFor(200)
-
+      await content.waitFor(200)
+    })
+    it('webRequest.onHeadersReceived event is disabled', async () => {
       t.strictEqual(
         await content.evaluate(() => {
           try {
@@ -202,14 +206,13 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
   })
 
   describe('enable csp + suspend the event page', () => {
-    it('the tab is reloaded on event page wakeup', async () => {
+    before(async () => {
       await advanced.bringToFront()
 
       // expand origin
       if (!await advanced.evaluate(() =>
         document.querySelector('.m-list li:nth-of-type(2)')
-          .classList.contains('m-exapanded')))
-      {
+          .classList.contains('m-expanded'))) {
         await advanced.click('.m-list li:nth-of-type(2)')
       }
 
@@ -218,6 +221,7 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
         await advanced.click('.m-list li:nth-of-type(2) .m-switch')
       }
 
+      // chrome://extensions
       await extensions.bringToFront()
 
       // enable developer mode
@@ -236,6 +240,7 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
             .querySelectorAll('extensions-item'))[0].shadowRoot
             .querySelector('#enable-toggle').click()
       })
+      await extensions.waitFor(200)
       // check
       t.equal(
         await extensions.evaluate(() =>
@@ -252,11 +257,11 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
       // go to page serving content with strict csp
       await content.goto('http://localhost:3000/csp-match-path')
       await content.bringToFront()
-
       // TODO: wait for https://github.com/GoogleChrome/puppeteer/pull/2289
       // await content.waitFor('#_html')
       await content.waitFor(200)
-
+    })
+    it('the tab is reloaded on event page wakeup', async () => {
       t.strictEqual(
         await content.evaluate(() =>
           window.localStorage.toString()

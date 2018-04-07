@@ -2,15 +2,26 @@
 var t = require('assert')
 
 
-module.exports = ({browser, advanced, content}) => {
+module.exports = ({advanced, content}) => {
 
   before(async () => {
-    // add origin
     await advanced.bringToFront()
+
+    // remove origin
+    if (await advanced.evaluate(() => Object.keys(state.origins).length > 1)) {
+      // expand origin
+      if (!await advanced.evaluate(() =>
+        document.querySelector('.m-list li:nth-of-type(2)')
+          .classList.contains('m-expanded'))) {
+        await advanced.click('.m-list li:nth-of-type(2)')
+      }
+      await advanced.click('.m-list li:nth-of-type(2) .m-footer .m-button:nth-of-type(2)')
+    }
+
+    // add origin
     await advanced.select('.m-select', 'http')
     await advanced.type('[type=text]', 'localhost:3000')
     await advanced.click('button')
-
     // TODO: wait for https://github.com/GoogleChrome/puppeteer/pull/2289
     // await advanced.waitFor(() => document.querySelectorAll('.m-list li').length === 2)
     await advanced.waitFor(200)
@@ -47,8 +58,7 @@ module.exports = ({browser, advanced, content}) => {
       // expand origin
       if (!await advanced.evaluate(() =>
         document.querySelector('.m-list li:nth-of-type(2)')
-          .classList.contains('m-exapanded')))
-      {
+          .classList.contains('m-expanded'))) {
         await advanced.click('.m-list li:nth-of-type(2)')
       }
 
@@ -62,7 +72,6 @@ module.exports = ({browser, advanced, content}) => {
       // there is debounce timeout of 750ms in the options UI
       await advanced.waitFor(800)
     })
-
     it('text/markdown', async () => {
       // go to page serving markdown as text/markdown
       await content.goto('http://localhost:3000/correct-content-type')
@@ -91,8 +100,7 @@ module.exports = ({browser, advanced, content}) => {
       // expand origin
       if (!await advanced.evaluate(() =>
         document.querySelector('.m-list li:nth-of-type(2)')
-          .classList.contains('m-exapanded')))
-      {
+          .classList.contains('m-expanded'))) {
         await advanced.click('.m-list li:nth-of-type(2)')
       }
 
@@ -106,7 +114,6 @@ module.exports = ({browser, advanced, content}) => {
       // there is debounce timeout of 750ms in the options UI
       await advanced.waitFor(800)
     })
-
     it('text/markdown', async () => {
       // go to page serving markdown as text/markdown
       await content.goto('http://localhost:3000/correct-content-type')
@@ -121,7 +128,6 @@ module.exports = ({browser, advanced, content}) => {
         'markdown should be rendered'
       )
     })
-
     it('text/x-markdown', async () => {
       // go to page serving markdown as text/x-markdown
       await content.goto('http://localhost:3000/correct-content-type-variation')
@@ -150,8 +156,7 @@ module.exports = ({browser, advanced, content}) => {
       // expand origin
       if (!await advanced.evaluate(() =>
         document.querySelector('.m-list li:nth-of-type(2)')
-          .classList.contains('m-exapanded')))
-      {
+          .classList.contains('m-expanded'))) {
         await advanced.click('.m-list li:nth-of-type(2)')
       }
 
