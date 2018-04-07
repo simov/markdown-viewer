@@ -2,6 +2,7 @@
 var path = require('path')
 var http = require('http')
 var puppeteer = require('puppeteer')
+var iconv = require('iconv-lite')
 
 var options = {
   headless: false,
@@ -17,6 +18,7 @@ var tests = [
   'advanced-defaults',
   'advanced-origins',
   'popup-options',
+  'advanced-encoding',
   'advanced-csp', // should be last - destroys popup and advanced
 ]
 
@@ -99,6 +101,10 @@ describe('markdown-viewer', () => {
           res.setHeader('Content-Security-Policy',
             `default-src 'none'; style-src 'unsafe-inline'; sandbox`)
           res.end('# h1')
+        }
+        else if (/windows-1251/.test(req.url)) {
+          res.setHeader('Content-Type', 'text/markdown; charset=UTF-8')
+          res.end(iconv.encode('здрасти', 'win1251'))
         }
       })
       server.listen(3000, resolve)
