@@ -193,81 +193,82 @@ m.mount(document.querySelector('main'), {
   view: () =>
     m('#options',
 
-      // file access is disabled
-      (!state.file || null) &&
-      m('.bs-callout m-file',
-        m('h4.mdc-typography--headline', 'Access to file:// URLs is Disabled'),
-        m('img.mdc-elevation--z2', {src: '/images/file-urls.png'}),
-        m('button.mdc-button mdc-button--raised m-button', {
-          oncreate: oncreate.ripple,
-          onclick: events.file
-          },
-          'Enable Access to file:// URLs'
-        )
-      ),
-
       // allowed origins
       m('.bs-callout m-origins',
-        m('h4.mdc-typography--headline', 'Allowed Origins'),
 
         // add origin
-        m('select.mdc-elevation--z2 m-select', {
-          onchange: events.origin.protocol
-          },
-          state.protocols.map((protocol) =>
-          m('option', {
-            value: protocol,
-            selected: protocol === state.protocol
+        m('.m-add-origin',
+          m('h4.mdc-typography--headline', 'Allowed Origins'),
+          m('select.mdc-elevation--z2 m-select', {
+            onchange: events.origin.protocol
             },
-            protocol + '://'
-          )
-        )),
-        m('.mdc-text-field m-textfield', {
-          oncreate: oncreate.textfield,
-          },
-          m('input.mdc-text-field__input', {
-            type: 'text',
-            value: state.origin,
-            onchange: events.origin.name,
-            placeholder: 'raw.githubusercontent.com'
-          }),
-          m('.mdc-line-ripple')
-        ),
-        m('button.mdc-button mdc-button--raised m-button', {
-          oncreate: oncreate.ripple,
-          onclick: events.origin.add
-          },
-          'Add'
-        ),
-        m('button.mdc-button mdc-button--raised m-button', {
-          oncreate: oncreate.ripple,
-          onclick: events.origin.all
-          },
-          'Allow All'
-        ),
-
-        // header detection - ff: disabled
-        (!/Firefox/.test(navigator.userAgent) || null) &&
-        m('label.mdc-switch m-switch', {
-          onupdate: onupdate.header,
-          title: 'Toggle header detection'
-          },
-          m('input.mdc-switch__native-control', {
-            type: 'checkbox',
-            checked: state.header,
-            onchange: events.header
-          }),
-          m('.mdc-switch__background', m('.mdc-switch__knob')),
-          m('span.mdc-switch-label',
-            'Detect ',
-            m('code', 'text/markdown'),
-            ' and ',
-            m('code', 'text/x-markdown'),
-            ' content type'
+            state.protocols.map((protocol) =>
+            m('option', {
+              value: protocol,
+              selected: protocol === state.protocol
+              },
+              protocol + '://'
+            )
+          )),
+          m('.mdc-text-field m-textfield', {
+            oncreate: oncreate.textfield,
+            },
+            m('input.mdc-text-field__input', {
+              type: 'text',
+              value: state.origin,
+              onchange: events.origin.name,
+              placeholder: 'raw.githubusercontent.com'
+            }),
+            m('.mdc-line-ripple')
+          ),
+          m('button.mdc-button mdc-button--raised m-button', {
+            oncreate: oncreate.ripple,
+            onclick: events.origin.add
+            },
+            'Add'
+          ),
+          m('button.mdc-button mdc-button--raised m-button', {
+            oncreate: oncreate.ripple,
+            onclick: events.origin.all
+            },
+            'Allow All'
           )
         ),
 
-        // origins
+        // global options
+        m('.m-global',
+          // header detection - ff: disabled
+          (!/Firefox/.test(navigator.userAgent) || null) &&
+          m('label.mdc-switch m-switch', {
+            onupdate: onupdate.header,
+            title: 'Toggle header detection'
+            },
+            m('input.mdc-switch__native-control', {
+              type: 'checkbox',
+              checked: state.header,
+              onchange: events.header
+            }),
+            m('.mdc-switch__background', m('.mdc-switch__knob')),
+            m('span.mdc-switch-label',
+              'Detect ',
+              m('code', 'text/markdown'),
+              ' and ',
+              m('code', 'text/x-markdown'),
+              ' content type'
+            )
+          ),
+
+          // file access is disabled
+          (!state.file || null) &&
+          m('button.mdc-button mdc-button--raised m-button', {
+            oncreate: oncreate.ripple,
+            onclick: events.file
+            },
+            'Allow Access to file:// URLs'
+          )
+        ),
+
+        // allowed origins
         m('ul.m-list',
           Object.keys(state.origins).sort().map((origin) =>
             (
