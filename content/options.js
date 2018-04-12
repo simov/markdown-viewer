@@ -3,13 +3,14 @@ var defaults = {
   // storage
   origins: {},
   header: false,
-  // static
-  protocols: ['https', 'http', '*'],
+  match: '',
   // UI
-  protocol: 'https',
-  origin: '',
+  scheme: 'https',
+  host: '',
   timeout: null,
   file: true,
+  // static
+  schemes: ['https', 'http', '*'],
   encodings: {
     'Unicode': ['UTF-8', 'UTF-16LE'],
     'Arabic': ['ISO-8859-6', 'Windows-1256'],
@@ -32,11 +33,24 @@ var defaults = {
     'Western': ['ISO-8859-15', 'Windows-1252', 'Macintosh'],
   }
 }
+
 var state = Object.assign({}, defaults)
+
+chrome.extension.isAllowedFileSchemeAccess((isAllowedAccess) => {
+  state.file = /Firefox/.test(navigator.userAgent)
+    ? true // ff: `Allow access to file URLs` option isn't available
+    : isAllowedAccess
+  m.redraw()
+})
+
+chrome.runtime.sendMessage({message: 'options'}, (res) => {
+  state = Object.assign({}, defaults, {file: state.file}, res)
+  m.redraw()
+})
 
 var events = {
   file: () => {
-    chrome.tabs.create({url: 'chrome://extensions/?id=' + chrome.runtime.id})
+    chrome.tabs.create({url: `chrome://extensions/?id=${chrome.runtime.id}`})
   },
 
   header: (e) => {
@@ -48,46 +62,46 @@ var events = {
   },
 
   origin: {
-    protocol: (e) => {
-      state.protocol = state.protocols[e.target.selectedIndex]
+    scheme: (e) => {
+      state.scheme = state.schemes[e.target.selectedIndex]
     },
 
-    name: (e) => {
-      state.origin = e.target.value
+    host: (e) => {
+      state.host = e.target.value.replace(/.*:\/\/([^/]+).*/i, '$1')
     },
 
-    add: () => {
-      var domain = state.origin.replace(/.*:\/\/([^/]+).*/i, '$1')
-      if (!domain) {
+    add: (all) => () => {
+      if (!all && !state.host) {
         return
       }
-      var origin = state.protocol + '://' + domain
-      chrome.permissions.request({origins: [origin + '/*']}, (granted) => {
+      var origin = all ? '*://*' : `${state.scheme}://${state.host}`
+      chrome.permissions.request({origins: [`${origin}/*`]}, (granted) => {
         if (granted) {
-          chrome.runtime.sendMessage({message: 'origin.add', origin}, init)
-        }
-      })
-    },
-
-    all: () => {
-      var origin = '*://*'
-      chrome.permissions.request({origins: [origin + '/*']}, (granted) => {
-        if (granted) {
-          chrome.runtime.sendMessage({message: 'origin.add', origin}, init)
+          chrome.runtime.sendMessage({message: 'origin.add', origin})
+          state.origins[origin] = {
+            match: state.match,
+            csp: false,
+            encoding: '',
+          }
+          state.host = ''
+          m.redraw()
         }
       })
     },
 
     remove: (origin) => () => {
-      chrome.permissions.remove({origins: [origin + '/*']}, (removed) => {
+      chrome.permissions.remove({origins: [`${origin}/*`]}, (removed) => {
         if (removed) {
-          chrome.runtime.sendMessage({message: 'origin.remove', origin}, init)
+          chrome.runtime.sendMessage({message: 'origin.remove', origin})
+          webRequest()
+          delete state.origins[origin]
+          m.redraw()
         }
       })
     },
 
     refresh: (origin) => () => {
-      chrome.permissions.request({origins: [origin + '/*']})
+      chrome.permissions.request({origins: [`${origin}/*`]})
     },
 
     match: (origin) => (e) => {
@@ -127,7 +141,7 @@ var events = {
   },
 }
 
-function webRequest () {
+var webRequest = () => {
   // ff: webRequest is required permission
   if (/Firefox/.test(navigator.userAgent)) {
     return
@@ -150,22 +164,6 @@ function webRequest () {
     })
   })
 }
-
-chrome.extension.isAllowedFileSchemeAccess((isAllowedAccess) => {
-  state.file = /Firefox/.test(navigator.userAgent)
-    ? true // ff: `Allow access to file URLs` option isn't available
-    : isAllowedAccess
-  m.redraw()
-})
-
-var init = () => {
-  chrome.runtime.sendMessage({message: 'options'}, (res) => {
-    state = Object.assign({}, defaults, {file: state.file}, res)
-    m.redraw()
-  })
-}
-
-init()
 
 var oncreate = {
   ripple: (vnode) => {
@@ -200,14 +198,14 @@ m.mount(document.querySelector('main'), {
         m('.m-add-origin',
           m('h4.mdc-typography--headline', 'Allowed Origins'),
           m('select.mdc-elevation--z2 m-select', {
-            onchange: events.origin.protocol
+            onchange: events.origin.scheme
             },
-            state.protocols.map((protocol) =>
+            state.schemes.map((scheme) =>
             m('option', {
-              value: protocol,
-              selected: protocol === state.protocol
+              value: scheme,
+              selected: scheme === state.scheme
               },
-              protocol + '://'
+              scheme + '://'
             )
           )),
           m('.mdc-text-field m-textfield', {
@@ -215,21 +213,21 @@ m.mount(document.querySelector('main'), {
             },
             m('input.mdc-text-field__input', {
               type: 'text',
-              value: state.origin,
-              onchange: events.origin.name,
+              value: state.host,
+              onchange: events.origin.host,
               placeholder: 'raw.githubusercontent.com'
             }),
             m('.mdc-line-ripple')
           ),
           m('button.mdc-button mdc-button--raised m-button', {
             oncreate: oncreate.ripple,
-            onclick: events.origin.add
+            onclick: events.origin.add()
             },
             'Add'
           ),
           m('button.mdc-button mdc-button--raised m-button', {
             oncreate: oncreate.ripple,
-            onclick: events.origin.all
+            onclick: events.origin.add(true)
             },
             'Allow All'
           )
@@ -237,8 +235,14 @@ m.mount(document.querySelector('main'), {
 
         // global options
         m('.m-global',
-          // header detection - ff: disabled
-          (!/Firefox/.test(navigator.userAgent) || null) &&
+          (
+            (
+              // header detection - ff: disabled
+              !/Firefox/.test(navigator.userAgent) &&
+              Object.keys(state.origins).length > 1
+            )
+            || null
+          ) &&
           m('label.mdc-switch m-switch', {
             onupdate: onupdate.header,
             title: 'Toggle header detection'
@@ -269,6 +273,7 @@ m.mount(document.querySelector('main'), {
         ),
 
         // allowed origins
+        (state.file || Object.keys(state.origins).length > 1 || null) &&
         m('ul.m-list',
           Object.keys(state.origins).sort().map((origin) =>
             (
