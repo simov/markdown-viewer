@@ -22,8 +22,6 @@ module.exports = ({advanced, content}) => {
     await advanced.select('.m-select', 'http')
     await advanced.type('[type=text]', 'localhost:3000')
     await advanced.click('button')
-    // TODO: wait for https://github.com/GoogleChrome/puppeteer/pull/2289
-    // await advanced.waitFor(() => document.querySelectorAll('.m-list li').length === 2)
     await advanced.waitFor(200)
 
     // expand origin
@@ -50,8 +48,6 @@ module.exports = ({advanced, content}) => {
       // with UTF-8 content-type charset
       await content.goto('http://localhost:3000/windows-1251')
       await content.bringToFront()
-      // TODO: wait for https://github.com/GoogleChrome/puppeteer/pull/2289
-      // await content.waitFor('pre')
       await content.waitFor(200)
     })
     it('use encoding set by the server', async () => {
@@ -83,8 +79,6 @@ module.exports = ({advanced, content}) => {
       // with windows-1251 content-type charset
       await content.goto('http://localhost:3000/windows-1251')
       await content.bringToFront()
-      // TODO: wait for https://github.com/GoogleChrome/puppeteer/pull/2289
-      // await content.waitFor('pre')
       await content.waitFor(200)
     })
     it('use encoding set for the origin', async () => {

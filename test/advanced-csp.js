@@ -22,8 +22,6 @@ module.exports = ({extensions, advanced, content}) => {
     await advanced.select('.m-select', 'http')
     await advanced.type('[type=text]', 'localhost:3000')
     await advanced.click('button')
-    // TODO: wait for https://github.com/GoogleChrome/puppeteer/pull/2289
-    // await advanced.waitFor(() => document.querySelectorAll('.m-list li').length === 2)
     await advanced.waitFor(200)
 
     // expand origin
@@ -53,8 +51,6 @@ module.exports = ({extensions, advanced, content}) => {
         await advanced.click('.m-list li:nth-of-type(2) .m-switch')
       }
       await advanced.reload()
-      // TODO: wait for https://github.com/GoogleChrome/puppeteer/pull/2289
-      // await advanced.waitFor('#options')
       await advanced.waitFor(200)
 
       // expand origin
@@ -77,8 +73,6 @@ module.exports = ({extensions, advanced, content}) => {
         await advanced.click('.m-list li:nth-of-type(2) .m-switch')
       }
       await advanced.reload()
-      // TODO: wait for https://github.com/GoogleChrome/puppeteer/pull/2289
-      // await advanced.waitFor('#options')
       await advanced.waitFor(200)
 
       // expand origin
@@ -114,8 +108,6 @@ module.exports = ({extensions, advanced, content}) => {
       // go to page serving content with strict csp
       await content.goto('http://localhost:3000/csp-wrong-path')
       await content.bringToFront()
-      // TODO: wait for https://github.com/GoogleChrome/puppeteer/pull/2289
-      // await content.waitFor('pre')
       await content.waitFor(200)
     })
     it('non matching urls should be skipped', async () => {
@@ -153,7 +145,7 @@ module.exports = ({extensions, advanced, content}) => {
       // go to page serving content with strict csp
       await content.goto('http://localhost:3000/csp-match-path')
       await content.bringToFront()
-      await content.waitFor('#_html')
+      await content.waitFor(200)
     })
     it('webRequest.onHeadersReceived event is enabled', async () => {
       t.strictEqual(
@@ -185,8 +177,6 @@ module.exports = ({extensions, advanced, content}) => {
       // go to page serving content with strict csp
       await content.goto('http://localhost:3000/csp-match-path')
       await content.bringToFront()
-      // TODO: wait for https://github.com/GoogleChrome/puppeteer/pull/2289
-      // await content.waitFor('#_html')
       await content.waitFor(200)
     })
     it('webRequest.onHeadersReceived event is disabled', async () => {
@@ -257,8 +247,6 @@ module.exports = ({extensions, advanced, content}) => {
       // go to page serving content with strict csp
       await content.goto('http://localhost:3000/csp-match-path')
       await content.bringToFront()
-      // TODO: wait for https://github.com/GoogleChrome/puppeteer/pull/2289
-      // await content.waitFor('#_html')
       await content.waitFor(200)
     })
     it('the tab is reloaded on event page wakeup', async () => {

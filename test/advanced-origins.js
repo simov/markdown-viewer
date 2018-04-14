@@ -22,8 +22,6 @@ module.exports = ({advanced, content}) => {
     await advanced.select('.m-select', 'http')
     await advanced.type('[type=text]', 'localhost:3000')
     await advanced.click('button')
-    // TODO: wait for https://github.com/GoogleChrome/puppeteer/pull/2289
-    // await advanced.waitFor(() => document.querySelectorAll('.m-list li').length === 2)
     await advanced.waitFor(200)
   })
 
@@ -76,7 +74,7 @@ module.exports = ({advanced, content}) => {
       // go to page serving markdown as text/markdown
       await content.goto('http://localhost:3000/correct-content-type')
       await content.bringToFront()
-      await content.waitFor('pre')
+      await content.waitFor(200)
 
       t.equal(
         await content.evaluate(() =>
@@ -118,7 +116,7 @@ module.exports = ({advanced, content}) => {
       // go to page serving markdown as text/markdown
       await content.goto('http://localhost:3000/correct-content-type')
       await content.bringToFront()
-      await content.waitFor('#_html')
+      await content.waitFor(200)
 
       t.equal(
         await content.evaluate(() =>
@@ -132,7 +130,7 @@ module.exports = ({advanced, content}) => {
       // go to page serving markdown as text/x-markdown
       await content.goto('http://localhost:3000/correct-content-type-variation')
       await content.bringToFront()
-      await content.waitFor('#_html')
+      await content.waitFor(200)
 
       t.equal(
         await content.evaluate(() =>
@@ -175,7 +173,7 @@ module.exports = ({advanced, content}) => {
       // go to page serving markdown as text/plain
       await content.goto('http://localhost:3000/wrong-content-type')
       await content.bringToFront()
-      await content.waitFor('#_html')
+      await content.waitFor(200)
 
       t.equal(
         await content.evaluate(() =>
