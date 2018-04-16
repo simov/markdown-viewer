@@ -2,15 +2,27 @@
 var t = require('assert')
 
 
-module.exports = ({browser, advanced, content}) => {
+module.exports = ({advanced, content}) => {
 
   before(async () => {
-    // add origin
     await advanced.bringToFront()
+
+    // remove origin
+    if (await advanced.evaluate(() => Object.keys(state.origins).length > 1)) {
+      // expand origin
+      if (!await advanced.evaluate(() =>
+        document.querySelector('.m-list li:nth-of-type(2)')
+          .classList.contains('m-expanded'))) {
+        await advanced.click('.m-list li:nth-of-type(2)')
+      }
+      await advanced.click('.m-list li:nth-of-type(2) .m-footer .m-button:nth-of-type(2)')
+    }
+
+    // add origin
     await advanced.select('.m-select', 'http')
     await advanced.type('[type=text]', 'localhost:3000')
     await advanced.click('button')
-    await advanced.waitFor(() => document.querySelectorAll('.m-list li').length === 2)
+    await advanced.waitFor(200)
   })
 
   describe('add origin', () => {
@@ -24,17 +36,10 @@ module.exports = ({browser, advanced, content}) => {
       )
       t.equal(
         await advanced.evaluate(() =>
-          document.querySelector('.m-list li:nth-of-type(2) span:nth-of-type(1)').innerText
+          document.querySelector('.m-list li:nth-of-type(2) .m-origin').innerText
         ),
-        'http',
-        'protocol should be http'
-      )
-      t.equal(
-        await advanced.evaluate(() =>
-          document.querySelector('.m-list li:nth-of-type(2) span:nth-of-type(2)').innerText
-        ),
-        'localhost:3000',
-        'hostname should be localhost:3000'
+        'http://localhost:3000',
+        'origin name should be http://localhost:3000'
       )
     })
   })
@@ -48,6 +53,13 @@ module.exports = ({browser, advanced, content}) => {
         await advanced.click('.m-switch')
       }
 
+      // expand origin
+      if (!await advanced.evaluate(() =>
+        document.querySelector('.m-list li:nth-of-type(2)')
+          .classList.contains('m-expanded'))) {
+        await advanced.click('.m-list li:nth-of-type(2)')
+      }
+
       // disable path matching
       await advanced.evaluate(() => {
         document.querySelector('.m-list li:nth-of-type(2) input')
@@ -58,12 +70,11 @@ module.exports = ({browser, advanced, content}) => {
       // there is debounce timeout of 750ms in the options UI
       await advanced.waitFor(800)
     })
-
     it('text/markdown', async () => {
       // go to page serving markdown as text/markdown
       await content.goto('http://localhost:3000/correct-content-type')
       await content.bringToFront()
-      await content.waitFor('pre')
+      await content.waitFor(200)
 
       t.equal(
         await content.evaluate(() =>
@@ -84,6 +95,13 @@ module.exports = ({browser, advanced, content}) => {
         await advanced.click('.m-switch')
       }
 
+      // expand origin
+      if (!await advanced.evaluate(() =>
+        document.querySelector('.m-list li:nth-of-type(2)')
+          .classList.contains('m-expanded'))) {
+        await advanced.click('.m-list li:nth-of-type(2)')
+      }
+
       // disable path matching
       await advanced.evaluate(() => {
         document.querySelector('.m-list li:nth-of-type(2) input')
@@ -94,12 +112,11 @@ module.exports = ({browser, advanced, content}) => {
       // there is debounce timeout of 750ms in the options UI
       await advanced.waitFor(800)
     })
-
     it('text/markdown', async () => {
       // go to page serving markdown as text/markdown
       await content.goto('http://localhost:3000/correct-content-type')
       await content.bringToFront()
-      await content.waitFor('#_html')
+      await content.waitFor(200)
 
       t.equal(
         await content.evaluate(() =>
@@ -109,12 +126,11 @@ module.exports = ({browser, advanced, content}) => {
         'markdown should be rendered'
       )
     })
-
     it('text/x-markdown', async () => {
       // go to page serving markdown as text/x-markdown
       await content.goto('http://localhost:3000/correct-content-type-variation')
       await content.bringToFront()
-      await content.waitFor('#_html')
+      await content.waitFor(200)
 
       t.equal(
         await content.evaluate(() =>
@@ -135,6 +151,13 @@ module.exports = ({browser, advanced, content}) => {
         await advanced.click('.m-switch')
       }
 
+      // expand origin
+      if (!await advanced.evaluate(() =>
+        document.querySelector('.m-list li:nth-of-type(2)')
+          .classList.contains('m-expanded'))) {
+        await advanced.click('.m-list li:nth-of-type(2)')
+      }
+
       // enable path matching
       await advanced.evaluate(() => {
         document.querySelector('.m-list li:nth-of-type(2) input')
@@ -150,7 +173,7 @@ module.exports = ({browser, advanced, content}) => {
       // go to page serving markdown as text/plain
       await content.goto('http://localhost:3000/wrong-content-type')
       await content.bringToFront()
-      await content.waitFor('#_html')
+      await content.waitFor(200)
 
       t.equal(
         await content.evaluate(() =>

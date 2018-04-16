@@ -1,8 +1,14 @@
 
-import * as ripple from '@material/ripple'
-import * as tabs from '@material/tabs'
+import {MDCRipple} from '@material/ripple'
+import {MDCTabBar} from '@material/tabs'
+import {MDCTextField} from '@material/textfield'
+
+let ripple = {MDCRipple}
+let tabs = {MDCTabBar}
+let textfield = {MDCTextField}
 
 export {
   ripple,
   tabs,
+  textfield,
 }

@@ -2,19 +2,33 @@
 var t = require('assert')
 
 
-module.exports = ({browser, extensions, popup, advanced, content}) => {
+module.exports = ({extensions, advanced, content}) => {
 
   before(async () => {
-    // add origin
     await advanced.bringToFront()
+
+    // remove origin
+    if (await advanced.evaluate(() => Object.keys(state.origins).length > 1)) {
+      // expand origin
+      if (!await advanced.evaluate(() =>
+        document.querySelector('.m-list li:nth-of-type(2)')
+          .classList.contains('m-expanded'))) {
+        await advanced.click('.m-list li:nth-of-type(2)')
+      }
+      await advanced.click('.m-list li:nth-of-type(2) .m-footer .m-button:nth-of-type(2)')
+    }
+
+    // add origin
     await advanced.select('.m-select', 'http')
     await advanced.type('[type=text]', 'localhost:3000')
     await advanced.click('button')
-    await advanced.waitFor(() => document.querySelectorAll('.m-list li').length === 2)
+    await advanced.waitFor(200)
 
-    // disable csp
-    if (await advanced.evaluate(() => state.csp)) {
-      await advanced.click('.m-switch:nth-of-type(2)')
+    // expand origin
+    if (!await advanced.evaluate(() =>
+      document.querySelector('.m-list li:nth-of-type(2)')
+        .classList.contains('m-expanded'))) {
+      await advanced.click('.m-list li:nth-of-type(2)')
     }
 
     // enable path matching
@@ -29,37 +43,44 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
   })
 
   describe('preserve state', () => {
-    it('options page', async () => {
+    it('enable csp', async () => {
       await advanced.bringToFront()
 
       // enable csp
-      if (!await advanced.evaluate(() => state.csp)) {
-        await advanced.click('.m-switch:nth-of-type(2)')
+      if (!await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
+        await advanced.click('.m-list li:nth-of-type(2) .m-switch')
       }
       await advanced.reload()
-      await advanced.waitFor('#options')
-      await advanced.waitFor(100)
+      await advanced.waitFor(200)
+
+      // expand origin
+      await advanced.click('.m-list li:nth-of-type(2)')
 
       t.strictEqual(
         await advanced.evaluate(() =>
-          document.querySelector('.m-switch:nth-of-type(2)')
+          document.querySelector('.m-list li:nth-of-type(2) .m-switch')
             .classList.contains('is-checked')
         ),
         true,
         'csp checkbox should be enabled'
       )
+    })
+    it('disable csp', async () => {
+      await advanced.bringToFront()
 
       // disable csp
-      if (await advanced.evaluate(() => state.csp)) {
-        await advanced.click('.m-switch:nth-of-type(2)')
+      if (await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
+        await advanced.click('.m-list li:nth-of-type(2) .m-switch')
       }
       await advanced.reload()
-      await advanced.waitFor('#options')
-      await advanced.waitFor(100)
+      await advanced.waitFor(200)
+
+      // expand origin
+      await advanced.click('.m-list li:nth-of-type(2)')
 
       t.strictEqual(
         await advanced.evaluate(() =>
-          document.querySelector('.m-switch:nth-of-type(2)')
+          document.querySelector('.m-list li:nth-of-type(2) .m-switch')
             .classList.contains('is-checked')
         ),
         false,
@@ -69,18 +90,27 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
   })
 
   describe('strip csp header only on matching content type or url', () => {
-    it('non matching urls should be skipped', async () => {
+    before(async () => {
       await advanced.bringToFront()
+
+      // expand origin
+      if (!await advanced.evaluate(() =>
+        document.querySelector('.m-list li:nth-of-type(2)')
+          .classList.contains('m-expanded'))) {
+        await advanced.click('.m-list li:nth-of-type(2)')
+      }
+
       // enable csp
-      if (!await advanced.evaluate(() => state.csp)) {
-        await advanced.click('.m-switch:nth-of-type(2)')
+      if (!await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
+        await advanced.click('.m-list li:nth-of-type(2) .m-switch')
       }
 
       // go to page serving content with strict csp
       await content.goto('http://localhost:3000/csp-wrong-path')
       await content.bringToFront()
-      await content.waitFor('pre')
-
+      await content.waitFor(200)
+    })
+    it('non matching urls should be skipped', async () => {
       t.strictEqual(
         await content.evaluate(() => {
           try {
@@ -97,18 +127,27 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
   })
 
   describe('enable csp', () => {
-    it('webRequest.onHeadersReceived event is enabled', async () => {
+    before(async () => {
       await advanced.bringToFront()
+
+      // expand origin
+      if (!await advanced.evaluate(() =>
+        document.querySelector('.m-list li:nth-of-type(2)')
+          .classList.contains('m-expanded'))) {
+        await advanced.click('.m-list li:nth-of-type(2)')
+      }
+
       // enable csp
-      if (!await advanced.evaluate(() => state.csp)) {
-        await advanced.click('.m-switch:nth-of-type(2)')
+      if (!await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
+        await advanced.click('.m-list li:nth-of-type(2) .m-switch')
       }
 
       // go to page serving content with strict csp
       await content.goto('http://localhost:3000/csp-match-path')
       await content.bringToFront()
-      await content.waitFor('#_html')
-
+      await content.waitFor(200)
+    })
+    it('webRequest.onHeadersReceived event is enabled', async () => {
       t.strictEqual(
         await content.evaluate(() =>
           window.localStorage.toString()
@@ -120,18 +159,27 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
   })
 
   describe('disable csp', () => {
-    it('webRequest.onHeadersReceived event is disabled', async () => {
+    before(async () => {
       await advanced.bringToFront()
+
+      // expand origin
+      if (!await advanced.evaluate(() =>
+        document.querySelector('.m-list li:nth-of-type(2)')
+          .classList.contains('m-expanded'))) {
+        await advanced.click('.m-list li:nth-of-type(2)')
+      }
+
       // disable csp
-      if (await advanced.evaluate(() => state.csp)) {
-        await advanced.click('.m-switch:nth-of-type(2)')
+      if (await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
+        await advanced.click('.m-list li:nth-of-type(2) .m-switch')
       }
 
       // go to page serving content with strict csp
       await content.goto('http://localhost:3000/csp-match-path')
       await content.bringToFront()
-      await content.waitFor('#_html')
-
+      await content.waitFor(200)
+    })
+    it('webRequest.onHeadersReceived event is disabled', async () => {
       t.strictEqual(
         await content.evaluate(() => {
           try {
@@ -148,34 +196,60 @@ module.exports = ({browser, extensions, popup, advanced, content}) => {
   })
 
   describe('enable csp + suspend the event page', () => {
-    it('the tab is reloaded on event page wakeup', async () => {
+    before(async () => {
       await advanced.bringToFront()
-      // enable csp
-      if (!await advanced.evaluate(() => state.csp)) {
-        await advanced.click('.m-switch:nth-of-type(2)')
+
+      // expand origin
+      if (!await advanced.evaluate(() =>
+        document.querySelector('.m-list li:nth-of-type(2)')
+          .classList.contains('m-expanded'))) {
+        await advanced.click('.m-list li:nth-of-type(2)')
       }
 
+      // enable csp
+      if (!await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
+        await advanced.click('.m-list li:nth-of-type(2) .m-switch')
+      }
+
+      // chrome://extensions
       await extensions.bringToFront()
+
       // enable developer mode
-      await extensions.click('#dev-toggle label')
+      await extensions.evaluate(() => {
+        Array.from(
+          document.querySelector('extensions-manager').shadowRoot
+            .querySelector('extensions-item-list').shadowRoot
+            .querySelectorAll('extensions-item'))[0].shadowRoot
+            .querySelector('#enable-toggle').click()
+      })
       // disable the extension
-      await extensions.click('.enable-checkbox label')
-      // enable the extension
-      await extensions.click('.enable-checkbox label')
+      await extensions.evaluate(() => {
+        Array.from(
+          document.querySelector('extensions-manager').shadowRoot
+            .querySelector('extensions-item-list').shadowRoot
+            .querySelectorAll('extensions-item'))[0].shadowRoot
+            .querySelector('#enable-toggle').click()
+      })
+      await extensions.waitFor(200)
       // check
       t.equal(
         await extensions.evaluate(() =>
-          document.querySelector('.active-views a').innerText
+          Array.from(
+            document.querySelector('extensions-manager').shadowRoot
+              .querySelector('extensions-item-list').shadowRoot
+              .querySelectorAll('extensions-item'))[0].shadowRoot
+              .querySelector('#inspect-views a').innerText
         ),
         'background page (Inactive)',
-        'background page should be disabled'
+        'background page should be inactive'
       )
 
       // go to page serving content with strict csp
       await content.goto('http://localhost:3000/csp-match-path')
       await content.bringToFront()
-      await content.waitFor('#_html')
-
+      await content.waitFor(200)
+    })
+    it('the tab is reloaded on event page wakeup', async () => {
       t.strictEqual(
         await content.evaluate(() =>
           window.localStorage.toString()

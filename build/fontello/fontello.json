@@ -35,6 +35,18 @@
       "css": "firefox",
       "code": 59456,
       "src": "fontelico"
+    },
+    {
+      "uid": "d9be617b7f2fe7843118ca2d3a1b8cca",
+      "css": "arrow-down",
+      "code": 61444,
+      "src": "mfglabs"
+    },
+    {
+      "uid": "440e148d0e21100118eae7036bcd2067",
+      "css": "arrow-up",
+      "code": 61445,
+      "src": "mfglabs"
     }
   ]
 }

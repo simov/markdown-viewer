@@ -28,43 +28,40 @@ module.exports = ({advanced}) => {
     )
   })
 
-  it('csp option', async () => {
-    t.strictEqual(
-      await advanced.evaluate(() =>
-        state.csp
-      ),
-      false,
-      'state.csp should be false'
-    )
-  })
-
   it('allowed origins', async () => {
     t.deepStrictEqual(
       await advanced.evaluate(() =>
         state.origins
       ),
       {
-        'file://': '\\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\\?.*)?$'
+        'file://': {
+          match: '\\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\\?.*)?$',
+          csp: false,
+          encoding: ''
+        }
       },
-      'state.origins should contain only the file:// origin'
+      'state.origins should contain the file:// origin'
     )
-
-    t.deepStrictEqual(
+    t.equal(
       await advanced.evaluate(() =>
-        state.origins
+        document.querySelectorAll('.m-list li').length
       ),
+      1,
+      'should contain only one origin'
+    )
+    t.equal(
       await advanced.evaluate(() =>
-        Array.from(document.querySelectorAll('.m-list li'))
-          .reduce((obj, origin) => (
-            obj[
-              origin.querySelector('span:nth-of-type(1)').innerText.trim() +
-              '://' +
-              origin.querySelector('span:nth-of-type(2)').innerText.trim()
-            ] = origin.querySelector('.m-textfield input').value,
-            obj
-          ), {})
+        document.querySelector('.m-list li:nth-of-type(1) .m-origin').innerText
       ),
-      'state.origins should be identical to dom origins'
+      'file://',
+      'origin name should be file://'
+    )
+    t.equal(
+      await advanced.evaluate(() =>
+        document.querySelector('.m-list li:nth-of-type(1) .m-match input').value
+      ),
+      '\\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\\?.*)?$',
+      'the text input should contain the default path matching regexp'
     )
   })
 

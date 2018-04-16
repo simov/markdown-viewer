@@ -2,15 +2,27 @@
 var t = require('assert')
 
 
-module.exports = ({browser, popup, advanced, content}) => {
+module.exports = ({popup, advanced, content}) => {
 
   before(async () => {
-    // add origin
     await advanced.bringToFront()
+
+    // remove origin
+    if (await advanced.evaluate(() => Object.keys(state.origins).length > 1)) {
+      // expand origin
+      if (!await advanced.evaluate(() =>
+        document.querySelector('.m-list li:nth-of-type(2)')
+          .classList.contains('m-expanded'))) {
+        await advanced.click('.m-list li:nth-of-type(2)')
+      }
+      await advanced.click('.m-list li:nth-of-type(2) .m-footer .m-button:nth-of-type(2)')
+    }
+
+    // add origin
     await advanced.select('.m-select', 'http')
     await advanced.type('[type=text]', 'localhost:3000')
     await advanced.click('button')
-    await advanced.waitFor(() => document.querySelectorAll('.m-list li').length === 2)
+    await advanced.waitFor(200)
 
     // enable header detection
     if (!await advanced.evaluate(() => state.header)) {
@@ -30,7 +42,7 @@ module.exports = ({browser, popup, advanced, content}) => {
       // go to page serving markdown as text/markdown
       await content.goto('http://localhost:3000/correct-content-type')
       await content.bringToFront()
-      await content.waitFor('#_html')
+      await content.waitFor(200)
 
       t.equal(
         await content.evaluate(() =>
@@ -64,7 +76,7 @@ module.exports = ({browser, popup, advanced, content}) => {
       await content.bringToFront()
       await popup.click('button:nth-of-type(1)')
       // content auto reloads
-      await content.waitFor('#_markdown')
+      await content.waitFor(200)
 
       t.equal(
         await content.evaluate(() =>
@@ -108,7 +120,7 @@ module.exports = ({browser, popup, advanced, content}) => {
       // go to page serving markdown as text/markdown
       await content.goto('http://localhost:3000/correct-content-type')
       await content.bringToFront()
-      await content.waitFor('#_theme')
+      await content.waitFor(200)
 
       t.strictEqual(
         await content.evaluate(() =>
@@ -126,7 +138,7 @@ module.exports = ({browser, popup, advanced, content}) => {
       await content.bringToFront()
       await popup.select('.m-panel:nth-of-type(1) select', 'github-dark')
       // content auto reloads
-      await content.waitFor('#_theme')
+      await content.waitFor(200)
 
       t.strictEqual(
         await content.evaluate(() =>
@@ -143,7 +155,7 @@ module.exports = ({browser, popup, advanced, content}) => {
       // reload popup
       await popup.bringToFront()
       await popup.reload()
-      await popup.waitFor('#popup')
+      await popup.waitFor(200)
 
       t.equal(
         await popup.evaluate(() =>
@@ -178,7 +190,7 @@ module.exports = ({browser, popup, advanced, content}) => {
       // go to page serving markdown as text/markdown
       await content.goto('http://localhost:3000/compiler-options-marked')
       await content.bringToFront()
-      await content.waitFor('#_html')
+      await content.waitFor(200)
 
       t.equal(
         await content.evaluate(() =>
@@ -195,8 +207,7 @@ module.exports = ({browser, popup, advanced, content}) => {
       // gfm switch
       await popup.click('.m-panel:nth-of-type(2) .m-switch:nth-of-type(2)')
       // content auto reloads
-      await content.waitFor(100)
-      await content.waitFor('#_html')
+      await content.waitFor(200)
 
       t.equal(
         await content.evaluate(() =>
@@ -211,7 +222,7 @@ module.exports = ({browser, popup, advanced, content}) => {
       // reload popup
       await popup.bringToFront()
       await popup.reload()
-      await popup.waitFor('#popup')
+      await popup.waitFor(200)
 
       t.equal(
         await popup.evaluate(() =>
@@ -254,7 +265,7 @@ module.exports = ({browser, popup, advanced, content}) => {
       // go to page serving markdown as text/markdown
       await content.goto('http://localhost:3000/compiler-options-remark')
       await content.bringToFront()
-      await content.waitFor('#_html')
+      await content.waitFor(200)
 
       t.equal(
         await content.evaluate(() =>
@@ -270,8 +281,7 @@ module.exports = ({browser, popup, advanced, content}) => {
       await content.bringToFront()
       await popup.select('.m-panel:nth-of-type(2) select', 'remark')
       // content auto reloads
-      await content.waitFor(100)
-      await content.waitFor('#_html')
+      await content.waitFor(200)
 
       t.equal(
         await content.evaluate(() =>
@@ -301,15 +311,14 @@ module.exports = ({browser, popup, advanced, content}) => {
       // redraw popup
       await popup.bringToFront()
       await popup.reload()
-      await popup.waitFor('#popup')
+      await popup.waitFor(200)
 
       // disable gfm
       await content.bringToFront()
       // gfm switch
       await popup.click('.m-panel:nth-of-type(2) .m-switch:nth-of-type(4)')
       // content auto reloads
-      await content.waitFor(100)
-      await content.waitFor('#_html')
+      await content.waitFor(200)
 
       t.equal(
         await content.evaluate(() =>
@@ -324,8 +333,7 @@ module.exports = ({browser, popup, advanced, content}) => {
       // reload popup
       await popup.bringToFront()
       await popup.reload()
-      await popup.waitFor('#popup')
-      await popup.waitFor(100)
+      await popup.waitFor(200)
 
       t.equal(
         await popup.evaluate(() =>
@@ -368,7 +376,7 @@ module.exports = ({browser, popup, advanced, content}) => {
       // go to page serving markdown as text/markdown
       await content.goto('http://localhost:3000/content-options-toc')
       await content.bringToFront()
-      await content.waitFor('#_html')
+      await content.waitFor(200)
 
       t.strictEqual(
         await content.evaluate(() =>
@@ -385,7 +393,7 @@ module.exports = ({browser, popup, advanced, content}) => {
       // toc switch
       await popup.click('.m-panel:nth-of-type(3) .m-switch:nth-of-type(3)')
       // content auto reloads
-      await content.waitFor('#_toc')
+      await content.waitFor(200)
 
       t.deepStrictEqual(
         await content.evaluate(() =>
@@ -416,18 +424,17 @@ module.exports = ({browser, popup, advanced, content}) => {
       // go to page serving markdown as text/markdown
       await content.goto('http://localhost:3000/content-options-scroll')
       await content.bringToFront()
-      await content.waitFor('#_html')
+      await content.waitFor(200)
 
       // scroll down 200px
       await content.evaluate(() =>
         document.querySelector('body').scrollTop = 200
       )
-      await content.waitFor(150)
+      await content.waitFor(200)
 
       // reload page
       await content.reload()
-      await content.waitFor('#_html')
-      await content.waitFor(150)
+      await content.waitFor(200)
 
       t.strictEqual(
         await content.evaluate(() =>
@@ -444,8 +451,7 @@ module.exports = ({browser, popup, advanced, content}) => {
       // scroll switch
       await popup.click('.m-panel:nth-of-type(3) .m-switch:nth-of-type(2)')
       // content auto reloads
-      await content.waitFor(100)
-      await content.waitFor('#_html')
+      await content.waitFor(200)
 
       t.strictEqual(
         await content.evaluate(() =>
@@ -459,12 +465,11 @@ module.exports = ({browser, popup, advanced, content}) => {
       await content.evaluate(() =>
         document.querySelector('body').scrollTop = 200
       )
-      await content.waitFor(150)
+      await content.waitFor(200)
 
       // reload page
       await content.reload()
-      await content.waitFor('#_html')
-      await content.waitFor(150)
+      await content.waitFor(200)
 
       t.strictEqual(
         await content.evaluate(() =>
@@ -478,11 +483,11 @@ module.exports = ({browser, popup, advanced, content}) => {
     it('scroll to anchor', async () => {
       // click on header link
       await content.click('h2 a')
-      await content.waitFor(150)
+      await content.waitFor(200)
 
       t.strictEqual(
         await content.evaluate(() =>
-          document.querySelector('body').scrollTop + 2
+          document.querySelector('body').scrollTop + 1
         ),
         await content.evaluate(() =>
           document.querySelector('h2').offsetTop
@@ -494,11 +499,11 @@ module.exports = ({browser, popup, advanced, content}) => {
       await content.evaluate(() =>
         document.querySelector('body').scrollTop += 200
       )
-      await content.waitFor(150)
+      await content.waitFor(200)
 
       t.strictEqual(
         await content.evaluate(() =>
-          document.querySelector('body').scrollTop + 2
+          document.querySelector('body').scrollTop + 1
         ),
         await content.evaluate(() =>
           document.querySelector('h2').offsetTop + 200
@@ -508,8 +513,7 @@ module.exports = ({browser, popup, advanced, content}) => {
 
       // reload page
       await content.reload()
-      await content.waitFor('#_html')
-      await content.waitFor(150)
+      await content.waitFor(200)
 
       t.strictEqual(
         await content.evaluate(() =>

@@ -33,8 +33,8 @@ md.detect = ({storage: {state}, inject}) => {
           return
         }
 
-        if (match(win.header, win.url)) {
-          if (onwakeup && state.csp) {
+        if (header(win.header) || match(win.url)) {
+          if (onwakeup && chrome.webRequest) {
             onwakeup = false
             chrome.tabs.reload(id)
           }
@@ -46,31 +46,30 @@ md.detect = ({storage: {state}, inject}) => {
     }
   }
 
-  var match = (header, url) => {
-    if (state.header && header && /text\/(?:x-)?markdown/i.test(header)) {
-      return true
-    }
-    else {
-      var location = new URL(url)
+  var header = (value) => {
+    return state.header && value && /text\/(?:x-)?markdown/i.test(value)
+  }
 
-      var path =
-        state.origins[location.origin] ||
-        state.origins['*://' + location.host] ||
+  var match = (url) => {
+    var location = new URL(url)
+
+    var origin =
+      state.origins[location.origin] ||
+      state.origins['*://' + location.host] ||
+      state.origins['*://*']
+
+    // ff: webRequest bug - does not match on `hostname:port`
+    if (!origin && /Firefox/.test(navigator.userAgent)) {
+      var origin =
+        state.origins[location.protocol + '//' + location.hostname] ||
+        state.origins['*://' + location.hostname] ||
         state.origins['*://*']
+    }
 
-      // ff: webRequest bug - does not match on `hostname:port`
-      if (!path && /Firefox/.test(navigator.userAgent)) {
-        var path =
-          state.origins[location.protocol + '//' + location.hostname] ||
-          state.origins['*://' + location.hostname] ||
-          state.origins['*://*']
-      }
-
-      if (path && new RegExp(path).test(location.href)) {
-        return true
-      }
+    if (origin && origin.match && new RegExp(origin.match).test(location.href)) {
+      return origin
     }
   }
 
-  return {tab, match}
+  return {tab, header, match}
 }

@@ -16,10 +16,13 @@ md.storage = ({compilers}) => {
     },
     raw: false,
     header: true,
-    csp: false,
     match,
     origins: {
-      'file://': match
+      'file://': {
+        match,
+        csp: false,
+        encoding: '',
+      }
     },
   }
 
@@ -79,9 +82,17 @@ md.storage = ({compilers}) => {
     if (options.content.mathjax === undefined) {
       options.content.mathjax = false
     }
-    // v3.3 -> v3.4
-    if (options.csp === undefined) {
-      options.csp = false
+    // v3.4 -> v3.5
+    if (typeof options.origins['file://'] === 'string') {
+      options.origins = Object.keys(options.origins)
+        .reduce((all, key) => (all[key] = {
+          match: options.origins[key],
+          csp: options.csp,
+          encoding: '',
+      }, all), {})
+    }
+    if (typeof options.csp === 'boolean') {
+      delete options.csp
     }
 
     // reload extension bug

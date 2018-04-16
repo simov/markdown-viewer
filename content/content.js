@@ -49,28 +49,14 @@ function mount () {
 
   m.mount($('body'), {
     oninit: () => {
-      ;((done) => {
-        if (document.charset === 'UTF-8') {
-          done()
-          return
-        }
-        m.request({method: 'GET', url: location.href,
-          deserialize: (body) => {
-            done(body)
-            return body
-          }
-        })
-      })((data) => {
-        state.markdown = data || md
-
-        chrome.runtime.sendMessage({
-          message: 'markdown',
-          compiler: state.compiler,
-          markdown: state.markdown
-        }, (res) => {
-          state.html = state.content.emoji ? emojinator(res.html) : res.html
-          m.redraw()
-        })
+      state.markdown = md
+      chrome.runtime.sendMessage({
+        message: 'markdown',
+        compiler: state.compiler,
+        markdown: state.markdown
+      }, (res) => {
+        state.html = state.content.emoji ? emojinator(res.html) : res.html
+        m.redraw()
       })
     },
     view: () => {

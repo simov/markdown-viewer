@@ -78,26 +78,28 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, headers}) =
       sendResponse({
         origins: state.origins,
         header: state.header,
-        csp: state.csp,
-        exclude: state.exclude,
+        match: state.match,
       })
     }
     else if (req.message === 'options.header') {
       set({header: req.header})
       sendResponse()
     }
-    else if (req.message === 'options.csp') {
+    else if (req.message === 'options.intercept') {
       // ff: onHeadersReceived is enabled by default
       if (!/Firefox/.test(navigator.userAgent)) {
-        headers[req.csp ? 'add' : 'remove']()
+        headers[req.intercept ? 'add' : 'remove']()
       }
-      set({csp: req.csp})
       sendResponse()
     }
 
-    // options origins
+    // origins
     else if (req.message === 'origin.add') {
-      state.origins[req.origin] = defaults.match
+      state.origins[req.origin] = {
+        match: defaults.match,
+        csp: false,
+        encoding: '',
+      }
       set({origins: state.origins})
       sendResponse()
     }
@@ -107,7 +109,7 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, headers}) =
       sendResponse()
     }
     else if (req.message === 'origin.update') {
-      state.origins[req.origin] = req.match
+      state.origins[req.origin] = req.options
       set({origins: state.origins})
       sendResponse()
     }
