@@ -21,6 +21,7 @@
 - Raw and rendered markdown views
 - Detects markdown by header and path
 - Toggle Content Security Policy
+- Override page encoding
 - Built as [event page][event-page]
 - Free and Open Source
 
@@ -43,9 +44,11 @@
   - [Allow All Origins](#allow-all-origins)
   - [Header Detection](#header-detection)
   - [Path Matching](#path-matching)
+  - [Path Matching Priority](#path-matching-priority)
   - [Remove Origin](#remove-origin)
   - [Refresh Origin](#refresh-origin)
   - [Disable CSP](#disable-content-security-policy)
+  - [Character Encoding](#character-encoding)
 - [Markdown Syntax and Features](#markdown-syntax-and-features)
 - [More Compilers](#more-compilers)
 
@@ -60,6 +63,7 @@
 ![file-urls]
 
 > Navigate to `file:///` in your browser and locate the markdown files that you want to read
+
 
 ## Remote Files
 
@@ -80,6 +84,7 @@ Option          | Default | Description
 **smartLists**  | `false` | Use smarter list behavior than the original markdown. May eventually be default with the old behavior moved into pedantic.
 **smartypants** | `false` | Use "smart" typographic punctuation for things like quotes and dashes.
 **tables**      | `true`  | Enable GFM [tables][gfm-tables]. This option requires the gfm option to be true.
+
 
 ## Remark
 
@@ -102,14 +107,17 @@ Option          | Default | Description
 **toc**         | `false` | Generate Table of Contents
 **mathjax**     | `false` | Render TeX and LaTeX math blocks
 
+
 ## Scroll
 
 - When enabled, the `scroll` option remembers the current scroll position and scrolls back to it after page load.
 - When disabled, the `scroll` option either scrolls to the top of the document or to a certain header (anchor) if a hash URL fragment is present.
 
+
 ## TOC
 
 - Generates Table of Contents (TOC) based on the headers found in the markdown document.
+
 
 ## MathJax
 
@@ -125,6 +133,7 @@ The following rules apply to your content when `mathjax` is enabled:
 
 > The MathJax support currently works only on local file URLs and remote origins without strict *Content Security Policy (CSP)* set. For example it won't work for files hosted on the GitHub's `raw.githubusercontent.com` origin. However you can bypass this by enabling the [Disable CSP](#disable-content-security-policy) option.
 
+
 ## Emoji
 
 - Emoji shortnames like: `:sparkles:` will be converted to :sparkles: using [EmojiOne][emojione] images.
@@ -139,6 +148,7 @@ Detecting and rendering [local file URLs](#local-files) can be enabled by using 
 
 Access to remote URLs however, needs to be enabled manually.
 
+
 ## Add Origin
 
 Here is how you can enable the extension for the `https://raw.githubusercontent.com` origin:
@@ -149,6 +159,7 @@ The origin consists of *protocol* part and *domain* part. The *protocol* can be 
 
 Enable the above origin and play around with the extension options [here][syntax].
 
+
 ## Allow All Origins
 
 In case you really want to you can enable the extension for **all** origins:
@@ -157,11 +168,42 @@ In case you really want to you can enable the extension for **all** origins:
 
 Alternatively you can use the `Allow All` button.
 
-**Important:** Note that all remote origins should either serve their markdown content with valid `content-type` header (see [Header Detection](#header-detection)) or valid URL path (see [Path Matching](#path-matching)). Otherwise the following rules take place:
+> **Note:** Take a look at the [Path Matching Priority](#path-matching-priority) section below to see how the Markdown content is being included for or excluded from rendering!
 
-Consider this example:
 
-![allow-all]
+## Header Detection
+
+When this option is enabled the extension will check for the presence of the `text/markdown` and `text/x-markdown` *content-type* header before trying to match the path:
+
+![header-detection]
+
+
+## Path Matching
+
+If the header detection is disabled or a proper *content-type* header is missing, the extension will check if the URL is ending with a markdown file extension.
+
+The default regular expression is: `\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\?.*)?$`
+
+It's a simple regular expression that matches URLs ending with:
+
+- markdown file extension: `\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)`
+- and optionally anchor or querystring after that: `(?:#.*|\?.*)?`
+
+> The `?:` used in `(?:match)` stands for *non-capturing group* and it's there for performance reasons.
+
+You can modify the path matching regular expression for each enabled origin individually. The settings are being updated as you type.
+
+
+## Path Matching Priority
+
+For example let's assume that we have the following origins enabled with their respective Path Matching RegExp set as follows:
+
+Origin               | Match
+:---                 | :---
+__`*://*`__          | `\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\?.*)?$`
+__`*://asite.com`__  | `\/some\/custom\/path\/to\/serve\/markdown\/$`
+__`*://github.com`__ | `something impossible to match`
+__`*://gitlab.com`__ | `.*\/raw\/.*\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\?.*)?$`
 
 1. In this example we have allowed all origins `*://*` (the first entry) with the default Path Matching RegExp, meaning that all origins are going to match **only** on those URLs ending with markdown file extension.<br>
 For example this is going to match: https://raw.githubusercontent.com/simov/markdown-viewer/master/README.md<br>
@@ -181,56 +223,43 @@ In this case we want to **exclude** the `github.com` origin althogether. To **ex
 https://gitlab.com/gitlab-org/gitlab-ce/raw/master/README.md<br>
 but not:<br>
 https://gitlab.com/gitlab-org/gitlab-ce/blob/master/README.md<br>
-Notice the subtle difference between the two URLs - the first one contains the `raw` word in its path. Now take a closer look at the screenshot above and you'll notice that the `gitlab.com` entry have a slightly modified path matching RegExp too - it have the `.*\/raw\/.*` string prepended in front of the default RegExp that matched every path ending with markdown file extension.<br>
+Notice the subtle difference between the two URLs - the first one contains the `raw` word in its path. Now take a closer look at the table above and you'll notice that the `gitlab.com` entry have a slightly modified path matching RegExp too - it have the `.*\/raw\/.*` string prepended in front of the default RegExp that matches every path ending with markdown file extension.<br>
 The result is as you might expect, the first URL:<br>
-https://gitlab.com/gitlab-org/gitlab-ce/raw/master/README.md is going to be matched and rendered by Markdown Viewer, however the second one:<br>
+https://gitlab.com/gitlab-org/gitlab-ce/raw/master/README.md is going to be **matched** and rendered by Markdown Viewer, however the second one:<br>
 https://gitlab.com/gitlab-org/gitlab-ce/blob/master/README.md will be **excluded**!
 
-## Header Detection
-
-When this option is enabled the extension will check for the presence of the `text/markdown` and `text/x-markdown` *content-type* header before trying to match the path:
-
-![header-detection]
-
-## Path Matching
-
-If the header detection is disabled or a proper *content-type* header is missing, the extension will check if the URL is ending with a markdown file extension:
-
-![path-regexp]
-
-It's a simple regular expression that matches URLs ending with:
-
-- markdown file extension: `\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)`
-- and optionally anchor or querystring after that: `(?:#.*|\?.*)?`
-
-> The `?:` used in `(?:match)` stands for *non-capturing group* and it's there for performance reasons.
-
-You can modify the path matching regular expression for each enabled origin individually. The settings are being updated as you type.
 
 ## Remove Origin
 
-At any point click on the small `x` button next to the origin that you want to remove. This actually removes the permission itself so that the extension is no longer able to inject scripts into that origin.
+At any point click on the `REMOVE` button for the origin that you want to remove. This actually removes the permission itself so that the extension is no longer able to inject code into that origin.
 
 Note that the Chrome's consent popup shows up only when you add the origin for the first time. In case you re-add it you'll no longer see that popup. That's a Chrome thing and it's not controllable through the extension.
 
+
 ## Refresh Origin
 
-The extension synchronizes your preferences across all your devices using Google Sync. The list of your allowed origins is being synced too, but the actual permissions that you give using the Chrome's consent popup cannot be synced.
+The extension synchronizes your preferences across all of your devices using Google Sync. The list of your allowed origins is being synced too. However, the actual permissions that you give using the Chrome's consent popup cannot be synced.
 
-In case you've recently added a new origin on one of your devices you'll have to explicitly allow it on your other devices. The little refresh button next to each origin is used for that.
+In case you've recently added a new origin on one of your devices you'll have to explicitly allow it on your other devices. The `REFRESH` button for each origin is used for that.
 
 
 ## Disable Content Security Policy
 
-Some remote origins may serve its content with a `content-security-policy` header set that prevents the extension from executing certain JavaScript code inside the content of the page. For example on `raw.githubusercontent.com` certain things such as remembering your scroll position, generating TOC, displaying MathJax or Emojis won't work.
+Some remote origins may serve its content with a `content-security-policy` header set that prevents the extension from executing certain JavaScript code inside the content of that page. For example on `raw.githubusercontent.com` certain things such as remembering your scroll position, generating TOC, displaying MathJax or Emojis won't work.
 
 Using the `Disable Content Security Policy` switch you can optionally tell the extension to strip that header from the incoming request and therefore allow its full functionality to work:
 
 ![disable-csp]
 
-It's important to note that even if you enable this option, the Content Security Policy header will be stripped **only** for those requests that either have a correct [Markdown Content Type](#header-detection) or URL that matches any of your explicitly allowed origins and their corresponding [Path Matching](#path-matching) regexes.
+It's important to note that even if you enable this option, the Content Security Policy header will be stripped **only** for those requests that either have a correct [Markdown Content Type](#header-detection) or URL that matches the corresponding [Path Matching RegExp](#path-matching) for that origin.
 
-Even if you have [Allowed All Origins](#allow-all-origins) and disabled the Content Security Policy at the same time, the header will be stripped **only** for those requests that either have a correct [Markdown Content Type](#header-detection) or URL that matches your explicitly set [Path Matching](#path-matching) regex for the Allow All origin `* *`.
+Even if you have [Allowed All Origins](#allow-all-origins) and disabled the Content Security Policy at the same time, the header will be stripped **only** for those requests that either have a correct [Markdown Content Type](#header-detection) or URL that matches your explicitly set [Path Matching](#path-matching) regex for the Allow All origin `*://*`.
+
+
+## Character Encoding
+
+By default Markdown Viewer uses the browser's built-in encoding detection. In case you want to force a certain Character Encoding for a specific origin - use the Encoding select control.
+
 
 # Markdown Syntax and Features
 
@@ -243,6 +272,7 @@ A few files located in the [test] folder of this repo can be used to test what's
 
 > Note that in order for the extension to fully function on the `raw.githubusercontent.com` origin you have to enable the [Disable CSP](#disable-content-security-policy) option.
 
+
 # More Compilers
 
 Markdown Viewer can be used with any markdown parser/compiler. Currently the following compilers are implemented: [marked], [remark], [showdown], [markdown-it], [remarkable], [commonmark], [markdown-js].
@@ -253,12 +283,12 @@ Markdown Viewer can be used with any markdown parser/compiler. Currently the fol
 4. Disable the Markdown Viewer extension downloaded from the Chrome Store
 5. Click on the `Load unpacked extension...` button and select the cloned directory
 
+
 # License
 
 The MIT License (MIT)
 
-Copyright (c) 2013-2018 Simeon Velichkov <simeonvelichkov@gmail.com>
-(https://github.com/simov/markdown-viewer)
+Copyright (c) 2013-present, Simeon Velichkov <simeonvelichkov@gmail.com> (https://github.com/simov/markdown-viewer)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -318,5 +348,3 @@ SOFTWARE.
   [all-origins]: https://i.imgur.com/4GH3EuP.png
   [header-detection]: https://i.imgur.com/bdz3Reg.png
   [disable-csp]: https://i.imgur.com/3Qbez1l.png
-  [path-regexp]: https://i.imgur.com/jSrLDAM.png
-  [allow-all]: https://i.imgur.com/1PecYgH.png
