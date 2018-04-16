@@ -93,7 +93,7 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, headers}) =
       sendResponse()
     }
 
-    // options origins
+    // origins
     else if (req.message === 'origin.add') {
       state.origins[req.origin] = {
         match: defaults.match,
