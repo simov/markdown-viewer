@@ -1,10 +1,11 @@
 {
   "manifest_version": 2,
   "name"            : "Markdown Viewer",
-  "version"         : "3.4",
+  "version"         : "3.5",
   "description"     : "Markdown Viewer",
 
   "browser_action": {
+    "browser_style": false,
     "default_icon": {
       "19" : "/images/icon19.png",
       "38" : "/images/icon38.png"
