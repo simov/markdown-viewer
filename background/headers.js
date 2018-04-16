@@ -6,7 +6,7 @@ md.headers = ({storage: {state}, detect}) => {
       return {responseHeaders}
     }
 
-    var header = responseHeaders.find(({name}) => /content-type/i.test(name)) || {}
+    var header = responseHeaders.find(({name}) => /^content-type/i.test(name)) || {}
     var origin = detect.match(url)
 
     if (!detect.header(header.value) && !origin) {
@@ -39,7 +39,7 @@ md.headers = ({storage: {state}, detect}) => {
   var options = ['blocking', 'responseHeaders']
 
   var add = () => {
-    if (!chrome.webRequest.onHeadersReceived.hasListeners()) {
+    if (!chrome.webRequest.onHeadersReceived.hasListener(callback)) {
       chrome.webRequest.onHeadersReceived.addListener(callback, filter, options)
     }
   }
