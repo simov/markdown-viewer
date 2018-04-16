@@ -196,14 +196,14 @@ You can modify the path matching regular expression for each enabled origin indi
 
 ## Path Matching Priority
 
-For example let's assume that we have the following origins enabled with their respective Path Matching RegExp set as follows:
+Let's assume that we have allowed the following origins and have set their respective Path Matching RegExp accordingly:
 
 Origin               | Match
 :---                 | :---
-__`*://*`__          | `\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\?.*)?$`
+__`*://*`__          | `\.(?:markdown\|mdown\|mkdn\|md\|mkd\|mdwn\|mdtxt\|mdtext\|text)(?:#.*\|\?.*)?$`
 __`*://asite.com`__  | `\/some\/custom\/path\/to\/serve\/markdown\/$`
 __`*://github.com`__ | `something impossible to match`
-__`*://gitlab.com`__ | `.*\/raw\/.*\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\?.*)?$`
+__`*://gitlab.com`__ | `.*\/raw\/.*\.(?:markdown\|mdown\|mkdn\|md\|mkd\|mdwn\|mdtxt\|mdtext\|text)(?:#.*\|\?.*)?$`
 
 1. In this example we have allowed all origins `*://*` (the first entry) with the default Path Matching RegExp, meaning that all origins are going to match **only** on those URLs ending with markdown file extension.<br>
 For example this is going to match: https://raw.githubusercontent.com/simov/markdown-viewer/master/README.md<br>
