@@ -196,7 +196,7 @@ m.mount(document.querySelector('main'), {
 
         // add origin
         m('.m-add-origin',
-          m('h4.mdc-typography--headline', 'Allowed Origins'),
+          m('h4.mdc-typography--headline5', 'Allowed Origins'),
           m('select.mdc-elevation--z2 m-select', {
             onchange: events.origin.scheme
             },

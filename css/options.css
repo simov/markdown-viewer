@@ -182,7 +182,7 @@ footer .icon-hidden {
   margin: 0 10px !important;
 }
 .m-add-origin .m-textfield input {
-  padding-top: 10px;
+  padding-top: 3px;
 }
 .m-add-origin button:nth-of-type(1) {
   position: relative;
@@ -314,7 +314,7 @@ footer .icon-hidden {
 }
 .m-list .m-content .m-option.m-match input {
   border-bottom: 1px solid #ececec !important;
-  padding: 15px 0 8px 0;
+  padding-top: 3px;
 }
 
 .m-list .m-content .m-option.m-csp {}
