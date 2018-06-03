@@ -44,6 +44,12 @@ h2
 
 ___
 
+- - -
+
+* * *
+
+_ _ _
+
 
 # List
 
@@ -503,6 +509,12 @@ var some: string = "typescript";
 
 ```yaml
 - language: yaml
+```
+
+```diff
+     not changed
+-    removed
++    added
 ```
 
 
