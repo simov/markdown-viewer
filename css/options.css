@@ -333,6 +333,6 @@ footer .icon-hidden {
   bottom: 20px;
   right: 20px;
 }
-.m-list .m-footer .m-button:first-child {
-  margin: 0 20px 0 0;
+.m-list .m-footer .m-button:last-child {
+  margin: 0 0 0 20px;
 }
