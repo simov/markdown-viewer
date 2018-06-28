@@ -1,4 +1,141 @@
 
+# MathJax
+
+## Delimiters
+
+Delimiter                         | Format      | Expression                  | Result                    | Support
+:---                              | :---:       | :---                        | :---:                     | :---:
+No delimiters                     | `str`       | `\sqrt{3x-1}+(1+x)^2`       | \sqrt{3x-1}+(1+x)^2       | no
+Bracket without backslash         | `[str]`     | `[\sqrt{3x-1}+(1+x)^2]`     | [\sqrt{3x-1}+(1+x)^2]     | no
+Single backslash with bracket     | `\[str\]`   | `\[\sqrt{3x-1}+(1+x)^2\]`   | \[\sqrt{3x-1}+(1+x)^2\]   | **yes**
+Double backslash with bracket     | `\\[str\\]` | `\\[\sqrt{3x-1}+(1+x)^2\\]` | \\[\sqrt{3x-1}+(1+x)^2\\] | no
+Parentheses without backslash     | `(str)`     | `(\sqrt{3x-1}+(1+x)^2)`     | (\sqrt{3x-1}+(1+x)^2)     | no
+Single backslash with parentheses | `\(str\)`   | `\(\sqrt{3x-1}+(1+x)^2\)`   | \(\sqrt{3x-1}+(1+x)^2\)   | **yes**
+Double backslash with parentheses | `\\(str\\)` | `\\(\sqrt{3x-1}+(1+x)^2\\)` | \\(\sqrt{3x-1}+(1+x)^2\\) | no
+Single dollar sign                | `$str$`     | `$\sqrt{3x-1}+(1+x)^2$`     | $\sqrt{3x-1}+(1+x)^2$     | **yes**
+Double dollar sign                | `$$str$$`   | `$$\sqrt{3x-1}+(1+x)^2$$`   | $$\sqrt{3x-1}+(1+x)^2$$   | **yes**
+
+## Empty
+
+- `\(\)` \(\)
+- `$$` $$
+- `\[\]` \[\]
+- `$$$$` $$$$
+
+## Single Character
+
+- `\(a\)` \(a\)
+- `$a$` $a$
+- `\[a\]` \[a\]
+- `$$a$$` $$a$$
+
+## Multiple on single line
+
+- `\(a\)` \(a\) `\(b\)` \(b\)
+- `$a$` $a$ `$b$` $b$
+- `\[a\]` \[a\] `\[b\]` \[b\]
+- `$$a$$` $$a$$ `$$b$$` $$b$$
+
+## Underscore `_`
+
+## `\(` single line `\)`
+
+`\(x_i = x_\gamma\)` \(x_i = x_\gamma\)
+
+## `\(` multiline `\)`
+
+```
+\(
+x_i = x_\gamma
+\)
+```
+
+\(
+x_i = x_\gamma
+\)
+
+---
+
+## `\[` single line `\]`
+
+`\[x_i = x_\gamma\]` \[x_i = x_\gamma\]
+
+## `\[` multiline `\]`
+
+```
+\[
+x_i = x_\gamma
+\]
+```
+
+\[
+x_i = x_\gamma
+\]
+
+---
+
+## `$` single line `$`
+
+`$x_i = x_\gamma$` $x_i = x_\gamma$
+
+## `$` multiline `$` Not Supported!
+
+```
+$
+x_i = x_\gamma
+$
+```
+
+$
+x_i = x_\gamma
+$
+
+---
+
+## `$$` single line `$$`
+
+`$$x_i = x_\gamma$$` $$x_i = x_\gamma$$
+
+## `$$` multiline `$$`
+
+```
+$$
+x_i = x_\gamma
+$$
+```
+
+$$
+x_i = x_\gamma
+$$
+
+---
+
+## `\begin{}` multiline `\end{}`
+
+```
+\begin{align}
+x_i = x_\gamma
+\end{align}
+```
+
+\begin{align}
+x_i = x_\gamma
+\end{align}
+
+---
+
+## Escapes
+
+### Dollar Sign
+
+`\$6.20 and \$0.5` \$6.20 and \$0.5
+
+`$4.40` $4.40
+
+---
+
+# Examples
+
 # Using TeX notation
 
 When $a \ne 0$, there are two solutions to \(ax^2 + bx + c = 0\) and they are

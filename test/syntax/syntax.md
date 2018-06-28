@@ -198,53 +198,6 @@ fenced code block using tilde
 ~~~
 
 
-# HTML
-
-<div style="text-decoration: underline;">
-  <p><strong>HTML</strong> tags</p>
-</div>
-
-
-## Details/Summary
-
-<details>
-<summary>Click to Expand</summary>
-
-```js
-var code = 'block'
-```
-
-### Inner Header
-
-[link](https://github.com/simov/markdown-viewer)
-</details>
-
-
-## Definition List
-
-<dl>
-  <dt>Name</dt>
-  <dd>Godzilla</dd>
-  <dt>Born</dt>
-  <dd>1952</dd>
-  <dt>Birthplace</dt>
-  <dd>Japan</dd>
-  <dt>Color</dt>
-  <dd>Green</dd>
-</dl>
-
-
-## KBD
-
-<kbd>the kbd tag</kbd>
-
-
-## Supscript/subscript
-
-- 19<sup>th</sup>
-- H<sub>2</sub>O
-
-
 # GFM
 
 
@@ -288,17 +241,79 @@ default      | align left      | centered           | align right
 - [ ] task
 
 
+# HTML
+
+<h2>HTML Tags</h2>
+<div style="text-decoration: underline;">
+  <p><strong>bold</strong> and underline</p>
+</div>
+
+
+## Details/Summary
+
+<details>
+<summary>Click to Expand</summary>
+
+```js
+var code = 'block'
+```
+
+### Inner Header
+
+[link](https://github.com/simov/markdown-viewer)
+</details>
+
+
+## Definition List
+
+<dl>
+  <dt>Name</dt>
+  <dd>Godzilla</dd>
+  <dt>Born</dt>
+  <dd>1952</dd>
+  <dt>Birthplace</dt>
+  <dd>Japan</dd>
+  <dt>Color</dt>
+  <dd>Green</dd>
+</dl>
+
+
+## KBD
+
+<kbd>the kbd tag</kbd>
+
+
+## Supscript/subscript
+
+- 19<sup>th</sup>
+- H<sub>2</sub>O
+
+
+
 # Extras
+
+## Emoji
+
+- shortcode: :wave: :alien:
+- unicode: 👋 👽
+- ascii: :D :/
+
+
+## MathJax
+
+- [Examples and Syntax](mathjax.md)
+
+
+## Syntax Highlighting
+
+- [Examples and Syntax](highlighting.md)
+
 
 ## Escapes
 
 <em\>HTML tags</em\>
 
-\\ \` \* \_ \{ \} \# \+ \- \. \!
-
-\[ mathjax \]
-
-\( mathjax \)
+\\ \` \* \_ \{ \} \# \+ \- \. \! \[ \] \( \)
 
 `` `\(` ``
 
@@ -308,17 +323,9 @@ fenced code block
 ```
 ````
 
-
 ## Mention
 
 @simov
-
-
-## Emoji
-
-- shortname: :wave: :alien:
-- unicode: 👋 👽
-- ascii: :D :/
 
 
 ## Footnotes
@@ -336,308 +343,6 @@ And something else[^1], and a link[^2]
 [^2]: https://github.com/simov/markdown-viewer
 [^named]: https://github.com/simov/markdown-viewer
 
-
-## Syntax Highlighting
-
-```actionscript
-var some = new actionscript();
-```
-
-```apacheconf
-ServerName apacheconf
-```
-
-```aspnet
-<asp:Label runat="server" id="aspnet"></asp:Label>
-```
-
-```bash
-$some = "bash";
-```
-
-```basic
-Dim basic As Integer
-```
-
-```batch
-set some="batch"
-```
-
-```c
-char some = "c";
-```
-
-```coffeescript
-some = "coffeescript"
-```
-
-```cpp
-char some = "cpp";
-```
-
-```csharp
-string some = "csharp";
-```
-
-```css
-#some { content: 'css'; }
-```
-
-```dart
-var some = "dart";
-```
-
-```docker
-MAINTAINER docker
-```
-
-```erlang
-module(erlang).
-```
-
-```go
-type go string
-```
-
-```haskell
-haskell :: Str -> String
-```
-
-```html
-<p id="some">html</p>
-```
-
-```java
-public static final void main java();
-```
-
-```javascript
-let some = 'javascript';
-```
-
-```js
-const some = 'js';
-```
-
-```json
-{"some": "json"}
-```
-
-```jsonp
-function({"some": "jsonp"})
-```
-
-```lua
-local some = "lua"
-```
-
-```makefile
-check: makefile
-```
-
-```markdown
-`some` **markdown**
-```
-
-```html
-<p>some <strong>markup</strong></p>
-```
-
-```nginx
-server_name nginx;
-```
-
-```objectivec
-char some = "objectivec";
-```
-
-```perl
-$some = "perl";
-```
-
-```php
-$some = "php";
-```
-
-```prolog
-some('prolog', 1972)
-```
-
-```python
-some = 'python'
-```
-
-```ruby
-some = "ruby"
-```
-
-```rust
-let some = 'rust';
-```
-
-```sass
-@include sass;
-```
-
-```scheme
-(define some 'scheme')
-```
-
-```scss
-@include scss;
-```
-
-```smalltalk
-'some smalltalk'
-```
-
-```sql
-select * from `language` where `name` = 'sql';
-```
-
-```swift
-var some = "swift"
-```
-
-```typescript
-var some: string = "typescript";
-```
-
-```xml
-<some name="xml"></some>
-```
-
-```yaml
-- language: yaml
-```
-
-```diff
-     not changed
--    removed
-+    added
-```
-
-
-# MathJax
-
-## Delimiters
-
-Delimiter                         | Format      | Expression                  | Result                    | Support
-:---                              | :---:       | :---                        | :---:                     | :---:
-No delimiters                     | `str`       | `\sqrt{3x-1}+(1+x)^2`       | \sqrt{3x-1}+(1+x)^2       | no
-Bracket without backslash         | `[str]`     | `[\sqrt{3x-1}+(1+x)^2]`     | [\sqrt{3x-1}+(1+x)^2]     | no
-Single backslash with bracket     | `\[str\]`   | `\[\sqrt{3x-1}+(1+x)^2\]`   | \[\sqrt{3x-1}+(1+x)^2\]   | **yes**
-Double backslash with bracket     | `\\[str\\]` | `\\[\sqrt{3x-1}+(1+x)^2\\]` | \\[\sqrt{3x-1}+(1+x)^2\\] | no
-Parentheses without backslash     | `(str)`     | `(\sqrt{3x-1}+(1+x)^2)`     | (\sqrt{3x-1}+(1+x)^2)     | no
-Single backslash with parentheses | `\(str\)`   | `\(\sqrt{3x-1}+(1+x)^2\)`   | \(\sqrt{3x-1}+(1+x)^2\)   | **yes**
-Double backslash with parentheses | `\\(str\\)` | `\\(\sqrt{3x-1}+(1+x)^2\\)` | \\(\sqrt{3x-1}+(1+x)^2\\) | no
-Single dollar sign                | `$str$`     | `$\sqrt{3x-1}+(1+x)^2$`     | $\sqrt{3x-1}+(1+x)^2$     | **yes**
-Double dollar sign                | `$$str$$`   | `$$\sqrt{3x-1}+(1+x)^2$$`   | $$\sqrt{3x-1}+(1+x)^2$$   | **yes**
-
-## Markdown
-
-Expressions containing underscore `_`:
-
-### `\(` single line `\)`
-
-`\(x_i = x_\gamma\)` \(x_i = x_\gamma\)
-
-### `\(` multiline `\)`
-
-```
-\(
-x_i = x_\gamma
-\)
-```
-
-\(
-x_i = x_\gamma
-\)
-
----
-
-### `\[` single line `\]`
-
-`\[x_i = x_\gamma\]` \[x_i = x_\gamma\]
-
-### `\[` multiline `\]`
-
-```
-\[
-x_i = x_\gamma
-\]
-```
-
-\[
-x_i = x_\gamma
-\]
-
----
-
-### `$` single line `$`
-
-`$x_i = x_\gamma$` $x_i = x_\gamma$
-
-### `$` multiline `$`
-
-**Not supported!**
-
-```
-$
-x_i = x_\gamma
-$
-```
-
-$
-x_i = x_\gamma
-$
-
----
-
-### `$$` single line `$$`
-
-`$$x_i = x_\gamma$$` $$x_i = x_\gamma$$
-
-### `$$` multiline `$$`
-
-```
-$$
-x_i = x_\gamma
-$$
-```
-
-$$
-x_i = x_\gamma
-$$
-
----
-
-### `\begin{}` multiline `\end{}`
-
-```
-\begin{align}
-x_i = x_\gamma
-\end{align}
-```
-
-\begin{align}
-x_i = x_\gamma
-\end{align}
-
-
-## HTML
-
-`<`, `>` and `&` symbols
-
-- `\(x<y\)` \(x<y\)
-- `\(x>y\)` \(x>y\)
-- `\(x&a\)` \(x&a\)
-
-## **Money**
-
-\$6.20 and \$0.5
-
-$4.40
 
 ---
 
