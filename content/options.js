@@ -98,7 +98,6 @@ var events = {
       chrome.permissions.remove({origins: [`${origin}/*`]}, (removed) => {
         if (removed) {
           chrome.runtime.sendMessage({message: 'origin.remove', origin})
-          webRequest()
           delete state.origins[origin]
           m.redraw()
         }
@@ -137,7 +136,6 @@ var events = {
         origin,
         options: {match, csp, encoding},
       })
-      webRequest()
     },
 
     encoding: (origin) => (e) => {
@@ -148,33 +146,8 @@ var events = {
         origin,
         options: {match, csp, encoding},
       })
-      webRequest()
     },
   },
-}
-
-var webRequest = () => {
-  // ff: webRequest is required permission
-  if (/Firefox/.test(navigator.userAgent)) {
-    return
-  }
-
-  var intercept = false
-  for (var key in state.origins) {
-    if (state.origins[key].csp || state.origins[key].encoding) {
-      intercept = true
-      break
-    }
-  }
-
-  chrome.permissions[intercept ? 'request' : 'remove']({
-    permissions: ['webRequest', 'webRequestBlocking']
-  }, () => {
-    chrome.runtime.sendMessage({
-      message: 'options.intercept',
-      intercept,
-    })
-  })
 }
 
 var oncreate = {

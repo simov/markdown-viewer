@@ -27,7 +27,7 @@
       "/background/compilers/remark.js",
 
       "/background/storage.js",
-      "/background/headers.js",
+      "/background/webrequest.js",
       "/background/detect.js",
       "/background/inject.js",
       "/background/messages.js",
