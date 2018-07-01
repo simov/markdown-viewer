@@ -39,7 +39,7 @@ md.detect = ({storage: {state}, inject}) => {
             chrome.tabs.reload(id)
           }
           else {
-            inject()
+            inject(id)
           }
         }
       })
