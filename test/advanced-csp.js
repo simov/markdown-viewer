@@ -15,7 +15,7 @@ module.exports = ({extensions, advanced, content}) => {
           .classList.contains('m-expanded'))) {
         await advanced.click('.m-list li:nth-of-type(2)')
       }
-      await advanced.click('.m-list li:nth-of-type(2) .m-footer .m-button:nth-of-type(2)')
+      await advanced.click('.m-list li:nth-of-type(2) .m-footer .m-button')
     }
 
     // add origin
