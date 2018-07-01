@@ -58,7 +58,8 @@
 ## Local Files
 
 1. Navigate to `chrome://extensions`
-2. Make sure that the `Allow access to file URLs` checkbox is checked for the Markdown Viewer extension
+2. Click on the `DETAILS` button of Markdown Viewer
+3. Make sure that the `Allow access to file URLs` switch is turned on
 
 ![file-urls]
 
@@ -196,37 +197,48 @@ You can modify the path matching regular expression for each enabled origin indi
 
 ## Path Matching Priority
 
-Let's assume that we have allowed the following origins and have set their respective Path Matching RegExp accordingly:
+The enabled origins are matched from most specific to least specific:
 
-Origin               | Match
-:---                 | :---
-__`*://*`__          | `\.(?:markdown\|mdown\|mkdn\|md\|mkd\|mdwn\|mdtxt\|mdtext\|text)(?:#.*\|\?.*)?$`
-__`*://asite.com`__  | `\/some\/custom\/path\/to\/serve\/markdown\/$`
-__`*://github.com`__ | `something impossible to match`
-__`*://gitlab.com`__ | `.*\/raw\/.*\.(?:markdown\|mdown\|mkdn\|md\|mkd\|mdwn\|mdtxt\|mdtext\|text)(?:#.*\|\?.*)?$`
+1. `https://raw.githubusercontent.com` or `http://raw.githubusercontent.com`
+2. `*://raw.githubusercontent.com`
+3. `*://*`
 
-1. In this example we have allowed all origins `*://*` (the first entry) with the default Path Matching RegExp, meaning that all origins are going to match **only** on those URLs ending with markdown file extension.<br>
-For example this is going to match: https://raw.githubusercontent.com/simov/markdown-viewer/master/README.md<br>
-However it's important to note that the `*://*` (Allow All) origin serves as a **fallback**. Its Path Matching RegExp will be used only if any other explicitly added (more specific) origins fail to match, meaning that all other explicitly added origins **override** the `*://*` (Allow All) origin and therefore its Path Matching RegExp!
+Only the first matching origin is picked and then its Path Matching RegExp is used to match the entire URL. If it fails no other attempts are made to match the URL.
 
-2. For example let's assume that our imaginary origin `asite.com` (the second entry) serves markdown files on a custom path: `https://asite.com/some/custom/path/to/serve/markdown/`<br>
-In this case we'll have to **explicitly add** an entry for `asite.com` and modify its path matching RegExp even if the extension was enabled for all origins!
+### Custom Path
 
-3. Now take a look at the third entry. GitHub is a good example of a website that serves rendered HTML content on URLs ending with markdown file extension.<br>
-For example we would like the extension to render:<br>
-https://raw.githubusercontent.com/simov/markdown-viewer/master/README.md<br>
-but not:<br>
-https://github.com/simov/markdown-viewer/blob/master/README.md<br>
-In this case we want to **exclude** the `github.com` origin althogether. To **exclude** an origin you have to set its path matching RegExp to something that's **impossible to match**!
+- __`*://*`__ - `\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\?.*)?$`
+- __`*://website.com`__ - `\/some\/custom\/path\/to\/serve\/markdown\/$`
 
-4. Moving on to the forth entry. What if we want to match things like:<br>
-https://gitlab.com/gitlab-org/gitlab-ce/raw/master/README.md<br>
-but not:<br>
-https://gitlab.com/gitlab-org/gitlab-ce/blob/master/README.md<br>
-Notice the subtle difference between the two URLs - the first one contains the `raw` word in its path. Now take a closer look at the table above and you'll notice that the `gitlab.com` entry have a slightly modified path matching RegExp too - it have the `.*\/raw\/.*` string prepended in front of the default RegExp that matches every path ending with markdown file extension.<br>
-The result is as you might expect, the first URL:<br>
-https://gitlab.com/gitlab-org/gitlab-ce/raw/master/README.md is going to be **matched** and rendered by Markdown Viewer, however the second one:<br>
-https://gitlab.com/gitlab-org/gitlab-ce/blob/master/README.md will be **excluded**!
+In this example we have allowed all origins (the first entry). The default Path Matching RegExp is going to match on URLs ending with markdown file extension.
+
+In case we want to match a custom path we have to add a more specific origin and specify its Path Matching RegExp accordingly.
+
+### Exclude Origin
+
+- __`*://*`__ - `\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\?.*)?$`
+- __`*://github.com`__ - `something impossible to match !!!`
+
+In this example we have allowed all origins (the first entry). The default Path Matching RegExp is going to match on URLs ending with markdown file extension.
+
+For example URLs like
+https://raw.githubusercontent.com/simov/markdown-viewer/master/README.md are going to be matched and rendered. However GitHub also serves rendered HTML on URLs ending with markdown file extension
+https://github.com/simov/markdown-viewer/blob/master/README.md
+
+In this case we want to exclude any URL on github.com and for that we have to add more specific origin and set its Path Matching RegExp to something that's impossible to match.
+
+### Exclude Path
+
+- __`*://*`__ - `\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\?.*)?$`
+- __`*://gitlab.com`__ - `.*\/raw\/.*\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\?.*)?$`
+
+In this example we have allowed all origins (the first entry). The default Path Matching RegExp is going to match on URLs ending with markdown file extension.
+
+For example URLs like
+https://gitlab.com/gitlab-org/gitlab-ce/raw/master/README.md are going to be matched and rendered. However GitLab also serves rendered HTML on URLs ending with markdown file extension
+https://gitlab.com/gitlab-org/gitlab-ce/blob/master/README.md
+
+In this case we want to match only URLs containing the `raw` word in their path and for that we have to add more specific origin and set its Path Matching RegExp accordingly.
 
 
 ## Remove Origin
@@ -240,7 +252,9 @@ Note that the Chrome's consent popup shows up only when you add the origin for t
 
 The extension synchronizes your preferences across all of your devices using Google Sync. The list of your allowed origins is being synced too. However, the actual permissions that you give using the Chrome's consent popup cannot be synced.
 
-In case you've recently added a new origin on one of your devices you'll have to explicitly allow it on your other devices. The `REFRESH` button for each origin is used for that.
+In case you've recently added a new origin on one of your devices you'll have to explicitly allow it on your other devices. In this case additional **`refresh`** label will be present for each origin that needs to be _refreshed_. This label is present **only** on the devices that needs to be _refreshed_. Expanding the origin will reveal additional `REFRESH` button:
+
+![refresh-origin]
 
 
 ## Disable Content Security Policy
@@ -258,7 +272,7 @@ Even if you have [Allowed All Origins](#allow-all-origins) and disabled the Cont
 
 ## Character Encoding
 
-By default Markdown Viewer uses the browser's built-in encoding detection. In case you want to force a certain Character Encoding for a specific origin - use the Encoding select control.
+By default Markdown Viewer uses the browser's built-in encoding detection. In case you want to force certain Character Encoding for a specific origin - use the Encoding select control.
 
 
 # Markdown Syntax and Features
@@ -266,7 +280,7 @@ By default Markdown Viewer uses the browser's built-in encoding detection. In ca
 A few files located in the [test] folder of this repo can be used to test what's possible with Markdown Viewer:
 
 - Add the `raw.githubusercontent.com` origin through the [Advanced Options](#advanced-options)
-- Navigate to the test files: [syntax][test-syntax], [mathjax][test-mathjax], [yaml][test-yaml], [toml][test-toml] and play around with the `Compiler` and `Content` options
+- Navigate to the test files: [syntax][test-syntax], [highlighting][test-highlighting], [mathjax][test-mathjax], [yaml][test-yaml], [toml][test-toml] and play around with the `Compiler` and `Content` options
 - Use the `Markdown/HTML` button to switch between raw markdown and rendered HTML
 - At any point click on the `Defaults` button to reset back the compiler options
 
@@ -340,11 +354,13 @@ SOFTWARE.
 
   [test-syntax]: https://raw.githubusercontent.com/simov/markdown-viewer/master/test/syntax/syntax.md
   [test-mathjax]: https://raw.githubusercontent.com/simov/markdown-viewer/master/test/syntax/mathjax.md
+  [test-highlighting]: https://raw.githubusercontent.com/simov/markdown-viewer/master/test/syntax/highlighting.md
   [test-yaml]: https://raw.githubusercontent.com/simov/markdown-viewer/master/test/syntax/yaml.md
   [test-toml]: https://raw.githubusercontent.com/simov/markdown-viewer/master/test/syntax/toml.md
 
-  [file-urls]: https://i.imgur.com/rNS9ADW.png
+  [file-urls]: https://i.imgur.com/BTmlNnX.png
   [add-origin]: https://i.imgur.com/GnKmkRG.png
   [all-origins]: https://i.imgur.com/4GH3EuP.png
   [header-detection]: https://i.imgur.com/bdz3Reg.png
   [disable-csp]: https://i.imgur.com/3Qbez1l.png
+  [refresh-origin]: https://i.imgur.com/UYSgelE.png
