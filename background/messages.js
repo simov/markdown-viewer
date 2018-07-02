@@ -58,6 +58,7 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, webrequest}
     else if (req.message === 'popup.content') {
       set({content: req.content})
       notifyContent({message: 'reload'})
+      webrequest()
       sendResponse()
     }
     else if (req.message === 'popup.advanced') {

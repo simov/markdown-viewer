@@ -40,6 +40,14 @@ md.webrequest = ({storage: {state}, detect}) => {
     return {responseHeaders}
   }
 
+  var onCompleted = ({ip, tabId}) => {
+    if (ip && ip !== '127.0.0.1') {
+      setTimeout(() => {
+        chrome.tabs.sendMessage(tabId, {message: 'autoreload'})
+      }, 500)
+    }
+  }
+
   var events = () => {
     var headers = false
     for (var key in state.origins) {
@@ -54,20 +62,25 @@ md.webrequest = ({storage: {state}, detect}) => {
       headers = true
     }
 
-    return {headers}
+    var completed = false
+    if (state.content.autoreload) {
+      completed = true
+    }
+
+    return {headers, completed}
   }
 
-  var perm = (headers, done) => {
+  var perm = (headers, completed, done) => {
     // ff: webRequest is required permission
     if (/Firefox/.test(navigator.userAgent)) {
       done()
     }
     // request permissions
-    else if (headers && !chrome.webRequest) {
+    else if ((headers || completed) && !chrome.webRequest) {
       chrome.permissions.request({permissions}, done)
     }
     // remove permissions
-    else if (!headers && chrome.webRequest) {
+    else if (!headers && !completed && chrome.webRequest) {
       chrome.permissions.remove({permissions}, () => {
         chrome.webRequest = null
         done()
@@ -80,19 +93,25 @@ md.webrequest = ({storage: {state}, detect}) => {
 
   return () => {
 
-    var {headers} = events()
+    var {headers, completed} = events()
 
     // remove listeners
     if (chrome.webRequest) {
       if (!headers && !/Firefox/.test(navigator.userAgent)) {
         chrome.webRequest.onHeadersReceived.removeListener(onHeadersReceived)
       }
+      if (!completed) {
+        chrome.webRequest.onCompleted.removeListener(onCompleted)
+      }
     }
 
-    perm(headers, () => {
+    perm(headers, completed, () => {
       // add listeners
       if (headers && !chrome.webRequest.onHeadersReceived.hasListener(onHeadersReceived)) {
         chrome.webRequest.onHeadersReceived.addListener(onHeadersReceived, filter, options)
+      }
+      if (completed && !chrome.webRequest.onCompleted.hasListener(onCompleted)) {
+        chrome.webRequest.onCompleted.addListener(onCompleted, filter)
       }
     })
   }

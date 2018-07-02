@@ -13,6 +13,7 @@ md.storage = ({compilers}) => {
       scroll: true,
       toc: false,
       mathjax: false,
+      autoreload: false,
     },
     raw: false,
     header: true,
@@ -93,6 +94,10 @@ md.storage = ({compilers}) => {
     }
     if (typeof options.csp === 'boolean') {
       delete options.csp
+    }
+    // v3.5 -> v3.6
+    if (options.content.autoreload === undefined) {
+      options.content.autoreload = false
     }
 
     // reload extension bug
