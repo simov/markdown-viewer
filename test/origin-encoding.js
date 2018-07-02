@@ -64,7 +64,6 @@ module.exports = ({advanced, content}) => {
     })
   })
 
-
   describe('correct encoding', () => {
     before(async () => {
       await advanced.bringToFront()

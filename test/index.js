@@ -14,12 +14,14 @@ var options = {
 }
 
 var tests = [
-  'popup-defaults',
-  'advanced-defaults',
-  'advanced-origins',
+  'defaults-popup',
+  'defaults-options',
+
   'popup-options',
-  'advanced-encoding',
-  'advanced-csp', // should be last - destroys popup and advanced
+
+  'origin-match',
+  'origin-encoding',
+  'origin-csp', // should be last - destroys popup and advanced
 ]
 
 
