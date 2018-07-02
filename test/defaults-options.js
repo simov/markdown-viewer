@@ -26,6 +26,13 @@ module.exports = ({advanced}) => {
       true,
       'state.header should be true'
     )
+    t.strictEqual(
+      await advanced.evaluate(() =>
+        document.querySelector('.m-switch')
+      ),
+      null,
+      'header detection switch should be hidden'
+    )
   })
 
   it('allowed origins', async () => {

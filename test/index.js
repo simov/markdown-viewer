@@ -19,6 +19,7 @@ var tests = [
 
   'popup-options',
 
+  'origin-add',
   'origin-match',
   'origin-encoding',
   'origin-csp', // should be last - destroys popup and advanced
@@ -59,6 +60,7 @@ describe('markdown-viewer', () => {
     await new Promise((resolve, reject) => {
       server = http.createServer()
       server.on('request', (req, res) => {
+        // content-type
         if (/wrong-content-type/.test(req.url)) {
           res.setHeader('Content-Type', 'text/plain')
           res.end('**bold**')
@@ -71,6 +73,7 @@ describe('markdown-viewer', () => {
           res.setHeader('Content-Type', 'text/x-markdown')
           res.end('**bold**')
         }
+        // popup options
         else if (/compiler-options-marked/.test(req.url)) {
           res.setHeader('Content-Type', 'text/x-markdown')
           res.end('~~strikethrough~~')
@@ -94,16 +97,24 @@ describe('markdown-viewer', () => {
             Array(500).fill('lorem ipsum').join(' '),
           ].join('\n\n'))
         }
+        // csp
+        else if (/csp-match-header/.test(req.url)) {
+          res.setHeader('Content-Security-Policy',
+            `default-src 'none'; style-src 'unsafe-inline'; sandbox`)
+          res.setHeader('Content-Type', 'text/markdown')
+          res.end('# h1')
+        }
         else if (/csp-match-path/.test(req.url)) {
           res.setHeader('Content-Security-Policy',
             `default-src 'none'; style-src 'unsafe-inline'; sandbox`)
           res.end('# h1')
         }
-        else if (/csp-wrong-path/.test(req.url)) {
+        else if (/csp-no-header-no-path/.test(req.url)) {
           res.setHeader('Content-Security-Policy',
             `default-src 'none'; style-src 'unsafe-inline'; sandbox`)
           res.end('# h1')
         }
+        // encoding
         else if (/windows-1251/.test(req.url)) {
           res.setHeader('Content-Type', 'text/markdown; charset=UTF-8')
           res.end(iconv.encode('здрасти', 'win1251'))

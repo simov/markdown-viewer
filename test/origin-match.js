@@ -10,9 +10,7 @@ module.exports = ({advanced, content}) => {
     // remove origin
     if (await advanced.evaluate(() => Object.keys(state.origins).length > 1)) {
       // expand origin
-      if (!await advanced.evaluate(() =>
-        document.querySelector('.m-list li:nth-of-type(2)')
-          .classList.contains('m-expanded'))) {
+      if (!await advanced.evaluate(() => document.querySelector('.m-list li:nth-of-type(2)').classList.contains('m-expanded'))) {
         await advanced.click('.m-list li:nth-of-type(2)')
       }
       await advanced.click('.m-list li:nth-of-type(2) .m-footer .m-button')
@@ -23,28 +21,14 @@ module.exports = ({advanced, content}) => {
     await advanced.type('[type=text]', 'localhost:3000')
     await advanced.click('button')
     await advanced.waitFor(200)
+
+    // expand origin
+    if (!await advanced.evaluate(() => document.querySelector('.m-list li:nth-of-type(2)').classList.contains('m-expanded'))) {
+      await advanced.click('.m-list li:nth-of-type(2)')
+    }
   })
 
-  describe('add origin', () => {
-    it('localhost:3000', async () => {
-      t.equal(
-        await advanced.evaluate(() =>
-          document.querySelectorAll('.m-list li').length
-        ),
-        2,
-        'allowed origins count should be 2'
-      )
-      t.equal(
-        await advanced.evaluate(() =>
-          document.querySelector('.m-list li:nth-of-type(2) .m-origin').innerText
-        ),
-        'http://localhost:3000',
-        'origin name should be http://localhost:3000'
-      )
-    })
-  })
-
-  describe('disabled header detection + disabled path matching', () => {
+  describe('correct content-type + disabled header detection + disabled path matching', () => {
     before(async () => {
       await advanced.bringToFront()
 
@@ -53,19 +37,10 @@ module.exports = ({advanced, content}) => {
         await advanced.click('.m-switch')
       }
 
-      // expand origin
-      if (!await advanced.evaluate(() =>
-        document.querySelector('.m-list li:nth-of-type(2)')
-          .classList.contains('m-expanded'))) {
-        await advanced.click('.m-list li:nth-of-type(2)')
-      }
-
       // disable path matching
       await advanced.evaluate(() => {
-        document.querySelector('.m-list li:nth-of-type(2) input')
-          .value = ''
-        document.querySelector('.m-list li:nth-of-type(2) input')
-          .dispatchEvent(new Event('keyup'))
+        document.querySelector('.m-list li:nth-of-type(2) input').value = ''
+        document.querySelector('.m-list li:nth-of-type(2) input').dispatchEvent(new Event('keyup'))
       })
       // there is debounce timeout of 750ms in the options UI
       await advanced.waitFor(800)
@@ -86,7 +61,7 @@ module.exports = ({advanced, content}) => {
     })
   })
 
-  describe('enabled header detection + disabled path matching', () => {
+  describe('correct content-type + enabled header detection + disabled path matching', () => {
     before(async () => {
       await advanced.bringToFront()
 
@@ -95,19 +70,10 @@ module.exports = ({advanced, content}) => {
         await advanced.click('.m-switch')
       }
 
-      // expand origin
-      if (!await advanced.evaluate(() =>
-        document.querySelector('.m-list li:nth-of-type(2)')
-          .classList.contains('m-expanded'))) {
-        await advanced.click('.m-list li:nth-of-type(2)')
-      }
-
       // disable path matching
       await advanced.evaluate(() => {
-        document.querySelector('.m-list li:nth-of-type(2) input')
-          .value = ''
-        document.querySelector('.m-list li:nth-of-type(2) input')
-          .dispatchEvent(new Event('keyup'))
+        document.querySelector('.m-list li:nth-of-type(2) input').value = ''
+        document.querySelector('.m-list li:nth-of-type(2) input').dispatchEvent(new Event('keyup'))
       })
       // there is debounce timeout of 750ms in the options UI
       await advanced.waitFor(800)
@@ -142,7 +108,7 @@ module.exports = ({advanced, content}) => {
     })
   })
 
-  describe('enabled header detection + enabled path matching', () => {
+  describe('wrong content-type + enabled header detection + enabled path matching', () => {
     before(async () => {
       await advanced.bringToFront()
 
@@ -151,19 +117,10 @@ module.exports = ({advanced, content}) => {
         await advanced.click('.m-switch')
       }
 
-      // expand origin
-      if (!await advanced.evaluate(() =>
-        document.querySelector('.m-list li:nth-of-type(2)')
-          .classList.contains('m-expanded'))) {
-        await advanced.click('.m-list li:nth-of-type(2)')
-      }
-
       // enable path matching
       await advanced.evaluate(() => {
-        document.querySelector('.m-list li:nth-of-type(2) input')
-          .value = 'wrong-content-type'
-        document.querySelector('.m-list li:nth-of-type(2) input')
-          .dispatchEvent(new Event('keyup'))
+        document.querySelector('.m-list li:nth-of-type(2) input').value = 'wrong-content-type'
+        document.querySelector('.m-list li:nth-of-type(2) input').dispatchEvent(new Event('keyup'))
       })
       // there is debounce timeout of 750ms in the options UI
       await advanced.waitFor(800)

@@ -10,9 +10,7 @@ module.exports = ({popup, advanced, content}) => {
     // remove origin
     if (await advanced.evaluate(() => Object.keys(state.origins).length > 1)) {
       // expand origin
-      if (!await advanced.evaluate(() =>
-        document.querySelector('.m-list li:nth-of-type(2)')
-          .classList.contains('m-expanded'))) {
+      if (!await advanced.evaluate(() => document.querySelector('.m-list li:nth-of-type(2)').classList.contains('m-expanded'))) {
         await advanced.click('.m-list li:nth-of-type(2)')
       }
       await advanced.click('.m-list li:nth-of-type(2) .m-footer .m-button')
@@ -242,8 +240,7 @@ module.exports = ({popup, advanced, content}) => {
       )
       t.strictEqual(
         await popup.evaluate(() =>
-          document.querySelector('.m-panel:nth-of-type(2) .m-switch:nth-of-type(2)')
-            .classList.contains('is-checked')
+          document.querySelector('.m-panel:nth-of-type(2) .m-switch:nth-of-type(2)').classList.contains('is-checked')
         ),
         false,
         'dom gfm checkbox should be disabled'
@@ -292,8 +289,7 @@ module.exports = ({popup, advanced, content}) => {
       )
       t.strictEqual(
         await content.evaluate(() =>
-          document.querySelector('#_html ul li [type=checkbox]')
-            .hasAttribute('disabled')
+          document.querySelector('#_html ul li [type=checkbox]').hasAttribute('disabled')
         ),
         true,
         'dom li should contain checkbox in it'
@@ -353,8 +349,7 @@ module.exports = ({popup, advanced, content}) => {
       )
       t.strictEqual(
         await popup.evaluate(() =>
-          document.querySelector('.m-panel:nth-of-type(2) .m-switch:nth-of-type(4)')
-            .classList.contains('is-checked')
+          document.querySelector('.m-panel:nth-of-type(2) .m-switch:nth-of-type(4)').classList.contains('is-checked')
         ),
         false,
         'dom gfm checkbox should be disabled'

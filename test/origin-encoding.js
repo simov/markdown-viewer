@@ -10,9 +10,7 @@ module.exports = ({advanced, content}) => {
     // remove origin
     if (await advanced.evaluate(() => Object.keys(state.origins).length > 1)) {
       // expand origin
-      if (!await advanced.evaluate(() =>
-        document.querySelector('.m-list li:nth-of-type(2)')
-          .classList.contains('m-expanded'))) {
+      if (!await advanced.evaluate(() => document.querySelector('.m-list li:nth-of-type(2)').classList.contains('m-expanded'))) {
         await advanced.click('.m-list li:nth-of-type(2)')
       }
       await advanced.click('.m-list li:nth-of-type(2) .m-footer .m-button')
@@ -25,18 +23,19 @@ module.exports = ({advanced, content}) => {
     await advanced.waitFor(200)
 
     // expand origin
-    if (!await advanced.evaluate(() =>
-      document.querySelector('.m-list li:nth-of-type(2)')
-        .classList.contains('m-expanded'))) {
+    if (!await advanced.evaluate(() => document.querySelector('.m-list li:nth-of-type(2)').classList.contains('m-expanded'))) {
       await advanced.click('.m-list li:nth-of-type(2)')
+    }
+
+    // enable header detection
+    if (!await advanced.evaluate(() => state.header)) {
+      await advanced.click('.m-switch')
     }
 
     // enable path matching
     await advanced.evaluate(() => {
-      document.querySelector('.m-list li:nth-of-type(2) input')
-        .value = 'windows-1251'
-      document.querySelector('.m-list li:nth-of-type(2) input')
-        .dispatchEvent(new Event('keyup'))
+      document.querySelector('.m-list li:nth-of-type(2) input').value = 'windows-1251'
+      document.querySelector('.m-list li:nth-of-type(2) input').dispatchEvent(new Event('keyup'))
     })
     // there is debounce timeout of 750ms in the options UI
     await advanced.waitFor(800)
@@ -67,10 +66,7 @@ module.exports = ({advanced, content}) => {
   describe('correct encoding', () => {
     before(async () => {
       await advanced.bringToFront()
-      // enable csp - required to enable the webRequest permission!
-      if (!await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
-        await advanced.click('.m-list li:nth-of-type(2) .m-switch')
-      }
+
       // set encoding
       await advanced.select('.m-list li:nth-of-type(2) .m-encoding select', 'Windows-1251')
 
@@ -100,11 +96,7 @@ module.exports = ({advanced, content}) => {
       await advanced.reload()
       await advanced.waitFor(200)
       // expand origin
-      if (!await advanced.evaluate(() =>
-        document.querySelector('.m-list li:nth-of-type(2)')
-          .classList.contains('m-expanded'))) {
-        await advanced.click('.m-list li:nth-of-type(2)')
-      }
+      await advanced.click('.m-list li:nth-of-type(2)')
     })
     it('reload', async () => {
       t.equal(
