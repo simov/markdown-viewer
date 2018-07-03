@@ -10,6 +10,7 @@ var state = {
   markdown: '',
   toc: '',
   interval: null,
+  ms: 1000,
 }
 
 chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
@@ -252,6 +253,6 @@ if (state.content.autoreload) {
         console.error(err)
         clearInterval(state.interval)
       }
-    }, 1000)
+    }, state.ms)
   })()
 }
