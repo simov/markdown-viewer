@@ -258,7 +258,7 @@ module.exports = ({popup, advanced, content}) => {
       await popup.click('.m-tabs a:nth-of-type(2)')
     })
 
-    it('marked should not render gfm task lists', async () => {
+    it('marked should render gfm task lists by default', async () => {
       // go to page serving markdown as text/markdown
       await content.goto('http://localhost:3000/compiler-options-remark')
       await content.bringToFront()
@@ -266,10 +266,24 @@ module.exports = ({popup, advanced, content}) => {
 
       t.equal(
         await content.evaluate(() =>
+          document.querySelector('#_html ul li').getAttribute('class')
+        ),
+        null,
+        'no class on dom li'
+      )
+      t.strictEqual(
+        await content.evaluate(() =>
+          document.querySelector('#_html ul li [type=checkbox]').hasAttribute('disabled')
+        ),
+        true,
+        'dom li should contain checkbox in it'
+      )
+      t.equal(
+        await content.evaluate(() =>
           document.querySelector('#_html ul li').innerText
         ),
-        '[ ] task',
-        'gfm task lists should not be rendered'
+        ' task',
+        'dom li should contain the task text'
       )
     })
 
