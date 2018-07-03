@@ -58,6 +58,7 @@ describe('markdown-viewer', () => {
     var content = await browser.newPage()
 
     await new Promise((resolve, reject) => {
+      var index = 0
       server = http.createServer()
       server.on('request', (req, res) => {
         // content-type
@@ -96,6 +97,11 @@ describe('markdown-viewer', () => {
             '### h3',
             Array(500).fill('lorem ipsum').join(' '),
           ].join('\n\n'))
+        }
+        else if (/autoreload/.test(req.url)) {
+          res.setHeader('Content-Type', 'text/markdown')
+          index += /preventCache/.test(req.url) ? 1 : 0
+          res.end(`# ${index}`)
         }
         // csp
         else if (/csp-match-header/.test(req.url)) {

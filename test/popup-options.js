@@ -522,4 +522,69 @@ module.exports = ({popup, advanced, content}) => {
     })
   })
 
+  describe('set content options - autoreload', () => {
+    before(async () => {
+      // popup
+      await popup.bringToFront()
+      // defaults button
+      await popup.click('button:nth-of-type(2)')
+      // content tab
+      await popup.click('.m-tabs a:nth-of-type(3)')
+
+      // go to test page
+      await content.goto('http://localhost:3000/autoreload')
+      await content.bringToFront()
+      await content.waitFor(200)
+
+      // enable autoreload
+      await content.bringToFront()
+      // autoreload switch
+      await popup.click('.m-panel:nth-of-type(3) .m-switch:nth-of-type(5)')
+      // content auto reloads
+      await content.waitFor(200)
+
+      // TODO: wait for https://github.com/GoogleChrome/puppeteer/pull/2812
+      // update autoreload interval
+      // await content.evaluate(() => state.ms = 250)
+    })
+
+    it('active tab', async () => {
+      t.equal(
+        await content.evaluate(() =>
+          parseInt(document.querySelector('h1').innerText.trim())
+        ),
+        0,
+        'first request'
+      )
+
+      // the initial interval is 1000
+      await content.waitFor(1500)
+
+      t.equal(
+        await content.evaluate(() =>
+          parseInt(document.querySelector('h1').innerText.trim())
+        ),
+        1,
+        'second request'
+      )
+    })
+
+    it('inactive tab', async () => {
+      // popup
+      await popup.bringToFront()
+
+      // the initial interval is 1000
+      await content.waitFor(1500)
+      await content.bringToFront()
+
+      t.equal(
+        await content.evaluate(() =>
+          parseInt(document.querySelector('h1').innerText.trim())
+        ),
+        2,
+        'third request'
+      )
+    })
+  })
+
 }
