@@ -2,9 +2,15 @@
 var t = require('assert')
 
 
-module.exports = ({advanced, content}) => {
+module.exports = ({popup, advanced, content}) => {
 
   before(async () => {
+    // popup
+    await popup.bringToFront()
+    // defaults button
+    await popup.click('button:nth-of-type(2)')
+
+    // advanced
     await advanced.bringToFront()
 
     // remove origin
