@@ -41,7 +41,7 @@ md.webrequest = ({storage: {state}, detect}) => {
   }
 
   var onCompleted = ({ip, tabId}) => {
-    if (ip && ip !== '127.0.0.1') {
+    if (ip && ip !== '127.0.0.1' && ip !== '::1') {
       setTimeout(() => {
         chrome.tabs.sendMessage(tabId, {message: 'autoreload'})
       }, 500)
