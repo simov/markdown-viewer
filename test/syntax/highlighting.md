@@ -13,6 +13,12 @@ var some = new actionscript();
 ServerName apacheconf
 ```
 
+#### applescript
+
+```applescript
+display alert "Hello, world!"
+```
+
 #### aspnet
 
 ```aspnet
@@ -67,6 +73,12 @@ string some = "csharp";
 #some { content: 'css'; }
 ```
 
+#### d
+
+```d
+int mySum(int a, int b) pure nothrow
+```
+
 #### dart
 
 ```dart
@@ -87,16 +99,40 @@ var some = "dart";
 MAINTAINER docker
 ```
 
+#### elixir
+
+```elixir
+IO.puts "Hello World!"
+```
+
 #### erlang
 
 ```erlang
 module(erlang).
 ```
 
+#### flow
+
+```flow
+function foo(x: ?number): string {}
+```
+
+#### fsharp
+
+```fsharp
+let mutable x = 1
+```
+
 #### go
 
 ```go
 type go string
+```
+
+#### graphql
+
+```graphql
+type Query {hero: Character}
 ```
 
 #### haskell
@@ -141,6 +177,12 @@ const some = 'js';
 function({"some": "jsonp"})
 ```
 
+#### latex
+
+```latex
+$\sqrt{3x-1}+(1+x)^2$
+```
+
 #### lua
 
 ```lua
@@ -159,12 +201,6 @@ check: makefile
 `some` **markdown**
 ```
 
-#### html
-
-```html
-<p>some <strong>markup</strong></p>
-```
-
 #### nginx
 
 ```nginx
@@ -175,6 +211,12 @@ server_name nginx;
 
 ```objectivec
 char some = "objectivec";
+```
+
+#### ocaml
+
+```ocaml
+let sum xs = List.fold_left (fun acc x -> acc + x) 0 xs;;
 ```
 
 #### perl
@@ -201,6 +243,18 @@ some('prolog', 1972)
 some = 'python'
 ```
 
+#### r
+
+```r
+x <- c(1, 2, 3, 4, 5, 6)
+```
+
+#### reason
+
+```reason
+let merge: (('a, 'a) => bool, list('a), list('a)) => list('a);
+```
+
 #### ruby
 
 ```ruby
@@ -217,6 +271,12 @@ let some = 'rust';
 
 ```sass
 @include sass;
+```
+
+#### scala
+
+```scala
+def formatApples(x: Int) = "I ate %d apples".format(x)
 ```
 
 #### scheme
@@ -253,6 +313,18 @@ var some = "swift"
 
 ```typescript
 var some: string = "typescript";
+```
+
+#### vbnet
+
+```vbnet
+Function ReadLine(Optional prompt As String = Nothing) As String
+```
+
+#### wasm
+
+```wasm
+(import "math" "exp" (func $exp (param f64) (result f64))
 ```
 
 #### xml
