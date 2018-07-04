@@ -15,10 +15,16 @@ md.webrequest = ({storage: {state}, detect}) => {
       return {responseHeaders}
     }
 
-    var header = responseHeaders.find(({name}) => /^content-type/i.test(name)) || {}
+    var header = responseHeaders.find(({name}) => /^content-type/i.test(name))
+
+    // ff: markdown `content-type` is not allowed
+    if (header && detect.header(header.value) && /Firefox/.test(navigator.userAgent)) {
+      header.value = 'text/plain'
+    }
+
     var origin = detect.match(url)
 
-    if (!detect.header(header.value) && !origin) {
+    if (!origin) {
       return {responseHeaders}
     }
 
@@ -27,12 +33,7 @@ md.webrequest = ({storage: {state}, detect}) => {
         .filter(({name}) => !/content-security-policy/i.test(name))
     }
 
-    // ff: markdown `content-type` is not allowed
-    if (/Firefox/.test(navigator.userAgent) && detect.header(header.value)) {
-      header.value = 'text/plain'
-    }
-
-    if (origin.encoding && header.name) {
+    if (origin.encoding && header && /charset/.test(header.value)) {
       var [media] = header.value.split(';')
       header.value = `${media}; charset=${origin.encoding}`
     }
