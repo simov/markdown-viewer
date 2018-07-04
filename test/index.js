@@ -121,7 +121,14 @@ describe('markdown-viewer', () => {
           res.end('# h1')
         }
         // encoding
-        else if (/windows-1251/.test(req.url)) {
+        else if (/encoding-no-content-type/.test(req.url)) {
+          res.end(iconv.encode('你好', 'big5'))
+        }
+        else if (/encoding-no-charset/.test(req.url)) {
+          res.setHeader('Content-Type', 'text/markdown')
+          res.end(iconv.encode('你好', 'big5'))
+        }
+        else if (/encoding-wrong-charset/.test(req.url)) {
           res.setHeader('Content-Type', 'text/markdown; charset=UTF-8')
           res.end(iconv.encode('здрасти', 'win1251'))
         }

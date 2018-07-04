@@ -40,26 +40,79 @@ module.exports = ({popup, advanced, content}) => {
 
     // enable path matching
     await advanced.evaluate(() => {
-      document.querySelector('.m-list li:nth-of-type(2) input').value = 'windows-1251'
+      document.querySelector('.m-list li:nth-of-type(2) input').value = 'encoding-.*'
       document.querySelector('.m-list li:nth-of-type(2) input').dispatchEvent(new Event('keyup'))
     })
     // there is debounce timeout of 750ms in the options UI
     await advanced.waitFor(800)
   })
 
-  describe('incorrect encoding', () => {
+  describe('no content-type header set', () => {
     before(async () => {
-      // go to page serving windows-1251 encoded string
-      // with UTF-8 content-type charset
-      await content.goto('http://localhost:3000/windows-1251')
+      // set wrong encoding
+      await advanced.select('.m-list li:nth-of-type(2) .m-encoding select', 'Shift_JIS')
+
+      // go to page serving Big5 encoded string
+      // with no content-type header set
+      await content.goto('http://localhost:3000/encoding-no-content-type')
       await content.bringToFront()
       await content.waitFor(200)
     })
-    it('use encoding set by the server', async () => {
+    it('do not override if content-type header is missing', async () => {
+      t.equal(
+        await content.evaluate(() => document.charset),
+        'Big5',
+        'chrome detects the correct encoding automatically'
+      )
+      t.equal(
+        await content.evaluate(() => document.querySelector('#_html p').innerText),
+        '你好',
+        'text should be decoded correctly'
+      )
+    })
+  })
+
+  describe('no charset in content-type header', () => {
+    before(async () => {
+      // set wrong encoding
+      await advanced.select('.m-list li:nth-of-type(2) .m-encoding select', 'Shift_JIS')
+
+      // go to page serving Big5 encoded string
+      // with no charset set in the content-type header
+      await content.goto('http://localhost:3000/encoding-no-charset')
+      await content.bringToFront()
+      await content.waitFor(200)
+    })
+    it('do not override if charset is missing in content-type header', async () => {
+      t.equal(
+        await content.evaluate(() => document.charset),
+        'Big5',
+        'chrome detects the correct encoding automatically'
+      )
+      t.equal(
+        await content.evaluate(() => document.querySelector('#_html p').innerText),
+        '你好',
+        'text should be decoded correctly'
+      )
+    })
+  })
+
+  describe('wrong charset in content-type header', () => {
+    before(async () => {
+      // detect encoding automatically
+      await advanced.select('.m-list li:nth-of-type(2) .m-encoding select', '')
+
+      // go to page serving windows-1251 encoded string
+      // with UTF-8 charset set in content-type header
+      await content.goto('http://localhost:3000/encoding-wrong-charset')
+      await content.bringToFront()
+      await content.waitFor(200)
+    })
+    it('when encoding override is disabled', async () => {
       t.equal(
         await content.evaluate(() => document.charset),
         'UTF-8',
-        'chrome should pick the encoding from the content-type charset'
+        'chrome picks the wrong encoding from the content-type charset'
       )
       t.equal(
         await content.evaluate(() => document.querySelector('#_html p').innerText),
@@ -69,16 +122,16 @@ module.exports = ({popup, advanced, content}) => {
     })
   })
 
-  describe('correct encoding', () => {
+  describe('override charset set in content-type header', () => {
     before(async () => {
       await advanced.bringToFront()
 
-      // set encoding
+      // override encoding
       await advanced.select('.m-list li:nth-of-type(2) .m-encoding select', 'Windows-1251')
 
       // go to page serving windows-1251 encoded string
-      // with windows-1251 content-type charset
-      await content.goto('http://localhost:3000/windows-1251')
+      // with UTF-8 charset set in content-type header
+      await content.goto('http://localhost:3000/encoding-wrong-charset')
       await content.bringToFront()
       await content.waitFor(200)
     })
