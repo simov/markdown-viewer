@@ -18,7 +18,7 @@ md.webrequest = ({storage: {state}, detect}) => {
     var header = responseHeaders.find(({name}) => /^content-type/i.test(name))
 
     // ff: markdown `content-type` is not allowed
-    if (header && detect.header(header.value) && /Firefox/.test(navigator.userAgent)) {
+    if (/Firefox/.test(navigator.userAgent) && header && detect.header(header.value)) {
       header.value = 'text/plain'
     }
 
@@ -92,7 +92,7 @@ md.webrequest = ({storage: {state}, detect}) => {
     }
   }
 
-  return () => {
+  var webrequest = () => {
 
     var {headers, completed} = events()
 
@@ -116,4 +116,11 @@ md.webrequest = ({storage: {state}, detect}) => {
       }
     })
   }
+
+  webrequest.init = () => {
+    chrome.webRequest.onHeadersReceived.addListener(onHeadersReceived, filter, options)
+    chrome.webRequest.onCompleted.addListener(onCompleted, filter)
+  }
+
+  return webrequest
 }

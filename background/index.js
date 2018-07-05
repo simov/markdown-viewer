@@ -1,25 +1,23 @@
 
 ;(() => {
-  md.storage(md, (storage) => {
-    var inject = md.inject({storage})
-    var detect = md.detect({storage, inject})
-    var webrequest = md.webrequest({storage, detect})
-    var mathjax = md.mathjax()
+  var storage = md.storage(md)
+  var inject = md.inject({storage})
+  var detect = md.detect({storage, inject})
+  var webrequest = md.webrequest({storage, detect})
+  var mathjax = md.mathjax()
 
-    var compilers = Object.keys(md.compilers)
-      .reduce((all, compiler) => (
-        all[compiler] = md.compilers[compiler]({storage}),
-        all
-      ), {})
+  var compilers = Object.keys(md.compilers)
+    .reduce((all, compiler) => (
+      all[compiler] = md.compilers[compiler]({storage}),
+      all
+    ), {})
 
-    var messages = md.messages({storage, compilers, mathjax, webrequest})
+  var messages = md.messages({storage, compilers, mathjax, webrequest})
 
+  chrome.tabs.onUpdated.addListener(detect.tab)
+  chrome.runtime.onMessage.addListener(messages)
 
-    chrome.tabs.onUpdated.addListener(detect.tab)
-
-    chrome.runtime.onMessage.addListener(messages)
-
-    webrequest()
-  })
-
+  if (chrome.webRequest) {
+    webrequest.init()
+  }
 })()
