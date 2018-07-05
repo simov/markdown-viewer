@@ -2,7 +2,7 @@
 // chrome.storage.sync.clear()
 // chrome.permissions.getAll((p) => chrome.permissions.remove({origins: p.origins}))
 
-md.storage = ({compilers}) => {
+md.storage = ({compilers}, done) => {
   var match = '\\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\\?.*)?$'
 
   var defaults = {
@@ -117,7 +117,6 @@ md.storage = ({compilers}) => {
 
     chrome.storage.sync.set(options)
     Object.assign(state, JSON.parse(JSON.stringify(options)))
+    done({defaults, state, set})
   })
-
-  return {defaults, state, set}
 }
