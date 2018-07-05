@@ -3,7 +3,7 @@
 
 ## Delimiters
 
-Delimiter                         | Format      | Expression                  | Result                    | Support
+Delimiter                         | Delimiters  | Example                     | Result                    | Support
 :---                              | :---:       | :---                        | :---:                     | :---:
 No delimiters                     | `str`       | `\sqrt{3x-1}+(1+x)^2`       | \sqrt{3x-1}+(1+x)^2       | no
 Bracket without backslash         | `[str]`     | `[\sqrt{3x-1}+(1+x)^2]`     | [\sqrt{3x-1}+(1+x)^2]     | no

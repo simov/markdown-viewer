@@ -289,7 +289,6 @@ var code = 'block'
 - H<sub>2</sub>O
 
 
-
 # Extras
 
 ## Emoji
@@ -307,6 +306,12 @@ var code = 'block'
 ## Syntax Highlighting
 
 - [Examples and Syntax](highlighting.md)
+
+
+## Frontmatter
+
+- [yaml](yaml.md)
+- [toml](toml.md)
 
 
 ## Escapes
