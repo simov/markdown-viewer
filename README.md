@@ -1,27 +1,29 @@
 
 # Markdown Viewer / Browser Extension
 
-**Install: [Chrome][chrome-store]** / **[Firefox][amo]** / **Donate: [PayPal][paypal]**
+**Install: [Chrome][chrome-store]** / **[Firefox][amo]** / **[Opera][opera]** / **Donate: [PayPal][paypal]**
 
 
 # Features
 
-- No special permissions required for file URLs
-- Full control over the allowed origins
-- Supports multiple markdown parsers
+- Renders local and remote URLs
+- Granular access to remote origins
+- Multiple markdown parsers
 - Full control over the [compiler options][compiler-options] ([marked][marked] or [remark][remark])
-- Themes support (including [GitHub theme][themes0]) ([jasonm23][themes1], [mixu][themes2], [cobalt][themes3])
-- Supports [GitHub Flavored Markdown][gfm]
+- Themes (including [GitHub theme][themes0]) ([jasonm23][themes1], [mixu][themes2], [cobalt][themes3])
+- [GitHub Flavored Markdown][gfm] (GFM)
+- Auto reload on file change
 - Syntax highlighted code blocks ([prism][prism])
-- Generates Table of Contents (TOC)
-- Remembers scroll position
-- Emoji support (Icons provided free by [EmojiOne][emojione])
+- Table of Contents (TOC)
 - [MathJax][mathjax] support
+- Emoji support (Icons provided free by [EmojiOne][emojione])
+- Remembers scroll position
+- Markdown Content-Type detection
+- URL detection using RegExp
+- Toggle Content Security Policy (CSP)
+- Override page encoding
 - Settings synchronization
 - Raw and rendered markdown views
-- Detects markdown by header and path
-- Toggle Content Security Policy
-- Override page encoding
 - Built as [event page][event-page]
 - Free and Open Source
 
@@ -31,26 +33,17 @@
 - **[After Install](#after-install)**
   - [Local Files](#local-files)
   - [Remote Files](#remote-files)
-- [Compiler Options](#compiler-options)
-  - [Marked](#marked)
-  - [Remark](#remark)
-- [Content Options](#content-options)
-  - [Scroll](#scroll)
-  - [TOC](#toc)
-  - [MathJax](#mathjax)
-  - [Emoji](#emoji)
-- [Advanced Options](#advanced-options)
-  - [Add Origin](#add-origin)
-  - [Allow All Origins](#allow-all-origins)
-  - [Header Detection](#header-detection)
-  - [Path Matching](#path-matching)
-  - [Path Matching Priority](#path-matching-priority)
-  - [Remove Origin](#remove-origin)
-  - [Refresh Origin](#refresh-origin)
-  - [Disable CSP](#disable-content-security-policy)
-  - [Character Encoding](#character-encoding)
-- [Markdown Syntax and Features](#markdown-syntax-and-features)
-- [More Compilers](#more-compilers)
+- **[Compiler Options](#compiler-options)**
+  - [Marked](#marked) | [Remark](#remark)
+- **[Content Options](#content-options)**
+  - [Autoreload](#autoreload) | [TOC](#toc) | [MathJax](#mathjax) | [Emoji](#emoji) | [Scroll](#scroll)
+- **[Advanced Options](#advanced-options)**
+  - [Add Origin](#add-origin) | [Allow All Origins](#allow-all-origins)
+  - [Header Detection](#header-detection) | [Path Matching](#path-matching) | [Path Matching Priority](#path-matching-priority)
+  - [Remove Origin](#remove-origin) | [Refresh Origin](#refresh-origin)
+  - [Disable CSP](#disable-content-security-policy) | [Character Encoding](#character-encoding)
+- **[Markdown Syntax and Features](#markdown-syntax-and-features)**
+- **[More Compilers](#more-compilers)**
 
 
 # After Install
@@ -58,7 +51,7 @@
 ## Local Files
 
 1. Navigate to `chrome://extensions`
-2. Click on the `DETAILS` button of Markdown Viewer
+2. Locate Markdown Viewer and click on the `DETAILS` button
 3. Make sure that the `Allow access to file URLs` switch is turned on
 
 ![file-urls]
@@ -107,6 +100,7 @@ Option          | Default | Description
 **scroll**      | `true`  | Remember scroll position
 **toc**         | `false` | Generate Table of Contents
 **mathjax**     | `false` | Render TeX and LaTeX math blocks
+**autoreload**  | `false` | Auto reload on file change
 
 
 ## Scroll
@@ -132,7 +126,7 @@ The following rules apply to your content when `mathjax` is enabled:
 - Regular dollar sign `$` in text that is not part of a math formula should be escaped: `\$`
 - Regular markdown escaping for parentheses: `\(` and `\)`, and brackets: `\[` and `\]` is not supported. MathJax will convert anything between these delimiters to math formulas, unless they are wrapped in backticks: `` `\(` `` or fenced code blocks.
 
-> The MathJax support currently works only on local file URLs and remote origins without strict *Content Security Policy (CSP)* set. For example it won't work for files hosted on the GitHub's `raw.githubusercontent.com` origin. However you can bypass this by enabling the [Disable CSP](#disable-content-security-policy) option.
+> The MathJax support currently works only on local file URLs and remote origins without strict *Content Security Policy (CSP)* set. For example it won't work for files hosted on the GitHub's `raw.githubusercontent.com` origin. However you can bypass this by enabling the [Disable CSP](#disable-content-security-policy) switch for that origin.
 
 
 ## Emoji
@@ -140,7 +134,15 @@ The following rules apply to your content when `mathjax` is enabled:
 - Emoji shortnames like: `:sparkles:` will be converted to :sparkles: using [EmojiOne][emojione] images.
 - Currently unicode symbols like `✨` and ASCII emoji like `:D` are not supported.
 
-> The Emoji support currently works only on local file URLs and remote origins without strict *Content Security Policy (CSP)* set. For example it won't work for files hosted on the GitHub's `raw.githubusercontent.com` origin. However you can bypass this by enabling the [Disable CSP](#disable-content-security-policy) option.
+> The Emoji support currently works only on local file URLs and remote origins without strict *Content Security Policy (CSP)* set. For example it won't work for files hosted on the GitHub's `raw.githubusercontent.com` origin. However you can bypass this by enabling the [Disable CSP](#disable-content-security-policy) switch for that origin.
+
+
+## Autoreload
+
+When enabled the extension will make a GET request every second to:
+
+- file:// URLs
+- any host that resolves to localhost IPv4 `127.0.0.1` or IPv6 `::1`
 
 
 # Advanced Options
@@ -210,7 +212,7 @@ Only the first matching origin is picked and then its Path Matching RegExp is us
 - __`*://*`__ - `\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\?.*)?$`
 - __`*://website.com`__ - `\/some\/custom\/path\/to\/serve\/markdown\/$`
 
-In this example we have allowed all origins (the first entry). The default Path Matching RegExp is going to match on URLs ending with markdown file extension.
+In this example we have allowed all origins (the first entry). The default Path Matching RegExp is going to match URLs ending with markdown file extension.
 
 In case we want to match a custom path we have to add a more specific origin and specify its Path Matching RegExp accordingly.
 
@@ -219,7 +221,7 @@ In case we want to match a custom path we have to add a more specific origin and
 - __`*://*`__ - `\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\?.*)?$`
 - __`*://github.com`__ - `something impossible to match !!!`
 
-In this example we have allowed all origins (the first entry). The default Path Matching RegExp is going to match on URLs ending with markdown file extension.
+In this example we have allowed all origins (the first entry). The default Path Matching RegExp is going to match URLs ending with markdown file extension.
 
 For example URLs like
 https://raw.githubusercontent.com/simov/markdown-viewer/master/README.md are going to be matched and rendered. However GitHub also serves rendered HTML on URLs ending with markdown file extension
@@ -232,7 +234,7 @@ In this case we want to exclude any URL on github.com and for that we have to ad
 - __`*://*`__ - `\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\?.*)?$`
 - __`*://gitlab.com`__ - `.*\/raw\/.*\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\?.*)?$`
 
-In this example we have allowed all origins (the first entry). The default Path Matching RegExp is going to match on URLs ending with markdown file extension.
+In this example we have allowed all origins (the first entry). The default Path Matching RegExp is going to match URLs ending with markdown file extension.
 
 For example URLs like
 https://gitlab.com/gitlab-org/gitlab-ce/raw/master/README.md are going to be matched and rendered. However GitLab also serves rendered HTML on URLs ending with markdown file extension
@@ -265,14 +267,16 @@ Using the `Disable Content Security Policy` switch you can optionally tell the e
 
 ![disable-csp]
 
-It's important to note that even if you enable this option, the Content Security Policy header will be stripped **only** for those requests that either have a correct [Markdown Content Type](#header-detection) or URL that matches the corresponding [Path Matching RegExp](#path-matching) for that origin.
+Note that the Content Security Policy header will be stripped **only** if the URL matches the corresponding [Path Matching RegExp](#path-matching) for that origin.
 
-Even if you have [Allowed All Origins](#allow-all-origins) and disabled the Content Security Policy at the same time, the header will be stripped **only** for those requests that either have a correct [Markdown Content Type](#header-detection) or URL that matches your explicitly set [Path Matching](#path-matching) regex for the Allow All origin `*://*`.
+Even if you have [Allowed All Origins](#allow-all-origins) and disabled the Content Security Policy at the same time, the header will be stripped **only** for those requests with URL that matches your explicitly set [Path Matching](#path-matching) regex for the Allow All origin `*://*`
 
 
 ## Character Encoding
 
 By default Markdown Viewer uses the browser's built-in encoding detection. In case you want to force certain Character Encoding for a specific origin - use the Encoding select control.
+
+The Character Encoding set for origin is used only when the markdown content is served with explicit `Content-Type` header and explicit `charset` set in its value. In all other cases Chrome picks the correct encoding by default.
 
 
 # Markdown Syntax and Features
@@ -284,7 +288,7 @@ A few files located in the [test] folder of this repo can be used to test what's
 - Use the `Markdown/HTML` button to switch between raw markdown and rendered HTML
 - At any point click on the `Defaults` button to reset back the compiler options
 
-> Note that in order for the extension to fully function on the `raw.githubusercontent.com` origin you have to enable the [Disable CSP](#disable-content-security-policy) option.
+> Note that in order for the extension to fully function on the `raw.githubusercontent.com` origin you have to enable the [Disable CSP](#disable-content-security-policy) switch for that origin.
 
 
 # More Compilers
@@ -292,10 +296,36 @@ A few files located in the [test] folder of this repo can be used to test what's
 Markdown Viewer can be used with any markdown parser/compiler. Currently the following compilers are implemented: [marked], [remark], [showdown], [markdown-it], [remarkable], [commonmark], [markdown-js].
 
 1. Clone the [compilers][compilers] branch
+2. Follow the [Manual Install](#manual-install) steps
+
+<!-- 2. Navigate to `chrome://extensions`
+3. Make sure that the `Developer mode` checkbox is checked at the top
+4. Disable the Markdown Viewer extension downloaded from the Chrome Store
+5. Click on the `Load unpacked extension...` button and select the cloned directory -->
+
+
+# Manual Install
+
+## Chrome / Opera
+
+1. Clone this repository
 2. Navigate to `chrome://extensions`
 3. Make sure that the `Developer mode` checkbox is checked at the top
 4. Disable the Markdown Viewer extension downloaded from the Chrome Store
 5. Click on the `Load unpacked extension...` button and select the cloned directory
+
+> Note that in this case you won't receive any future updates automatically.
+
+
+## Firefox
+
+1. Clone this repository
+2. Rename `manifest.json` to `manifest.chrome.json`, then rename `manifest.firefox.json` to `manifest.json`
+3. Navigate to `about:addons` and disable the Markdown Viewer extension downloaded from Firefox Store
+4. Navigate to `about:debugging#addons`
+5. Click on the `Load Temporary Add-on...` button and select the cloned directory
+
+> Note that in this case you won't receive any future updates automatically.
 
 
 # License
@@ -325,6 +355,7 @@ SOFTWARE.
 
   [chrome-store]: https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk
   [amo]: https://addons.mozilla.org/en-US/firefox/addon/markdown-viewer-chrome/
+  [opera]: https://forums.opera.com/topic/23830/markdown-viewer-chrome-extension-awaiting-moderation
   [donate]: https://img.shields.io/badge/paypal-donate-blue.svg?style=flat-square (Donate on Paypal)
   [paypal]: https://www.paypal.me/simeonvelichkov
 
