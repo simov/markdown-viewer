@@ -33,7 +33,7 @@ var defaults = {
     'Western': ['ISO-8859-15', 'Windows-1252', 'Macintosh'],
   },
   // chrome
-  permissions: [],
+  permissions: {},
 }
 
 var state = Object.assign({}, defaults)
@@ -48,7 +48,8 @@ chrome.extension.isAllowedFileSchemeAccess((isAllowedAccess) => {
 chrome.runtime.sendMessage({message: 'options'}, (res) => {
   state = Object.assign({}, defaults, {file: state.file}, res)
   chrome.permissions.getAll(({origins}) => {
-    state.permissions = origins.map((origin) => origin.replace(/(.*)\/\*$/, '$1'))
+    state.permissions = origins.reduce((all, origin) =>
+      (all[origin.replace(/(.*)\/\*$/, '$1')] = true, all), {})
     m.redraw()
   })
 })
@@ -89,6 +90,7 @@ var events = {
             encoding: '',
           }
           state.host = ''
+          state.permissions[origin] = true
           m.redraw()
         }
       })
@@ -99,6 +101,7 @@ var events = {
         if (removed) {
           chrome.runtime.sendMessage({message: 'origin.remove', origin})
           delete state.origins[origin]
+          delete state.permissions[origin]
           m.redraw()
         }
       })
@@ -107,10 +110,8 @@ var events = {
     refresh: (origin) => () => {
       chrome.permissions.request({origins: [`${origin}/*`]}, (granted) => {
         if (granted) {
-          chrome.permissions.getAll(({origins}) => {
-            state.permissions = origins.map((origin) => origin.replace(/(.*)\/\*$/, '$1'))
-            m.redraw()
-          })
+          state.permissions[origin] = true
+          m.redraw()
         }
       })
     },
@@ -277,7 +278,7 @@ m.mount(document.querySelector('main'), {
                 },
                 m('.m-origin', origin),
                 m('.m-options',
-                  !state.permissions.includes(origin) ? m('span', m('strong', 'refresh')) : null,
+                  !state.permissions[origin] ? m('span', m('strong', 'refresh')) : null,
                   state.origins[origin].match !== state.match ? m('span', 'match') : null,
                   state.origins[origin].csp ? m('span', 'csp') : null,
                   state.origins[origin].encoding ? m('span', 'encoding') : null,
@@ -355,7 +356,7 @@ m.mount(document.querySelector('main'), {
                 (origin !== 'file://' || null) &&
                 m('.m-footer',
                   m('span',
-                    (!state.permissions.includes(origin) || null) &&
+                    (!state.permissions[origin] || null) &&
                     m('button.mdc-button mdc-button--raised m-button', {
                       oncreate: oncreate.ripple,
                       onclick: events.origin.refresh(origin)
