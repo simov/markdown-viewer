@@ -545,8 +545,12 @@ module.exports = ({popup, advanced, content}) => {
       // content tab
       await popup.click('.m-tabs a:nth-of-type(3)')
 
+      await content.goto('about:blank')
+      await content.bringToFront()
+      await content.waitFor(200)
+
       // go to test page
-      await content.goto('http://localhost:3000/autoreload')
+      await content.goto('http://localhost:3000/popup-autoreload')
       await content.bringToFront()
       await content.waitFor(200)
 
@@ -562,41 +566,46 @@ module.exports = ({popup, advanced, content}) => {
       // await content.evaluate(() => state.ms = 250)
     })
 
-    it('active tab', async () => {
+    it('test ajax autoreload with non UTF-8 encoding and inactive tab', async () => {
       t.equal(
         await content.evaluate(() =>
-          parseInt(document.querySelector('h1').innerText.trim())
+          document.querySelector('#_html p').innerText.trim()
         ),
-        0,
+        '你好',
         'first request'
       )
-
       // the initial interval is 1000
-      await content.waitFor(1500)
+      await content.waitFor(1300)
 
       t.equal(
         await content.evaluate(() =>
-          parseInt(document.querySelector('h1').innerText.trim())
+          document.querySelector('#_html p').innerText.trim()
         ),
-        1,
-        'second request'
+        '你好',
+        'second request - xhr body is UTF-8 - should not trigger reload'
       )
-    })
+      // the initial interval is 1000
+      await content.waitFor(1300)
 
-    it('inactive tab', async () => {
+      t.equal(
+        await content.evaluate(() =>
+          document.querySelector('#_html p').innerText.trim()
+        ),
+        '你好你好',
+        'third request - actual change'
+      )
+
       // popup
       await popup.bringToFront()
-
       // the initial interval is 1000
-      await content.waitFor(1500)
+      await content.waitFor(1300)
       await content.bringToFront()
-
       t.equal(
         await content.evaluate(() =>
-          parseInt(document.querySelector('h1').innerText.trim())
+          document.querySelector('#_html p').innerText.trim()
         ),
-        2,
-        'third request'
+        '你好你好你好',
+        'fourth request - should reload inactive tab'
       )
     })
   })
