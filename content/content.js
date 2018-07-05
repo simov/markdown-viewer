@@ -238,13 +238,21 @@ else {
 
 if (state.content.autoreload) {
   ;(() => {
+    var initial = ''
+
     var xhr = new XMLHttpRequest()
     xhr.onreadystatechange = () => {
-      if (xhr.readyState === 4 && state.markdown !== xhr.responseText) {
-        location.reload(true)
+      if (xhr.readyState === 4) {
+        if (!initial) {
+          initial = xhr.responseText
+        }
+        else if (initial !== xhr.responseText) {
+          location.reload(true)
+        }
       }
     }
-    state.interval = setInterval(() => {
+
+    var get = () => {
       xhr.open('GET', location.href + '?preventCache=' + Date.now(), true)
       try {
         xhr.send()
@@ -253,6 +261,9 @@ if (state.content.autoreload) {
         console.error(err)
         clearInterval(state.interval)
       }
-    }, state.ms)
+    }
+
+    get()
+    state.interval = setInterval(get, state.ms)
   })()
 }
