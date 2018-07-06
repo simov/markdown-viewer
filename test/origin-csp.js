@@ -1,43 +1,12 @@
 
 var t = require('assert')
+var defaults = require('./utils/defaults')
 
 
 module.exports = ({extensions, popup, advanced, content}) => {
 
   before(async () => {
-    // popup
-    await popup.bringToFront()
-    // defaults button
-    await popup.click('button:nth-of-type(2)')
-
-    // advanced
-    await advanced.bringToFront()
-
-    // remove origin
-    if (await advanced.evaluate(() => Object.keys(state.origins).length > 1)) {
-      // expand origin
-      if (!await advanced.evaluate(() => document.querySelector('.m-list li:nth-of-type(2)').classList.contains('m-expanded'))) {
-        await advanced.click('.m-list li:nth-of-type(2)')
-      }
-      await advanced.click('.m-list li:nth-of-type(2) .m-footer .m-button')
-    }
-
-    // add origin
-    await advanced.select('.m-select', 'http')
-    await advanced.type('[type=text]', 'localhost:3000')
-    await advanced.click('button')
-    await advanced.waitFor(200)
-
-    // expand origin
-    if (!await advanced.evaluate(() =>
-      document.querySelector('.m-list li:nth-of-type(2)').classList.contains('m-expanded'))) {
-      await advanced.click('.m-list li:nth-of-type(2)')
-    }
-
-    // enable header detection
-    if (!await advanced.evaluate(() => state.header)) {
-      await advanced.click('.m-switch')
-    }
+    await defaults({popup, advanced, content})
 
     // enable path matching
     await advanced.evaluate(() => {
