@@ -26,7 +26,7 @@ module.exports = ({popup, advanced, content}) => {
       // with no content-type header set
       await content.goto('http://localhost:3000/encoding-no-content-type')
       await content.bringToFront()
-      await content.waitFor(200)
+      await content.waitFor(300)
     })
     it('do not override if content-type header is missing', async () => {
       t.equal(
@@ -51,7 +51,7 @@ module.exports = ({popup, advanced, content}) => {
       // with no charset set in the content-type header
       await content.goto('http://localhost:3000/encoding-no-charset')
       await content.bringToFront()
-      await content.waitFor(200)
+      await content.waitFor(300)
     })
     it('do not override if charset is missing in content-type header', async () => {
       t.equal(
@@ -76,7 +76,7 @@ module.exports = ({popup, advanced, content}) => {
       // with UTF-8 charset set in content-type header
       await content.goto('http://localhost:3000/encoding-wrong-charset')
       await content.bringToFront()
-      await content.waitFor(200)
+      await content.waitFor(300)
     })
     it('when encoding override is disabled', async () => {
       t.equal(
@@ -103,7 +103,7 @@ module.exports = ({popup, advanced, content}) => {
       // with UTF-8 charset set in content-type header
       await content.goto('http://localhost:3000/encoding-wrong-charset')
       await content.bringToFront()
-      await content.waitFor(200)
+      await content.waitFor(300)
     })
     it('use encoding set for the origin', async () => {
       t.equal(
@@ -123,7 +123,7 @@ module.exports = ({popup, advanced, content}) => {
     before(async () => {
       await advanced.bringToFront()
       await advanced.reload()
-      await advanced.waitFor(200)
+      await advanced.waitFor(300)
       // expand origin
       await advanced.click('.m-list li:nth-of-type(2)')
     })

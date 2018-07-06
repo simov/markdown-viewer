@@ -29,7 +29,7 @@ module.exports = ({extensions, popup, advanced, content}) => {
       // go to page serving content with strict csp
       await content.goto('http://localhost:3000/csp-no-header-no-path')
       await content.bringToFront()
-      await content.waitFor(200)
+      await content.waitFor(300)
     })
     it('non matching urls should be skipped', async () => {
       t.strictEqual(
@@ -59,7 +59,7 @@ module.exports = ({extensions, popup, advanced, content}) => {
       // go to page serving content with strict csp
       await content.goto('http://localhost:3000/csp-match-header')
       await content.bringToFront()
-      await content.waitFor(200)
+      await content.waitFor(300)
     })
     it('non matching urls cannot be checked for enabled csp', async () => {
       t.strictEqual(
@@ -89,7 +89,7 @@ module.exports = ({extensions, popup, advanced, content}) => {
       // go to page serving content with strict csp
       await content.goto('http://localhost:3000/csp-match-path')
       await content.bringToFront()
-      await content.waitFor(200)
+      await content.waitFor(300)
     })
     it('webRequest.onHeadersReceived event is enabled', async () => {
       t.strictEqual(
@@ -111,11 +111,12 @@ module.exports = ({extensions, popup, advanced, content}) => {
       if (await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
         await advanced.click('.m-list li:nth-of-type(2) .m-switch')
       }
+      await advanced.waitFor(300)
 
       // go to page serving content with strict csp
       await content.goto('http://localhost:3000/csp-match-path')
       await content.bringToFront()
-      await content.waitFor(200)
+      await content.waitFor(300)
 
       t.strictEqual(
         await content.evaluate(() => {
@@ -137,11 +138,12 @@ module.exports = ({extensions, popup, advanced, content}) => {
       if (!await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
         await advanced.click('.m-list li:nth-of-type(2) .m-switch')
       }
+      await advanced.waitFor(300)
 
       // go to page serving content with strict csp
       await content.goto('http://localhost:3000/csp-match-path')
       await content.bringToFront()
-      await content.waitFor(200)
+      await content.waitFor(300)
 
       t.strictEqual(
         await content.evaluate(() =>
@@ -158,11 +160,12 @@ module.exports = ({extensions, popup, advanced, content}) => {
       if (await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
         await advanced.click('.m-list li:nth-of-type(2) .m-switch')
       }
+      await advanced.waitFor(300)
 
       // go to page serving content with strict csp
       await content.goto('http://localhost:3000/csp-match-path')
       await content.bringToFront()
-      await content.waitFor(200)
+      await content.waitFor(300)
 
       t.strictEqual(
         await content.evaluate(() => {
@@ -188,7 +191,7 @@ module.exports = ({extensions, popup, advanced, content}) => {
         await advanced.click('.m-list li:nth-of-type(2) .m-switch')
       }
       await advanced.reload()
-      await advanced.waitFor(200)
+      await advanced.waitFor(300)
 
       // expand origin
       await advanced.click('.m-list li:nth-of-type(2)')
@@ -209,7 +212,7 @@ module.exports = ({extensions, popup, advanced, content}) => {
         await advanced.click('.m-list li:nth-of-type(2) .m-switch')
       }
       await advanced.reload()
-      await advanced.waitFor(200)
+      await advanced.waitFor(300)
 
       // expand origin
       await advanced.click('.m-list li:nth-of-type(2)')
@@ -252,7 +255,7 @@ module.exports = ({extensions, popup, advanced, content}) => {
             .querySelectorAll('extensions-item'))[0].shadowRoot
             .querySelector('#enable-toggle').click()
       })
-      await extensions.waitFor(200)
+      await extensions.waitFor(300)
       // check
       t.equal(
         await extensions.evaluate(() =>
@@ -269,7 +272,7 @@ module.exports = ({extensions, popup, advanced, content}) => {
       // go to page serving content with strict csp
       await content.goto('http://localhost:3000/csp-match-path')
       await content.bringToFront()
-      await content.waitFor(200)
+      await content.waitFor(300)
     })
     it('the tab is reloaded on event page wakeup', async () => {
       t.strictEqual(

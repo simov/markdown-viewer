@@ -30,7 +30,7 @@ module.exports = ({popup, advanced, content}) => {
       // go to page serving markdown as text/markdown
       await content.goto('http://localhost:3000/correct-content-type')
       await content.bringToFront()
-      await content.waitFor(200)
+      await content.waitFor(300)
 
       t.equal(
         await content.evaluate(() =>
@@ -63,7 +63,7 @@ module.exports = ({popup, advanced, content}) => {
       // go to page serving markdown as text/markdown
       await content.goto('http://localhost:3000/correct-content-type')
       await content.bringToFront()
-      await content.waitFor(200)
+      await content.waitFor(300)
 
       t.equal(
         await content.evaluate(() =>
@@ -77,7 +77,7 @@ module.exports = ({popup, advanced, content}) => {
       // go to page serving markdown as text/x-markdown
       await content.goto('http://localhost:3000/correct-content-type-variation')
       await content.bringToFront()
-      await content.waitFor(200)
+      await content.waitFor(300)
 
       t.equal(
         await content.evaluate(() =>
@@ -111,7 +111,7 @@ module.exports = ({popup, advanced, content}) => {
       // go to page serving markdown as text/plain
       await content.goto('http://localhost:3000/wrong-content-type')
       await content.bringToFront()
-      await content.waitFor(200)
+      await content.waitFor(300)
 
       t.equal(
         await content.evaluate(() =>
