@@ -10,8 +10,8 @@ module.exports = ({extensions, popup, advanced, content}) => {
 
     // enable path matching
     await advanced.evaluate(() => {
-      document.querySelector('.m-list li:nth-of-type(2) input').value = 'csp-match-path'
-      document.querySelector('.m-list li:nth-of-type(2) input').dispatchEvent(new Event('keyup'))
+      document.querySelector('.m-list li:nth-of-type(1) input').value = 'csp-match-path'
+      document.querySelector('.m-list li:nth-of-type(1) input').dispatchEvent(new Event('keyup'))
     })
     // there is debounce timeout of 750ms in the options UI
     await advanced.waitFor(800)
@@ -23,7 +23,7 @@ module.exports = ({extensions, popup, advanced, content}) => {
 
       // enable csp
       if (!await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
-        await advanced.click('.m-list li:nth-of-type(2) .m-switch')
+        await advanced.click('.m-list li:nth-of-type(1) .m-switch')
       }
 
       // go to page serving content with strict csp
@@ -53,7 +53,7 @@ module.exports = ({extensions, popup, advanced, content}) => {
 
       // enable csp
       if (!await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
-        await advanced.click('.m-list li:nth-of-type(2) .m-switch')
+        await advanced.click('.m-list li:nth-of-type(1) .m-switch')
       }
 
       // go to page serving content with strict csp
@@ -83,7 +83,7 @@ module.exports = ({extensions, popup, advanced, content}) => {
 
       // enable csp
       if (!await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
-        await advanced.click('.m-list li:nth-of-type(2) .m-switch')
+        await advanced.click('.m-list li:nth-of-type(1) .m-switch')
       }
 
       // go to page serving content with strict csp
@@ -109,7 +109,7 @@ module.exports = ({extensions, popup, advanced, content}) => {
 
       // disable csp
       if (await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
-        await advanced.click('.m-list li:nth-of-type(2) .m-switch')
+        await advanced.click('.m-list li:nth-of-type(1) .m-switch')
       }
       await advanced.waitFor(300)
 
@@ -136,7 +136,7 @@ module.exports = ({extensions, popup, advanced, content}) => {
 
       // enable csp
       if (!await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
-        await advanced.click('.m-list li:nth-of-type(2) .m-switch')
+        await advanced.click('.m-list li:nth-of-type(1) .m-switch')
       }
       await advanced.waitFor(300)
 
@@ -158,7 +158,7 @@ module.exports = ({extensions, popup, advanced, content}) => {
 
       // disable csp
       if (await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
-        await advanced.click('.m-list li:nth-of-type(2) .m-switch')
+        await advanced.click('.m-list li:nth-of-type(1) .m-switch')
       }
       await advanced.waitFor(300)
 
@@ -188,17 +188,17 @@ module.exports = ({extensions, popup, advanced, content}) => {
 
       // enable csp
       if (!await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
-        await advanced.click('.m-list li:nth-of-type(2) .m-switch')
+        await advanced.click('.m-list li:nth-of-type(1) .m-switch')
       }
       await advanced.reload()
       await advanced.waitFor(300)
 
       // expand origin
-      await advanced.click('.m-list li:nth-of-type(2)')
+      await advanced.click('.m-list li:nth-of-type(1)')
 
       t.strictEqual(
         await advanced.evaluate(() =>
-          document.querySelector('.m-list li:nth-of-type(2) .m-switch').classList.contains('is-checked')
+          document.querySelector('.m-list li:nth-of-type(1) .m-switch').classList.contains('is-checked')
         ),
         true,
         'csp checkbox should be enabled'
@@ -209,17 +209,17 @@ module.exports = ({extensions, popup, advanced, content}) => {
 
       // disable csp
       if (await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
-        await advanced.click('.m-list li:nth-of-type(2) .m-switch')
+        await advanced.click('.m-list li:nth-of-type(1) .m-switch')
       }
       await advanced.reload()
       await advanced.waitFor(300)
 
       // expand origin
-      await advanced.click('.m-list li:nth-of-type(2)')
+      await advanced.click('.m-list li:nth-of-type(1)')
 
       t.strictEqual(
         await advanced.evaluate(() =>
-          document.querySelector('.m-list li:nth-of-type(2) .m-switch').classList.contains('is-checked')
+          document.querySelector('.m-list li:nth-of-type(1) .m-switch').classList.contains('is-checked')
         ),
         false,
         'csp checkbox should be disabled'
@@ -233,7 +233,7 @@ module.exports = ({extensions, popup, advanced, content}) => {
 
       // enable csp
       if (!await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
-        await advanced.click('.m-list li:nth-of-type(2) .m-switch')
+        await advanced.click('.m-list li:nth-of-type(1) .m-switch')
       }
 
       // chrome://extensions

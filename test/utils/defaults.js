@@ -17,10 +17,10 @@ module.exports = async ({popup, advanced, content}) => {
   // remove origin
   if (await advanced.evaluate(() => Object.keys(state.origins).length > 1)) {
     // expand origin
-    if (!await advanced.evaluate(() => document.querySelector('.m-list li:nth-of-type(2)').classList.contains('m-expanded'))) {
-      await advanced.click('.m-list li:nth-of-type(2)')
+    if (!await advanced.evaluate(() => document.querySelector('.m-list li:nth-of-type(1)').classList.contains('m-expanded'))) {
+      await advanced.click('.m-list li:nth-of-type(1)')
     }
-    await advanced.click('.m-list li:nth-of-type(2) .m-footer .m-button')
+    await advanced.click('.m-list li:nth-of-type(1) .m-footer .m-button')
   }
 
   // add origin
@@ -30,8 +30,8 @@ module.exports = async ({popup, advanced, content}) => {
   await advanced.waitFor(300)
 
   // expand origin
-  if (!await advanced.evaluate(() => document.querySelector('.m-list li:nth-of-type(2)').classList.contains('m-expanded'))) {
-    await advanced.click('.m-list li:nth-of-type(2)')
+  if (!await advanced.evaluate(() => document.querySelector('.m-list li:nth-of-type(1)').classList.contains('m-expanded'))) {
+    await advanced.click('.m-list li:nth-of-type(1)')
   }
 
   // content

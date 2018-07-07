@@ -20,8 +20,8 @@ module.exports = ({popup, advanced, content}) => {
 
       // disable path matching
       await advanced.evaluate(() => {
-        document.querySelector('.m-list li:nth-of-type(2) input').value = ''
-        document.querySelector('.m-list li:nth-of-type(2) input').dispatchEvent(new Event('keyup'))
+        document.querySelector('.m-list li:nth-of-type(1) input').value = ''
+        document.querySelector('.m-list li:nth-of-type(1) input').dispatchEvent(new Event('keyup'))
       })
       // there is debounce timeout of 750ms in the options UI
       await advanced.waitFor(800)
@@ -53,8 +53,8 @@ module.exports = ({popup, advanced, content}) => {
 
       // disable path matching
       await advanced.evaluate(() => {
-        document.querySelector('.m-list li:nth-of-type(2) input').value = ''
-        document.querySelector('.m-list li:nth-of-type(2) input').dispatchEvent(new Event('keyup'))
+        document.querySelector('.m-list li:nth-of-type(1) input').value = ''
+        document.querySelector('.m-list li:nth-of-type(1) input').dispatchEvent(new Event('keyup'))
       })
       // there is debounce timeout of 750ms in the options UI
       await advanced.waitFor(800)
@@ -100,8 +100,8 @@ module.exports = ({popup, advanced, content}) => {
 
       // enable path matching
       await advanced.evaluate(() => {
-        document.querySelector('.m-list li:nth-of-type(2) input').value = 'wrong-content-type'
-        document.querySelector('.m-list li:nth-of-type(2) input').dispatchEvent(new Event('keyup'))
+        document.querySelector('.m-list li:nth-of-type(1) input').value = 'wrong-content-type'
+        document.querySelector('.m-list li:nth-of-type(1) input').dispatchEvent(new Event('keyup'))
       })
       // there is debounce timeout of 750ms in the options UI
       await advanced.waitFor(800)

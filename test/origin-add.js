@@ -20,35 +20,35 @@ module.exports = ({popup, advanced, content}) => {
       )
       t.equal(
         await advanced.evaluate(() =>
-          document.querySelector('.m-list li:nth-of-type(2) .m-origin').innerText
+          document.querySelector('.m-list li:nth-of-type(1) .m-origin').innerText
         ),
         'http://localhost:3000',
         'origin name should be http://localhost:3000'
       )
       t.strictEqual(
         await advanced.evaluate(() =>
-          document.querySelector('.m-list li:nth-of-type(2) .m-switch').classList.contains('is-checked')
+          document.querySelector('.m-list li:nth-of-type(1) .m-switch').classList.contains('is-checked')
         ),
         false,
         'csp checkbox should be disabled'
       )
       t.equal(
         await advanced.evaluate(() =>
-          document.querySelector('.m-list li:nth-of-type(2) .m-encoding select').value
+          document.querySelector('.m-list li:nth-of-type(1) .m-encoding select').value
         ),
         '',
         'encoding should be set to auto'
       )
       t.strictEqual(
         await advanced.evaluate(() =>
-          document.querySelectorAll('.m-list li:nth-of-type(2) .m-footer .m-button').length
+          document.querySelectorAll('.m-list li:nth-of-type(1) .m-footer .m-button').length
         ),
         1,
         'only one button should be visible in the origin footer'
       )
       t.equal(
         await advanced.evaluate(() =>
-          document.querySelector('.m-list li:nth-of-type(2) .m-footer .m-button').innerText.toLowerCase()
+          document.querySelector('.m-list li:nth-of-type(1) .m-footer .m-button').innerText.toLowerCase()
         ),
         'remove',
         'remove origin button should be rendered'
