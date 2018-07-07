@@ -1,7 +1,7 @@
 
 # Markdown Viewer / Browser Extension
 
-**Install: [Chrome][chrome-store]** / **[Firefox][amo]** / **[Opera][opera]** / **Donate: [PayPal][paypal]**
+**Install: [Chrome]** / **[Firefox]** / **[Opera]** / **Donate: [PayPal]**
 
 
 # Features
@@ -9,7 +9,7 @@
 - Renders local and remote URLs
 - Granular access to remote origins
 - Multiple markdown parsers
-- Full control over the [compiler options][compiler-options] ([marked][marked] or [remark][remark])
+- Full control over the [compiler options](#compiler-options) ([marked][marked] or [remark][remark])
 - Themes (including [GitHub theme][themes0]) ([jasonm23][themes1], [mixu][themes2], [cobalt][themes3])
 - [GitHub Flavored Markdown][gfm] (GFM)
 - Auto reload on file change
@@ -31,17 +31,16 @@
 # Table of Contents
 
 - **[After Install](#after-install)**
-  - [Local Files](#local-files)
-  - [Remote Files](#remote-files)
+  - [Local Files](#local-files) / [Remote Files](#remote-files)
 - **[Compiler Options](#compiler-options)**
-  - [Marked](#marked) | [Remark](#remark)
+  - [Marked](#marked) / [Remark](#remark)
 - **[Content Options](#content-options)**
-  - [Autoreload](#autoreload) | [TOC](#toc) | [MathJax](#mathjax) | [Emoji](#emoji) | [Scroll](#scroll)
+  - [Autoreload](#autoreload) / [TOC](#toc) / [MathJax](#mathjax) / [Emoji](#emoji) / [Scroll](#scroll)
 - **[Advanced Options](#advanced-options)**
-  - [Add Origin](#add-origin) | [Allow All Origins](#allow-all-origins)
-  - [Header Detection](#header-detection) | [Path Matching](#path-matching) | [Path Matching Priority](#path-matching-priority)
-  - [Remove Origin](#remove-origin) | [Refresh Origin](#refresh-origin)
-  - [Disable CSP](#disable-content-security-policy) | [Character Encoding](#character-encoding)
+  - [Add Origin](#add-origin) / [Allow All Origins](#allow-all-origins)
+  - [Header Detection](#header-detection) / [Path Matching](#path-matching) / [Path Matching Priority](#path-matching-priority)
+  - [Remove Origin](#remove-origin) / [Refresh Origin](#refresh-origin)
+  - [Disable CSP](#disable-content-security-policy) / [Character Encoding](#character-encoding)
 - **[Markdown Syntax and Features](#markdown-syntax-and-features)**
 - **[More Compilers](#more-compilers)**
 
@@ -96,17 +95,19 @@ Option          | Default | Description
 
 Option          | Default | Description
 :---            | :---    | :---
-**emoji**       | `false` | Convert emoji :shortnames: into EmojiOne images
-**scroll**      | `true`  | Remember scroll position
+**autoreload**  | `false` | Auto reload on file change
 **toc**         | `false` | Generate Table of Contents
 **mathjax**     | `false` | Render TeX and LaTeX math blocks
-**autoreload**  | `false` | Auto reload on file change
+**emoji**       | `false` | Convert emoji :shortnames: into EmojiOne images
+**scroll**      | `true`  | Remember scroll position
 
 
-## Scroll
+## Autoreload
 
-- When enabled, the `scroll` option remembers the current scroll position and scrolls back to it after page load.
-- When disabled, the `scroll` option either scrolls to the top of the document or to a certain header (anchor) if a hash URL fragment is present.
+When enabled the extension will make a GET request every second to:
+
+- `file://` URLs
+- any host that resolves to localhost IPv4 `127.0.0.1` or IPv6 `::1`
 
 
 ## TOC
@@ -137,12 +138,10 @@ The following rules apply to your content when `mathjax` is enabled:
 > The Emoji support currently works only on local file URLs and remote origins without strict *Content Security Policy (CSP)* set. For example it won't work for files hosted on the GitHub's `raw.githubusercontent.com` origin. However you can bypass this by enabling the [Disable CSP](#disable-content-security-policy) switch for that origin.
 
 
-## Autoreload
+## Scroll
 
-When enabled the extension will make a GET request every second to:
-
-- file:// URLs
-- any host that resolves to localhost IPv4 `127.0.0.1` or IPv6 `::1`
+- When enabled, the `scroll` option remembers the current scroll position and scrolls back to it after page load.
+- When disabled, the `scroll` option either scrolls to the top of the document or to a certain header (anchor) if a hash URL fragment is present.
 
 
 # Advanced Options
@@ -159,8 +158,6 @@ Here is how you can enable the extension for the `https://raw.githubusercontent.
 ![add-origin]
 
 The origin consists of *protocol* part and *domain* part. The *protocol* can be either `https`, `http`, or a `*` to match both `https` and `http`.
-
-Enable the above origin and play around with the extension options [here][syntax].
 
 
 ## Allow All Origins
@@ -209,38 +206,47 @@ Only the first matching origin is picked and then its Path Matching RegExp is us
 
 ### Custom Path
 
-- __`*://*`__ - `\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\?.*)?$`
 - __`*://website.com`__ - `\/some\/custom\/path\/to\/serve\/markdown\/$`
+- __`*://*`__ - `\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\?.*)?$`
 
-In this example we have allowed all origins (the first entry). The default Path Matching RegExp is going to match URLs ending with markdown file extension.
+In this example we have allowed all origins (the last entry). It uses the default Path Matching RegExp that is going to match only URLs ending with markdown file extension.
 
 In case we want to match a custom path we have to add a more specific origin and specify its Path Matching RegExp accordingly.
 
 ### Exclude Origin
 
-- __`*://*`__ - `\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\?.*)?$`
 - __`*://github.com`__ - `something impossible to match !!!`
+- __`*://*`__ - `\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\?.*)?$`
 
-In this example we have allowed all origins (the first entry). The default Path Matching RegExp is going to match URLs ending with markdown file extension.
+In this example we have allowed all origins (the last entry). It uses the default Path Matching RegExp that is going to match only URLs ending with markdown file extension.
 
-For example URLs like
-https://raw.githubusercontent.com/simov/markdown-viewer/master/README.md are going to be matched and rendered. However GitHub also serves rendered HTML on URLs ending with markdown file extension
-https://github.com/simov/markdown-viewer/blob/master/README.md
+The problem is that some origins may serve rendered HTML content on URLs ending with markdown file extension.
 
-In this case we want to exclude any URL on github.com and for that we have to add more specific origin and set its Path Matching RegExp to something that's impossible to match.
+GitHub:
+- https://github.com/simov/markdown-syntax/blob/master/README.md - *HTML*
+- https://raw.githubusercontent.com/simov/markdown-syntax/master/README.md - *Markdown*
+
+In this case we want to exclude the `github.com` origin altogether and for that we have to add more specific origin and set its Path Matching RegExp to something that's impossible to match.
 
 ### Exclude Path
 
-- __`*://*`__ - `\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\?.*)?$`
+- __`*://bitbucket.org`__ - `.*\/raw\/.*\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\?.*)?$`
 - __`*://gitlab.com`__ - `.*\/raw\/.*\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\?.*)?$`
+- __`*://*`__ - `\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\?.*)?$`
 
-In this example we have allowed all origins (the first entry). The default Path Matching RegExp is going to match URLs ending with markdown file extension.
+In this example we have allowed all origins (the last entry). It uses the default Path Matching RegExp that is going to match only URLs ending with markdown file extension.
 
-For example URLs like
-https://gitlab.com/gitlab-org/gitlab-ce/raw/master/README.md are going to be matched and rendered. However GitLab also serves rendered HTML on URLs ending with markdown file extension
-https://gitlab.com/gitlab-org/gitlab-ce/blob/master/README.md
+The problem is that some origins may serve rendered HTML content on URLs ending with markdown file extension.
 
-In this case we want to match only URLs containing the `raw` word in their path and for that we have to add more specific origin and set its Path Matching RegExp accordingly.
+BitBucket:
+- https://bitbucket.org/simovelichkov/markdown-syntax/src/master/README.md - *HTML*
+- https://bitbucket.org/simovelichkov/markdown-syntax/raw/master/README.md - *Markdown*
+
+GitLab:
+- https://gitlab.com/simovelichkov/markdown-syntax/blob/master/README.md - *HTML*
+- https://gitlab.com/simovelichkov/markdown-syntax/raw/master/README.md - *Markdown*
+
+In this case we want to match only URLs containing the `raw` word in their path and for that we have to add more specific origins and set their Path Matching RegExp accordingly.
 
 
 ## Remove Origin
@@ -254,7 +260,7 @@ Note that the Chrome's consent popup shows up only when you add the origin for t
 
 The extension synchronizes your preferences across all of your devices using Google Sync. The list of your allowed origins is being synced too. However, the actual permissions that you give using the Chrome's consent popup cannot be synced.
 
-In case you've recently added a new origin on one of your devices you'll have to explicitly allow it on your other devices. In this case additional **`refresh`** label will be present for each origin that needs to be _refreshed_. This label is present **only** on the devices that needs to be _refreshed_. Expanding the origin will reveal additional `REFRESH` button:
+In case you've recently added a new origin on one of your devices you'll have to explicitly allow it on your other devices. In this case additional **`refresh`** label will be present for each origin that needs to be _refreshed_. This label is present **only** on those devices that needs to be _refreshed_. Expanding the origin will reveal additional `REFRESH` button:
 
 ![refresh-origin]
 
@@ -269,26 +275,23 @@ Using the `Disable Content Security Policy` switch you can optionally tell the e
 
 Note that the Content Security Policy header will be stripped **only** if the URL matches the corresponding [Path Matching RegExp](#path-matching) for that origin.
 
-Even if you have [Allowed All Origins](#allow-all-origins) and disabled the Content Security Policy at the same time, the header will be stripped **only** for those requests with URL that matches your explicitly set [Path Matching](#path-matching) regex for the Allow All origin `*://*`
+Even if you have [Allowed All Origins](#allow-all-origins) and disabled the Content Security Policy at the same time, the header will be stripped **only** for those requests with URL that matches your explicitly set [Path Matching RegExp](#path-matching) for the Allow All origin `*://*`
 
 
 ## Character Encoding
 
 By default Markdown Viewer uses the browser's built-in encoding detection. In case you want to force certain Character Encoding for a specific origin - use the Encoding select control.
 
-The Character Encoding set for origin is used only when the markdown content is served with explicit `Content-Type` header and explicit `charset` set in its value. In all other cases Chrome picks the correct encoding by default.
+The Character Encoding set for origin is used only when the markdown content is served with explicit `Content-Type` header and explicit `charset`. In all other cases Chrome picks the correct encoding by default.
+
+In Firefox the character encoding is set always when enabled.
 
 
 # Markdown Syntax and Features
 
-A few files located in the [test] folder of this repo can be used to test what's possible with Markdown Viewer:
+A separate repository containing examples about: markdown syntax, syntax highlighting in code blocks, mathjax etc. is hosted on all major Git hosting providers: [GitHub][syntax-github], [GitLab][syntax-gitlab], [BitBucket][syntax-bitbucket].
 
-- Add the `raw.githubusercontent.com` origin through the [Advanced Options](#advanced-options)
-- Navigate to the test files: [syntax][test-syntax], [highlighting][test-highlighting], [mathjax][test-mathjax], [yaml][test-yaml], [toml][test-toml] and play around with the `Compiler` and `Content` options
-- Use the `Markdown/HTML` button to switch between raw markdown and rendered HTML
-- At any point click on the `Defaults` button to reset back the compiler options
-
-> Note that in order for the extension to fully function on the `raw.githubusercontent.com` origin you have to enable the [Disable CSP](#disable-content-security-policy) switch for that origin.
+Allow the appropriate origin to render the raw markdown files directly on: [GitHub][syntax-raw-github], [GitLab][syntax-raw-gitlab], [BitBucket][syntax-raw-bitbucket], or pull any of these repositories locally and play around with the extension's options.
 
 
 # More Compilers
@@ -328,6 +331,13 @@ Markdown Viewer can be used with any markdown parser/compiler. Currently the fol
 > Note that in this case you won't receive any future updates automatically.
 
 
+# Opera
+
+You can use the [Opera's official browser extension][opera-extensions] for installing Chrome extensions from Google Chrome Web Store to install Markdown Viewer.
+
+Alternatively you can [install it manually](#manual-install).
+
+
 # License
 
 The MIT License (MIT)
@@ -353,41 +363,39 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
-  [chrome-store]: https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk
-  [amo]: https://addons.mozilla.org/en-US/firefox/addon/markdown-viewer-chrome/
-  [opera]: https://forums.opera.com/topic/23830/markdown-viewer-chrome-extension-awaiting-moderation
-  [donate]: https://img.shields.io/badge/paypal-donate-blue.svg?style=flat-square (Donate on Paypal)
+  [chrome]: https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk
+  [firefox]: https://addons.mozilla.org/en-US/firefox/addon/markdown-viewer-chrome/
+  [opera]: #opera
   [paypal]: https://www.paypal.me/simeonvelichkov
+  [donate]: https://img.shields.io/badge/paypal-donate-blue.svg?style=flat-square (Donate on Paypal)
 
-  [marked]: https://github.com/chjj/marked
-  [remark]: https://github.com/wooorm/remark
+  [marked]: https://github.com/markedjs/marked
+  [remark]: https://github.com/remarkjs/remark
   [showdown]: https://github.com/showdownjs/showdown
   [markdown-it]: https://github.com/markdown-it/markdown-it
   [remarkable]: https://github.com/jonschlinkert/remarkable
-  [commonmark]: https://github.com/jgm/commonmark.js
+  [commonmark]: https://github.com/commonmark/commonmark.js
   [markdown-js]: https://github.com/evilstreak/markdown-js
 
   [emojione]: https://emojione.com
   [mathjax]: https://www.mathjax.org
-
   [gfm]: https://guides.github.com/features/mastering-markdown/#GitHub-flavored-markdown
-  [compiler-options]: #compiler-options
   [themes0]: https://github.com/sindresorhus/github-markdown-css
   [themes1]: https://github.com/jasonm23/markdown-css-themes
   [themes2]: https://github.com/mixu/markdown-styles
   [themes3]: https://github.com/nWODT-Cobalt/markown-utilities
-  [prism]: http://prismjs.com/
+  [prism]: https://prismjs.com/
   [gfm-tables]: https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#tables
-  [syntax]: https://raw.githubusercontent.com/simov/markdown-viewer/master/test/syntax/syntax.md
   [compilers]: https://github.com/simov/markdown-viewer/tree/compilers
-  [test]: https://github.com/simov/markdown-viewer/tree/master/test/syntax
-  [event-page]: https://developer.chrome.com/extensions/event_pages
+  [event-page]: https://developer.chrome.com/extensions/background_pages
+  [opera-extensions]: https://addons.opera.com/en/extensions/details/install-chrome-extensions/
 
-  [test-syntax]: https://raw.githubusercontent.com/simov/markdown-viewer/master/test/syntax/syntax.md
-  [test-mathjax]: https://raw.githubusercontent.com/simov/markdown-viewer/master/test/syntax/mathjax.md
-  [test-highlighting]: https://raw.githubusercontent.com/simov/markdown-viewer/master/test/syntax/highlighting.md
-  [test-yaml]: https://raw.githubusercontent.com/simov/markdown-viewer/master/test/syntax/yaml.md
-  [test-toml]: https://raw.githubusercontent.com/simov/markdown-viewer/master/test/syntax/toml.md
+  [syntax-github]: https://github.com/simov/markdown-syntax
+  [syntax-raw-github]: https://raw.githubusercontent.com/simov/markdown-syntax/master/README.md
+  [syntax-gitlab]: https://gitlab.com/simovelichkov/markdown-syntax
+  [syntax-raw-gitlab]: https://gitlab.com/simovelichkov/markdown-syntax/raw/master/README.md
+  [syntax-bitbucket]: https://bitbucket.org/simovelichkov/markdown-syntax
+  [syntax-raw-bitbucket]: https://bitbucket.org/simovelichkov/markdown-syntax/raw/master/README.md
 
   [file-urls]: https://i.imgur.com/BTmlNnX.png
   [add-origin]: https://i.imgur.com/GnKmkRG.png
