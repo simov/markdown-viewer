@@ -55,16 +55,10 @@ md.detect = ({storage: {state}, inject}) => {
 
     var origin =
       state.origins[location.origin] ||
+      state.origins[location.protocol + '//' + location.hostname] ||
       state.origins['*://' + location.host] ||
+      state.origins['*://' + location.hostname] ||
       state.origins['*://*']
-
-    // ff: webRequest bug - does not match on `hostname:port`
-    if (!origin && /Firefox/.test(navigator.userAgent)) {
-      var origin =
-        state.origins[location.protocol + '//' + location.hostname] ||
-        state.origins['*://' + location.hostname] ||
-        state.origins['*://*']
-    }
 
     if (origin && origin.match && new RegExp(origin.match).test(location.href)) {
       return origin
