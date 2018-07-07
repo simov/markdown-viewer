@@ -261,7 +261,7 @@ m.mount(document.querySelector('main'), {
         // allowed origins
         (state.file || Object.keys(state.origins).length > 1 || null) &&
         m('ul.m-list',
-          Object.keys(state.origins).sort().map((origin) =>
+          Object.keys(state.origins).sort((a, b) => a < b ? 1 : a > b ? -1 : 0).map((origin) =>
             (
               (
                 state.file && origin === 'file://' &&
