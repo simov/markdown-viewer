@@ -10,19 +10,26 @@ md.webrequest = ({storage: {state}, detect}) => {
 
   var options = ['blocking', 'responseHeaders']
 
-  var onHeadersReceived = ({method, url, responseHeaders}) => {
-    if (method !== 'GET') {
+  var onHeadersReceived = ({method, url, statusCode, responseHeaders}) => {
+      if (method !== 'GET') {
       return {responseHeaders}
     }
 
     var header = responseHeaders.find(({name}) => /^content-type/i.test(name))
-
-    // ff: markdown `content-type` is not allowed
-    if (/Firefox/.test(navigator.userAgent) && header && detect.header(header.value)) {
-      header.value = 'text/plain'
-    }
-
     var origin = detect.match(url)
+
+    if (/Firefox/.test(navigator.userAgent)) {
+      // ff: markdown `content-type` is not allowed
+      if (header && detect.header(header.value)) {
+        var [_, charset] = header.value.split(';')
+        header.value = `text/plain${charset ? `; ${charset}` : ''}`
+      }
+      // ff: missing `content-type` is not allowed
+      else if (!header && origin && statusCode === 200) {
+        header = {name: 'Content-Type', value: 'text/plain'}
+        responseHeaders.push(header)
+      }
+    }
 
     if (!origin) {
       return {responseHeaders}
@@ -33,7 +40,11 @@ md.webrequest = ({storage: {state}, detect}) => {
         .filter(({name}) => !/content-security-policy/i.test(name))
     }
 
-    if (origin.encoding && header && /charset/.test(header.value)) {
+    if (origin.encoding && header && (
+      /charset/.test(header.value) ||
+      // ff: won't decode correctly by default
+      /Firefox/.test(navigator.userAgent)
+    )) {
       var [media] = header.value.split(';')
       header.value = `${media}; charset=${origin.encoding}`
     }
