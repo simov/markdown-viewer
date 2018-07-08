@@ -3,6 +3,8 @@ html, body {
   font-family: 'Helvetica', 'Arial', sans-serif;
   height: auto;
   min-height: auto;
+  overflow: hidden;
+  background: #fff;
   padding: 0;
   margin: 0;
 }
@@ -34,6 +36,7 @@ html, body {
   font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
   font-size: 14px;
   line-height: 17px;
+  color: #000;
   text-transform: uppercase;
   letter-spacing: 0.2px;
   background-color: #ececec;
@@ -89,12 +92,20 @@ html, body {
   border: 0;
   height: 36px;
   margin: 20px 0 0 0;
+  display: flex;
 }
 .m-tabs a {
   line-height: 36px;
   border-bottom: 1px solid #e0e0e0;
+  display: inline-block;
+  width: 33.33%;
+  max-width: 33.33%;
+  min-width: 33.33%;
   height: 36px;
-  padding: 0 24px;
+  max-height: 36px;
+  min-height: 36px;
+  padding: 0;
+  align-content: stretch;
 }
 .m-tabs .mdc-tab-bar__indicator { background: #607d8b; }
 

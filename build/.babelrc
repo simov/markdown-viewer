@@ -1,0 +1,19 @@
+{
+  "presets": [
+    [
+      "env",
+      {
+        "targets": {
+          "browsers":
+          [
+            "chrome >= 60",
+            "firefox >= 57"
+          ]
+        }
+      }
+    ]
+  ],
+  "compact": true,
+  "minified": true,
+  "comments": false
+}

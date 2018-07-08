@@ -1,5 +1,5 @@
 
-md.messages = ({storage: {defaults, state, set}, compilers, mathjax, headers}) => {
+md.messages = ({storage: {defaults, state, set}, compilers, mathjax, webrequest}) => {
 
   return (req, sender, sendResponse) => {
 
@@ -58,6 +58,7 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, headers}) =
     else if (req.message === 'popup.content') {
       set({content: req.content})
       notifyContent({message: 'reload'})
+      webrequest()
       sendResponse()
     }
     else if (req.message === 'popup.advanced') {
@@ -85,13 +86,6 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, headers}) =
       set({header: req.header})
       sendResponse()
     }
-    else if (req.message === 'options.intercept') {
-      // ff: onHeadersReceived is enabled by default
-      if (!/Firefox/.test(navigator.userAgent)) {
-        headers[req.intercept ? 'add' : 'remove']()
-      }
-      sendResponse()
-    }
 
     // origins
     else if (req.message === 'origin.add') {
@@ -106,11 +100,13 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, headers}) =
     else if (req.message === 'origin.remove') {
       delete state.origins[req.origin]
       set({origins: state.origins})
+      webrequest()
       sendResponse()
     }
     else if (req.message === 'origin.update') {
       state.origins[req.origin] = req.options
       set({origins: state.origins})
+      webrequest()
       sendResponse()
     }
   }

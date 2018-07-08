@@ -31,7 +31,9 @@ var defaults = {
     'Turkish': ['Windows-1254'],
     'Vietnamese': ['Windows-1258'],
     'Western': ['ISO-8859-15', 'Windows-1252', 'Macintosh'],
-  }
+  },
+  // chrome
+  permissions: {},
 }
 
 var state = Object.assign({}, defaults)
@@ -45,7 +47,11 @@ chrome.extension.isAllowedFileSchemeAccess((isAllowedAccess) => {
 
 chrome.runtime.sendMessage({message: 'options'}, (res) => {
   state = Object.assign({}, defaults, {file: state.file}, res)
-  m.redraw()
+  chrome.permissions.getAll(({origins}) => {
+    state.permissions = origins.reduce((all, origin) =>
+      (all[origin.replace(/(.*)\/\*$/, '$1')] = true, all), {})
+    m.redraw()
+  })
 })
 
 var events = {
@@ -84,6 +90,7 @@ var events = {
             encoding: '',
           }
           state.host = ''
+          state.permissions[origin] = true
           m.redraw()
         }
       })
@@ -93,15 +100,20 @@ var events = {
       chrome.permissions.remove({origins: [`${origin}/*`]}, (removed) => {
         if (removed) {
           chrome.runtime.sendMessage({message: 'origin.remove', origin})
-          webRequest()
           delete state.origins[origin]
+          delete state.permissions[origin]
           m.redraw()
         }
       })
     },
 
     refresh: (origin) => () => {
-      chrome.permissions.request({origins: [`${origin}/*`]})
+      chrome.permissions.request({origins: [`${origin}/*`]}, (granted) => {
+        if (granted) {
+          state.permissions[origin] = true
+          m.redraw()
+        }
+      })
     },
 
     match: (origin) => (e) => {
@@ -125,7 +137,6 @@ var events = {
         origin,
         options: {match, csp, encoding},
       })
-      webRequest()
     },
 
     encoding: (origin) => (e) => {
@@ -136,33 +147,8 @@ var events = {
         origin,
         options: {match, csp, encoding},
       })
-      webRequest()
     },
   },
-}
-
-var webRequest = () => {
-  // ff: webRequest is required permission
-  if (/Firefox/.test(navigator.userAgent)) {
-    return
-  }
-
-  var intercept = false
-  for (var key in state.origins) {
-    if (state.origins[key].csp || state.origins[key].encoding) {
-      intercept = true
-      break
-    }
-  }
-
-  chrome.permissions[intercept ? 'request' : 'remove']({
-    permissions: ['webRequest', 'webRequestBlocking']
-  }, () => {
-    chrome.runtime.sendMessage({
-      message: 'options.intercept',
-      intercept,
-    })
-  })
 }
 
 var oncreate = {
@@ -196,7 +182,7 @@ m.mount(document.querySelector('main'), {
 
         // add origin
         m('.m-add-origin',
-          m('h4.mdc-typography--headline', 'Allowed Origins'),
+          m('h4.mdc-typography--headline5', 'Allowed Origins'),
           m('select.mdc-elevation--z2 m-select', {
             onchange: events.origin.scheme
             },
@@ -275,7 +261,7 @@ m.mount(document.querySelector('main'), {
         // allowed origins
         (state.file || Object.keys(state.origins).length > 1 || null) &&
         m('ul.m-list',
-          Object.keys(state.origins).sort().map((origin) =>
+          Object.keys(state.origins).sort((a, b) => a < b ? 1 : a > b ? -1 : 0).map((origin) =>
             (
               (
                 state.file && origin === 'file://' &&
@@ -292,6 +278,7 @@ m.mount(document.querySelector('main'), {
                 },
                 m('.m-origin', origin),
                 m('.m-options',
+                  !state.permissions[origin] ? m('span', m('strong', 'refresh')) : null,
                   state.origins[origin].match !== state.match ? m('span', 'match') : null,
                   state.origins[origin].csp ? m('span', 'csp') : null,
                   state.origins[origin].encoding ? m('span', 'encoding') : null,
@@ -369,6 +356,7 @@ m.mount(document.querySelector('main'), {
                 (origin !== 'file://' || null) &&
                 m('.m-footer',
                   m('span',
+                    (!state.permissions[origin] || null) &&
                     m('button.mdc-button mdc-button--raised m-button', {
                       oncreate: oncreate.ripple,
                       onclick: events.origin.refresh(origin)

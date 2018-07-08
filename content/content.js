@@ -8,7 +8,9 @@ var state = {
   compiler,
   html: '',
   markdown: '',
-  toc: ''
+  toc: '',
+  interval: null,
+  ms: 1000,
 }
 
 chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
@@ -22,6 +24,9 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
   else if (req.message === 'raw') {
     state.raw = req.raw
     m.redraw()
+  }
+  else if (req.message === 'autoreload') {
+    clearInterval(state.interval)
   }
 })
 
@@ -229,4 +234,36 @@ if (document.readyState === 'complete') {
 }
 else {
   window.addEventListener('DOMContentLoaded', mount)
+}
+
+if (state.content.autoreload) {
+  ;(() => {
+    var initial = ''
+
+    var xhr = new XMLHttpRequest()
+    xhr.onreadystatechange = () => {
+      if (xhr.readyState === 4) {
+        if (!initial) {
+          initial = xhr.responseText
+        }
+        else if (initial !== xhr.responseText) {
+          location.reload(true)
+        }
+      }
+    }
+
+    var get = () => {
+      xhr.open('GET', location.href + '?preventCache=' + Date.now(), true)
+      try {
+        xhr.send()
+      }
+      catch (err) {
+        console.error(err)
+        clearInterval(state.interval)
+      }
+    }
+
+    get()
+    state.interval = setInterval(get, state.ms)
+  })()
 }

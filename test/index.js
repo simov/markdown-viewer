@@ -1,8 +1,7 @@
 
 var path = require('path')
-var http = require('http')
 var puppeteer = require('puppeteer')
-var iconv = require('iconv-lite')
+var Server = require('./utils/server')
 
 var options = {
   headless: false,
@@ -14,12 +13,15 @@ var options = {
 }
 
 var tests = [
-  'popup-defaults',
-  'advanced-defaults',
-  'advanced-origins',
+  'defaults-popup',
+  'defaults-options',
+
   'popup-options',
-  'advanced-encoding',
-  'advanced-csp', // should be last - destroys popup and advanced
+
+  'origin-add',
+  'origin-match',
+  'origin-encoding',
+  'origin-csp', // should be last - destroys popup and advanced
 ]
 
 
@@ -54,61 +56,7 @@ describe('markdown-viewer', () => {
 
     var content = await browser.newPage()
 
-    await new Promise((resolve, reject) => {
-      server = http.createServer()
-      server.on('request', (req, res) => {
-        if (/wrong-content-type/.test(req.url)) {
-          res.setHeader('Content-Type', 'text/plain')
-          res.end('**bold**')
-        }
-        else if (/correct-content-type/.test(req.url)) {
-          res.setHeader('Content-Type', 'text/markdown')
-          res.end('**bold**')
-        }
-        else if (/correct-content-type-variation/.test(req.url)) {
-          res.setHeader('Content-Type', 'text/x-markdown')
-          res.end('**bold**')
-        }
-        else if (/compiler-options-marked/.test(req.url)) {
-          res.setHeader('Content-Type', 'text/x-markdown')
-          res.end('~~strikethrough~~')
-        }
-        else if (/compiler-options-remark/.test(req.url)) {
-          res.setHeader('Content-Type', 'text/x-markdown')
-          res.end('- [ ] task')
-        }
-        else if (/content-options-toc/.test(req.url)) {
-          res.setHeader('Content-Type', 'text/markdown')
-          res.end('# h1\n# h2\n# h3')
-        }
-        else if (/content-options-scroll/.test(req.url)) {
-          res.setHeader('Content-Type', 'text/markdown')
-          res.end([
-            '# h1',
-            Array(500).fill('lorem ipsum').join(' '),
-            '## h2',
-            Array(500).fill('lorem ipsum').join(' '),
-            '### h3',
-            Array(500).fill('lorem ipsum').join(' '),
-          ].join('\n\n'))
-        }
-        else if (/csp-match-path/.test(req.url)) {
-          res.setHeader('Content-Security-Policy',
-            `default-src 'none'; style-src 'unsafe-inline'; sandbox`)
-          res.end('# h1')
-        }
-        else if (/csp-wrong-path/.test(req.url)) {
-          res.setHeader('Content-Security-Policy',
-            `default-src 'none'; style-src 'unsafe-inline'; sandbox`)
-          res.end('# h1')
-        }
-        else if (/windows-1251/.test(req.url)) {
-          res.setHeader('Content-Type', 'text/markdown; charset=UTF-8')
-          res.end(iconv.encode('здрасти', 'win1251'))
-        }
-      })
-      server.listen(3000, resolve)
-    })
+    var server = await Server()
 
     tests.forEach((file) => {
       describe(file, () => {

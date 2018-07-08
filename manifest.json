@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name"            : "Markdown Viewer",
-  "version"         : "3.5",
+  "version"         : "3.6",
   "description"     : "Markdown Viewer",
 
   "browser_action": {
@@ -39,7 +39,7 @@
       "/background/compilers/markdown-js.js",
 
       "/background/storage.js",
-      "/background/headers.js",
+      "/background/webrequest.js",
       "/background/detect.js",
       "/background/inject.js",
       "/background/messages.js",
