@@ -99,6 +99,10 @@ md.storage = ({compilers}) => {
     if (options.content.autoreload === undefined) {
       options.content.autoreload = false
     }
+    // v3.6 -> v3.7
+    if (typeof options.origins['file://'] === 'object') {
+      options.origins['file://'].csp = false
+    }
 
     // reload extension bug
     chrome.permissions.getAll((permissions) => {
