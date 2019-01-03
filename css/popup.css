@@ -46,8 +46,9 @@ html, body {
 }
 
 #popup .m-select {
-  width: 310px;
-  margin: 20px 0 0 0;
+  width: 100%;
+  min-width: 310px;
+  margin-top: 20px;
 }
 
 
