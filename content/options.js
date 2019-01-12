@@ -174,209 +174,207 @@ var onupdate = {
 }
 
 m.mount(document.querySelector('main'), {
-  view: () =>
-    m('#options',
+  view: () => [
+    // allowed origins
+    m('.bs-callout m-origins',
+
+      // add origin
+      m('.m-add-origin',
+        m('h4.mdc-typography--headline5', 'Allowed Origins'),
+        m('select.mdc-elevation--z2 m-select', {
+          onchange: events.origin.scheme
+          },
+          state.schemes.map((scheme) =>
+          m('option', {
+            value: scheme,
+            selected: scheme === state.scheme
+            },
+            scheme + '://'
+          )
+        )),
+        m('.mdc-text-field m-textfield', {
+          oncreate: oncreate.textfield,
+          },
+          m('input.mdc-text-field__input', {
+            type: 'text',
+            value: state.host,
+            onchange: events.origin.host,
+            placeholder: 'raw.githubusercontent.com'
+          }),
+          m('.mdc-line-ripple')
+        ),
+        m('button.mdc-button mdc-button--raised m-button', {
+          oncreate: oncreate.ripple,
+          onclick: events.origin.add()
+          },
+          'Add'
+        ),
+        m('button.mdc-button mdc-button--raised m-button', {
+          oncreate: oncreate.ripple,
+          onclick: events.origin.add(true)
+          },
+          'Allow All'
+        )
+      ),
+
+      // global options
+      m('.m-global',
+        (
+          (
+            // header detection - ff: disabled
+            !/Firefox/.test(navigator.userAgent) &&
+            Object.keys(state.origins).length > 1
+          )
+          || null
+        ) &&
+        m('label.mdc-switch m-switch', {
+          onupdate: onupdate.header,
+          title: 'Toggle header detection'
+          },
+          m('input.mdc-switch__native-control', {
+            type: 'checkbox',
+            checked: state.header,
+            onchange: events.header
+          }),
+          m('.mdc-switch__background', m('.mdc-switch__knob')),
+          m('span.mdc-switch-label',
+            'Detect ',
+            m('code', 'text/markdown'),
+            ' and ',
+            m('code', 'text/x-markdown'),
+            ' content type'
+          )
+        ),
+
+        // file access is disabled
+        (!state.file || null) &&
+        m('button.mdc-button mdc-button--raised m-button', {
+          oncreate: oncreate.ripple,
+          onclick: events.file
+          },
+          'Allow Access to file:// URLs'
+        )
+      ),
 
       // allowed origins
-      m('.bs-callout m-origins',
-
-        // add origin
-        m('.m-add-origin',
-          m('h4.mdc-typography--headline5', 'Allowed Origins'),
-          m('select.mdc-elevation--z2 m-select', {
-            onchange: events.origin.scheme
-            },
-            state.schemes.map((scheme) =>
-            m('option', {
-              value: scheme,
-              selected: scheme === state.scheme
-              },
-              scheme + '://'
-            )
-          )),
-          m('.mdc-text-field m-textfield', {
-            oncreate: oncreate.textfield,
-            },
-            m('input.mdc-text-field__input', {
-              type: 'text',
-              value: state.host,
-              onchange: events.origin.host,
-              placeholder: 'raw.githubusercontent.com'
-            }),
-            m('.mdc-line-ripple')
-          ),
-          m('button.mdc-button mdc-button--raised m-button', {
-            oncreate: oncreate.ripple,
-            onclick: events.origin.add()
-            },
-            'Add'
-          ),
-          m('button.mdc-button mdc-button--raised m-button', {
-            oncreate: oncreate.ripple,
-            onclick: events.origin.add(true)
-            },
-            'Allow All'
-          )
-        ),
-
-        // global options
-        m('.m-global',
+      (state.file || Object.keys(state.origins).length > 1 || null) &&
+      m('ul.m-list',
+        Object.keys(state.origins).sort((a, b) => a < b ? 1 : a > b ? -1 : 0).map((origin) =>
           (
             (
-              // header detection - ff: disabled
-              !/Firefox/.test(navigator.userAgent) &&
-              Object.keys(state.origins).length > 1
+              state.file && origin === 'file://' &&
+              // ff: access to file:// URLs is not allowed
+              !/Firefox/.test(navigator.userAgent)
             )
-            || null
+            || origin !== 'file://' || null
           ) &&
-          m('label.mdc-switch m-switch', {
-            onupdate: onupdate.header,
-            title: 'Toggle header detection'
+          m('li.mdc-elevation--z2', {
+            class: state.origins[origin].expanded ? 'm-expanded' : null,
             },
-            m('input.mdc-switch__native-control', {
-              type: 'checkbox',
-              checked: state.header,
-              onchange: events.header
-            }),
-            m('.mdc-switch__background', m('.mdc-switch__knob')),
-            m('span.mdc-switch-label',
-              'Detect ',
-              m('code', 'text/markdown'),
-              ' and ',
-              m('code', 'text/x-markdown'),
-              ' content type'
-            )
-          ),
-
-          // file access is disabled
-          (!state.file || null) &&
-          m('button.mdc-button mdc-button--raised m-button', {
-            oncreate: oncreate.ripple,
-            onclick: events.file
-            },
-            'Allow Access to file:// URLs'
-          )
-        ),
-
-        // allowed origins
-        (state.file || Object.keys(state.origins).length > 1 || null) &&
-        m('ul.m-list',
-          Object.keys(state.origins).sort((a, b) => a < b ? 1 : a > b ? -1 : 0).map((origin) =>
-            (
-              (
-                state.file && origin === 'file://' &&
-                // ff: access to file:// URLs is not allowed
-                !/Firefox/.test(navigator.userAgent)
-              )
-              || origin !== 'file://' || null
-            ) &&
-            m('li.mdc-elevation--z2', {
-              class: state.origins[origin].expanded ? 'm-expanded' : null,
+            m('.m-summary', {
+              onclick: (e) => state.origins[origin].expanded = !state.origins[origin].expanded
               },
-              m('.m-summary', {
-                onclick: (e) => state.origins[origin].expanded = !state.origins[origin].expanded
-                },
-                m('.m-origin', origin),
-                m('.m-options',
-                  !state.permissions[origin] ? m('span', m('strong', 'refresh')) : null,
-                  state.origins[origin].match !== state.match ? m('span', 'match') : null,
-                  state.origins[origin].csp ? m('span', 'csp') : null,
-                  state.origins[origin].encoding ? m('span', 'encoding') : null,
-                ),
-                m('i.material-icons', {
-                  class: state.origins[origin].expanded ? 'icon-arrow-up' : 'icon-arrow-down'
-                })
+              m('.m-origin', origin),
+              m('.m-options',
+                !state.permissions[origin] ? m('span', m('strong', 'refresh')) : null,
+                state.origins[origin].match !== state.match ? m('span', 'match') : null,
+                state.origins[origin].csp ? m('span', 'csp') : null,
+                state.origins[origin].encoding ? m('span', 'encoding') : null,
               ),
-              m('.m-content',
-                // match
-                m('.m-option m-match',
-                  m('.m-name', m('span', 'match')),
-                  m('.m-control',
-                    m('.mdc-text-field m-textfield', {
-                      oncreate: oncreate.textfield
-                      },
-                      m('input.mdc-text-field__input', {
-                        type: 'text',
-                        onkeyup: events.origin.match(origin),
-                        value: state.origins[origin].match,
-                      }),
-                      m('.mdc-line-ripple')
+              m('i.material-icons', {
+                class: state.origins[origin].expanded ? 'icon-arrow-up' : 'icon-arrow-down'
+              })
+            ),
+            m('.m-content',
+              // match
+              m('.m-option m-match',
+                m('.m-name', m('span', 'match')),
+                m('.m-control',
+                  m('.mdc-text-field m-textfield', {
+                    oncreate: oncreate.textfield
+                    },
+                    m('input.mdc-text-field__input', {
+                      type: 'text',
+                      onkeyup: events.origin.match(origin),
+                      value: state.origins[origin].match,
+                    }),
+                    m('.mdc-line-ripple')
+                  )
+                )
+              ),
+              // csp
+              (origin !== 'file://' || null) &&
+              m('.m-option m-csp',
+                m('.m-name', m('span', 'csp')),
+                m('.m-control',
+                  m('label.mdc-switch m-switch', {
+                    onupdate: onupdate.csp(origin),
+                    },
+                    m('input.mdc-switch__native-control', {
+                      type: 'checkbox',
+                      checked: state.origins[origin].csp,
+                      onchange: events.origin.csp(origin)
+                    }),
+                    m('.mdc-switch__background', m('.mdc-switch__knob')),
+                    m('span.mdc-switch-label',
+                      'Disable ',
+                      m('code', 'Content Security Policy'),
                     )
                   )
-                ),
-                // csp
-                (origin !== 'file://' || null) &&
-                m('.m-option m-csp',
-                  m('.m-name', m('span', 'csp')),
-                  m('.m-control',
-                    m('label.mdc-switch m-switch', {
-                      onupdate: onupdate.csp(origin),
+                )
+              ),
+              // encoding
+              (origin !== 'file://' || null) &&
+              m('.m-option m-encoding',
+                m('.m-name', m('span', 'encoding')),
+                m('.m-control',
+                  m('select.mdc-elevation--z2 m-select', {
+                    onchange: events.origin.encoding(origin),
+                    },
+                    m('option', {
+                      value: '',
+                      selected: state.origins[origin].encoding === ''
                       },
-                      m('input.mdc-switch__native-control', {
-                        type: 'checkbox',
-                        checked: state.origins[origin].csp,
-                        onchange: events.origin.csp(origin)
-                      }),
-                      m('.mdc-switch__background', m('.mdc-switch__knob')),
-                      m('span.mdc-switch-label',
-                        'Disable ',
-                        m('code', 'Content Security Policy'),
-                      )
-                    )
-                  )
-                ),
-                // encoding
-                (origin !== 'file://' || null) &&
-                m('.m-option m-encoding',
-                  m('.m-name', m('span', 'encoding')),
-                  m('.m-control',
-                    m('select.mdc-elevation--z2 m-select', {
-                      onchange: events.origin.encoding(origin),
-                      },
-                      m('option', {
-                        value: '',
-                        selected: state.origins[origin].encoding === ''
-                        },
-                        'auto'
-                      ),
-                      Object.keys(state.encodings).map((label) =>
-                        m('optgroup', {label}, state.encodings[label].map((encoding) =>
-                          m('option', {
-                            value: encoding,
-                            selected: state.origins[origin].encoding === encoding
-                            },
-                            encoding
-                          )
-                        ))
-                      )
-                    )
-                  )
-                ),
-                // refresh/remove
-                (origin !== 'file://' || null) &&
-                m('.m-footer',
-                  m('span',
-                    (!state.permissions[origin] || null) &&
-                    m('button.mdc-button mdc-button--raised m-button', {
-                      oncreate: oncreate.ripple,
-                      onclick: events.origin.refresh(origin)
-                      },
-                      'Refresh'
+                      'auto'
                     ),
-                    m('button.mdc-button mdc-button--raised m-button', {
-                      oncreate: oncreate.ripple,
-                      onclick: events.origin.remove(origin)
-                      },
-                      'Remove'
+                    Object.keys(state.encodings).map((label) =>
+                      m('optgroup', {label}, state.encodings[label].map((encoding) =>
+                        m('option', {
+                          value: encoding,
+                          selected: state.origins[origin].encoding === encoding
+                          },
+                          encoding
+                        )
+                      ))
                     )
+                  )
+                )
+              ),
+              // refresh/remove
+              (origin !== 'file://' || null) &&
+              m('.m-footer',
+                m('span',
+                  (!state.permissions[origin] || null) &&
+                  m('button.mdc-button mdc-button--raised m-button', {
+                    oncreate: oncreate.ripple,
+                    onclick: events.origin.refresh(origin)
+                    },
+                    'Refresh'
+                  ),
+                  m('button.mdc-button mdc-button--raised m-button', {
+                    oncreate: oncreate.ripple,
+                    onclick: events.origin.remove(origin)
+                    },
+                    'Remove'
                   )
                 )
               )
             )
           )
         )
-      ),
-    )
+      )
+    ),
+  ]
 })
 
 // ff: set appropriate footer icon
