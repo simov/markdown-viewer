@@ -24,10 +24,24 @@ main {
   margin: 0 auto;
 }
 
+/*font family*/
+body,
+body #wrapper,
+body #wrapper header.mdc-toolbar .mdc-toolbar__title,
+body #wrapper header.mdc-toolbar nav.mdc-tab-bar a,
+body label,
+body input,
+body select,
+body button,
+body h4 {
+  font-family: 'Monospace', monospace !important;
+}
+
 
 /*content*/
-main { padding: 90px 0 30px 0; }
-#options { letter-spacing: 0.2px; }
+main {
+  padding: 90px 0 30px 0;
+}
 
 
 /*header*/
@@ -97,6 +111,10 @@ footer .icon-hidden {
   padding: 20px;
   margin: 0 0 30px 0;
 }
+.bs-callout h4 {
+  line-height: 36px;
+  margin: 0 !important;
+}
 
 
 /*button*/
@@ -139,12 +157,10 @@ footer .icon-hidden {
 
 /*select*/
 .m-select {
-  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
   font-size: 14px;
   line-height: 17px;
   color: #000;
   text-transform: uppercase;
-  letter-spacing: 0.2px;
   background-color: #ececec;
   border: none;
   border-radius: 2px;
@@ -162,14 +178,13 @@ footer .icon-hidden {
 }
 
 
-/*add-origin*/
+/*add origin*/
+
 .m-add-origin {}
 .m-add-origin:after { content: ''; display: block; clear: both; }
 .m-add-origin h4 {
-  line-height: 36px;
   float: left;
   padding: 0 100px 0 0;
-  margin: 0 !important;
 }
 .m-add-origin .m-select {
   width: 110px;
@@ -194,6 +209,31 @@ footer .icon-hidden {
 }
 
 
+/*add theme*/
+.m-add-theme:after { content: ''; display: block; clear: both; }
+.m-add-theme h4 {
+  float: left;
+  padding: 0 80px 0 0;
+}
+.m-add-theme .m-textfield {
+  height: auto !important;
+  padding: 0 !important;
+  margin: 0 10px !important;
+}
+.m-add-theme .m-textfield input {
+  padding-top: 3px;
+}
+.m-add-theme .m-name {
+  width: 270px;
+}
+.m-add-theme .m-url {
+  width: 500px;
+}
+.m-add-theme button {
+  float: right;
+}
+
+
 /*global*/
 .m-global {
   margin: 20px 0 0 0;
@@ -208,6 +248,7 @@ footer .icon-hidden {
 
 
 /*list*/
+
 .m-list {
   list-style: none;
   padding: 0;
@@ -234,6 +275,8 @@ footer .icon-hidden {
   margin: 20px 0;
 }
 
+/*list summary*/
+
 .m-list .m-summary {
   display: block;
   height: 36px;
@@ -244,7 +287,6 @@ footer .icon-hidden {
 .m-list .m-summary:after { content: ''; display: block; clear: both; }
 .m-list .m-summary .m-origin {
   float: left;
-  font-family: monospace;
   font-size: 16px;
   line-height: 28px;
 }
@@ -266,8 +308,9 @@ footer .icon-hidden {
   right: 17px;
 }
 
+/*list content*/
+
 .m-list .m-content {
-  /*TEST*/
   display: none;
   background: #fff;
   padding: 0 20px 12px 20px;
@@ -276,10 +319,11 @@ footer .icon-hidden {
 .m-list .m-expanded .m-summary {
   background: #ececec;
 }
-.m-list .m-expanded .m-origin {}
 .m-list .m-expanded .m-content {
   display: block;
 }
+
+/*list option*/
 
 .m-list .m-content .m-option {
   min-height: 50px;
@@ -296,37 +340,49 @@ footer .icon-hidden {
   font-size: 12px;
   line-height: 15px;
   text-transform: uppercase;
-  letter-spacing: .2px;
 }
 .m-list .m-content .m-option .m-control {
   float: left;
   width: 90%;
 }
+.m-list .m-content .m-option .m-control .m-textfield {
+  height: 43px;
+  margin: 0 0 7px 10px;
+}
+.m-list .m-content .m-option .m-control .m-textfield input {
+  border-bottom: 1px solid #ececec !important;
+  padding-top: 3px;
+}
 
-.m-list .m-content .m-option.m-match {}
+
+/*list options - origin*/
+
 .m-list .m-content .m-option.m-match .m-control {
   width: 80%;
   margin: 0 0 0 15px;
 }
 .m-list .m-content .m-option.m-match .m-textfield {
   width: 100%;
-  height: 43px;
-  margin: 0 0 7px 10px;
 }
-.m-list .m-content .m-option.m-match input {
-  border-bottom: 1px solid #ececec !important;
-  padding-top: 3px;
-}
-
-.m-list .m-content .m-option.m-csp {}
 .m-list .m-content .m-option.m-csp label {
   margin: 12px 0 0 10px;
 }
-.m-list .m-content .m-option.m-encoding {}
 .m-list .m-content .m-option.m-encoding select {
   width: 200px;
   margin: 6px 0 0 25px;
 }
+
+/*list options - themes*/
+
+.m-list .m-content .m-option.m-theme .m-control {
+  width: 80%;
+  margin: 0 0 0 15px;
+}
+.m-list .m-content .m-option.m-theme .m-textfield {
+  width: 80%;
+}
+
+/*list footer*/
 
 .m-list .m-footer {
   text-align: right;

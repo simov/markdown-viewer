@@ -58,6 +58,7 @@ md.storage.defaults = (compilers) => {
         encoding: '',
       }
     },
+    themes: [],
   }
 
   Object.keys(compilers).forEach((compiler) => {
@@ -82,5 +83,14 @@ md.storage.migrations = (state) => {
   // v3.6 -> v3.7
   if (typeof state.origins['file://'] === 'object') {
     state.origins['file://'].csp = false
+  }
+  if (typeof state.theme === 'string') {
+    state.theme = {
+      name: state.theme,
+      url: chrome.runtime.getURL(`/themes/${state.theme}.css`)
+    }
+  }
+  if (state.themes === undefined) {
+    state.themes = []
   }
 }

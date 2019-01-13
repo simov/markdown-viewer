@@ -75,12 +75,12 @@ function mount () {
         if (state.theme) {
           dom.push(m('link#_theme', {
             rel: 'stylesheet', type: 'text/css',
-            href: chrome.runtime.getURL('/themes/' + state.theme + '.css')
+            href: state.theme.url,
           }))
         }
         if (state.html) {
           dom.push(m('#_html', {oncreate: oncreate.html,
-            class: /github(-dark)?/.test(state.theme) ? 'markdown-body' : 'markdown-theme'},
+            class: /github(-dark)?/.test(state.theme.name) ? 'markdown-body' : 'markdown-theme'},
             m.trust(state.html)
           ))
           if (state.content.toc && state.toc) {

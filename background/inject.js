@@ -4,7 +4,7 @@ md.inject = ({storage: {state}}) => (id) => {
   chrome.tabs.executeScript(id, {
     code: `
       document.querySelector('pre').style.visibility = 'hidden'
-      var theme = '${state.theme}'
+      var theme = ${JSON.stringify(state.theme)}
       var raw = ${state.raw}
       var content = ${JSON.stringify(state.content)}
       var compiler = '${state.compiler}'

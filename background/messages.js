@@ -25,7 +25,8 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, webrequest}
       sendResponse(Object.assign({}, state, {
         options: state[state.compiler],
         description: compilers[state.compiler].description,
-        compilers: Object.keys(compilers)
+        compilers: Object.keys(compilers),
+        themes: state.themes,
       }))
     }
     else if (req.message === 'popup.theme') {
@@ -80,6 +81,7 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, webrequest}
         origins: state.origins,
         header: state.header,
         match: state.match,
+        themes: state.themes,
       })
     }
     else if (req.message === 'options.header') {
@@ -107,6 +109,12 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, webrequest}
       state.origins[req.origin] = req.options
       set({origins: state.origins})
       webrequest()
+      sendResponse()
+    }
+
+    // themes
+    else if (req.message === 'themes') {
+      set({themes: req.themes})
       sendResponse()
     }
   }
