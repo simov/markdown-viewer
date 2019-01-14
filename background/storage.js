@@ -39,7 +39,10 @@ md.storage.defaults = (compilers) => {
   var match = '\\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\\?.*)?$'
 
   var defaults = {
-    theme: 'github',
+    theme: {
+      name: 'github',
+      url: chrome.runtime.getURL('/themes/github.css')
+    },
     compiler: 'marked',
     raw: false,
     header: true,
