@@ -12,35 +12,30 @@
     "url": "https://github.com/simov/markdown-viewer.git"
   },
   "dependencies": {
-    "@material/button": "^0.37.0",
-    "@material/elevation": "^0.36.1",
-    "@material/list": "^0.37.0",
-    "@material/ripple": "^0.37.0",
+    "@material/button": "^0.37.1",
+    "@material/ripple": "^0.37.1",
     "@material/switch": "^0.36.1",
-    "@material/tabs": "^0.37.0",
-    "@material/textfield": "^0.37.0",
-    "@material/theme": "^0.35.0",
-    "@material/toolbar": "^0.37.0",
-    "@material/typography": "^0.35.0",
-    "marked": "^0.4.0",
+    "@material/tabs": "^0.37.1",
+    "@material/textfield": "^0.37.1",
+    "marked": "^0.6.0",
     "mithril": "^1.1.6",
     "prismjs": "^1.15.0",
-    "remark": "^9.0.0",
-    "remark-frontmatter": "^1.2.0",
-    "remark-html": "^7.0.0",
-    "remark-slug": "^5.0.0"
+    "remark": "^10.0.1",
+    "remark-frontmatter": "^1.3.1",
+    "remark-html": "^9.0.0",
+    "remark-slug": "^5.1.1"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
-    "csso-cli": "^1.1.0",
-    "iconv-lite": "^0.4.23",
+    "csso-cli": "^2.0.2",
+    "iconv-lite": "^0.4.24",
     "mocha": "^5.2.0",
-    "node-sass": "^4.9.0",
-    "puppeteer": "^1.4.0",
-    "rollup": "^0.62.0",
-    "rollup-plugin-commonjs": "^9.1.3",
-    "rollup-plugin-node-resolve": "^3.3.0"
+    "node-sass": "^4.11.0",
+    "puppeteer": "^1.11.0",
+    "rollup": "^1.1.0",
+    "rollup-plugin-commonjs": "^9.2.0",
+    "rollup-plugin-node-resolve": "^4.0.0"
   },
   "bin": {},
   "main": "",
@@ -49,7 +44,8 @@
     "test": "mocha --timeout 100000000 --slow 400",
     "debug": "mocha --inspect-brk --timeout 100000000",
     "build:mdc": "./build/mdc/mdc.sh",
-    "build:prism": "node build/prism/"
+    "build:prism": "node build/prism/",
+    "build:themes": "./build/themes/themes.sh"
   },
   "engines": {
     "node": ">=8.0.0"

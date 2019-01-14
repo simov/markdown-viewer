@@ -28,7 +28,7 @@ md.compilers.remark = (() => {
         .use(remark.stringify)
         .use(remarkSlug)
         .use(remarkFrontmatter, ['yaml', 'toml'])
-        .use(remarkHTML, state.remark) // sanitize
+        .use(remarkHtml, state.remark) // sanitize
         .processSync(markdown)
         .contents
   })
