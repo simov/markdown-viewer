@@ -138,10 +138,10 @@ module.exports = ({popup, advanced, content}) => {
 
       t.equal(
         await popup.evaluate(() =>
-          state.theme
+          state.theme.name
         ),
         'github-dark',
-        'state.theme should equal github-dark'
+        'state.theme.name should equal github-dark'
       )
       t.equal(
         await popup.evaluate(() =>
