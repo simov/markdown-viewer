@@ -21,6 +21,7 @@
     "mithril": "^1.1.6",
     "prismjs": "^1.15.0",
     "remark": "^10.0.1",
+    "remark-breaks": "^1.0.2",
     "remark-frontmatter": "^1.3.1",
     "remark-html": "^9.0.0",
     "remark-slug": "^5.1.1"
@@ -28,14 +29,16 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
+    "browserify": "^16.2.3",
     "csso-cli": "^2.0.2",
     "iconv-lite": "^0.4.24",
     "mocha": "^5.2.0",
     "node-sass": "^4.11.0",
-    "puppeteer": "^1.5.0",
+    "puppeteer": "1.5.0",
     "rollup": "^1.1.0",
     "rollup-plugin-commonjs": "^9.2.0",
-    "rollup-plugin-node-resolve": "^4.0.0"
+    "rollup-plugin-node-resolve": "^4.0.0",
+    "terser": "^3.14.1"
   },
   "bin": {},
   "main": "",
@@ -45,6 +48,7 @@
     "debug": "mocha --inspect-brk --timeout 100000000",
     "build:mdc": "./build/mdc/mdc.sh",
     "build:prism": "node build/prism/",
+    "build:remark": "./build/remark/build.sh",
     "build:themes": "./build/themes/themes.sh"
   },
   "engines": {
