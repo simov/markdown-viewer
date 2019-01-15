@@ -19,9 +19,6 @@
     "scripts": [
       "/vendor/marked.min.js",
       "/vendor/remark.min.js",
-      "/vendor/remark-html.min.js",
-      "/vendor/remark-slug.min.js",
-      "/vendor/remark-frontmatter.min.js",
 
       "/background/compilers/marked.js",
       "/background/compilers/remark.js",

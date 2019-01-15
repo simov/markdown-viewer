@@ -1,13 +1,15 @@
 
 md.compilers.remark = (() => {
   var defaults = {
-    breaks: false,
+    // remark.parse
+    gfm: true,
     commonmark: false,
     footnotes: false,
-    gfm: true,
     pedantic: false,
+    // remark.breaks
+    breaks: false,
+    // remark.html
     sanitize: false,
-    // blocks (Array.<string>, default: list of block HTML elements)
   }
 
   var description = {
@@ -25,10 +27,11 @@ md.compilers.remark = (() => {
     compile: (markdown) =>
       remark.unified()
         .use(remark.parse, state.remark)
+        .use(state.remark.breaks ? remark.breaks : undefined)
         .use(remark.stringify)
-        .use(remarkSlug)
-        .use(remarkFrontmatter, ['yaml', 'toml'])
-        .use(remarkHtml, state.remark) // sanitize
+        .use(remark.slug)
+        .use(remark.frontmatter, ['yaml', 'toml'])
+        .use(remark.html, state.remark) // sanitize
         .processSync(markdown)
         .contents
   })
