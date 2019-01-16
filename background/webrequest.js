@@ -11,7 +11,7 @@ md.webrequest = ({storage: {state}, detect}) => {
   var options = ['blocking', 'responseHeaders']
 
   var onHeadersReceived = ({method, url, statusCode, responseHeaders}) => {
-      if (method !== 'GET') {
+    if (method !== 'GET') {
       return {responseHeaders}
     }
 
