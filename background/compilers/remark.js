@@ -1,14 +1,11 @@
 
 md.compilers.remark = (() => {
   var defaults = {
-    // remark.parse
-    gfm: true,
+    breaks: false,
     commonmark: false,
     footnotes: false,
+    gfm: true,
     pedantic: false,
-    // remark.breaks
-    breaks: false,
-    // remark.html
     sanitize: false,
   }
 
@@ -26,8 +23,8 @@ md.compilers.remark = (() => {
     description,
     compile: (markdown) =>
       remark.unified()
-        .use(remark.parse, state.remark)
-        .use(state.remark.breaks ? remark.breaks : undefined)
+        .use(remark.parse, state.remark) // commonmark, gfm, pedantic, footnotes
+        .use(state.remark.breaks ? remark.breaks : undefined) // breaks
         .use(remark.stringify)
         .use(remark.slug)
         .use(remark.frontmatter, ['yaml', 'toml'])
