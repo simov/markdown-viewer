@@ -26,10 +26,13 @@ main {
 /*font family*/
 body,
 body label,
-body input,
-body select,
-body button {
+body input {
   font-family: 'Monospace', monospace !important;
+}
+body select,
+body button,
+.m-name {
+  font-family: sans-serif !important;
 }
 
 
