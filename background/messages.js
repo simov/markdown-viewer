@@ -115,6 +115,27 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, webrequest}
     // themes
     else if (req.message === 'themes') {
       set({themes: req.themes})
+
+      ;(() => {
+        var defaults = chrome.runtime.getManifest().web_accessible_resources
+          .filter((file) => file.indexOf('/themes/') === 0)
+          .map((file) => file.replace(/\/themes\/(.*)\.css/, '$1'))
+        var custom = state.themes.map(({name}) => name)
+        var all = custom.concat(defaults)
+
+        if (!all.includes(state.theme.name)) {
+          var theme = {
+            name: 'github',
+            url: chrome.runtime.getURL('/themes/github.css')
+          }
+          set({theme})
+        }
+        else if (custom.includes(state.theme.name)) {
+          var theme = state.themes.find(({name}) => state.theme.name === name)
+          set({theme})
+        }
+      })()
+
       sendResponse()
     }
   }
