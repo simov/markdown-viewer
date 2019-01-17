@@ -345,7 +345,7 @@ m.mount(document.querySelector('main'), {
             m('.m-summary', {
               onclick: (e) => state.origins[origin].expanded = !state.origins[origin].expanded
               },
-              m('.m-origin', origin),
+              m('.m-title', origin),
               m('.m-options',
                 !state.permissions[origin] ? m('span', m('strong', 'refresh')) : null,
                 state.origins[origin].match !== state.match ? m('span', 'match') : null,
@@ -493,7 +493,7 @@ m.mount(document.querySelector('main'), {
           m('.m-summary', {
             onclick: (e) => theme.expanded = !theme.expanded
             },
-            m('.m-origin', theme.name),
+            m('.m-title', theme.name),
             m('i.material-icons', {
               class: theme.expanded ? 'icon-arrow-up' : 'icon-arrow-down'
             })

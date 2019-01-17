@@ -313,7 +313,7 @@ footer .icon-hidden {
   position: relative;
 }
 .m-list .m-summary:after { content: ''; display: block; clear: both; }
-.m-list .m-summary .m-origin {
+.m-list .m-summary .m-title {
   float: left;
   font-size: 16px;
   line-height: 28px;
