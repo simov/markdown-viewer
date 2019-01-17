@@ -51,14 +51,14 @@ module.exports = ({advanced}) => {
     )
     t.equal(
       await advanced.evaluate(() =>
-        document.querySelectorAll('.m-list li').length
+        document.querySelectorAll('.m-origins .m-list li').length
       ),
       1,
       'should contain only one origin'
     )
     t.equal(
       await advanced.evaluate(() =>
-        document.querySelector('.m-list li:nth-of-type(1) .m-origin').innerText
+        document.querySelector('.m-origins .m-list li:nth-of-type(1) .m-title').innerText
       ),
       'file://',
       'origin name should be file://'
