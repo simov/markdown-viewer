@@ -4,7 +4,7 @@ md.inject = ({storage: {state}}) => (id) => {
   chrome.tabs.executeScript(id, {
     code: `
       document.querySelector('pre').style.visibility = 'hidden'
-      var theme = '${state.theme}'
+      var theme = ${JSON.stringify(state.theme)}
       var raw = ${state.raw}
       var content = ${JSON.stringify(state.content)}
       var compiler = '${state.compiler}'
@@ -12,7 +12,7 @@ md.inject = ({storage: {state}}) => (id) => {
     runAt: 'document_start'
   })
 
-  chrome.tabs.insertCSS(id, {file: 'css/content.css', runAt: 'document_start'})
+  chrome.tabs.insertCSS(id, {file: 'content/index.css', runAt: 'document_start'})
   chrome.tabs.insertCSS(id, {file: 'vendor/prism.min.css', runAt: 'document_start'})
 
   chrome.tabs.executeScript(id, {file: 'vendor/mithril.min.js', runAt: 'document_start'})
@@ -20,5 +20,5 @@ md.inject = ({storage: {state}}) => (id) => {
   if (state.content.emoji) {
     chrome.tabs.executeScript(id, {file: 'content/emoji.js', runAt: 'document_start'})
   }
-  chrome.tabs.executeScript(id, {file: 'content/content.js', runAt: 'document_start'})
+  chrome.tabs.executeScript(id, {file: 'content/index.js', runAt: 'document_start'})
 }

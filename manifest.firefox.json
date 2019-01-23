@@ -7,24 +7,21 @@
   "browser_action": {
     "browser_style": false,
     "default_icon": {
-      "19" : "/images/icon19.png",
-      "38" : "/images/icon38.png"
+      "19" : "/icons/icon19.png",
+      "38" : "/icons/icon38.png"
     },
     "default_title": "Markdown Viewer",
-    "default_popup": "/content/popup.html"
+    "default_popup": "/popup/index.html"
   },
 
   "options_ui": {
-    "page": "content/options.html"
+    "page": "/options/index.html"
   },
 
   "background" : {
     "scripts": [
       "/vendor/marked.min.js",
       "/vendor/remark.min.js",
-      "/vendor/remark-html.min.js",
-      "/vendor/remark-slug.min.js",
-      "/vendor/remark-frontmatter.min.js",
 
       "/background/compilers/marked.js",
       "/background/compilers/remark.js",
@@ -67,9 +64,9 @@
   ],
 
   "icons": {
-    "16" : "/images/icon16.png",
-    "48" : "/images/icon48.png",
-    "128": "/images/icon128.png"
+    "16" : "/icons/icon16.png",
+    "48" : "/icons/icon48.png",
+    "128": "/icons/icon128.png"
   },
 
   "homepage_url": "https://addons.mozilla.org/en-US/firefox/addon/markdown-viewer-chrome/",

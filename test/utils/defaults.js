@@ -10,12 +10,12 @@ module.exports = async ({popup, advanced, content}) => {
   await advanced.bringToFront()
 
   // enable header detection
-  if (!await advanced.evaluate(() => state.header)) {
+  if (!await advanced.evaluate(() => origins.state.header)) {
     await advanced.click('.m-switch')
   }
 
   // remove origin
-  if (await advanced.evaluate(() => Object.keys(state.origins).length > 1)) {
+  if (await advanced.evaluate(() => Object.keys(origins.state.origins).length > 1)) {
     // expand origin
     if (!await advanced.evaluate(() => document.querySelector('.m-list li:nth-of-type(1)').classList.contains('m-expanded'))) {
       await advanced.click('.m-list li:nth-of-type(1)')

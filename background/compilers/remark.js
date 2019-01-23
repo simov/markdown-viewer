@@ -7,7 +7,6 @@ md.compilers.remark = (() => {
     gfm: true,
     pedantic: false,
     sanitize: false,
-    // blocks (Array.<string>, default: list of block HTML elements)
   }
 
   var description = {
@@ -24,11 +23,12 @@ md.compilers.remark = (() => {
     description,
     compile: (markdown) =>
       remark.unified()
-        .use(remark.parse, state.remark)
+        .use(remark.parse, state.remark) // commonmark, gfm, pedantic, footnotes
+        .use(state.remark.breaks ? remark.breaks : undefined) // breaks
         .use(remark.stringify)
-        .use(remarkSlug)
-        .use(remarkFrontmatter, ['yaml', 'toml'])
-        .use(remarkHTML, state.remark) // sanitize
+        .use(remark.slug)
+        .use(remark.frontmatter, ['yaml', 'toml'])
+        .use(remark.html, state.remark) // sanitize
         .processSync(markdown)
         .contents
   })

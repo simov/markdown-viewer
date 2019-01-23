@@ -11,20 +11,20 @@ module.exports = ({advanced}) => {
   it('access to file URLs', async () => {
     t.strictEqual(
       await advanced.evaluate(() =>
-        state.file
+        origins.state.file
       ),
       true,
-      'state.file should be true'
+      'origins.state.file should be true'
     )
   })
 
   it('header detection', async () => {
     t.strictEqual(
       await advanced.evaluate(() =>
-        state.header
+        origins.state.header
       ),
       true,
-      'state.header should be true'
+      'origins.state.header should be true'
     )
     t.strictEqual(
       await advanced.evaluate(() =>
@@ -38,7 +38,7 @@ module.exports = ({advanced}) => {
   it('allowed origins', async () => {
     t.deepStrictEqual(
       await advanced.evaluate(() =>
-        state.origins
+        origins.state.origins
       ),
       {
         'file://': {
@@ -47,18 +47,18 @@ module.exports = ({advanced}) => {
           encoding: ''
         }
       },
-      'state.origins should contain the file:// origin'
+      'origins.state.origins should contain the file:// origin'
     )
     t.equal(
       await advanced.evaluate(() =>
-        document.querySelectorAll('.m-list li').length
+        document.querySelectorAll('.m-origins .m-list li').length
       ),
       1,
       'should contain only one origin'
     )
     t.equal(
       await advanced.evaluate(() =>
-        document.querySelector('.m-list li:nth-of-type(1) .m-origin').innerText
+        document.querySelector('.m-origins .m-list li:nth-of-type(1) .m-title').innerText
       ),
       'file://',
       'origin name should be file://'

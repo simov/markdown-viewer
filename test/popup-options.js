@@ -138,10 +138,10 @@ module.exports = ({popup, advanced, content}) => {
 
       t.equal(
         await popup.evaluate(() =>
-          state.theme
+          state.theme.name
         ),
         'github-dark',
-        'state.theme should equal github-dark'
+        'state.theme.name should equal github-dark'
       )
       t.equal(
         await popup.evaluate(() =>
@@ -307,7 +307,7 @@ module.exports = ({popup, advanced, content}) => {
       // disable gfm
       await content.bringToFront()
       // gfm switch
-      await popup.click('.m-panel:nth-of-type(2) .m-switch:nth-of-type(4)')
+      await popup.click('.m-panel:nth-of-type(2) .m-switch[title~=GFM]')
       // content auto reloads
       await content.waitFor(300)
 
@@ -344,7 +344,7 @@ module.exports = ({popup, advanced, content}) => {
       )
       t.strictEqual(
         await popup.evaluate(() =>
-          document.querySelector('.m-panel:nth-of-type(2) .m-switch:nth-of-type(4)').classList.contains('is-checked')
+          document.querySelector('.m-panel:nth-of-type(2) .m-switch[title~=GFM]').classList.contains('is-checked')
         ),
         false,
         'dom gfm checkbox should be disabled'
