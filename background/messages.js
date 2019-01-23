@@ -76,11 +76,15 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, webrequest}
     }
 
     // options
-    else if (req.message === 'options') {
+    else if (req.message === 'options.origins') {
       sendResponse({
         origins: state.origins,
         header: state.header,
         match: state.match,
+      })
+    }
+    else if (req.message === 'options.themes') {
+      sendResponse({
         themes: state.themes,
       })
     }

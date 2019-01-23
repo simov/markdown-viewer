@@ -22,7 +22,7 @@ module.exports = ({extensions, popup, advanced, content}) => {
       await advanced.bringToFront()
 
       // enable csp
-      if (!await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
+      if (!await advanced.evaluate(() => origins.state.origins['http://localhost:3000'].csp)) {
         await advanced.click('.m-list li:nth-of-type(1) .m-switch')
       }
 
@@ -52,7 +52,7 @@ module.exports = ({extensions, popup, advanced, content}) => {
       await advanced.bringToFront()
 
       // enable csp
-      if (!await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
+      if (!await advanced.evaluate(() => origins.state.origins['http://localhost:3000'].csp)) {
         await advanced.click('.m-list li:nth-of-type(1) .m-switch')
       }
 
@@ -82,7 +82,7 @@ module.exports = ({extensions, popup, advanced, content}) => {
       await advanced.bringToFront()
 
       // enable csp
-      if (!await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
+      if (!await advanced.evaluate(() => origins.state.origins['http://localhost:3000'].csp)) {
         await advanced.click('.m-list li:nth-of-type(1) .m-switch')
       }
 
@@ -108,7 +108,7 @@ module.exports = ({extensions, popup, advanced, content}) => {
       await advanced.bringToFront()
 
       // disable csp
-      if (await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
+      if (await advanced.evaluate(() => origins.state.origins['http://localhost:3000'].csp)) {
         await advanced.click('.m-list li:nth-of-type(1) .m-switch')
       }
       await advanced.waitFor(300)
@@ -135,7 +135,7 @@ module.exports = ({extensions, popup, advanced, content}) => {
       await advanced.bringToFront()
 
       // enable csp
-      if (!await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
+      if (!await advanced.evaluate(() => origins.state.origins['http://localhost:3000'].csp)) {
         await advanced.click('.m-list li:nth-of-type(1) .m-switch')
       }
       await advanced.waitFor(300)
@@ -157,7 +157,7 @@ module.exports = ({extensions, popup, advanced, content}) => {
       await advanced.bringToFront()
 
       // disable csp
-      if (await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
+      if (await advanced.evaluate(() => origins.state.origins['http://localhost:3000'].csp)) {
         await advanced.click('.m-list li:nth-of-type(1) .m-switch')
       }
       await advanced.waitFor(300)
@@ -187,7 +187,7 @@ module.exports = ({extensions, popup, advanced, content}) => {
       await advanced.bringToFront()
 
       // enable csp
-      if (!await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
+      if (!await advanced.evaluate(() => origins.state.origins['http://localhost:3000'].csp)) {
         await advanced.click('.m-list li:nth-of-type(1) .m-switch')
       }
       await advanced.reload()
@@ -208,7 +208,7 @@ module.exports = ({extensions, popup, advanced, content}) => {
       await advanced.bringToFront()
 
       // disable csp
-      if (await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
+      if (await advanced.evaluate(() => origins.state.origins['http://localhost:3000'].csp)) {
         await advanced.click('.m-list li:nth-of-type(1) .m-switch')
       }
       await advanced.reload()
@@ -232,7 +232,7 @@ module.exports = ({extensions, popup, advanced, content}) => {
       await advanced.bringToFront()
 
       // enable csp
-      if (!await advanced.evaluate(() => state.origins['http://localhost:3000'].csp)) {
+      if (!await advanced.evaluate(() => origins.state.origins['http://localhost:3000'].csp)) {
         await advanced.click('.m-list li:nth-of-type(1) .m-switch')
       }
 

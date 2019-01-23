@@ -14,7 +14,7 @@ module.exports = ({popup, advanced, content}) => {
       await advanced.bringToFront()
 
       // disable header detection
-      if (await advanced.evaluate(() => state.header)) {
+      if (await advanced.evaluate(() => origins.state.header)) {
         await advanced.click('.m-switch')
       }
 
@@ -47,7 +47,7 @@ module.exports = ({popup, advanced, content}) => {
       await advanced.bringToFront()
 
       // enable header detection
-      if (!await advanced.evaluate(() => state.header)) {
+      if (!await advanced.evaluate(() => origins.state.header)) {
         await advanced.click('.m-switch')
       }
 
@@ -94,7 +94,7 @@ module.exports = ({popup, advanced, content}) => {
       await advanced.bringToFront()
 
       // enable header detection
-      if (!await advanced.evaluate(() => state.header)) {
+      if (!await advanced.evaluate(() => origins.state.header)) {
         await advanced.click('.m-switch')
       }
 

@@ -50,10 +50,10 @@ describe('markdown-viewer', () => {
     )
 
     var popup = await browser.newPage()
-    await popup.goto(`chrome-extension://${id}/content/popup.html`)
+    await popup.goto(`chrome-extension://${id}/popup/index.html`)
 
     var advanced = await browser.newPage()
-    await advanced.goto(`chrome-extension://${id}/content/options.html`)
+    await advanced.goto(`chrome-extension://${id}/options/index.html`)
 
     var content = await browser.newPage()
 
