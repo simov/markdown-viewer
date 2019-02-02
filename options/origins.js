@@ -278,7 +278,7 @@ var Origins = () => {
                 !state.permissions[origin] ? m('span', m('strong', 'refresh')) : null,
                 state.origins[origin].match !== state.match ? m('span', 'match') : null,
                 state.origins[origin].csp ? m('span', 'csp') : null,
-                state.origins[origin].encoding ? m('span', 'encoding') : null,
+                state.origins[origin].encoding ? m('span', 'encoding') : null
               ),
               m('i.material-icons', {
                 class: state.origins[origin].expanded ? 'icon-arrow-up' : 'icon-arrow-down'
@@ -317,7 +317,7 @@ var Origins = () => {
                     m('.mdc-switch__background', m('.mdc-switch__knob')),
                     m('span.mdc-switch-label',
                       'Disable ',
-                      m('code', 'Content Security Policy'),
+                      m('code', 'Content Security Policy')
                     )
                   )
                 )

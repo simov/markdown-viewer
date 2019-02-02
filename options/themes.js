@@ -137,7 +137,7 @@ var Themes = () => {
           onclick: events.add
           },
           'Add'
-        ),
+        )
       ),
 
       // themes list
