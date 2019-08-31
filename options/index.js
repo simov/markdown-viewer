@@ -7,7 +7,7 @@ m.mount(document.querySelector('main'), {
     // allowed origins
     origins.render(),
     // custom themes
-    themes.render(),
+    // themes.render(),
   ]
 })
 
