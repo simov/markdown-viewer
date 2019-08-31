@@ -191,7 +191,12 @@ if (document.readyState === 'complete') {
   mount()
 }
 else {
-  window.addEventListener('DOMContentLoaded', mount)
+  var timeout = setInterval(() => {
+    if (document.readyState === 'complete') {
+      clearInterval(timeout)
+      mount()
+    }
+  }, 0)
 }
 
 if (state.content.autoreload) {
