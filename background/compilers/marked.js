@@ -9,7 +9,6 @@ md.compilers.marked = (() => {
     sanitize: false,
     smartLists: false,
     smartypants: false,
-    tables: true,
     langPrefix: 'language-' // prism
   }
 
@@ -20,7 +19,6 @@ md.compilers.marked = (() => {
     sanitize: 'Ignore any HTML\nthat has been input',
     smartLists: 'Use smarter list behavior\nthan the original markdown',
     smartypants: 'Use "smart" typographic punctuation\nfor things like quotes and dashes',
-    tables: 'Enable GFM tables\n(requires the gfm option to be true)'
   }
 
   var ctor = ({storage: {state}}) => ({
