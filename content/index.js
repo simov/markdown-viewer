@@ -119,16 +119,30 @@ function scroll () {
   }
   function init () {
     if (state.content.scroll) {
-      var key = 'md-' + location.origin + location.pathname
-      $('body').scrollTop = parseInt(localStorage.getItem(key))
-
-      var timeout = null
-      window.addEventListener('scroll', () => {
-        clearTimeout(timeout)
-        timeout = setTimeout(() => {
-          localStorage.setItem(key, $('body').scrollTop)
-        }, 100)
-      })
+      try {
+        var key = 'md-' + location.origin + location.pathname
+        $('body').scrollTop = parseInt(localStorage.getItem(key))
+        var timeout = null
+        window.addEventListener('scroll', () => {
+          clearTimeout(timeout)
+          timeout = setTimeout(() => {
+            localStorage.setItem(key, $('body').scrollTop)
+          }, 100)
+        })
+      }
+      catch (err) {
+        var key = 'md-' + location.origin + location.pathname
+        chrome.storage.local.get(key, (res) => {
+          $('body').scrollTop = parseInt(res[key])
+        })
+        var timeout = null
+        window.addEventListener('scroll', () => {
+          clearTimeout(timeout)
+          timeout = setTimeout(() => {
+            chrome.storage.local.set({[key]: $('body').scrollTop})
+          }, 100)
+        })
+      }
     }
     else if (location.hash && $(location.hash)) {
       $('body').scrollTop = $(location.hash).offsetTop
@@ -191,7 +205,12 @@ if (document.readyState === 'complete') {
   mount()
 }
 else {
-  window.addEventListener('DOMContentLoaded', mount)
+  var timeout = setInterval(() => {
+    if (document.readyState === 'complete') {
+      clearInterval(timeout)
+      mount()
+    }
+  }, 0)
 }
 
 if (state.content.autoreload) {

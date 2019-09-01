@@ -96,4 +96,7 @@ md.storage.migrations = (state) => {
   if (state.themes === undefined) {
     state.themes = []
   }
+  if (state.marked.tables !== undefined) {
+    delete state.marked.tables
+  }
 }

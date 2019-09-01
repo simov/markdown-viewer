@@ -17,14 +17,14 @@
     "@material/switch": "^0.36.1",
     "@material/tabs": "^0.37.1",
     "@material/textfield": "^0.37.1",
-    "marked": "^0.6.0",
+    "marked": "^0.7.0",
     "mithril": "^1.1.6",
-    "prismjs": "^1.15.0",
-    "remark": "^10.0.1",
-    "remark-breaks": "^1.0.2",
-    "remark-frontmatter": "^1.3.1",
-    "remark-html": "^9.0.0",
-    "remark-slug": "^5.1.1"
+    "prismjs": "^1.17.1",
+    "remark": "^11.0.1",
+    "remark-breaks": "^1.0.3",
+    "remark-frontmatter": "^1.3.2",
+    "remark-html": "^10.0.0",
+    "remark-slug": "^5.1.2"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
@@ -38,7 +38,8 @@
     "rollup": "^1.1.0",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-node-resolve": "^4.0.0",
-    "terser": "^3.14.1"
+    "terser": "^3.14.1",
+    "uglify-js": "^3.6.0"
   },
   "bin": {},
   "main": "",

@@ -14,13 +14,13 @@ pre#_markdown {
 .markdown-body {
   overflow: auto;
 
-  min-width: 888px;
-  max-width: 888px;
+  min-width: 882px;
+  max-width: 882px;
 
   background-color: #fff;
   border: 1px solid #ddd;
 
-  padding: 45px;
+  padding: 48px;
   margin: 20px auto;
 }
 .markdown-body #_html>*:first-child {
