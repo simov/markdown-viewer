@@ -76,7 +76,6 @@ Option          | Default | Description
 **sanitize**    | `false` | Sanitize the output. Ignore any HTML that has been input.
 **smartLists**  | `false` | Use smarter list behavior than the original markdown. May eventually be default with the old behavior moved into pedantic.
 **smartypants** | `false` | Use "smart" typographic punctuation for things like quotes and dashes.
-**tables**      | `true`  | Enable GFM [tables][gfm-tables]. This option requires the gfm option to be true.
 
 
 ## Remark
@@ -258,9 +257,9 @@ Note that the Chrome's consent popup shows up only when you add the origin for t
 
 ## Refresh Origin
 
-The extension synchronizes your preferences across all of your devices using Google Sync. The list of your allowed origins is being synced too. However, the actual permissions that you give using the Chrome's consent popup cannot be synced.
+The extension synchronizes your preferences across all of your devices using Google Sync. The list of your allowed origins is being synced too. However, the actual permissions that you grant using the Chrome's consent popup cannot be synced.
 
-In case you've recently added a new origin on one of your devices you'll have to explicitly allow it on your other devices. In this case additional **`refresh`** label will be present for each origin that needs to be _refreshed_. This label is present **only** on those devices that needs to be _refreshed_. Expanding the origin will reveal additional `REFRESH` button:
+In case you've recently added a new origin on one of your devices you'll have to explicitly allow it on your other devices. In this case additional **`refresh`** label will be shown for each origin that needs to be _refreshed_. This label is present **only** on those devices that needs to be _refreshed_. Expanding the origin will reveal additional `REFRESH` button:
 
 ![refresh-origin]
 
@@ -280,7 +279,7 @@ Even if you have [Allowed All Origins](#allow-all-origins) and disabled the Cont
 
 ## Character Encoding
 
-By default Markdown Viewer uses the browser's built-in encoding detection. In case you want to force certain Character Encoding for a specific origin - use the Encoding select control.
+By default Markdown Viewer uses the browser's built-in encoding detection. In case you want to force certain Character Encoding for an origin - use the Encoding select control.
 
 The Character Encoding set for origin is used only when the markdown content is served with explicit `Content-Type` header and explicit `charset`. In all other cases Chrome picks the correct encoding by default.
 
@@ -300,11 +299,6 @@ Markdown Viewer can be used with any markdown parser/compiler. Currently the fol
 
 1. Clone the [compilers][compilers] branch
 2. Follow the [Manual Install](#manual-install) steps
-
-<!-- 2. Navigate to `chrome://extensions`
-3. Make sure that the `Developer mode` checkbox is checked at the top
-4. Disable the Markdown Viewer extension downloaded from the Chrome Store
-5. Click on the `Load unpacked extension...` button and select the cloned directory -->
 
 
 # Manual Install
