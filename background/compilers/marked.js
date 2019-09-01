@@ -18,7 +18,7 @@ md.compilers.marked = (() => {
     pedantic: 'Don\'t fix any of the original markdown\nbugs or poor behavior',
     sanitize: 'Ignore any HTML\nthat has been input',
     smartLists: 'Use smarter list behavior\nthan the original markdown',
-    smartypants: 'Use "smart" typographic punctuation\nfor things like quotes and dashes',
+    smartypants: 'Use "smart" typographic punctuation\nfor things like quotes and dashes'
   }
 
   var ctor = ({storage: {state}}) => ({
