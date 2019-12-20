@@ -179,25 +179,10 @@ var toc = (
     level: parseInt(node.tagName.replace('H', '')),
     title: node.innerText
   }))
-  .reduce((html, header, index, headers) => {
-    if (index) {
-      var prev = headers[index - 1]
-    }
-    if (!index || prev.level === header.level) {
-      html += link(header)
-    }
-    else if (prev.level > header.level) {
-      while (prev.level-- > header.level) {
-        html += '</div>'
-      }
-      html += link(header)
-    }
-    else if (prev.level < header.level) {
-      while (prev.level++ < header.level) {
-        html += '<div id="_ul">'
-      }
-      html += link(header)
-    }
+  .reduce((html, header) => {
+    html += '<div id="_ul">'.repeat(header.level)
+    html += link(header)
+    html += '</div>'.repeat(header.level)
     return html
   }, '<div id="_toc"><div id="_ul">') + '</div></div>'
 
