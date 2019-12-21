@@ -170,6 +170,12 @@ function anchors () {
   })
 }
 
+function escapeHtml (input) {
+  var s = new XMLSerializer()
+  var node = document.createTextNode(input)
+  return s.serializeToString(node)
+}
+
 var toc = (
   link = (header) => '<a href="#' + header.id + '">' + header.title + '</a>') =>
   Array.from($('#_html').childNodes)
@@ -177,7 +183,7 @@ var toc = (
   .map((node) => ({
     id: node.getAttribute('id'),
     level: parseInt(node.tagName.replace('H', '')),
-    title: node.innerText
+    title: escapeHtml(node.innerText)
   }))
   .reduce((html, header, index, headers) => {
     if (index) {
