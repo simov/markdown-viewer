@@ -32,10 +32,10 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
 
 var oncreate = {
   markdown: () => {
-    scroll()
+    scroll.body()
   },
   html: () => {
-    scroll()
+    scroll.body()
 
     if (state.content.toc && !state.toc) {
       state.toc = toc()
@@ -45,6 +45,9 @@ var oncreate = {
     setTimeout(() => Prism.highlightAll(), 20)
 
     anchors()
+  },
+  toc: () => {
+    scroll.toc()
   }
 }
 
@@ -84,7 +87,9 @@ function mount () {
             m.trust(state.html)
           ))
           if (state.content.toc && state.toc) {
-            dom.push(m.trust(state.toc))
+            dom.push(m('#_toc', {oncreate: oncreate.toc},
+              m.trust(state.toc)
+            ))
             $('body').classList.add('_toc-left')
           }
           if (state.content.mathjax) {
@@ -101,7 +106,7 @@ function mount () {
   })
 }
 
-function scroll () {
+var scroll = (() => {
   function race (done) {
     var images = Array.from(document.querySelectorAll('img'))
     if (!images.length) {
@@ -117,45 +122,51 @@ function scroll () {
     })
     setTimeout(done, 100)
   }
-  function init () {
-    if (state.content.scroll) {
-      try {
-        var key = 'md-' + location.origin + location.pathname
-        $('body').scrollTop = parseInt(localStorage.getItem(key))
-        var timeout = null
-        window.addEventListener('scroll', () => {
-          clearTimeout(timeout)
-          timeout = setTimeout(() => {
-            localStorage.setItem(key, $('body').scrollTop)
-          }, 100)
-        })
-      }
-      catch (err) {
-        var key = 'md-' + location.origin + location.pathname
-        chrome.storage.local.get(key, (res) => {
-          $('body').scrollTop = parseInt(res[key])
-        })
-        var timeout = null
-        window.addEventListener('scroll', () => {
-          clearTimeout(timeout)
-          timeout = setTimeout(() => {
-            chrome.storage.local.set({[key]: $('body').scrollTop})
-          }, 100)
-        })
-      }
+  function debounce (container, done) {
+    var listener = /body/i.test(container.nodeName) ? window : container
+    var timeout = null
+    listener.addEventListener('scroll', () => {
+      clearTimeout(timeout)
+      timeout = setTimeout(done, 100)
+    })
+  }
+  function listen (container, prefix) {
+    var key = prefix + location.origin + location.pathname
+    try {
+      container.scrollTop = parseInt(localStorage.getItem(key))
+      debounce(container, () => {
+        localStorage.setItem(key, container.scrollTop)
+      })
     }
-    else if (location.hash && $(location.hash)) {
-      $('body').scrollTop = $(location.hash).offsetTop
+    catch (err) {
+      chrome.storage.local.get(key, (res) => {
+        container.scrollTop = parseInt(res[key])
+      })
+      debounce(container, () => {
+        chrome.storage.local.set({[key]: container.scrollTop})
+      })
     }
   }
-  var loaded
-  race(() => {
-    if (!loaded) {
-      init()
-      loaded = true
+  return {
+    body: () => {
+      var loaded
+      race(() => {
+        if (!loaded) {
+          loaded = true
+          if (state.content.scroll) {
+            listen($('body'), 'md-')
+          }
+          else if (location.hash && $(location.hash)) {
+            $('body').scrollTop = $(location.hash).offsetTop
+          }
+        }
+      })
+    },
+    toc: () => {
+      listen($('#_toc'), 'md-toc-')
     }
-  })
-}
+  }
+})()
 
 function anchors () {
   Array.from($('#_html').childNodes)
@@ -184,7 +195,7 @@ var toc = (
     html += link(header)
     html += '</div>'.repeat(header.level)
     return html
-  }, '<div id="_toc">') + '</div>'
+  }, '')
 
 if (document.readyState === 'complete') {
   mount()
