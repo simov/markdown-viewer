@@ -188,7 +188,7 @@ var toc = (
   .map((node) => ({
     id: node.getAttribute('id'),
     level: parseInt(node.tagName.replace('H', '')),
-    title: node.innerText
+    title: node.innerText.replace(/</g, '&lt;').replace(/>/g, '&gt;')
   }))
   .reduce((html, header) => {
     html += '<div class="_ul">'.repeat(header.level)
