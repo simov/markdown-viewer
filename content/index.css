@@ -68,11 +68,11 @@ body._toc-right { padding-right: 300px !important; }
   overflow-y: auto;
   overflow-x: hidden;
 }
-#_toc #_ul {
+#_toc ._ul {
   padding: 0 0 0 20px !important;
   margin: 0 !important;
 }
-#_toc #_ul a {
+#_toc ._ul a {
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
   font-size: 14px !important;
   line-height: 17px !important;
@@ -87,7 +87,7 @@ body._toc-right { padding-right: 300px !important; }
   padding: 10px 15px !important;
   display: block !important;
 }
-#_toc #_ul a:hover {
+#_toc ._ul a:hover {
   text-decoration: underline !important;
 }
 

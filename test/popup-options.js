@@ -387,7 +387,7 @@ module.exports = ({popup, advanced, content}) => {
 
       t.deepStrictEqual(
         await content.evaluate(() =>
-          Array.from(document.querySelectorAll('#_toc #_ul a'))
+          Array.from(document.querySelectorAll('#_toc ._ul a'))
             .map((a) => ({href: a.getAttribute('href'), text: a.innerText}))
         ),
         [

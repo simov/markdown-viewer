@@ -180,11 +180,11 @@ var toc = (
     title: node.innerText
   }))
   .reduce((html, header) => {
-    html += '<div id="_ul">'.repeat(header.level)
+    html += '<div class="_ul">'.repeat(header.level)
     html += link(header)
     html += '</div>'.repeat(header.level)
     return html
-  }, '<div id="_toc"><div id="_ul">') + '</div></div>'
+  }, '<div id="_toc">') + '</div>'
 
 if (document.readyState === 'complete') {
   mount()
