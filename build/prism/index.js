@@ -44,17 +44,6 @@ source += config['markdown-viewer'].reduce((source, component) => (
 fs.writeFileSync(path.resolve(__dirname, '../../vendor/prism.min.js'), source, 'utf8')
 
 
-// print the excluded ones and their corresponding files sizes
-console.log('Excluded:')
-config.all
-  .filter((component) => !config['markdown-viewer'].includes(component))
-  .map((component) => console.log(
-    component, '\t\t\t',
-    fs.lstatSync(path.resolve(__dirname,
-      `../../node_modules/prismjs/components/prism-${component}.min.js`)).size
-  ))
-
-
 // build css
 var csso = require('csso')
 
@@ -68,3 +57,29 @@ fs.writeFileSync(
   csso.minify(source).css,
   'utf8'
 )
+
+
+// print stats
+var included = config.all
+  .filter((name) => config['markdown-viewer'].includes(name))
+  .map((name) => ({
+    name,
+    size: fs.lstatSync(path.resolve(__dirname,
+      `../../node_modules/prismjs/components/prism-${name}.min.js`)).size
+  }))
+
+var excluded = config.all
+  .filter((name) => !config['markdown-viewer'].includes(name))
+  .map((name) => ({
+    name,
+    size: fs.lstatSync(path.resolve(__dirname,
+      `../../node_modules/prismjs/components/prism-${name}.min.js`)).size
+  }))
+
+console.log('Excluded:')
+excluded // sorted by name
+  // .sort((a, b) => b.size - a.size) // sorted by size
+  .forEach(({name, size}) => console.log(name, '\t\t\t', size))
+
+console.log('Included:', included.length, included.reduce((total, {size}) => total += size, 0))
+console.log('Excluded:', excluded.length, excluded.reduce((total, {size}) => total += size, 0))
