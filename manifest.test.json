@@ -29,6 +29,7 @@
       "/background/inject.js",
       "/background/messages.js",
       "/background/mathjax.js",
+      "/background/xhr.js",
 
       "/background/index.js"
     ],

@@ -1,8 +1,9 @@
 
-md.messages = ({storage: {defaults, state, set}, compilers, mathjax, webrequest}) => {
+md.messages = ({storage: {defaults, state, set}, compilers, mathjax, xhr, webrequest}) => {
 
   return (req, sender, sendResponse) => {
 
+    // content
     if (req.message === 'markdown') {
       var markdown = req.markdown
 
@@ -18,6 +19,11 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, webrequest}
       }
 
       sendResponse({message: 'html', html})
+    }
+    else if (req.message === 'autoreload') {
+      xhr.get(req.location, (err, body) => {
+        sendResponse({err, body})
+      })
     }
 
     // popup
@@ -142,6 +148,8 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, webrequest}
 
       sendResponse()
     }
+
+    return true
   }
 
   function notifyContent (req, res) {
