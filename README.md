@@ -391,7 +391,7 @@ SOFTWARE.
   [syntax-bitbucket]: https://bitbucket.org/simovelichkov/markdown-syntax
   [syntax-raw-bitbucket]: https://bitbucket.org/simovelichkov/markdown-syntax/raw/master/README.md
 
-  [file-urls]: https://i.imgur.com/BTmlNnX.png
+  [file-urls]: https://i.imgur.com/MpzsT5g.png
   [add-origin]: https://i.imgur.com/GnKmkRG.png
   [all-origins]: https://i.imgur.com/4GH3EuP.png
   [header-detection]: https://i.imgur.com/bdz3Reg.png
