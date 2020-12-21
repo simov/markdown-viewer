@@ -99,4 +99,11 @@ md.storage.migrations = (state) => {
   if (state.marked.tables !== undefined) {
     delete state.marked.tables
   }
+  // v3.9 -> v4.0
+  if (state.remark.commonmark !== undefined) {
+    delete state.remark.commonmark
+  }
+  if (state.remark.pedantic !== undefined) {
+    delete state.remark.pedantic
+  }
 }
