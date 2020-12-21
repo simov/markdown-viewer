@@ -5,7 +5,7 @@ var Server = require('./utils/server')
 
 var options = {
   headless: false,
-  // slowMo: 300,
+  slowMo: 25,
   args: [
     `--disable-extensions-except=${path.resolve(__dirname, '../')}`,
     `--load-extension=${path.resolve(__dirname, '../')}`,

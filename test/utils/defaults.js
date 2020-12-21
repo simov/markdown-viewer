@@ -4,7 +4,7 @@ module.exports = async ({popup, advanced, content}) => {
   await popup.bringToFront()
   // defaults button
   await popup.click('button:nth-of-type(2)')
-  await popup.waitFor(300)
+  await popup.waitForTimeout(300)
 
   // advanced
   await advanced.bringToFront()
@@ -27,7 +27,7 @@ module.exports = async ({popup, advanced, content}) => {
   await advanced.select('.m-select', 'http')
   await advanced.type('[type=text]', 'localhost:3000')
   await advanced.click('button')
-  await advanced.waitFor(300)
+  await advanced.waitForTimeout(300)
 
   // expand origin
   if (!await advanced.evaluate(() => document.querySelector('.m-list li:nth-of-type(1)').classList.contains('m-expanded'))) {
@@ -37,5 +37,5 @@ module.exports = async ({popup, advanced, content}) => {
   // content
   await content.bringToFront()
   await content.goto('about:blank')
-  await content.waitFor(300)
+  await content.waitForTimeout(300)
 }
