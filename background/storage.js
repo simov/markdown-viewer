@@ -53,6 +53,7 @@ md.storage.defaults = (compilers) => {
       toc: false,
       mathjax: false,
       autoreload: false,
+      mermaid: false,
     },
     origins: {
       'file://': {
@@ -105,5 +106,8 @@ md.storage.migrations = (state) => {
   }
   if (state.remark.pedantic !== undefined) {
     delete state.remark.pedantic
+  }
+  if (state.content.mermaid === undefined) {
+    state.content.mermaid = false
   }
 }

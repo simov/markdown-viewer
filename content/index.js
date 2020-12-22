@@ -98,6 +98,21 @@ function mount () {
               src: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js'
             }))
           }
+          if (state.content.mermaid) {
+            dom.push(m('script', {
+              src: 'https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.8.4/mermaid.min.js'
+            }))
+            dom.push(m('script', {type: 'text/javascript'}, `
+              ;(() => {
+                var timeout = setInterval(() => {
+                  if (!!(mermaid && mermaid.init)) {
+                    clearInterval(timeout)
+                    mermaid.init({}, 'code.language-mmd, code.language-mermaid')
+                  }
+                }, 50)
+              })()
+            `))
+          }
         }
       }
 

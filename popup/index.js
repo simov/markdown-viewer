@@ -18,6 +18,7 @@ var state = {
       scroll: 'Remember scroll position',
       toc: 'Generate Table of Contents',
       mathjax: 'Render MathJax formulas',
+      mermaid: 'Mermaid diagrams',
     }
   }
 }
