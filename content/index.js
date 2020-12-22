@@ -95,7 +95,7 @@ function mount () {
           if (state.content.mathjax) {
             dom.push(m('script', {type: 'text/x-mathjax-config'}, mathjax))
             dom.push(m('script', {
-              src: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js'
+              src: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js'
             }))
           }
           if (state.content.mermaid) {
