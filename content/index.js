@@ -4,6 +4,7 @@ var $ = document.querySelector.bind(document)
 var state = {
   theme,
   raw,
+  themes,
   content,
   compiler,
   html: '',
@@ -19,6 +20,10 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
   }
   else if (req.message === 'theme') {
     state.theme = req.theme
+    m.redraw()
+  }
+  else if (req.message === 'themes') {
+    state.themes = req.themes
     m.redraw()
   }
   else if (req.message === 'raw') {
@@ -78,12 +83,14 @@ function mount () {
         if (state.theme) {
           dom.push(m('link#_theme', {
             rel: 'stylesheet', type: 'text/css',
-            href: state.theme.url,
+            href: chrome.runtime.getURL(`/themes/${state.theme}.css`),
           }))
         }
         if (state.html) {
           dom.push(m('#_html', {oncreate: oncreate.html,
-            class: /github(-dark)?/.test(state.theme.name) ? 'markdown-body' : 'markdown-theme'},
+            class: (/github(-dark)?/.test(state.theme) ? 'markdown-body' : 'markdown-theme') +
+            (state.themes.wide ? ' wide-theme' : '')
+          },
             m.trust(state.html)
           ))
           if (state.content.toc && state.toc) {

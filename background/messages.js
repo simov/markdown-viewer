@@ -45,6 +45,11 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, xhr, webreq
       notifyContent({message: 'raw', raw: req.raw})
       sendResponse()
     }
+    else if (req.message === 'popup.themes') {
+      set({themes: req.themes})
+      notifyContent({message: 'themes', themes: req.themes})
+      sendResponse()
+    }
     else if (req.message === 'popup.defaults') {
       var options = Object.assign({}, defaults)
       options.origins = state.origins
@@ -89,11 +94,6 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, xhr, webreq
         match: state.match,
       })
     }
-    else if (req.message === 'options.themes') {
-      sendResponse({
-        themes: state.themes,
-      })
-    }
     else if (req.message === 'options.header') {
       set({header: req.header})
       sendResponse()
@@ -119,33 +119,6 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, xhr, webreq
       state.origins[req.origin] = req.options
       set({origins: state.origins})
       webrequest()
-      sendResponse()
-    }
-
-    // themes
-    else if (req.message === 'themes') {
-      set({themes: req.themes})
-
-      ;(() => {
-        var defaults = chrome.runtime.getManifest().web_accessible_resources
-          .filter((file) => file.indexOf('/themes/') === 0)
-          .map((file) => file.replace(/\/themes\/(.*)\.css/, '$1'))
-        var custom = state.themes.map(({name}) => name)
-        var all = custom.concat(defaults)
-
-        if (!all.includes(state.theme.name)) {
-          var theme = {
-            name: 'github',
-            url: chrome.runtime.getURL('/themes/github.css')
-          }
-          set({theme})
-        }
-        else if (custom.includes(state.theme.name)) {
-          var theme = state.themes.find(({name}) => state.theme.name === name)
-          set({theme})
-        }
-      })()
-
       sendResponse()
     }
 

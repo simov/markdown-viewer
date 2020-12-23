@@ -39,14 +39,14 @@ md.storage.defaults = (compilers) => {
   var match = '\\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\\?.*)?$'
 
   var defaults = {
-    theme: {
-      name: 'github',
-      url: chrome.runtime.getURL('/themes/github.css')
-    },
+    theme: 'github',
     compiler: 'marked',
     raw: false,
     header: true,
     match,
+    themes: {
+      wide: false,
+    },
     content: {
       emoji: false,
       scroll: true,
@@ -62,7 +62,6 @@ md.storage.defaults = (compilers) => {
         encoding: '',
       }
     },
-    themes: [],
   }
 
   Object.keys(compilers).forEach((compiler) => {
@@ -109,5 +108,11 @@ md.storage.migrations = (state) => {
   }
   if (state.content.mermaid === undefined) {
     state.content.mermaid = false
+  }
+  if (state.themes === undefined || state.themes instanceof Array) {
+    state.themes = {wide: false}
+  }
+  if (typeof state.theme === 'object') {
+    state.theme = state.theme.name
   }
 }

@@ -53,6 +53,22 @@ pre#_markdown {
   .markdown-theme { width: 1145px !important; }
 }
 
+/*100% width*/
+.wide-theme {
+  box-sizing: border-box;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 100% !important;
+  border: none;
+  padding: 20px !important;
+  margin: 0 !important;
+}
+
+/*mermaid text bold effect*/
+svg[id^=mermaid] text {
+  stroke: none !important;
+}
+
 /*toc*/
 body {
   display: flex;

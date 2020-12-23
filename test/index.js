@@ -17,7 +17,6 @@ var tests = [
   'defaults-options',
 
   'popup-options',
-  // 'custom-themes',
 
   'origin-add',
   'origin-match',

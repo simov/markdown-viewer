@@ -1,13 +1,10 @@
 
 var origins = Origins()
-var themes = Themes()
 
 m.mount(document.querySelector('main'), {
   view: () => [
     // allowed origins
     origins.render(),
-    // custom themes
-    // themes.render(),
   ]
 })
 
