@@ -112,7 +112,7 @@ function mount () {
             dom.push(m('script', {type: 'text/javascript'}, `
               ;(() => {
                 var timeout = setInterval(() => {
-                  if (!!(mermaid && mermaid.init)) {
+                  if (!!(window.mermaid && mermaid.init)) {
                     clearInterval(timeout)
                     mermaid.init({}, 'code.language-mmd, code.language-mermaid')
                   }
@@ -130,19 +130,43 @@ function mount () {
 
 var scroll = (() => {
   function race (done) {
-    var images = Array.from(document.querySelectorAll('img'))
-    if (!images.length) {
-      done()
-    }
-    var loaded = 0
-    images.forEach((img) => {
-      img.addEventListener('load', () => {
-        if (++loaded === images.length) {
-          done()
-        }
-      }, {once: true})
-    })
-    setTimeout(done, 100)
+    Promise.race([
+      Promise.all([
+        new Promise((resolve) => {
+          var diagrams = Array.from(document.querySelectorAll('code.language-mmd, code.language-mermaid'))
+          if (!state.content.mermaid || !diagrams.length) {
+            resolve()
+          }
+          else {
+            var timeout = setInterval(() => {
+              var svg = Array.from(document.querySelectorAll('code.language-mmd svg, code.language-mermaid svg'))
+              if (diagrams.length === svg.length) {
+                clearInterval(timeout)
+                resolve()
+              }
+            }, 50)
+          }
+        }),
+        new Promise((resolve) => {
+          var images = Array.from(document.querySelectorAll('img'))
+          if (!images.length) {
+            resolve()
+          }
+          else {
+            var loaded = 0
+            images.forEach((img) => {
+              img.addEventListener('load', () => {
+                if (++loaded === images.length) {
+                  resolve()
+                }
+              }, {once: true})
+            })
+          }
+        }),
+      ]),
+      new Promise((resolve) => setTimeout(resolve, 500))
+    ])
+    .then(done)
   }
   function debounce (container, done) {
     var listener = /body/i.test(container.nodeName) ? window : container
