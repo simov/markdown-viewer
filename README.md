@@ -1,7 +1,7 @@
 
 # Markdown Viewer / Browser Extension
 
-**Install: [Chrome]** / **[Firefox]** / **[Opera]** / **Donate: [PayPal]**
+**Install: [Chrome]** / **[Firefox]** / **[Opera]**
 
 
 # Features
@@ -16,6 +16,7 @@
 - Syntax highlighted code blocks ([prism][prism])
 - Table of Contents (TOC)
 - [MathJax][mathjax] support
+- [Mermaid][mermaid] support
 - Emoji support (Icons provided free by [EmojiOne][emojione])
 - Remembers scroll position
 - Markdown Content-Type detection
@@ -83,10 +84,8 @@ Option          | Default | Description
 Option          | Default | Description
 :---            | :---    | :---
 **breaks**      | `false` | Enable GFM [line breaks][gfm]. This option requires the gfm option to be true.
-**commonmark**  | `false` | Toggle CommonMark mode.
 **footnotes**   | `false` | Toggle reference footnotes and inline footnotes.
 **gfm**         | `true`  | Enable GFM [GitHub Flavored Markdown][gfm].
-**pedantic**    | `false` | Conform to obscure parts of markdown.pl as much as possible. Don't fix any of the original markdown bugs or poor behavior.
 **sanitize**    | `false` | Sanitize the output. Ignore any HTML that has been input.
 
 
@@ -97,6 +96,7 @@ Option          | Default | Description
 **autoreload**  | `false` | Auto reload on file change
 **toc**         | `false` | Generate Table of Contents
 **mathjax**     | `false` | Render TeX and LaTeX math blocks
+**mermaid**     | `false` | Render Mermaid diagrams
 **emoji**       | `false` | Convert emoji :shortnames: into EmojiOne images
 **scroll**      | `true`  | Remember scroll position
 
@@ -128,6 +128,14 @@ The following rules apply to your content when `mathjax` is enabled:
 
 > The MathJax support currently works only on local file URLs and remote origins without strict *Content Security Policy (CSP)* set. For example it won't work for files hosted on the GitHub's `raw.githubusercontent.com` origin. However you can bypass this by enabling the [Disable CSP](#disable-content-security-policy) switch for that origin.
 
+
+## Mermaid
+
+Render Mermaid diagrams wrapped in `mmd` or `mermaid` fenced code blocks:
+
+    ```mmd
+    sequenceDiagram
+    ```
 
 ## Emoji
 
@@ -360,6 +368,7 @@ SOFTWARE.
   [chrome]: https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk
   [firefox]: https://addons.mozilla.org/en-US/firefox/addon/markdown-viewer-chrome/
   [opera]: #opera
+  [edge]: #edge
   [paypal]: https://www.paypal.me/simeonvelichkov
   [donate]: https://img.shields.io/badge/paypal-donate-blue.svg?style=flat-square (Donate on Paypal)
 
@@ -373,6 +382,7 @@ SOFTWARE.
 
   [emojione]: https://emojione.com
   [mathjax]: https://www.mathjax.org
+  [mermaid]: https://mermaid-js.github.io/mermaid/
   [gfm]: https://guides.github.com/features/mastering-markdown/#GitHub-flavored-markdown
   [themes0]: https://github.com/sindresorhus/github-markdown-css
   [themes1]: https://github.com/jasonm23/markdown-css-themes
