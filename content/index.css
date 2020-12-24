@@ -14,13 +14,13 @@ pre#_markdown {
 .markdown-body {
   overflow: auto;
 
-  min-width: 882px;
-  max-width: 882px;
+  min-width: 838px;
+  max-width: 838px;
 
   background-color: #fff;
-  border: 1px solid #ddd;
+  border: 1px solid #e1e4e8;
 
-  padding: 48px;
+  padding: 32px;
   margin: 20px auto;
 }
 .markdown-body #_html>*:first-child {
@@ -51,6 +51,22 @@ pre#_markdown {
 }
 @media (min-width: 1200px) {
   .markdown-theme { width: 1145px !important; }
+}
+
+/*100% width*/
+.wide-theme {
+  box-sizing: border-box;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 100% !important;
+  border: none;
+  padding: 20px !important;
+  margin: 0 !important;
+}
+
+/*mermaid text bold effect*/
+svg[id^=mermaid] text {
+  stroke: none !important;
 }
 
 /*toc*/

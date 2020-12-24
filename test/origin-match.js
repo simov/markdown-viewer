@@ -24,13 +24,13 @@ module.exports = ({popup, advanced, content}) => {
         document.querySelector('.m-list li:nth-of-type(1) input').dispatchEvent(new Event('keyup'))
       })
       // there is debounce timeout of 750ms in the options UI
-      await advanced.waitFor(800)
+      await advanced.waitForTimeout(800)
     })
     it('text/markdown', async () => {
       // go to page serving markdown as text/markdown
       await content.goto('http://localhost:3000/correct-content-type')
       await content.bringToFront()
-      await content.waitFor(300)
+      await content.waitForTimeout(300)
 
       t.equal(
         await content.evaluate(() =>
@@ -57,13 +57,13 @@ module.exports = ({popup, advanced, content}) => {
         document.querySelector('.m-list li:nth-of-type(1) input').dispatchEvent(new Event('keyup'))
       })
       // there is debounce timeout of 750ms in the options UI
-      await advanced.waitFor(800)
+      await advanced.waitForTimeout(800)
     })
     it('text/markdown', async () => {
       // go to page serving markdown as text/markdown
       await content.goto('http://localhost:3000/correct-content-type')
       await content.bringToFront()
-      await content.waitFor(300)
+      await content.waitForTimeout(300)
 
       t.equal(
         await content.evaluate(() =>
@@ -77,7 +77,7 @@ module.exports = ({popup, advanced, content}) => {
       // go to page serving markdown as text/x-markdown
       await content.goto('http://localhost:3000/correct-content-type-variation')
       await content.bringToFront()
-      await content.waitFor(300)
+      await content.waitForTimeout(300)
 
       t.equal(
         await content.evaluate(() =>
@@ -104,14 +104,14 @@ module.exports = ({popup, advanced, content}) => {
         document.querySelector('.m-list li:nth-of-type(1) input').dispatchEvent(new Event('keyup'))
       })
       // there is debounce timeout of 750ms in the options UI
-      await advanced.waitFor(800)
+      await advanced.waitForTimeout(800)
     })
 
     it('text/plain', async () => {
       // go to page serving markdown as text/plain
       await content.goto('http://localhost:3000/wrong-content-type')
       await content.bringToFront()
-      await content.waitFor(300)
+      await content.waitForTimeout(300)
 
       t.equal(
         await content.evaluate(() =>

@@ -4,6 +4,7 @@ var $ = document.querySelector.bind(document)
 var state = {
   theme,
   raw,
+  themes,
   content,
   compiler,
   html: '',
@@ -19,6 +20,10 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
   }
   else if (req.message === 'theme') {
     state.theme = req.theme
+    m.redraw()
+  }
+  else if (req.message === 'themes') {
+    state.themes = req.themes
     m.redraw()
   }
   else if (req.message === 'raw') {
@@ -78,12 +83,14 @@ function mount () {
         if (state.theme) {
           dom.push(m('link#_theme', {
             rel: 'stylesheet', type: 'text/css',
-            href: state.theme.url,
+            href: chrome.runtime.getURL(`/themes/${state.theme}.css`),
           }))
         }
         if (state.html) {
           dom.push(m('#_html', {oncreate: oncreate.html,
-            class: /github(-dark)?/.test(state.theme.name) ? 'markdown-body' : 'markdown-theme'},
+            class: (/github(-dark)?/.test(state.theme) ? 'markdown-body' : 'markdown-theme') +
+            (state.themes.wide ? ' wide-theme' : '')
+          },
             m.trust(state.html)
           ))
           if (state.content.toc && state.toc) {
@@ -95,8 +102,23 @@ function mount () {
           if (state.content.mathjax) {
             dom.push(m('script', {type: 'text/x-mathjax-config'}, mathjax))
             dom.push(m('script', {
-              src: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js'
+              src: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js'
             }))
+          }
+          if (state.content.mermaid) {
+            dom.push(m('script', {
+              src: 'https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.8.4/mermaid.min.js'
+            }))
+            dom.push(m('script', {type: 'text/javascript'}, `
+              ;(() => {
+                var timeout = setInterval(() => {
+                  if (!!(window.mermaid && mermaid.init)) {
+                    clearInterval(timeout)
+                    mermaid.init({}, 'code.language-mmd, code.language-mermaid')
+                  }
+                }, 50)
+              })()
+            `))
           }
         }
       }
@@ -108,22 +130,46 @@ function mount () {
 
 var scroll = (() => {
   function race (done) {
-    var images = Array.from(document.querySelectorAll('img'))
-    if (!images.length) {
-      done()
-    }
-    var loaded = 0
-    images.forEach((img) => {
-      img.addEventListener('load', () => {
-        if (++loaded === images.length) {
-          done()
-        }
-      }, {once: true})
-    })
-    setTimeout(done, 100)
+    Promise.race([
+      Promise.all([
+        new Promise((resolve) => {
+          var diagrams = Array.from(document.querySelectorAll('code.language-mmd, code.language-mermaid'))
+          if (!state.content.mermaid || !diagrams.length) {
+            resolve()
+          }
+          else {
+            var timeout = setInterval(() => {
+              var svg = Array.from(document.querySelectorAll('code.language-mmd svg, code.language-mermaid svg'))
+              if (diagrams.length === svg.length) {
+                clearInterval(timeout)
+                resolve()
+              }
+            }, 50)
+          }
+        }),
+        new Promise((resolve) => {
+          var images = Array.from(document.querySelectorAll('img'))
+          if (!images.length) {
+            resolve()
+          }
+          else {
+            var loaded = 0
+            images.forEach((img) => {
+              img.addEventListener('load', () => {
+                if (++loaded === images.length) {
+                  resolve()
+                }
+              }, {once: true})
+            })
+          }
+        }),
+      ]),
+      new Promise((resolve) => setTimeout(resolve, 500))
+    ])
+    .then(done)
   }
   function debounce (container, done) {
-    var listener = /body/i.test(container.nodeName) ? window : container
+    var listener = /html/i.test(container.nodeName) ? window : container
     var timeout = null
     listener.addEventListener('scroll', () => {
       clearTimeout(timeout)
@@ -154,10 +200,10 @@ var scroll = (() => {
         if (!loaded) {
           loaded = true
           if (state.content.scroll) {
-            listen($('body'), 'md-')
+            listen($('html'), 'md-')
           }
           else if (location.hash && $(location.hash)) {
-            $('body').scrollTop = $(location.hash).offsetTop
+            $('html').scrollTop = $(location.hash).offsetTop
           }
         }
       })
@@ -213,26 +259,46 @@ if (state.content.autoreload) {
   ;(() => {
     var initial = ''
 
+    var response = (body) => {
+      if (!initial) {
+        initial = body
+      }
+      else if (initial !== body) {
+        location.reload(true)
+      }
+    }
+
     var xhr = new XMLHttpRequest()
     xhr.onreadystatechange = () => {
       if (xhr.readyState === 4) {
-        if (!initial) {
-          initial = xhr.responseText
-        }
-        else if (initial !== xhr.responseText) {
-          location.reload(true)
-        }
+        response(xhr.responseText)
       }
     }
 
     var get = () => {
-      xhr.open('GET', location.href + '?preventCache=' + Date.now(), true)
-      try {
-        xhr.send()
+      if (location.protocol === 'file:') {
+        chrome.runtime.sendMessage({
+          message: 'autoreload',
+          location: location.href
+        }, (res) => {
+          if (res.err) {
+            console.error(res.err)
+            clearInterval(state.interval)
+          }
+          else {
+            response(res.body)
+          }
+        })
       }
-      catch (err) {
-        console.error(err)
-        clearInterval(state.interval)
+      else {
+        xhr.open('GET', location.href + '?preventCache=' + Date.now(), true)
+        try {
+          xhr.send()
+        }
+        catch (err) {
+          console.error(err)
+          clearInterval(state.interval)
+        }
       }
     }
 

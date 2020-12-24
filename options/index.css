@@ -237,31 +237,6 @@ footer .icon-hidden {
 }
 
 
-/*add theme*/
-.m-add-theme:after { content: ''; display: block; clear: both; }
-.m-add-theme h4 {
-  float: left;
-  padding: 0 80px 0 0;
-}
-.m-add-theme .m-textfield {
-  height: auto !important;
-  padding: 0 !important;
-  margin: 0 10px !important;
-}
-.m-add-theme .m-textfield input {
-  padding-top: 3px;
-}
-.m-add-theme .m-name {
-  width: 270px;
-}
-.m-add-theme .m-url {
-  width: 500px;
-}
-.m-add-theme button {
-  float: right;
-}
-
-
 /*global*/
 .m-global {
   margin: 20px 0 0 0;
@@ -400,15 +375,6 @@ footer .icon-hidden {
   margin: 6px 0 0 25px;
 }
 
-/*list options - themes*/
-
-.m-list .m-content .m-option.m-theme .m-control {
-  width: 80%;
-  margin: 0 0 0 15px;
-}
-.m-list .m-content .m-option.m-theme .m-textfield {
-  width: 80%;
-}
 
 /*list footer*/
 

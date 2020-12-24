@@ -4,13 +4,16 @@ var state = {
   options: {},
   content: {},
   theme: '',
-  themes: [],
-  custom: [],
+  themes: {},
+  _themes: [],
   raw: false,
   tab: '',
   tabs: ['theme', 'compiler', 'content'],
   compilers: [],
   description: {
+    themes: {
+      wide: '100% width',
+    },
     compiler: {},
     content: {
       autoreload: 'Auto reload on file change',
@@ -18,6 +21,7 @@ var state = {
       scroll: 'Remember scroll position',
       toc: 'Generate Table of Contents',
       mathjax: 'Render MathJax formulas',
+      mermaid: 'Mermaid diagrams',
     }
   }
 }
@@ -57,17 +61,16 @@ var events = {
     })
   },
 
+  themes: (e) => {
+    state.themes[e.target.name] = !state.themes[e.target.name]
+    chrome.runtime.sendMessage({
+      message: 'popup.themes',
+      themes: state.themes,
+    })
+  },
+
   theme: (e) => {
-    var name = state.themes[e.target.selectedIndex]
-
-    var defaults = chrome.runtime.getManifest().web_accessible_resources
-      .filter((file) => file.indexOf('/themes/') === 0)
-      .map((file) => file.replace(/\/themes\/(.*)\.css/, '$1'))
-
-    state.theme = defaults.includes(name)
-      ? {name, url: chrome.runtime.getURL(`/themes/${name}.css`)}
-      : state.custom.find((theme) => theme.name === name)
-
+    state.theme = state._themes[e.target.selectedIndex]
     chrome.runtime.sendMessage({
       message: 'popup.theme',
       theme: state.theme
@@ -102,12 +105,11 @@ var init = (res) => {
   state.options = res.options
   state.content = res.content
   state.theme = res.theme
+  state.themes = res.themes
 
-  state.custom = res.themes
-  state.themes = res.themes.map(({name}) => name).concat(
-    chrome.runtime.getManifest().web_accessible_resources
-      .filter((file) => file.indexOf('/themes/') === 0)
-      .map((file) => file.replace(/\/themes\/(.*)\.css/, '$1')))
+  state._themes = chrome.runtime.getManifest().web_accessible_resources
+    .filter((file) => file.indexOf('/themes/') === 0)
+    .map((file) => file.replace(/\/themes\/(.*)\.css/, '$1'))
 
   state.raw = res.raw
   state.tab = localStorage.getItem('tab') || 'theme'
@@ -180,9 +182,24 @@ m.mount(document.querySelector('body'), {
           m('select.mdc-elevation--z2 m-select', {
             onchange: events.theme
             },
-            state.themes.map((theme) =>
-              m('option', {selected: state.theme.name === theme}, theme)
+            state._themes.map((theme) =>
+              m('option', {selected: state.theme === theme}, theme)
             )
+          ),
+          m('.scroll', Object.keys(state.themes).map((key) =>
+            m('label.mdc-switch m-switch', {
+              onupdate: onupdate('themes', key),
+              title: state.description.themes[key]
+              },
+              m('input.mdc-switch__native-control', {
+                type: 'checkbox',
+                name: key,
+                checked: state.themes[key],
+                onchange: events.themes
+              }),
+              m('.mdc-switch__background', m('.mdc-switch__knob')),
+              m('span.mdc-switch-label', key)
+            ))
           )
         ),
         // compiler

@@ -21,7 +21,7 @@ module.exports = ({popup, advanced, content}) => {
       // go to page serving markdown as text/markdown
       await content.goto('http://localhost:3000/correct-content-type')
       await content.bringToFront()
-      await content.waitFor(300)
+      await content.waitForTimeout(300)
 
       t.equal(
         await content.evaluate(() =>
@@ -52,10 +52,11 @@ module.exports = ({popup, advanced, content}) => {
 
     it('display raw markdown', async () => {
       // raw button
-      await content.bringToFront()
+      await popup.bringToFront()
       await popup.click('button:nth-of-type(1)')
-      // content auto reloads
-      await content.waitFor(300)
+      // content auto reloads, but there is no way to have both tabs active
+      await content.bringToFront()
+      await content.reload()
 
       t.equal(
         await content.evaluate(() =>
@@ -99,7 +100,7 @@ module.exports = ({popup, advanced, content}) => {
       // go to page serving markdown as text/markdown
       await content.goto('http://localhost:3000/correct-content-type')
       await content.bringToFront()
-      await content.waitFor(300)
+      await content.waitForTimeout(300)
 
       t.strictEqual(
         await content.evaluate(() =>
@@ -114,10 +115,11 @@ module.exports = ({popup, advanced, content}) => {
 
     it('set github-dark theme', async () => {
       // select github-dark theme
-      await content.bringToFront()
+      await popup.bringToFront()
       await popup.select('.m-panel:nth-of-type(1) select', 'github-dark')
-      // content auto reloads
-      await content.waitFor(300)
+      // content auto reloads, but there is no way to have both tabs active
+      await content.bringToFront()
+      await content.reload()
 
       t.strictEqual(
         await content.evaluate(() =>
@@ -134,14 +136,14 @@ module.exports = ({popup, advanced, content}) => {
       // reload popup
       await popup.bringToFront()
       await popup.reload()
-      await popup.waitFor(300)
+      await popup.waitForTimeout(300)
 
       t.equal(
         await popup.evaluate(() =>
-          state.theme.name
+          state.theme
         ),
         'github-dark',
-        'state.theme.name should equal github-dark'
+        'state.theme should equal github-dark'
       )
       t.equal(
         await popup.evaluate(() =>
@@ -169,7 +171,7 @@ module.exports = ({popup, advanced, content}) => {
       // go to page serving markdown as text/markdown
       await content.goto('http://localhost:3000/compiler-options-marked')
       await content.bringToFront()
-      await content.waitFor(300)
+      await content.waitForTimeout(300)
 
       t.equal(
         await content.evaluate(() =>
@@ -182,11 +184,13 @@ module.exports = ({popup, advanced, content}) => {
 
     it('gfm is disabled', async () => {
       // disable gfm
-      await content.bringToFront()
+      await popup.bringToFront()
       // gfm switch
       await popup.click('.m-panel:nth-of-type(2) .m-switch:nth-of-type(2)')
-      // content auto reloads
-      await content.waitFor(300)
+      // content auto reloads, but there is no way to have both tabs active
+      await content.bringToFront()
+      await content.reload()
+      await content.waitForTimeout(300)
 
       t.equal(
         await content.evaluate(() =>
@@ -201,7 +205,7 @@ module.exports = ({popup, advanced, content}) => {
       // reload popup
       await popup.bringToFront()
       await popup.reload()
-      await popup.waitFor(300)
+      await popup.waitForTimeout(300)
 
       t.equal(
         await popup.evaluate(() =>
@@ -243,7 +247,7 @@ module.exports = ({popup, advanced, content}) => {
       // go to page serving markdown as text/markdown
       await content.goto('http://localhost:3000/compiler-options-remark')
       await content.bringToFront()
-      await content.waitFor(300)
+      await content.waitForTimeout(300)
 
       t.equal(
         await content.evaluate(() =>
@@ -270,10 +274,12 @@ module.exports = ({popup, advanced, content}) => {
 
     it('remark should render gfm task lists by default', async () => {
       // select remark compiler
-      await content.bringToFront()
+      await popup.bringToFront()
       await popup.select('.m-panel:nth-of-type(2) select', 'remark')
-      // content auto reloads
-      await content.waitFor(300)
+      // content auto reloads, but there is no way to have both tabs active
+      await content.bringToFront()
+      await content.reload()
+      await content.waitForTimeout(300)
 
       t.equal(
         await content.evaluate(() =>
@@ -302,14 +308,14 @@ module.exports = ({popup, advanced, content}) => {
       // redraw popup
       await popup.bringToFront()
       await popup.reload()
-      await popup.waitFor(300)
+      await popup.waitForTimeout(300)
 
-      // disable gfm
-      await content.bringToFront()
-      // gfm switch
+      // disable gfm - gfm switch
       await popup.click('.m-panel:nth-of-type(2) .m-switch[title~=GFM]')
-      // content auto reloads
-      await content.waitFor(300)
+      // content auto reloads, but there is no way to have both tabs active
+      await content.bringToFront()
+      await content.reload()
+      await content.waitForTimeout(300)
 
       t.equal(
         await content.evaluate(() =>
@@ -324,7 +330,7 @@ module.exports = ({popup, advanced, content}) => {
       // reload popup
       await popup.bringToFront()
       await popup.reload()
-      await popup.waitFor(300)
+      await popup.waitForTimeout(300)
 
       t.equal(
         await popup.evaluate(() =>
@@ -366,7 +372,7 @@ module.exports = ({popup, advanced, content}) => {
       // go to page serving markdown as text/markdown
       await content.goto('http://localhost:3000/content-options-toc')
       await content.bringToFront()
-      await content.waitFor(300)
+      await content.waitForTimeout(300)
 
       t.strictEqual(
         await content.evaluate(() =>
@@ -379,11 +385,13 @@ module.exports = ({popup, advanced, content}) => {
 
     it('enable toc', async () => {
       // enable toc
-      await content.bringToFront()
+      await popup.bringToFront()
       // toc switch
       await popup.click('.m-panel:nth-of-type(3) .m-switch:nth-of-type(3)')
-      // content auto reloads
-      await content.waitFor(300)
+      // content auto reloads, but there is no way to have both tabs active
+      await content.bringToFront()
+      await content.reload()
+      await content.waitForTimeout(300)
 
       t.deepStrictEqual(
         await content.evaluate(() =>
@@ -414,21 +422,21 @@ module.exports = ({popup, advanced, content}) => {
       // go to page serving markdown as text/markdown
       await content.goto('http://localhost:3000/content-options-scroll')
       await content.bringToFront()
-      await content.waitFor(300)
+      await content.waitForTimeout(300)
 
       // scroll down 200px
       await content.evaluate(() =>
-        document.querySelector('body').scrollTop = 200
+        document.querySelector('html').scrollTop = 200
       )
-      await content.waitFor(300)
+      await content.waitForTimeout(300)
 
       // reload page
       await content.reload()
-      await content.waitFor(300)
+      await content.waitForTimeout(300)
 
       t.strictEqual(
         await content.evaluate(() =>
-          document.querySelector('body').scrollTop,
+          document.querySelector('html').scrollTop,
         ),
         200,
         'scrollTop should be 200px'
@@ -437,15 +445,17 @@ module.exports = ({popup, advanced, content}) => {
 
     it('scroll to top', async () => {
       // disable scroll option
-      await content.bringToFront()
+      await popup.bringToFront()
       // scroll switch
       await popup.click('.m-panel:nth-of-type(3) .m-switch:nth-of-type(2)')
-      // content auto reloads
-      await content.waitFor(300)
+      // content auto reloads, but there is no way to have both tabs active
+      await content.bringToFront()
+      await content.reload()
+      await content.waitForTimeout(300)
 
       t.strictEqual(
         await content.evaluate(() =>
-          document.querySelector('body').scrollTop,
+          document.querySelector('html').scrollTop,
         ),
         0,
         'scrollTop should be 0px'
@@ -453,17 +463,17 @@ module.exports = ({popup, advanced, content}) => {
 
       // scroll down 200px
       await content.evaluate(() =>
-        document.querySelector('body').scrollTop = 200
+        document.querySelector('html').scrollTop = 200
       )
-      await content.waitFor(300)
+      await content.waitForTimeout(300)
 
       // reload page
       await content.reload()
-      await content.waitFor(300)
+      await content.waitForTimeout(300)
 
       t.strictEqual(
         await content.evaluate(() =>
-          document.querySelector('body').scrollTop,
+          document.querySelector('html').scrollTop,
         ),
         0,
         'scrollTop should be 0px'
@@ -473,11 +483,11 @@ module.exports = ({popup, advanced, content}) => {
     it('scroll to anchor', async () => {
       // click on header link
       await content.click('h2 a')
-      await content.waitFor(300)
+      await content.waitForTimeout(300)
 
       t.strictEqual(
         await content.evaluate(() =>
-          document.querySelector('body').scrollTop + 1
+          document.querySelector('html').scrollTop + 1
         ),
         await content.evaluate(() =>
           document.querySelector('h2').offsetTop
@@ -487,13 +497,13 @@ module.exports = ({popup, advanced, content}) => {
 
       // scroll down 200px
       await content.evaluate(() =>
-        document.querySelector('body').scrollTop += 200
+        document.querySelector('html').scrollTop += 200
       )
-      await content.waitFor(300)
+      await content.waitForTimeout(300)
 
       t.strictEqual(
         await content.evaluate(() =>
-          document.querySelector('body').scrollTop + 1
+          document.querySelector('html').scrollTop + 1
         ),
         await content.evaluate(() =>
           document.querySelector('h2').offsetTop + 200
@@ -503,11 +513,11 @@ module.exports = ({popup, advanced, content}) => {
 
       // reload page
       await content.reload()
-      await content.waitFor(300)
+      await content.waitForTimeout(300)
 
       t.strictEqual(
         await content.evaluate(() =>
-          document.querySelector('body').scrollTop
+          document.querySelector('html').scrollTop
         ),
         await content.evaluate(() =>
           document.querySelector('h2').offsetTop
@@ -528,19 +538,21 @@ module.exports = ({popup, advanced, content}) => {
 
       await content.goto('about:blank')
       await content.bringToFront()
-      await content.waitFor(300)
+      await content.waitForTimeout(300)
 
       // go to test page
       await content.goto('http://localhost:3000/popup-autoreload')
       await content.bringToFront()
-      await content.waitFor(300)
+      await content.waitForTimeout(300)
 
       // enable autoreload
-      await content.bringToFront()
+      await popup.bringToFront()
       // autoreload switch
       await popup.click('.m-panel:nth-of-type(3) .m-switch:nth-of-type(5)')
-      // content auto reloads
-      await content.waitFor(300)
+      // content auto reloads, but there is no way to have both tabs active
+      await content.bringToFront()
+      await content.reload()
+      await content.waitForTimeout(300)
 
       // TODO: wait for https://github.com/GoogleChrome/puppeteer/pull/2812
       // update autoreload interval
@@ -556,7 +568,7 @@ module.exports = ({popup, advanced, content}) => {
         'first request'
       )
       // the initial interval is 1000
-      await content.waitFor(1300)
+      await content.waitForTimeout(1300)
 
       t.equal(
         await content.evaluate(() =>
@@ -566,7 +578,7 @@ module.exports = ({popup, advanced, content}) => {
         'second request - xhr body is UTF-8 - should not trigger reload'
       )
       // the initial interval is 1000
-      await content.waitFor(1300)
+      await content.waitForTimeout(1300)
 
       t.equal(
         await content.evaluate(() =>
@@ -579,7 +591,7 @@ module.exports = ({popup, advanced, content}) => {
       // popup
       await popup.bringToFront()
       // the initial interval is 1000
-      await content.waitFor(1300)
+      await content.waitForTimeout(1300)
       await content.bringToFront()
       t.equal(
         await content.evaluate(() =>

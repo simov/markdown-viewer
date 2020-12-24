@@ -5,6 +5,7 @@
   var detect = md.detect({storage, inject})
   var webrequest = md.webrequest({storage, detect})
   var mathjax = md.mathjax()
+  var xhr = md.xhr()
 
   var compilers = Object.keys(md.compilers)
     .reduce((all, compiler) => (
@@ -12,7 +13,7 @@
       all
     ), {})
 
-  var messages = md.messages({storage, compilers, mathjax, webrequest})
+  var messages = md.messages({storage, compilers, mathjax, xhr, webrequest})
 
   chrome.tabs.onUpdated.addListener(detect.tab)
   chrome.runtime.onMessage.addListener(messages)

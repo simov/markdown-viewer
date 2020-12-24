@@ -6,6 +6,7 @@ md.inject = ({storage: {state}}) => (id) => {
       document.querySelector('pre').style.visibility = 'hidden'
       var theme = ${JSON.stringify(state.theme)}
       var raw = ${state.raw}
+      var themes = ${JSON.stringify(state.themes)}
       var content = ${JSON.stringify(state.content)}
       var compiler = '${state.compiler}'
     `,

@@ -20,3 +20,4 @@ npx csso --input ../markdown-themes/solarized-dark.css --output themes/solarized
 npx csso --input ../markdown-themes/solarized-light.css --output themes/solarized-light.css
 npx csso --input ../markdown-themes/torpedo.css --output themes/torpedo.css
 npx csso --input ../markdown-themes/vostok.css --output themes/vostok.css
+node build/themes/fix-github.js

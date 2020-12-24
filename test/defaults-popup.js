@@ -55,10 +55,10 @@ module.exports = ({popup}) => {
   it('tab - theme', async () => {
     t.equal(
       await popup.evaluate(() =>
-        state.theme.name
+        state.theme
       ),
       'github',
-      'state.theme.name should equal github'
+      'state.theme should equal github'
     )
     t.strictEqual(
       await popup.evaluate(() =>

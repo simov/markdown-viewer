@@ -1,8 +1,9 @@
 
-md.messages = ({storage: {defaults, state, set}, compilers, mathjax, webrequest}) => {
+md.messages = ({storage: {defaults, state, set}, compilers, mathjax, xhr, webrequest}) => {
 
   return (req, sender, sendResponse) => {
 
+    // content
     if (req.message === 'markdown') {
       var markdown = req.markdown
 
@@ -18,6 +19,11 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, webrequest}
       }
 
       sendResponse({message: 'html', html})
+    }
+    else if (req.message === 'autoreload') {
+      xhr.get(req.location, (err, body) => {
+        sendResponse({err, body})
+      })
     }
 
     // popup
@@ -37,6 +43,11 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, webrequest}
     else if (req.message === 'popup.raw') {
       set({raw: req.raw})
       notifyContent({message: 'raw', raw: req.raw})
+      sendResponse()
+    }
+    else if (req.message === 'popup.themes') {
+      set({themes: req.themes})
+      notifyContent({message: 'themes', themes: req.themes})
       sendResponse()
     }
     else if (req.message === 'popup.defaults') {
@@ -83,11 +94,6 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, webrequest}
         match: state.match,
       })
     }
-    else if (req.message === 'options.themes') {
-      sendResponse({
-        themes: state.themes,
-      })
-    }
     else if (req.message === 'options.header') {
       set({header: req.header})
       sendResponse()
@@ -116,32 +122,7 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, webrequest}
       sendResponse()
     }
 
-    // themes
-    else if (req.message === 'themes') {
-      set({themes: req.themes})
-
-      ;(() => {
-        var defaults = chrome.runtime.getManifest().web_accessible_resources
-          .filter((file) => file.indexOf('/themes/') === 0)
-          .map((file) => file.replace(/\/themes\/(.*)\.css/, '$1'))
-        var custom = state.themes.map(({name}) => name)
-        var all = custom.concat(defaults)
-
-        if (!all.includes(state.theme.name)) {
-          var theme = {
-            name: 'github',
-            url: chrome.runtime.getURL('/themes/github.css')
-          }
-          set({theme})
-        }
-        else if (custom.includes(state.theme.name)) {
-          var theme = state.themes.find(({name}) => state.theme.name === name)
-          set({theme})
-        }
-      })()
-
-      sendResponse()
-    }
+    return true
   }
 
   function notifyContent (req, res) {
