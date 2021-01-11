@@ -169,7 +169,7 @@ var scroll = (() => {
     .then(done)
   }
   function debounce (container, done) {
-    var listener = /html/i.test(container.nodeName) ? window : container
+    var listener = /html|body/i.test(container.nodeName) ? window : container
     var timeout = null
     listener.addEventListener('scroll', () => {
       clearTimeout(timeout)
@@ -199,11 +199,15 @@ var scroll = (() => {
       race(() => {
         if (!loaded) {
           loaded = true
+          var container = ((html = $('html')) => (
+            html.scrollTop = 1,
+            html.scrollTop ? (html.scrollTop = 0, html) : $('body')
+          ))()
           if (state.content.scroll) {
-            listen($('html'), 'md-')
+            listen(container, 'md-')
           }
           else if (location.hash && $(location.hash)) {
-            $('html').scrollTop = $(location.hash).offsetTop
+            container.scrollTop = $(location.hash).offsetTop
           }
         }
       })
