@@ -70,7 +70,7 @@
     "128": "/icons/icon128.png"
   },
 
-  "homepage_url": "https://addons.mozilla.org/en-US/firefox/addon/markdown-viewer-chrome/",
+  "homepage_url": "https://github.com/simov/markdown-viewer",
 
   "permissions": [
     "storage",
