@@ -1,7 +1,7 @@
 
 # Markdown Viewer / Browser Extension
 
-**Install: [Chrome]** / **[Firefox]** / **[Opera]**
+**Install: [Chrome]** / **[Firefox]** / **[Opera]** / **[Edge]**
 
 
 # Features
@@ -368,7 +368,7 @@ SOFTWARE.
   [chrome]: https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk
   [firefox]: https://addons.mozilla.org/en-US/firefox/addon/markdown-viewer-chrome/
   [opera]: #opera
-  [edge]: #edge
+  [edge]: https://microsoftedge.microsoft.com/addons/detail/markdown-viewer/cgfmehpekedojlmjepoimbfcafopimdg
   [paypal]: https://www.paypal.me/simeonvelichkov
   [donate]: https://img.shields.io/badge/paypal-donate-blue.svg?style=flat-square (Donate on Paypal)
 
