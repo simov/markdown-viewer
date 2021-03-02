@@ -330,6 +330,7 @@ var mathjax = `
         'AMSsymbols.js',
         'noErrors.js',
         'noUndefined.js',
+        'mediawiki-texvc.js',
       ]
     },
     tex2jax: {
