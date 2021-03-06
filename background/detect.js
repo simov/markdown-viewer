@@ -11,6 +11,29 @@ md.detect = ({storage: {state}, inject}) => {
     })
   `
 
+  var checkIsRichPage = `((function() {
+    var threshold = 5;
+    /* ^ Number of Element nodes required on the page for
+         it to be considered rich (i.e. not just markdown) */
+
+    var elements = [document.body];
+    var seen = 0;
+
+    loop:
+    while (seen < elements.length) {
+      var element = elements[seen];
+      for (let childI = 0; childI < element.childNodes.length; childI++) {
+        let child = element.childNodes[childI];
+        if (!(child instanceof Element)) continue;
+        elements.push(child);
+      }
+      seen++;
+      if (seen >= threshold) break loop;
+    }
+
+    return seen >= threshold;
+  })())`
+
   var tab = (id, info, tab) => {
     if (info.status === 'loading') {
       // try
@@ -39,7 +62,17 @@ md.detect = ({storage: {state}, inject}) => {
             chrome.tabs.reload(id)
           }
           else {
-            inject(id)
+            chrome.tabs.executeScript(id, {code: checkIsRichPage, runAt: 'document_end'}, (pageIsRichJson) => {
+              if (chrome.runtime.lastError) {
+                return
+              }
+
+              var pageIsRich = JSON.parse(pageIsRichJson)
+
+              if (!pageIsRich) {
+                inject(id)
+              }
+            })
           }
         }
       })
