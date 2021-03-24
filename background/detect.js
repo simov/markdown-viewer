@@ -22,8 +22,8 @@ md.detect = ({storage: {state}, inject}) => {
     loop:
     while (seen < elements.length) {
       var element = elements[seen];
-      for (let childI = 0; childI < element.childNodes.length; childI++) {
-        let child = element.childNodes[childI];
+      for (var childI = 0; childI < element.childNodes.length; childI++) {
+        var child = element.childNodes[childI];
         if (!(child instanceof Element)) continue;
         elements.push(child);
       }
