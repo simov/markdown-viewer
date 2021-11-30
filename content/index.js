@@ -107,7 +107,7 @@ function mount () {
           }
           if (state.content.mermaid) {
             dom.push(m('script', {
-              src: 'https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.8.4/mermaid.min.js'
+              src: 'https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.13.4/mermaid.min.js'
             }))
             dom.push(m('script', {type: 'text/javascript'}, `
               ;(() => {

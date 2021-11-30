@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name"            : "Markdown Viewer",
-  "version"         : "4.0",
+  "version"         : "4.1",
   "description"     : "Markdown Viewer",
 
   "browser_action": {
