@@ -72,7 +72,8 @@
 
   "permissions": [
     "storage",
-    "file:///*"
+    "file:///*",
+    "https://api.github.com"
   ],
 
   "optional_permissions": [

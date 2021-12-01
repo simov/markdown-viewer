@@ -9,6 +9,7 @@ md.inject = ({storage: {state}}) => (id) => {
       var themes = ${JSON.stringify(state.themes)}
       var content = ${JSON.stringify(state.content)}
       var compiler = '${state.compiler}'
+      var mermaidVersion = ${JSON.stringify(state.mermaidVersion)}
     `,
     runAt: 'document_start'
   })

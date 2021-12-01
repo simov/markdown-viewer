@@ -6,6 +6,8 @@ var state = {
   theme: '',
   themes: {},
   _themes: [],
+  mermaidVersion: '',
+  _mermaidVersions: [],
   raw: false,
   tab: '',
   tabs: ['theme', 'compiler', 'content'],
@@ -21,7 +23,7 @@ var state = {
       scroll: 'Remember scroll position',
       toc: 'Generate Table of Contents',
       mathjax: 'Render MathJax formulas',
-      mermaid: 'Mermaid diagrams',
+      mermaid: 'Mermaid diagrams'
     }
   }
 }
@@ -77,6 +79,14 @@ var events = {
     })
   },
 
+  mermaidVersion: (e) => {
+    state.mermaidVersion = state._mermaidVersions[e.target.selectedIndex]
+    chrome.runtime.sendMessage({
+      message: 'popup.mermaidVersion',
+      mermaidVersion: state.mermaidVersion
+    })
+  },
+
   raw: () => {
     state.raw = !state.raw
     chrome.runtime.sendMessage({
@@ -106,10 +116,17 @@ var init = (res) => {
   state.content = res.content
   state.theme = res.theme
   state.themes = res.themes
+  state.mermaidVersion = res.mermaidVersion
 
   state._themes = chrome.runtime.getManifest().web_accessible_resources
     .filter((file) => file.indexOf('/themes/') === 0)
     .map((file) => file.replace(/\/themes\/(.*)\.css/, '$1'))
+
+  fetch('https://api.github.com/repos/mermaid-js/mermaid/releases').then(response => response.json())
+    .then(result => {
+      state._mermaidVersions = result.map(version => version.name).sort(compareVersions).reverse()
+      m.redraw()
+    })
 
   state.raw = res.raw
   state.tab = localStorage.getItem('tab') || 'theme'
@@ -117,6 +134,19 @@ var init = (res) => {
   state.description.compiler = res.description
 
   m.redraw()
+}
+var compareVersions = (a, b) =>{
+  var a1 = a.split('.');
+  var b1 = b.split('.');
+  var len = Math.max(a1.length, b1.length);
+  
+  for(var i = 0; i< len; i++){
+    var _a = +a1[i] || 0;
+    var _b = +b1[i] || 0;
+    if(_a === _b) continue;
+    else return _a > _b ? 1 : -1
+  }
+  return 0;
 }
 
 chrome.runtime.sendMessage({message: 'popup'}, init)
@@ -256,6 +286,18 @@ m.mount(document.querySelector('body'), {
               m('.mdc-switch__background', m('.mdc-switch__knob')),
               m('span.mdc-switch-label', key)
             ))
+          ),
+          m('label.mdc-switch m-switch', {
+              title: "Version of mermaid diagrams JS library"
+            },
+            m('select.mdc-elevation--z2 m-select-labeled', {
+              onchange: events.mermaidVersion
+              },
+              state._mermaidVersions.map((version) =>
+                m('option', {selected: state.mermaidVersion === version}, version)
+              )
+            ),
+            m('span.mdc-select-label', 'mermaidVersion'),
           )
         )
       ),

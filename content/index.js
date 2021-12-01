@@ -7,11 +7,12 @@ var state = {
   themes,
   content,
   compiler,
+  mermaidVersion,
   html: '',
   markdown: '',
   toc: '',
   interval: null,
-  ms: 1000,
+  ms: 1000
 }
 
 chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
@@ -32,6 +33,10 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
   }
   else if (req.message === 'autoreload') {
     clearInterval(state.interval)
+  }
+  else if (req.message === 'mermaidVersion') {
+    state.mermaidVersion = req.mermaidVersion
+    location.reload(true)
   }
 })
 
@@ -105,9 +110,9 @@ function mount () {
               src: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js'
             }))
           }
-          if (state.content.mermaid) {
+          if (state.content.mermaid && state.mermaidVersion) {
             dom.push(m('script', {
-              src: 'https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.13.4/mermaid.min.js'
+              src: `https://cdnjs.cloudflare.com/ajax/libs/mermaid/${state.mermaidVersion}/mermaid.min.js`
             }))
             dom.push(m('script', {type: 'text/javascript'}, `
               ;(() => {

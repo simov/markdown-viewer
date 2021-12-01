@@ -50,6 +50,11 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, xhr, webreq
       notifyContent({message: 'themes', themes: req.themes})
       sendResponse()
     }
+    else if (req.message === 'popup.mermaidVersion') {
+      set({mermaidVersion: req.mermaidVersion})
+      notifyContent({message: 'mermaidVersion', mermaidVersion: req.mermaidVersion})
+      sendResponse()
+    }
     else if (req.message === 'popup.defaults') {
       var options = Object.assign({}, defaults)
       options.origins = state.origins

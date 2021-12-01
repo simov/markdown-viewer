@@ -136,6 +136,7 @@ Render Mermaid diagrams wrapped in `mmd` or `mermaid` fenced code blocks:
     ```mmd
     sequenceDiagram
     ```
+Version of Mermaid diagrams library is defined by `mermaidVersion` setting
 
 ## Emoji
 

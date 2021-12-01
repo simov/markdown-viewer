@@ -53,8 +53,9 @@ md.storage.defaults = (compilers) => {
       toc: false,
       mathjax: false,
       autoreload: false,
-      mermaid: false,
+      mermaid: false
     },
+    mermaidVersion: '',
     origins: {
       'file://': {
         match,
@@ -114,5 +115,9 @@ md.storage.migrations = (state) => {
   }
   if (typeof state.theme === 'object') {
     state.theme = state.theme.name
+  }
+  // v4.0 -> v4.1
+  if (state.mermaidVersion === undefined) {
+    state.mermaidVersion = ''
   }
 }
