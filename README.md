@@ -118,8 +118,8 @@ When enabled the extension will make a GET request every second to:
 
 The following `mathjax` delimiters are supported:
 
-- inline math: `\(math\)` and `$math$`
-- display math: `\[math\]` and `$$math$$`
+- inline math: `\(math\)`, `$math$`, and ``$`math`$``
+- display math: `\[math\]`, `$$math$$`, and math code blocks (```` ```math ````)
 
 The following rules apply to your content when `mathjax` is enabled:
 

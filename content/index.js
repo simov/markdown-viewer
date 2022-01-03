@@ -104,6 +104,14 @@ function mount () {
             dom.push(m('script', {
               src: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js'
             }))
+            dom.push(m('script', {type: 'text/javascript'}, `
+              ;(() => {
+                var mathblocks = document.querySelectorAll('code.language-math')
+                mathblocks.forEach(mathblock => {
+                  mathblock.parentNode.replaceWith("$$" + mathblock.textContent + "$$")
+                })
+              })()
+            `))
           }
           if (state.content.mermaid) {
             dom.push(m('script', {
@@ -336,6 +344,7 @@ var mathjax = `
       inlineMath: [
         ['$', '$'],
         ['\\\\(', '\\\\)'],
+        ['$\`', '\`$'],
       ],
       displayMath: [
         ['$$', '$$'],
