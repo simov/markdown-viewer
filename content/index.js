@@ -44,6 +44,12 @@ var oncreate = {
 
     if (state.content.toc && !state.toc) {
       state.toc = toc()
+      if (!state.content.tocc)
+        m.redraw()
+    }
+
+    if (state.content.tocc) {
+      state.toc = tocc()
       m.redraw()
     }
 
@@ -246,6 +252,60 @@ var toc = (
     html += '</div>'.repeat(header.level)
     return html
   }, '')
+
+var tocc = (
+  link = (header) => '<a href="#' + header.id + '">' + header.title + '</a>') => {
+  let toc_array = Array.from($('#_html').childNodes)
+  .filter((node) => /h[1-6]/i.test(node.tagName))
+  .map((node) => ({
+    id: node.getAttribute('id'),
+    level: parseInt(node.tagName.replace('H', '')),
+    title: node.innerText.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  }))
+
+  let html = ''
+
+  let add_div_toc = (i) => {
+    html += '<div class="_ul">'
+    html += link(toc_array[i])
+    html += '</div>'
+  }
+
+  let create_toc_html_recursive = (i) => {
+    if (i === toc_array.length - 1) {
+      html += '<div class="_ul">'.repeat(toc_array[i].level)
+      html += link(toc_array[i])
+      html += '</div>'.repeat(toc_array[i].level)
+      return i
+    }
+    let curr_level = toc_array[i].level
+    for (; i < toc_array.length; i++) {
+      if (toc_array[i].level < curr_level) {
+        html += '</div></details>'
+        return i-1
+      }else if (i === toc_array.length - 1){
+        add_div_toc(i)
+        return i
+      } else if (toc_array[i+1].level < curr_level) {
+        add_div_toc(i)
+        html += '</div></details>'
+        return i
+      } else if (toc_array[i+1].level > curr_level) {
+        html += '<details><summary class="_ul">'
+        html += link(toc_array[i])
+        html += '</summary><div class="_ul">'
+        i = create_toc_html_recursive(++i)
+      } else if (toc_array[i+1].level === curr_level) {
+        add_div_toc(i)
+      }
+    }
+    return i
+  }
+
+  create_toc_html_recursive(0)
+  return html
+}
+
 
 if (document.readyState === 'complete') {
   mount()
