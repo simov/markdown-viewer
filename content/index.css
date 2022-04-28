@@ -180,3 +180,11 @@ img.emojione {
   /* prevent img stretch */
   width: auto;
 }
+@media print {
+  #_toc {
+    display: none;
+  }
+  body._toc-left {
+    padding-left: 0px !important;
+  }
+}
