@@ -7,7 +7,7 @@ var uglify = require('uglify-js')
 
 // load prism languages
 var include = (file) => {
-  var fpath = path.resolve(__dirname, `../../node_modules/prismjs/${file}.js`)
+  var fpath = path.resolve(__dirname, `node_modules/prismjs/${file}.js`)
   var source = fs.readFileSync(fpath, 'utf8')
   var ctx = vm.createContext()
   vm.runInContext(source, ctx)
@@ -31,29 +31,29 @@ fs.writeFileSync(path.resolve(__dirname, 'prism.json'),
 
 // build prism.min.js
 var core = fs.readFileSync(
-  path.resolve(__dirname, '../../node_modules/prismjs/prism.js'), 'utf8')
+  path.resolve(__dirname, 'node_modules/prismjs/prism.js'), 'utf8')
 // core
 var source = uglify.minify(core, {compress: {}, mangle: true}).code
 // components
 source += config['markdown-viewer'].reduce((source, component) => (
   source += fs.readFileSync(path.resolve(__dirname,
-    `../../node_modules/prismjs/components/prism-${component}.min.js`), 'utf8') + '\n',
+    `node_modules/prismjs/components/prism-${component}.min.js`), 'utf8') + '\n',
   source
 ), '')
 
-fs.writeFileSync(path.resolve(__dirname, '../../vendor/prism.min.js'), source, 'utf8')
+fs.writeFileSync(path.resolve(__dirname, 'tmp/prism.min.js'), source, 'utf8')
 
 
 // build css
 var csso = require('csso')
 
 var source = fs.readFileSync(
-  path.resolve(__dirname, '../../node_modules/prismjs/themes/prism.css'),
+  path.resolve(__dirname, 'node_modules/prismjs/themes/prism.css'),
   'utf8'
 )
 
 fs.writeFileSync(
-  path.resolve(__dirname, '../../vendor/prism.min.css'),
+  path.resolve(__dirname, 'tmp/prism.min.css'),
   csso.minify(source).css,
   'utf8'
 )
@@ -65,7 +65,7 @@ var included = config.all
   .map((name) => ({
     name,
     size: fs.lstatSync(path.resolve(__dirname,
-      `../../node_modules/prismjs/components/prism-${name}.min.js`)).size
+      `node_modules/prismjs/components/prism-${name}.min.js`)).size
   }))
 
 var excluded = config.all
@@ -73,7 +73,7 @@ var excluded = config.all
   .map((name) => ({
     name,
     size: fs.lstatSync(path.resolve(__dirname,
-      `../../node_modules/prismjs/components/prism-${name}.min.js`)).size
+      `node_modules/prismjs/components/prism-${name}.min.js`)).size
   }))
 
 console.log('Excluded:')

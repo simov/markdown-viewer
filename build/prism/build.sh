@@ -7,13 +7,11 @@ cd "$(dirname "$0")"
 npm install
 mkdir -p tmp
 
-# bundle
-npx browserify index.js -s remark > tmp/remark.js
-# minify
-npx terser --compress --mangle -- tmp/remark.js > tmp/remark.min.js
+# build
+node prism.js
 
 # copy
-cp tmp/remark.min.js ../../vendor/
+cp tmp/prism.min.* ../../vendor/
 
 # after
 rm -r tmp/

@@ -1,9 +1,10 @@
 
 var fs = require('fs')
+var path = require('path')
 
-var github = fs.readFileSync('./themes/github.css', 'utf8')
-fs.writeFileSync(
-  'themes/github.css',
-  github.replace(/\.markdown-body :root/g, ':root'),
-  'utf8'
-)
+var fpath = path.resolve(__dirname, 'markdown-themes/github.css')
+
+var theme = fs.readFileSync(fpath, 'utf8')
+  .replace(/\.markdown-body :root/g, ':root')
+
+fs.writeFileSync(fpath, theme, 'utf8')
