@@ -1,9 +1,23 @@
 
+importScripts('/vendor/marked.min.js')
+importScripts('/vendor/remark.min.js')
+
+importScripts('/background/compilers/marked.js')
+importScripts('/background/compilers/remark.js')
+
+importScripts('/background/storage.js')
+importScripts('/background/webrequest.js')
+importScripts('/background/detect.js')
+importScripts('/background/inject.js')
+importScripts('/background/messages.js')
+importScripts('/background/mathjax.js')
+importScripts('/background/xhr.js')
+
 ;(() => {
   var storage = md.storage(md)
   var inject = md.inject({storage})
   var detect = md.detect({storage, inject})
-  var webrequest = md.webrequest({storage, detect})
+  var webrequest = md.webrequest({storage})
   var mathjax = md.mathjax()
   var xhr = md.xhr()
 
@@ -17,8 +31,4 @@
 
   chrome.tabs.onUpdated.addListener(detect.tab)
   chrome.runtime.onMessage.addListener(messages)
-
-  if (chrome.webRequest) {
-    webrequest.init()
-  }
 })()

@@ -1,10 +1,10 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name"            : "Markdown Viewer",
-  "version"         : "4.0",
+  "version"         : "5.0",
   "description"     : "Markdown Viewer",
 
-  "browser_action": {
+  "action": {
     "default_icon": {
       "19" : "/icons/icon19.png",
       "38" : "/icons/icon38.png"
@@ -16,50 +16,19 @@
   "options_page": "/options/index.html",
 
   "background" : {
-    "scripts": [
-      "/vendor/marked.min.js",
-      "/vendor/remark.min.js",
-
-      "/background/compilers/marked.js",
-      "/background/compilers/remark.js",
-
-      "/background/storage.js",
-      "/background/webrequest.js",
-      "/background/detect.js",
-      "/background/inject.js",
-      "/background/messages.js",
-      "/background/mathjax.js",
-      "/background/xhr.js",
-
-      "/background/index.js"
-    ],
-    "persistent": false
+    "service_worker": "/background/index.js"
   },
 
   "web_accessible_resources": [
-    "/themes/github.css",
-    "/themes/github-dark.css",
-
-    "/themes/godspeed.css",
-    "/themes/new-modern.css",
-    "/themes/torpedo.css",
-    "/themes/vostok.css",
-
-    "/themes/ghostwriter.css",
-    "/themes/radar.css",
-    "/themes/foghorn.css",
-    "/themes/markdown.css",
-    "/themes/markedapp-byword.css",
-    "/themes/solarized-dark.css",
-    "/themes/solarized-light.css",
-
-    "/themes/screen.css",
-    "/themes/markdown5.css",
-    "/themes/markdown6.css",
-    "/themes/markdown7.css",
-    "/themes/markdown8.css",
-    "/themes/markdown9.css",
-    "/themes/markdown-alt.css"
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "resources": [
+        "/themes/*",
+        "/vendor/*"
+      ]
+    }
   ],
 
   "icons": {
@@ -72,14 +41,18 @@
 
   "permissions": [
     "storage",
+    "scripting"
+  ],
+
+  "host_permissions": [
     "file:///*"
   ],
 
+  "optional_host_permissions": [
+    "*://*/"
+  ],
+
   "optional_permissions": [
-    "https://*/",
-    "http://*/",
-    "*://*/",
-    "webRequest",
-    "webRequestBlocking"
+    "webRequest"
   ]
 }

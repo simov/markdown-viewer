@@ -2,11 +2,11 @@
 var $ = document.querySelector.bind(document)
 
 var state = {
-  theme,
-  raw,
-  themes,
-  content,
-  compiler,
+  theme: args.theme,
+  raw: args.raw,
+  themes: args.themes,
+  content: args.content,
+  compiler: args.compiler,
   html: '',
   markdown: '',
   toc: '',
@@ -100,25 +100,12 @@ function mount () {
             $('body').classList.add('_toc-left')
           }
           if (state.content.mathjax) {
-            dom.push(m('script', {type: 'text/x-mathjax-config'}, mathjax))
             dom.push(m('script', {
-              src: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js'
+              src: chrome.runtime.getURL('/vendor/mathjax/mathjax.init.js')
             }))
-          }
-          if (state.content.mermaid) {
             dom.push(m('script', {
-              src: 'https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.8.4/mermaid.min.js'
+              src: chrome.runtime.getURL('/vendor/mathjax/tex-mml-chtml.js')
             }))
-            dom.push(m('script', {type: 'text/javascript'}, `
-              ;(() => {
-                var timeout = setInterval(() => {
-                  if (!!(window.mermaid && mermaid.init)) {
-                    clearInterval(timeout)
-                    mermaid.init({}, 'code.language-mmd, code.language-mermaid')
-                  }
-                }, 50)
-              })()
-            `))
           }
         }
       }
@@ -310,47 +297,3 @@ if (state.content.autoreload) {
     state.interval = setInterval(get, state.ms)
   })()
 }
-
-var mathjax = `
-  // TeX-AMS_HTML
-  MathJax.Hub.Config({
-    jax: [
-      'input/TeX',
-      'output/HTML-CSS',
-      'output/PreviewHTML',
-    ],
-    extensions: [
-      'tex2jax.js',
-      'AssistiveMML.js',
-      'a11y/accessibility-menu.js',
-    ],
-    TeX: {
-      extensions: [
-        'AMSmath.js',
-        'AMSsymbols.js',
-        'noErrors.js',
-        'noUndefined.js',
-      ]
-    },
-    tex2jax: {
-      inlineMath: [
-        ['$', '$'],
-        ['\\\\(', '\\\\)'],
-      ],
-      displayMath: [
-        ['$$', '$$'],
-        ['\\\\[', '\\\\]'],
-      ],
-      processEscapes: true
-    },
-    showMathMenu: false,
-    showProcessingMessages: false,
-    messageStyle: 'none',
-    skipStartupTypeset: true, // disable initial rendering
-    positionToHash: false
-  })
-  // set specific container to render, can be delayed too
-  MathJax.Hub.Queue(
-    ['Typeset', MathJax.Hub, '_html']
-  )
-`

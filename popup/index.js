@@ -5,7 +5,28 @@ var state = {
   content: {},
   theme: '',
   themes: {},
-  _themes: [],
+  _themes: [
+    'github',
+    'github-dark',
+    'godspeed',
+    'new-modern',
+    'torpedo',
+    'vostok',
+    'ghostwriter',
+    'radar',
+    'foghorn',
+    'markdown',
+    'markedapp-byword',
+    'solarized-dark',
+    'solarized-light',
+    'screen',
+    'markdown5',
+    'markdown6',
+    'markdown7',
+    'markdown8',
+    'markdown9',
+    'markdown-alt',
+  ],
   raw: false,
   tab: '',
   tabs: ['theme', 'compiler', 'content'],
@@ -106,10 +127,6 @@ var init = (res) => {
   state.content = res.content
   state.theme = res.theme
   state.themes = res.themes
-
-  state._themes = chrome.runtime.getManifest().web_accessible_resources
-    .filter((file) => file.indexOf('/themes/') === 0)
-    .map((file) => file.replace(/\/themes\/(.*)\.css/, '$1'))
 
   state.raw = res.raw
   state.tab = localStorage.getItem('tab') || 'theme'

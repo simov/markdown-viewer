@@ -3,25 +3,25 @@ md.detect = ({storage: {state}, inject}) => {
 
   var onwakeup = true
 
-  var code = `
-    JSON.stringify({
-      url: window.location.href,
-      header: document.contentType,
-      loaded: !!window.state,
-    })
-  `
-
   var tab = (id, info, tab) => {
     if (info.status === 'loading') {
       // try
-      chrome.tabs.executeScript(id, {code, runAt: 'document_start'}, (res) => {
+      chrome.scripting.executeScript({
+        target: {tabId: id},
+        func: () =>
+          JSON.stringify({
+            url: window.location.href,
+            header: document.contentType,
+            loaded: !!window.state,
+          })
+      }, (res) => {
         if (chrome.runtime.lastError) {
           // origin not allowed
           return
         }
 
         try {
-          var win = JSON.parse(res)
+          var win = JSON.parse(res[0].result)
         }
         catch (err) {
           // JSON parse error
