@@ -26,7 +26,8 @@
       ],
       "resources": [
         "/themes/*",
-        "/vendor/*"
+        "/vendor/mathjax/*",
+        "/content/mathjax.js"
       ]
     }
   ],

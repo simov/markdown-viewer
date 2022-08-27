@@ -101,7 +101,7 @@ function mount () {
           }
           if (state.content.mathjax) {
             dom.push(m('script', {
-              src: chrome.runtime.getURL('/vendor/mathjax/mathjax.init.js')
+              src: chrome.runtime.getURL('/content/mathjax.js')
             }))
             dom.push(m('script', {
               src: chrome.runtime.getURL('/vendor/mathjax/tex-mml-chtml.js')
