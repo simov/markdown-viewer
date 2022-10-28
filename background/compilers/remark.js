@@ -18,7 +18,7 @@ md.compilers.remark = (() => {
     defaults,
     description,
     compile: (markdown) =>
-      remark.unified()
+      remark.remark()
         .use(remark.parse)
         .use(state.remark.gfm ? remark.gfm : undefined)
         .use(state.remark.breaks ? remark.breaks : undefined)
@@ -28,7 +28,7 @@ md.compilers.remark = (() => {
         .use(remark.frontmatter, ['yaml', 'toml'])
         .use(remark.html, state.remark) // sanitize
         .processSync(markdown)
-        .contents
+        .value
   })
 
   return Object.assign(ctor, {defaults, description})

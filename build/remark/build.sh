@@ -7,9 +7,8 @@ cd "$(dirname "$0")"
 npm install
 mkdir -p tmp
 
-# bundle
-npx browserify index.js -s remark > tmp/remark.js
-# minify
+# remark.min.js
+npx rollup --config rollup.js --input remark.mjs --file tmp/remark.js
 npx terser --compress --mangle -- tmp/remark.js > tmp/remark.min.js
 
 # copy
