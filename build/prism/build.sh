@@ -12,6 +12,7 @@ node prism.js
 
 # copy
 cp tmp/prism.min.* ../../vendor/
+cp tmp/prism-okaidia.min.css ../../vendor/
 
 # after
 rm -r tmp/

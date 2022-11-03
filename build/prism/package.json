@@ -4,11 +4,11 @@
   "description": "Markdown Viewer / Browser Extension",
   "private": true,
   "dependencies": {
-    "prismjs": "^1.22.0"
+    "prismjs": "^1.29.0"
   },
   "devDependencies": {
-    "csso-cli": "^2.0.2",
-    "uglify-js": "^3.12.2"
+    "csso-cli": "^4.0.1",
+    "terser": "^5.5.1"
   },
   "engines": {
     "node": ">=14.0.0"
