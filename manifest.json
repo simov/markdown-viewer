@@ -4,6 +4,14 @@
   "version"         : "5.0",
   "description"     : "Markdown Viewer",
 
+  "homepage_url": "https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk",
+
+  "icons": {
+    "16" : "/icons/icon16.png",
+    "48" : "/icons/icon48.png",
+    "128": "/icons/icon128.png"
+  },
+
   "action": {
     "default_icon": {
       "19" : "/icons/icon19.png",
@@ -13,11 +21,11 @@
     "default_popup": "/popup/index.html"
   },
 
-  "options_page": "/options/index.html",
-
   "background" : {
     "service_worker": "/background/index.js"
   },
+
+  "options_page": "/options/index.html",
 
   "web_accessible_resources": [
     {
@@ -27,18 +35,12 @@
       "resources": [
         "/themes/*",
         "/vendor/mathjax/*",
+        "/vendor/prism.min.css",
+        "/vendor/prism-okaidia.min.css",
         "/content/mathjax.js"
       ]
     }
   ],
-
-  "icons": {
-    "16" : "/icons/icon16.png",
-    "48" : "/icons/icon48.png",
-    "128": "/icons/icon128.png"
-  },
-
-  "homepage_url": "https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk",
 
   "permissions": [
     "storage",

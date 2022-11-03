@@ -1,27 +1,33 @@
 
-/*global*/
+/*-----------------------------------------------------------------------------
+  global*/
 html, body {
   padding: 0 !important; margin: 0 !important;
   width: auto !important; max-width: 100% !important;
 }
+
+/*-----------------------------------------------------------------------------
+  raw markdown view*/
 
 pre#_markdown {
   word-wrap: break-word;
   white-space: pre-wrap;
 }
 
-/*github theme*/
+/*-----------------------------------------------------------------------------
+  github theme*/
+
 .markdown-body {
   overflow: auto;
 
-  min-width: 838px;
-  max-width: 838px;
+  min-width: 830px;
+  max-width: 830px;
 
   background-color: #fff;
   border: 1px solid #e1e4e8;
 
   padding: 32px;
-  margin: 20px auto;
+  margin: 20px auto !important;
 }
 .markdown-body #_html>*:first-child {
   margin-top: 0 !important;
@@ -33,27 +39,44 @@ pre#_markdown {
   background-color: transparent;
 }
 
-/*all other themes*/
+/*-----------------------------------------------------------------------------
+  all other themes*/
+
 .markdown-theme {
   box-sizing: border-box;
   max-width: 100% !important;
   padding: 20px !important;
   margin: 0 auto !important;
 }
-@media (max-width: 767px) {
-  .markdown-theme { width: auto !important; }
-}
-@media (min-width: 768px) and (max-width: 992px) {
-  .markdown-theme { width: 713px !important; }
-}
-@media (min-width: 992px) and (max-width: 1200px) {
-  .markdown-theme { width: 937px !important; }
-}
-@media (min-width: 1200px) {
-  .markdown-theme { width: 1145px !important; }
+.markdown-theme pre,
+.markdown-theme pre code {
+  overflow: auto;
+  overflow-x: auto;
+  overflow-y: auto;
 }
 
-/*100% width*/
+@media (max-width: 576px) { /*Extra small - none*/
+  .markdown-theme { width: auto !important; }
+}
+@media (min-width: 576px) and (max-width: 768px) { /*Small sm*/
+  .markdown-theme { width: 576px !important; }
+}
+@media (min-width: 768px) and (max-width: 992px) { /*Medium md*/
+  .markdown-theme { width: 768px !important; }
+}
+@media (min-width: 992px) and (max-width: 1200px) { /*Large lg*/
+  .markdown-theme { width: 992px !important; }
+}
+@media (min-width: 1200px) and (max-width: 1400px) { /*Extra large xl*/
+  .markdown-theme { width: 1200px !important; }
+}
+@media (min-width: 1400px) { /*Extra extra large xxl*/
+  .markdown-theme { width: 1400px !important; }
+}
+
+/*-----------------------------------------------------------------------------
+  100% width*/
+
 .wide-theme {
   box-sizing: border-box;
   width: 100% !important;
@@ -64,12 +87,9 @@ pre#_markdown {
   margin: 0 !important;
 }
 
-/*mermaid text bold effect*/
-svg[id^=mermaid] text {
-  stroke: none !important;
-}
+/*-----------------------------------------------------------------------------
+  toc*/
 
-/*toc*/
 body {
   display: flex;
 }
@@ -78,9 +98,9 @@ body._toc-right { padding-right: 300px !important; }
 #_toc {
   position: fixed;
   top: 0; bottom: 0; left: 0;
-  width: 300px;
+  width: 299px;
   height: 100%;
-  background: #fafafa;
+  border-right: 1px solid #e1e4e8; /*light themes*/
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -89,22 +109,167 @@ body._toc-right { padding-right: 300px !important; }
   margin: 0 !important;
 }
 #_toc ._ul a {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
-  font-size: 14px !important;
-  line-height: 17px !important;
-  color: #364149 !important;
-  font-weight: normal !important;
-  font-style: normal !important;
-  text-decoration: none !important;
-  text-transform: none !important;
-  letter-spacing: 0.2px !important;
-  background: none !important;
   border: 0 !important;
-  padding: 10px 15px !important;
+  padding: 5px 10px !important;
   display: block !important;
 }
-#_toc ._ul a:hover {
-  text-decoration: underline !important;
+#_toc > ._ul {
+  padding: 0 0 0 10px !important;
+}
+
+/*-----------------------------------------------------------------------------
+  light-themes*/
+
+/*scrollbar*/
+body:not(._theme-water, ._theme-water-dark)::-webkit-scrollbar,
+body:not(._theme-water, ._theme-water-dark) *::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+
+body:not(._theme-water, ._theme-water-dark)::-webkit-scrollbar-track,
+body:not(._theme-water, ._theme-water-dark) *::-webkit-scrollbar-track {
+  background: #efefef;
+  border-radius: 6px;
+}
+
+body:not(._theme-water, ._theme-water-dark)::-webkit-scrollbar-thumb,
+body:not(._theme-water, ._theme-water-dark) *::-webkit-scrollbar-thumb {
+  background: #d5d5d5;
+  border-radius: 6px;
+}
+
+body:not(._theme-water, ._theme-water-dark)::-webkit-scrollbar-thumb:hover,
+body:not(._theme-water, ._theme-water-dark) *::-webkit-scrollbar-thumb:hover {
+  background: #c4c4c4;
+}
+
+/*-----------------------------------------------------------------------------
+  dark-themes*/
+
+/*scrollbar*/
+body._theme-github-dark::-webkit-scrollbar,
+body._theme-github-dark *::-webkit-scrollbar,
+body._theme-markdown-retro::-webkit-scrollbar,
+body._theme-markdown-retro *::-webkit-scrollbar,
+body._theme-sakura-vader::-webkit-scrollbar,
+body._theme-sakura-vader *::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+
+body._theme-github-dark::-webkit-scrollbar-track,
+body._theme-github-dark *::-webkit-scrollbar-track,
+body._theme-markdown-retro::-webkit-scrollbar-track,
+body._theme-markdown-retro *::-webkit-scrollbar-track,
+body._theme-sakura-vader::-webkit-scrollbar-track,
+body._theme-sakura-vader *::-webkit-scrollbar-track {
+  background: #424242;
+  border-radius: 6px;
+}
+
+body._theme-github-dark::-webkit-scrollbar-thumb,
+body._theme-github-dark *::-webkit-scrollbar-thumb,
+body._theme-markdown-retro::-webkit-scrollbar-thumb,
+body._theme-markdown-retro *::-webkit-scrollbar-thumb,
+body._theme-sakura-vader::-webkit-scrollbar-thumb,
+body._theme-sakura-vader *::-webkit-scrollbar-thumb {
+  background: #686868;
+  border-radius: 6px;
+}
+
+body._theme-github-dark::-webkit-scrollbar-thumb:hover,
+body._theme-github-dark *::-webkit-scrollbar-thumb:hover,
+body._theme-markdown-retro::-webkit-scrollbar-thumb:hover,
+body._theme-markdown-retro *::-webkit-scrollbar-thumb:hover,
+body._theme-sakura-vader::-webkit-scrollbar-thumb:hover,
+body._theme-sakura-vader *::-webkit-scrollbar-thumb:hover {
+  background: #7b7b7b;
+}
+
+/*code block*/
+._theme-markdown-retro pre,
+._theme-sakura-vader pre,
+._theme-water-dark pre {
+  background-color: #161b22 !important;
+}
+
+/*toc delimiter*/
+._theme-github-dark #_toc,
+._theme-markdown-retro #_toc,
+._theme-sakura-vader #_toc,
+._theme-water-dark #_toc {
+  border-right: 1px solid #30363d;
+}
+
+/*github-dark*/
+._theme-github-dark {
+  background-color:#0d1117;
+}
+._theme-github-dark .markdown-body{
+  border: 1px solid #30363d;
+}
+
+/*-----------------------------------------------------------------------------
+  theme fixes*/
+
+/*github - toc*/
+._theme-github #_toc { /*.markdown-body {*/
+  background-color: #fff;
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+  font-size: 16px;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+._theme-github #_toc a { /*.markdown-body a {*/
+  background-color: transparent;
+  color: #0969da;
+  text-decoration: none;
+}
+._theme-github #_toc a:hover {
+  text-decoration: underline;
+}
+/*github-dark - toc*/
+._theme-github-dark #_toc { /*.markdown-body {*/
+  background-color: #0d1117;
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+  font-size: 16px;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+._theme-github-dark #_toc a { /*.markdown-body a {*/
+  background-color: transparent;
+  color: #58a6ff;
+  text-decoration: none;
+}
+._theme-github-dark #_toc a:hover {
+  text-decoration: underline;
+}
+
+/*superstylin - fix lists*/
+._theme-superstylin ul ul,
+._theme-superstylin ol ol {
+  padding-left: 40px;
+}
+._theme-superstylin ul li p,
+._theme-superstylin ol li p {
+  display: inline-block;
+  margin-bottom: 0;
+}
+
+/*markdown-air - fix images*/
+._theme-markdown-air img {
+  border-radius: 0;
+  width: auto;
+  height: auto;
+}
+
+/*-----------------------------------------------------------------------------
+  misc*/
+
+/*mermaid text bold effect*/
+svg[id^=mermaid] text {
+  stroke: none !important;
 }
 
 /*anchor link*/

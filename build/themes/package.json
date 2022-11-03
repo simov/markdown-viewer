@@ -4,7 +4,7 @@
   "description": "Markdown Viewer / Browser Extension",
   "private": true,
   "devDependencies": {
-    "csso-cli": "^2.0.2"
+    "csso-cli": "^4.0.1"
   },
   "engines": {
     "node": ">=14.0.0"

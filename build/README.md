@@ -13,7 +13,8 @@ sh build/package.sh
 
 ## Build Dependencies
 
-- Node.js >= 14
+- node >= 14
+- npm
 - git
 - curl
 - zip
@@ -27,12 +28,14 @@ sh build/package.sh
 | @material/switch    | ^0.36.1
 | @material/tabs      | ^0.37.1
 | @material/textfield | ^0.37.1
+| cleanrmd            |  0.1.0
 | emojione            |  2.2.7
+| github-markdown-css |  5.1.0
 | marked              |  4.1.1
 | mathjax             |  3.2.2
 | mermaid             |  9.1.6
 | mithril             |  1.1.6
-| prismjs             |  1.22.0
+| prismjs             | ^1.29.0
 | remark              | ^14.0.2
 | remark-breaks       | ^3.0.2
 | remark-footnotes    | ^4.0.1

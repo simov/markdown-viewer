@@ -81,9 +81,21 @@ function mount () {
       }
       else {
         if (state.theme) {
+          var included = Array.from($('body').classList).filter((name) => /^_theme/.test(name))
+          if (included.length) {
+            $('body').classList.remove(included)
+          }
           dom.push(m('link#_theme', {
             rel: 'stylesheet', type: 'text/css',
             href: chrome.runtime.getURL(`/themes/${state.theme}.css`),
+          }))
+          $('body').classList.add(`_theme-${state.theme}`)
+
+          var prism = ['github-dark', 'markdown-retro', 'sakura-vader', 'water-dark']
+            .includes(state.theme) ? 'prism-okaidia' : 'prism'
+          dom.push(m('link#_prism', {
+            rel: 'stylesheet', type: 'text/css',
+            href: chrome.runtime.getURL(`/vendor/${prism}.min.css`),
           }))
         }
         if (state.html) {

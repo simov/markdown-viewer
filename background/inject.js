@@ -21,7 +21,6 @@ md.inject = ({storage: {state}}) => (id) => {
     target: {tabId: id},
     files: [
       '/content/index.css',
-      '/vendor/prism.min.css',
     ]
   })
 
@@ -31,7 +30,7 @@ md.inject = ({storage: {state}}) => (id) => {
       '/vendor/mithril.min.js',
       '/vendor/prism.min.js',
       state.content.emoji && '/content/emoji.js',
-      state.content.mermaid && ['/vendor/mermaid.min.js', '/vendor/mermaid.init.js'],
+      state.content.mermaid && ['/vendor/mermaid.min.js', '/content/mermaid.js'],
       '/content/index.js',
     ].filter(Boolean).flat(),
     injectImmediately: true
