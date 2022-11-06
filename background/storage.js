@@ -54,6 +54,7 @@ md.storage.defaults = (compilers) => {
       mathjax: false,
       autoreload: false,
       mermaid: false,
+      syntax: true,
     },
     origins: {
       'file://': {
@@ -122,5 +123,8 @@ md.storage.migrations = (state) => {
   })
   if (state.marked.smartLists !== undefined) {
     delete state.marked.smartLists
+  }
+  if (state.content.syntax === undefined) {
+    state.content.syntax = true
   }
 }

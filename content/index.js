@@ -47,7 +47,9 @@ var oncreate = {
       m.redraw()
     }
 
-    setTimeout(() => Prism.highlightAll(), 20)
+    if (state.content.syntax) {
+      setTimeout(() => Prism.highlightAll(), 20)
+    }
 
     anchors()
   },
@@ -91,12 +93,14 @@ function mount () {
           }))
           $('body').classList.add(`_theme-${state.theme}`)
 
-          var prism = ['github-dark', 'markdown-retro', 'sakura-vader', 'water-dark']
-            .includes(state.theme) ? 'prism-okaidia' : 'prism'
-          dom.push(m('link#_prism', {
-            rel: 'stylesheet', type: 'text/css',
-            href: chrome.runtime.getURL(`/vendor/${prism}.min.css`),
-          }))
+          if (state.content.syntax) {
+            var prism = ['github-dark', 'markdown-retro', 'sakura-vader', 'water-dark']
+              .includes(state.theme) ? 'prism-okaidia' : 'prism'
+            dom.push(m('link#_prism', {
+              rel: 'stylesheet', type: 'text/css',
+              href: chrome.runtime.getURL(`/vendor/${prism}.min.css`),
+            }))
+          }
         }
         if (state.html) {
           dom.push(m('#_html', {oncreate: oncreate.html,

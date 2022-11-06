@@ -55,6 +55,7 @@ var state = {
       toc: 'Generate Table of Contents',
       mathjax: 'Render MathJax formulas',
       mermaid: 'Mermaid diagrams',
+      syntax: 'Syntax highlighting for fenced code blocks',
     }
   }
 }
