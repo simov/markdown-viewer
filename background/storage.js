@@ -115,4 +115,12 @@ md.storage.migrations = (state) => {
   if (typeof state.theme === 'object') {
     state.theme = state.theme.name
   }
+  // v4.0 -> v5.0
+  Object.keys(state.origins).forEach((origin) => {
+    state.origins[origin].csp = false
+    state.origins[origin].encoding = ''
+  })
+  if (state.marked.smartLists !== undefined) {
+    delete state.marked.smartLists
+  }
 }

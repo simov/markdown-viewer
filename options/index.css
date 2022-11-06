@@ -380,9 +380,10 @@ footer .icon-hidden {
 
 .m-list .m-footer {
   text-align: right;
-  position: absolute;
+  margin: 10px 0 8px 0;
+  /*position: absolute;
   bottom: 20px;
-  right: 20px;
+  right: 20px;*/
 }
 .m-list .m-footer .m-button:last-child {
   margin: 0 0 0 20px;

@@ -12,27 +12,27 @@ var Origins = () => {
     file: true,
     // static
     schemes: ['https', 'http', '*'],
-    encodings: {
-      'Unicode': ['UTF-8', 'UTF-16LE'],
-      'Arabic': ['ISO-8859-6', 'Windows-1256'],
-      'Baltic': ['ISO-8859-4', 'ISO-8859-13', 'Windows-1257'],
-      'Celtic': ['ISO-8859-14'],
-      'Central European': ['ISO-8859-2', 'Windows-1250'],
-      'Chinese Simplified': ['GB18030', 'GBK'],
-      'Chinese Traditional': ['BIG5'],
-      'Cyrillic': ['ISO-8859-5', 'IBM866', 'KOI8-R', 'KOI8-U', 'Windows-1251'],
-      'Greek': ['ISO-8859-7', 'Windows-1253'],
-      'Hebrew': ['Windows-1255', 'ISO-8859-8', 'ISO-8859-8-I'],
-      'Japanese': ['EUC-JP', 'ISO-2022-JP', 'Shift_JIS'],
-      'Korean': ['EUC-KR'],
-      'Nordic': ['ISO-8859-10'],
-      'Romanian': ['ISO-8859-16'],
-      'South European': ['ISO-8859-3'],
-      'Thai': ['Windows-874'],
-      'Turkish': ['Windows-1254'],
-      'Vietnamese': ['Windows-1258'],
-      'Western': ['ISO-8859-15', 'Windows-1252', 'Macintosh'],
-    },
+    // encodings: {
+    //   'Unicode': ['UTF-8', 'UTF-16LE'],
+    //   'Arabic': ['ISO-8859-6', 'Windows-1256'],
+    //   'Baltic': ['ISO-8859-4', 'ISO-8859-13', 'Windows-1257'],
+    //   'Celtic': ['ISO-8859-14'],
+    //   'Central European': ['ISO-8859-2', 'Windows-1250'],
+    //   'Chinese Simplified': ['GB18030', 'GBK'],
+    //   'Chinese Traditional': ['BIG5'],
+    //   'Cyrillic': ['ISO-8859-5', 'IBM866', 'KOI8-R', 'KOI8-U', 'Windows-1251'],
+    //   'Greek': ['ISO-8859-7', 'Windows-1253'],
+    //   'Hebrew': ['Windows-1255', 'ISO-8859-8', 'ISO-8859-8-I'],
+    //   'Japanese': ['EUC-JP', 'ISO-2022-JP', 'Shift_JIS'],
+    //   'Korean': ['EUC-KR'],
+    //   'Nordic': ['ISO-8859-10'],
+    //   'Romanian': ['ISO-8859-16'],
+    //   'South European': ['ISO-8859-3'],
+    //   'Thai': ['Windows-874'],
+    //   'Turkish': ['Windows-1254'],
+    //   'Vietnamese': ['Windows-1258'],
+    //   'Western': ['ISO-8859-15', 'Windows-1252', 'Macintosh'],
+    // },
     // chrome
     permissions: {},
   }
@@ -302,53 +302,53 @@ var Origins = () => {
                 )
               ),
               // csp
-              (origin !== 'file://' || null) &&
-              m('.m-option m-csp',
-                m('.m-name', m('span', 'csp')),
-                m('.m-control',
-                  m('label.mdc-switch m-switch', {
-                    onupdate: onupdate.csp(origin),
-                    },
-                    m('input.mdc-switch__native-control', {
-                      type: 'checkbox',
-                      checked: state.origins[origin].csp,
-                      onchange: events.origin.csp(origin)
-                    }),
-                    m('.mdc-switch__background', m('.mdc-switch__knob')),
-                    m('span.mdc-switch-label',
-                      'Disable ',
-                      m('code', 'Content Security Policy')
-                    )
-                  )
-                )
-              ),
+              // (origin !== 'file://' || null) &&
+              // m('.m-option m-csp',
+              //   m('.m-name', m('span', 'csp')),
+              //   m('.m-control',
+              //     m('label.mdc-switch m-switch', {
+              //       onupdate: onupdate.csp(origin),
+              //       },
+              //       m('input.mdc-switch__native-control', {
+              //         type: 'checkbox',
+              //         checked: state.origins[origin].csp,
+              //         onchange: events.origin.csp(origin)
+              //       }),
+              //       m('.mdc-switch__background', m('.mdc-switch__knob')),
+              //       m('span.mdc-switch-label',
+              //         'Disable ',
+              //         m('code', 'Content Security Policy')
+              //       )
+              //     )
+              //   )
+              // ),
               // encoding
-              (origin !== 'file://' || null) &&
-              m('.m-option m-encoding',
-                m('.m-name', m('span', 'encoding')),
-                m('.m-control',
-                  m('select.mdc-elevation--z2 m-select', {
-                    onchange: events.origin.encoding(origin),
-                    },
-                    m('option', {
-                      value: '',
-                      selected: state.origins[origin].encoding === ''
-                      },
-                      'auto'
-                    ),
-                    Object.keys(state.encodings).map((label) =>
-                      m('optgroup', {label}, state.encodings[label].map((encoding) =>
-                        m('option', {
-                          value: encoding,
-                          selected: state.origins[origin].encoding === encoding
-                          },
-                          encoding
-                        )
-                      ))
-                    )
-                  )
-                )
-              ),
+              // (origin !== 'file://' || null) &&
+              // m('.m-option m-encoding',
+              //   m('.m-name', m('span', 'encoding')),
+              //   m('.m-control',
+              //     m('select.mdc-elevation--z2 m-select', {
+              //       onchange: events.origin.encoding(origin),
+              //       },
+              //       m('option', {
+              //         value: '',
+              //         selected: state.origins[origin].encoding === ''
+              //         },
+              //         'auto'
+              //       ),
+              //       Object.keys(state.encodings).map((label) =>
+              //         m('optgroup', {label}, state.encodings[label].map((encoding) =>
+              //           m('option', {
+              //             value: encoding,
+              //             selected: state.origins[origin].encoding === encoding
+              //             },
+              //             encoding
+              //           )
+              //         ))
+              //       )
+              //     )
+              //   )
+              // ),
               // refresh/remove
               (origin !== 'file://' || null) &&
               m('.m-footer',
