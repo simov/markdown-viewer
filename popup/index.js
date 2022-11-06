@@ -39,14 +39,21 @@ var state = {
     'water-dark',
     'writ',
   ],
+  _width: [
+    'auto',
+    'full',
+    'wide',
+    'large',
+    'medium',
+    'small',
+    'tiny',
+  ],
   raw: false,
   tab: '',
   tabs: ['theme', 'compiler', 'content'],
   compilers: [],
   description: {
-    themes: {
-      wide: '100% width',
-    },
+    themes: {},
     compiler: {},
     content: {
       autoreload: 'Auto reload on file change',
@@ -96,7 +103,7 @@ var events = {
   },
 
   themes: (e) => {
-    state.themes[e.target.name] = !state.themes[e.target.name]
+    state.themes.width = state._width[e.target.selectedIndex]
     chrome.runtime.sendMessage({
       message: 'popup.themes',
       themes: state.themes,
@@ -109,6 +116,13 @@ var events = {
       message: 'popup.theme',
       theme: state.theme
     })
+    if (/^github/.test(state.theme) && !['auto', 'full'].includes(state.themes.width)) {
+      state.themes.width = 'auto'
+      chrome.runtime.sendMessage({
+        message: 'popup.themes',
+        themes: state.themes,
+      })
+    }
   },
 
   raw: () => {
@@ -216,21 +230,16 @@ m.mount(document.querySelector('body'), {
               m('option', {selected: state.theme === theme}, theme)
             )
           ),
-          m('.scroll', Object.keys(state.themes).map((key) =>
-            m('label.mdc-switch m-switch', {
-              onupdate: onupdate('themes', key),
-              title: state.description.themes[key]
-              },
-              m('input.mdc-switch__native-control', {
-                type: 'checkbox',
-                name: key,
-                checked: state.themes[key],
-                onchange: events.themes
-              }),
-              m('.mdc-switch__background', m('.mdc-switch__knob')),
-              m('span.mdc-switch-label', key)
-            ))
-          )
+          m('select.mdc-elevation--z2 m-select', {
+            onchange: events.themes
+            },
+            state._width.map((width) =>
+              m('option', {
+                selected: state.themes.width === width,
+                disabled: /^github/.test(state.theme) && !['auto', 'full'].includes(width) ? 'disabled' : null
+              }, width)
+            )
+          ),
         ),
         // compiler
         m('.m-panel', {

@@ -105,7 +105,7 @@ function mount () {
         if (state.html) {
           dom.push(m('#_html', {oncreate: oncreate.html,
             class: (/github(-dark)?/.test(state.theme) ? 'markdown-body' : 'markdown-theme') +
-            (state.themes.wide ? ' wide-theme' : '')
+            (state.themes.width !== 'auto' ? ` _width-${state.themes.width}` : '')
           },
             m.trust(state.html)
           ))

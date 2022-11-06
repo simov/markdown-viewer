@@ -79,7 +79,7 @@ pre#_markdown {
   .markdown-theme { width: 1400px !important; }
 }
 
-.wide-theme {
+._width-full {
   box-sizing: border-box;
   width: 100% !important;
   max-width: 100% !important;
@@ -87,6 +87,21 @@ pre#_markdown {
   border: none;
   padding: 20px !important;
   margin: 0 !important;
+}
+._width-wide {
+  width: 1400px !important;
+}
+._width-large {
+  width: 1200px !important;
+}
+._width-medium {
+  width: 992px !important;
+}
+._width-small {
+  width: 768px !important;
+}
+._width-tiny {
+  width: 576px !important;
 }
 
 /*---------------------------------------------------------------------------*/

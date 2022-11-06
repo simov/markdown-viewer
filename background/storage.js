@@ -45,7 +45,7 @@ md.storage.defaults = (compilers) => {
     header: true,
     match,
     themes: {
-      wide: false,
+      width: 'auto',
     },
     content: {
       emoji: false,
@@ -126,5 +126,11 @@ md.storage.migrations = (state) => {
   }
   if (state.content.syntax === undefined) {
     state.content.syntax = true
+  }
+  if (state.themes.wide !== undefined) {
+    if (state.themes.wide) {
+      state.themes.width = 'full'
+    }
+    delete state.themes.wide
   }
 }
