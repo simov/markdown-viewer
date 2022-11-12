@@ -153,7 +153,7 @@ body._toc-right { padding-right: 300px !important; }
 ._theme-bullframe #_toc,
 ._theme-kacit #_toc,
 ._theme-latex #_toc,
-._theme-minicss #_toc,
+._theme-mini #_toc,
 ._theme-sakura #_toc,
 ._theme-style-sans #_toc,
 ._theme-style-serif #_toc,
@@ -164,7 +164,7 @@ body._toc-right { padding-right: 300px !important; }
 
 /*dark*/
 ._theme-github-dark #_toc,
-._theme-markdown-retro #_toc,
+._theme-retro #_toc,
 ._theme-sakura-vader #_toc,
 ._theme-water-dark #_toc {
   border-right: 1px solid #30363d;
@@ -246,7 +246,7 @@ body._toc-right { padding-right: 300px !important; }
 ._theme-bullframe::-webkit-scrollbar-track, ._theme-bullframe *::-webkit-scrollbar-track,
 ._theme-kacit::-webkit-scrollbar-track, ._theme-kacit *::-webkit-scrollbar-track,
 ._theme-latex::-webkit-scrollbar-track, ._theme-latex *::-webkit-scrollbar-track,
-._theme-minicss::-webkit-scrollbar-track, ._theme-minicss *::-webkit-scrollbar-track,
+._theme-mini::-webkit-scrollbar-track, ._theme-mini *::-webkit-scrollbar-track,
 ._theme-sakura::-webkit-scrollbar-track, ._theme-sakura *::-webkit-scrollbar-track,
 ._theme-style-sans::-webkit-scrollbar-track, ._theme-style-sans *::-webkit-scrollbar-track,
 ._theme-style-serif::-webkit-scrollbar-track, ._theme-style-serif *::-webkit-scrollbar-track,
@@ -261,7 +261,7 @@ body._toc-right { padding-right: 300px !important; }
 ._theme-bullframe::-webkit-scrollbar-thumb, ._theme-bullframe *::-webkit-scrollbar-thumb,
 ._theme-kacit::-webkit-scrollbar-thumb, ._theme-kacit *::-webkit-scrollbar-thumb,
 ._theme-latex::-webkit-scrollbar-thumb, ._theme-latex *::-webkit-scrollbar-thumb,
-._theme-minicss::-webkit-scrollbar-thumb, ._theme-minicss *::-webkit-scrollbar-thumb,
+._theme-mini::-webkit-scrollbar-thumb, ._theme-mini *::-webkit-scrollbar-thumb,
 ._theme-sakura::-webkit-scrollbar-thumb, ._theme-sakura *::-webkit-scrollbar-thumb,
 ._theme-style-sans::-webkit-scrollbar-thumb, ._theme-style-sans *::-webkit-scrollbar-thumb,
 ._theme-style-serif::-webkit-scrollbar-thumb, ._theme-style-serif *::-webkit-scrollbar-thumb,
@@ -276,7 +276,7 @@ body._toc-right { padding-right: 300px !important; }
 ._theme-bullframe::-webkit-scrollbar-thumb:hover, ._theme-bullframe *::-webkit-scrollbar-thumb:hover,
 ._theme-kacit::-webkit-scrollbar-thumb:hover, ._theme-kacit *::-webkit-scrollbar-thumb:hover,
 ._theme-latex::-webkit-scrollbar-thumb:hover, ._theme-latex *::-webkit-scrollbar-thumb:hover,
-._theme-minicss::-webkit-scrollbar-thumb:hover, ._theme-minicss *::-webkit-scrollbar-thumb:hover,
+._theme-mini::-webkit-scrollbar-thumb:hover, ._theme-mini *::-webkit-scrollbar-thumb:hover,
 ._theme-sakura::-webkit-scrollbar-thumb:hover, ._theme-sakura *::-webkit-scrollbar-thumb:hover,
 ._theme-style-sans::-webkit-scrollbar-thumb:hover, ._theme-style-sans *::-webkit-scrollbar-thumb:hover,
 ._theme-style-serif::-webkit-scrollbar-thumb:hover, ._theme-style-serif *::-webkit-scrollbar-thumb:hover,
@@ -288,19 +288,19 @@ body._toc-right { padding-right: 300px !important; }
 
 /*dark*/
 ._theme-github-dark::-webkit-scrollbar-track, ._theme-github-dark *::-webkit-scrollbar-track,
-._theme-markdown-retro::-webkit-scrollbar-track, ._theme-markdown-retro *::-webkit-scrollbar-track,
+._theme-retro::-webkit-scrollbar-track, ._theme-retro *::-webkit-scrollbar-track,
 ._theme-sakura-vader::-webkit-scrollbar-track, ._theme-sakura-vader *::-webkit-scrollbar-track
 {
   background: #424242;
 }
 ._theme-github-dark::-webkit-scrollbar-thumb, ._theme-github-dark *::-webkit-scrollbar-thumb,
-._theme-markdown-retro::-webkit-scrollbar-thumb, ._theme-markdown-retro *::-webkit-scrollbar-thumb,
+._theme-retro::-webkit-scrollbar-thumb, ._theme-retro *::-webkit-scrollbar-thumb,
 ._theme-sakura-vader::-webkit-scrollbar-thumb, ._theme-sakura-vader *::-webkit-scrollbar-thumb
 {
   background: #686868;
 }
 ._theme-github-dark::-webkit-scrollbar-thumb:hover, ._theme-github-dark *::-webkit-scrollbar-thumb:hover,
-._theme-markdown-retro::-webkit-scrollbar-thumb:hover, ._theme-markdown-retro *::-webkit-scrollbar-thumb:hover,
+._theme-retro::-webkit-scrollbar-thumb:hover, ._theme-retro *::-webkit-scrollbar-thumb:hover,
 ._theme-sakura-vader::-webkit-scrollbar-thumb:hover, ._theme-sakura-vader *::-webkit-scrollbar-thumb:hover
 {
   background: #7b7b7b;
@@ -393,7 +393,7 @@ body._toc-right { padding-right: 300px !important; }
 ._theme-bullframe .octicon-link,
 ._theme-kacit .octicon-link,
 ._theme-latex .octicon-link,
-._theme-minicss .octicon-link,
+._theme-mini .octicon-link,
 ._theme-sakura .octicon-link,
 ._theme-style-sans .octicon-link,
 ._theme-style-serif .octicon-link,
@@ -404,7 +404,7 @@ body._toc-right { padding-right: 300px !important; }
 
 /*dark*/
 ._theme-github-dark .octicon-link,
-._theme-markdown-retro .octicon-link,
+._theme-retro .octicon-link,
 ._theme-sakura-vader .octicon-link,
 ._theme-water-dark .octicon-link {
   color: #c9d1d9;
@@ -420,7 +420,7 @@ body._toc-right { padding-right: 300px !important; }
 ._theme-awsm .octicon,
 ._theme-axist .octicon,
 ._theme-kacit .octicon,
-._theme-minicss .octicon,
+._theme-mini .octicon,
 ._theme-new .octicon,
 ._theme-sakura .octicon,
 ._theme-sakura-vader .octicon,
@@ -474,7 +474,7 @@ body._toc-right { padding-right: 300px !important; }
 /*theme fixes*/
 
 /*code block*/
-._theme-markdown-retro pre,
+._theme-retro pre,
 ._theme-sakura-vader pre,
 ._theme-water-dark pre {
   background-color: #161b22 !important;
