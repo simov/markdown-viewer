@@ -65,7 +65,13 @@ var css = () => {
 
   fs.writeFileSync(
     path.resolve(__dirname, 'tmp/prism.min.css'),
-    csso.minify(source).css,
+    csso.minify(source).css
+      .replace('background:0 0;', '')
+      .replace('background:#f5f2f0', '')
+      .replace('border-radius:.3em', '')
+      .replace('padding:1em;', '')
+      .replace('margin:.5em 0;', '')
+      .replace('background:rgba(255,255,255,.5)', ''),
     'utf8'
   )
 
@@ -76,7 +82,12 @@ var css = () => {
 
   fs.writeFileSync(
     path.resolve(__dirname, 'tmp/prism-okaidia.min.css'),
-    csso.minify(source).css,
+    csso.minify(source).css
+      .replace('background:0 0;', '')
+      .replace('background:#272822', '')
+      .replace('border-radius:.3em', '')
+      .replace('padding:1em;', '')
+      .replace('margin:.5em 0;', ''),
     'utf8'
   )
 }

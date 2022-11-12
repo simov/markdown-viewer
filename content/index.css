@@ -473,13 +473,6 @@ body._toc-right { padding-right: 300px !important; }
 /*---------------------------------------------------------------------------*/
 /*theme fixes*/
 
-/*code block*/
-._theme-retro pre,
-._theme-sakura-vader pre,
-._theme-water-dark pre {
-  background-color: #161b22 !important;
-}
-
 /*github-dark*/
 ._theme-github-dark {
   background-color:#0d1117;

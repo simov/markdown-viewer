@@ -12,6 +12,40 @@ var state = {
   toc: '',
   interval: null,
   ms: 1000,
+  _themes: {
+    'github': 'auto',
+    'github-dark': 'dark',
+    'almond': 'light',
+    'air': 'auto',
+    'awsm': 'light',
+    'axist': 'light',
+    'bamboo': 'auto',
+    'bullframe': 'light',
+    'holiday': 'auto',
+    'kacit': 'light',
+    'latex': 'light',
+    'marx': 'auto',
+    'mini': 'light',
+    'modest': 'auto',
+    'new': 'auto',
+    'no-class': 'auto',
+    'pico': 'auto',
+    'retro': 'dark',
+    'sakura': 'light',
+    'sakura-vader': 'dark',
+    'semantic': 'auto',
+    'simple': 'auto',
+    'splendor': 'auto',
+    'style-sans': 'light',
+    'style-serif': 'light',
+    'stylize': 'auto',
+    'superstylin': 'auto',
+    'tacit': 'light',
+    'vanilla': 'auto',
+    'water': 'light',
+    'water-dark': 'dark',
+    'writ': 'auto',
+  }
 }
 
 chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
@@ -94,12 +128,17 @@ function mount () {
           $('body').classList.add(`_theme-${state.theme}`)
 
           if (state.content.syntax) {
-            var prism = ['github-dark', 'markdown-retro', 'sakura-vader', 'water-dark']
-              .includes(state.theme) ? 'prism-okaidia' : 'prism'
+            var prism =
+              state._themes[state.theme] === 'dark' ||
+              (state._themes[state.theme] === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+              ? 'prism-okaidia' : 'prism'
             dom.push(m('link#_prism', {
               rel: 'stylesheet', type: 'text/css',
               href: chrome.runtime.getURL(`/vendor/${prism}.min.css`),
             }))
+          }
+          if (state.content.mermaid) {
+            mmd.refresh()
           }
         }
         if (state.html) {
