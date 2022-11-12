@@ -15,5 +15,8 @@ var MathJax = {
   showProcessingMessages: false,
   messageStyle: 'none',
   skipStartupTypeset: true, // disable initial rendering
-  positionToHash: false
+  positionToHash: false,
+  options: {
+    ignoreHtmlClass: 'tex2jax-ignore'
+  }
 }

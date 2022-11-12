@@ -149,7 +149,7 @@ function mount () {
             m.trust(state.html)
           ))
           if (state.content.toc && state.toc) {
-            dom.push(m('#_toc', {oncreate: oncreate.toc},
+            dom.push(m('#_toc.tex2jax-ignore', {oncreate: oncreate.toc},
               m.trust(state.toc)
             ))
             $('body').classList.add('_toc-left')
