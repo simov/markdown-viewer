@@ -7,7 +7,7 @@ browser=$1
 
 if [ -z "$browser" ]; then
   echo "Specify target browser"
-  echo "chrome, firefox, edge"
+  echo "chrome, firefox"
   exit 1
 fi
 
@@ -34,15 +34,15 @@ cd ..
 cp -r background content icons options popup themes vendor build/tmp/markdown-viewer/
 
 if [ "$browser" = "chrome" ]; then
-  cp manifest.json build/tmp/markdown-viewer/
+  cp manifest.chrome.json build/tmp/markdown-viewer/manifest.json
+  cp manifest.chrome.json manifest.json
 elif [ "$browser" = "firefox" ]; then
   cp manifest.firefox.json build/tmp/markdown-viewer/manifest.json
-elif [ "$browser" = "edge" ]; then
-  cp manifest.edge.json build/tmp/markdown-viewer/manifest.json
+  cp manifest.firefox.json manifest.json
 fi
 
 # zip the markdown-viewer folder itself
-if [ "$browser" = "chrome" ] || [ "$browser" = "edge" ]; then
+if [ "$browser" = "chrome" ]; then
   cd build/tmp/
   zip -r ../../markdown-viewer.zip markdown-viewer
   cd ..
