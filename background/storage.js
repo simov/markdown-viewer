@@ -63,6 +63,7 @@ md.storage.defaults = (compilers) => {
         encoding: '',
       }
     },
+    icon: false,
   }
 
   Object.keys(compilers).forEach((compiler) => {
@@ -132,5 +133,8 @@ md.storage.migrations = (state) => {
       state.themes.width = 'full'
     }
     delete state.themes.wide
+  }
+  if (state.icon === undefined) {
+    state.icon = false
   }
 }

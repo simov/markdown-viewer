@@ -1,5 +1,5 @@
 
-md.messages = ({storage: {defaults, state, set}, compilers, mathjax, xhr, webrequest}) => {
+md.messages = ({storage: {defaults, state, set}, compilers, mathjax, xhr, webrequest, icon}) => {
 
   return (req, sender, sendResponse) => {
 
@@ -96,6 +96,18 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, xhr, webreq
     }
     else if (req.message === 'options.header') {
       set({header: req.header})
+      sendResponse()
+    }
+
+    // settings
+    else if (req.message === 'options.settings') {
+      sendResponse({
+        icon: state.icon,
+      })
+    }
+    else if (req.message === 'options.icon') {
+      set({icon: req.icon})
+      icon()
       sendResponse()
     }
 

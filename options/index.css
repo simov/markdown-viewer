@@ -44,6 +44,11 @@ a { text-decoration: none; }
 a:hover { text-decoration: none; }
 
 
+/*global*/
+.hidden {
+  display: none;
+}
+
 /*header*/
 #header {
   background: #607d8b;
@@ -62,11 +67,46 @@ a:hover { text-decoration: none; }
   display: flex;
   justify-content: space-between;
 }
-#header span {
-}
-#header a {
-  font-size: 16px;
+
+
+/*header menu*/
+#menu {
+  position: relative;
   color: #fff;
+}
+#menu span {
+  display: inline-block;
+  line-height: 60px;
+  padding: 0 20px;
+}
+#menu div {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  z-index: 10;
+  width: 200px;
+  box-shadow:
+    0 3px 1px -2px rgba(0,0,0,.2),
+    0 2px 2px 0 rgba(0,0,0,.14),
+    0 1px 5px 0 rgba(0,0,0,.12);
+}
+#menu em {
+  display: block;
+  font-size: 16px;
+  font-style: normal;
+  color: #333;
+  cursor: pointer;
+  padding: 0 20px;
+  background: #fff;
+  transition-duration: .28s;
+  transition-timing-function: cubic-bezier(.4,0,.2,1);
+  transition-property: background-color box-shadow;
+}
+#menu em:hover {
+  background: #ececec;
+}
+#menu em.active {
+  background: #ececec;
 }
 
 
