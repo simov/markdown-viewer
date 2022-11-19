@@ -31,6 +31,7 @@ md.inject = ({storage: {state}}) => (id) => {
       state.content.syntax && '/vendor/prism.min.js',
       state.content.emoji && '/content/emoji.js',
       state.content.mermaid && ['/vendor/mermaid.min.js', '/content/mermaid.js'],
+      state.content.mathjax && ['/content/mathjax.js', '/vendor/mathjax/tex-mml-chtml.js'],
       '/content/index.js',
     ].filter(Boolean).flat(),
     injectImmediately: true
