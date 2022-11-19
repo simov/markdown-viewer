@@ -1,7 +1,6 @@
 
 importScripts('/vendor/marked.min.js')
 importScripts('/vendor/remark.min.js')
-
 importScripts('/background/compilers/marked.js')
 importScripts('/background/compilers/remark.js')
 

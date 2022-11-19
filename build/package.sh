@@ -4,6 +4,7 @@
 set -e
 
 browser=$1
+compilers=$2
 
 if [ -z "$browser" ]; then
   echo "Specify target browser"
@@ -14,6 +15,10 @@ fi
 # set current working directory to directory of the shell script
 cd "$(dirname "$0")"
 
+# cleanup
+rm -rf ../themes
+rm -rf ../vendor
+rm ../background/index-compilers.js
 mkdir -p ../themes
 mkdir -p ../vendor
 
@@ -27,7 +32,7 @@ sh prism/build.sh
 sh remark/build.sh
 sh themes/build.sh
 
-# archive
+# copy files
 mkdir -p tmp
 mkdir -p tmp/markdown-viewer
 cd ..
@@ -41,16 +46,22 @@ elif [ "$browser" = "firefox" ]; then
   cp manifest.firefox.json manifest.json
 fi
 
-# zip the markdown-viewer folder itself
+# archive the markdown-viewer folder itself
 if [ "$browser" = "chrome" ]; then
   cd build/tmp/
   zip -r ../../markdown-viewer.zip markdown-viewer
   cd ..
-# zip the contents of the markdown-viewer folder
+# archive the contents of the markdown-viewer folder
 elif [ "$browser" = "firefox" ]; then
   cd build/tmp/markdown-viewer/
   zip -r ../../../markdown-viewer.zip .
   cd ../../
 fi
 
+# cleanup
 rm -rf tmp/
+
+# compilers
+if [ "$compilers" = "compilers" ]; then
+  sh compilers/build.sh
+fi

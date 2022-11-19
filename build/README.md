@@ -33,7 +33,7 @@ sh build/package.sh
 | github-markdown-css |  5.1.0
 | marked              |  4.1.1
 | mathjax             |  3.2.2
-| mermaid             |  9.1.6
+| mermaid             |  9.2.2
 | mithril             |  1.1.6
 | prismjs             | ^1.29.0
 | remark              | ^14.0.2
@@ -43,3 +43,12 @@ sh build/package.sh
 | remark-gfm          | ^3.0.1
 | remark-html         | ^15.0.1
 | remark-slug         | ^7.0.1
+
+## Additional Compilers
+
+| Module              | Version
+| :-                  | :-
+| commonmark          | 0.29.3
+| markdown-it         | 13.0.1
+| remarkable          | 1.7.4
+| showdown            | 2.1.0

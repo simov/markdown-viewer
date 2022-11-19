@@ -7,3 +7,4 @@ package-lock.json
 /vendor/
 /*.zip
 /manifest.json
+/background/index-compilers.js
