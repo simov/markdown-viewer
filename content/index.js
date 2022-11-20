@@ -10,8 +10,11 @@ var state = {
   html: '',
   markdown: '',
   toc: '',
-  interval: null,
-  ms: 1000,
+  reload: {
+    interval: null,
+    ms: 1000,
+    md: false,
+  },
   _themes: {
     'github': 'auto',
     'github-dark': 'dark',
@@ -65,7 +68,7 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
     m.redraw()
   }
   else if (req.message === 'autoreload') {
-    clearInterval(state.interval)
+    clearInterval(state.reload.interval)
   }
 })
 
@@ -74,25 +77,69 @@ var oncreate = {
     scroll.body()
   },
   html: () => {
-    scroll.body()
-
-    if (state.content.syntax) {
-      setTimeout(() => Prism.highlightAll(), 20)
-    }
-
-    if (state.content.mermaid) {
-      setTimeout(() => mmd.render(), 40)
-    }
-
-    if (state.content.mathjax) {
-      setTimeout(() => mj.render(), 60)
-    }
-
-    anchors()
+    update()
   },
   toc: () => {
     scroll.toc()
   }
+}
+
+var onupdate = {
+  html: () => {
+    if (state.reload.md) {
+      state.reload.md = false
+      update()
+    }
+  },
+  toc: () => {
+    scroll.toc()
+  },
+  theme: () => {
+    if (state.content.mermaid) {
+      setTimeout(() => mmd.render(), 0)
+    }
+  }
+}
+
+var update = () => {
+  scroll.body()
+
+  if (state.content.syntax) {
+    setTimeout(() => Prism.highlightAll(), 20)
+  }
+
+  if (state.content.mermaid) {
+    setTimeout(() => mmd.render(), 40)
+  }
+
+  if (state.content.mathjax) {
+    setTimeout(() => mj.render(), 60)
+  }
+}
+
+var render = (md) => {
+  state.markdown = md
+  chrome.runtime.sendMessage({
+    message: 'markdown',
+    compiler: state.compiler,
+    markdown: state.markdown
+  }, (res) => {
+    state.html = res.html
+    if (state.content.emoji) {
+      state.html = emojinator(state.html)
+    }
+    if (state.content.mermaid) {
+      state.html = state.html.replace(
+        /<code class="language-(?:mermaid|mmd)">/gi,
+        '<code class="mermaid">'
+      )
+    }
+    if (state.content.toc) {
+      state.toc = toc.render(state.html)
+    }
+    state.html = anchors(state.html)
+    m.redraw()
+  })
 }
 
 function mount () {
@@ -101,27 +148,7 @@ function mount () {
 
   m.mount($('body'), {
     oninit: () => {
-      state.markdown = md
-      chrome.runtime.sendMessage({
-        message: 'markdown',
-        compiler: state.compiler,
-        markdown: state.markdown
-      }, (res) => {
-        state.html = res.html
-        if (state.content.emoji) {
-          state.html = emojinator(state.html)
-        }
-        if (state.content.mermaid) {
-          state.html = state.html.replace(
-            /<code class="language-(?:mermaid|mmd)">/gi,
-            '<code class="mermaid">'
-          )
-        }
-        if (state.content.toc) {
-          state.toc = toc.render(state.html)
-        }
-        m.redraw()
-      })
+      render(md)
     },
     view: () => {
       var dom = []
@@ -134,6 +161,7 @@ function mount () {
         var loaded = Array.from($('body').classList).filter((name) => /^_theme/.test(name))[0]
         $('body').classList.remove(loaded)
         dom.push(m('link#_theme', {
+          onupdate: onupdate.theme,
           rel: 'stylesheet', type: 'text/css',
           href: chrome.runtime.getURL(`/themes/${state.theme}.css`),
         }))
@@ -150,11 +178,7 @@ function mount () {
           }))
         }
 
-        if (state.content.mermaid && loaded && loaded !== `_theme-${state.theme}`) {
-          mmd.refresh()
-        }
-
-        dom.push(m('#_html', {oncreate: oncreate.html,
+        dom.push(m('#_html', {oncreate: oncreate.html, onupdate: onupdate.html,
           class: (/github(-dark)?/.test(state.theme) ? 'markdown-body' : 'markdown-theme') +
           (state.themes.width !== 'auto' ? ` _width-${state.themes.width}` : '')
         },
@@ -162,30 +186,24 @@ function mount () {
         ))
 
         if (state.content.toc) {
-          dom.push(m('#_toc.tex2jax-ignore', {oncreate: oncreate.toc},
+          dom.push(m('#_toc.tex2jax-ignore', {oncreate: oncreate.toc, onupdate: onupdate.toc},
             m.trust(state.toc)
           ))
           $('body').classList.add('_toc-left')
         }
       }
 
-      return (dom.length ? dom : m('div'))
+      return dom
     }
   })
 }
 
-function anchors () {
-  Array.from($('#_html').childNodes)
-  .filter((node) => /h[1-6]/i.test(node.tagName))
-  .forEach((node) => {
-    var a = document.createElement('a')
-    a.className = 'anchor'
-    a.name = node.id
-    a.href = '#' + node.id
-    a.innerHTML = '<span class="octicon octicon-link"></span>'
-    node.prepend(a)
-  })
-}
+var anchors = (html) =>
+  html.replace(/(<h[1-6] id="(.*?)">)/g, (header, _, id) =>
+    header +
+    '<a class="anchor" name="' + id + '" href="#' + id + '">' +
+    '<span class="octicon octicon-link"></span></a>'
+  )
 
 var toc = (() => {
   var walk = (regex, string, group, result = [], match = regex.exec(string)) =>

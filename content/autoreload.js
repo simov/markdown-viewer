@@ -1,13 +1,15 @@
 
 ;(() => {
-  var initial = ''
+  var current = ''
 
-  var response = (body) => {
-    if (!initial) {
-      initial = body
+  var response = (md) => {
+    if (!current) {
+      current = md
     }
-    else if (initial !== body) {
-      location.reload(true)
+    else if (current !== md) {
+      state.reload.md = true
+      current = md
+      render(md)
     }
   }
 
@@ -26,7 +28,7 @@
       }, (res) => {
         if (res.err) {
           console.error(res.err)
-          clearInterval(state.interval)
+          clearInterval(state.reload.interval)
         }
         else {
           response(res.body)
@@ -40,11 +42,11 @@
       }
       catch (err) {
         console.error(err)
-        clearInterval(state.interval)
+        clearInterval(state.reload.interval)
       }
     }
   }
 
   get()
-  state.interval = setInterval(get, state.ms)
+  state.reload.interval = setInterval(get, state.reload.ms)
 })()
