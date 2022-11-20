@@ -81,6 +81,10 @@ var oncreate = {
       m.redraw()
     }
 
+    if (state.content.mermaid) {
+      mmd.render()
+    }
+
     if (state.content.syntax) {
       setTimeout(() => Prism.highlightAll(), 20)
     }
@@ -104,7 +108,16 @@ function mount () {
         compiler: state.compiler,
         markdown: state.markdown
       }, (res) => {
-        state.html = state.content.emoji ? emojinator(res.html) : res.html
+        state.html = res.html
+        if (state.content.emoji) {
+          state.html = emojinator(state.html)
+        }
+        if (state.content.mermaid) {
+          state.html = state.html.replace(
+            /<code class="language-(?:mermaid|mmd)">/gi,
+            '<code class="mermaid">'
+          )
+        }
         m.redraw()
       })
     },
@@ -115,12 +128,10 @@ function mount () {
         dom.push(m('pre#_markdown', {oncreate: oncreate.markdown}, state.markdown))
         $('body').classList.remove('_toc-left', '_toc-right')
       }
-      else {
+      else if (state.html) {
         if (state.theme) {
-          var included = Array.from($('body').classList).filter((name) => /^_theme/.test(name))
-          if (included.length) {
-            $('body').classList.remove(included)
-          }
+          var loaded = Array.from($('body').classList).filter((name) => /^_theme/.test(name))[0]
+          $('body').classList.remove(loaded)
           dom.push(m('link#_theme', {
             rel: 'stylesheet', type: 'text/css',
             href: chrome.runtime.getURL(`/themes/${state.theme}.css`),
@@ -137,26 +148,24 @@ function mount () {
               href: chrome.runtime.getURL(`/vendor/${prism}.min.css`),
             }))
           }
-          if (state.content.mermaid) {
+          if (state.content.mermaid && loaded && loaded !== `_theme-${state.theme}`) {
             mmd.refresh()
           }
         }
-        if (state.html) {
-          dom.push(m('#_html', {oncreate: oncreate.html,
-            class: (/github(-dark)?/.test(state.theme) ? 'markdown-body' : 'markdown-theme') +
-            (state.themes.width !== 'auto' ? ` _width-${state.themes.width}` : '')
-          },
-            m.trust(state.html)
+        dom.push(m('#_html', {oncreate: oncreate.html,
+          class: (/github(-dark)?/.test(state.theme) ? 'markdown-body' : 'markdown-theme') +
+          (state.themes.width !== 'auto' ? ` _width-${state.themes.width}` : '')
+        },
+          m.trust(state.html)
+        ))
+        if (state.content.toc && state.toc) {
+          dom.push(m('#_toc.tex2jax-ignore', {oncreate: oncreate.toc},
+            m.trust(state.toc)
           ))
-          if (state.content.toc && state.toc) {
-            dom.push(m('#_toc.tex2jax-ignore', {oncreate: oncreate.toc},
-              m.trust(state.toc)
-            ))
-            $('body').classList.add('_toc-left')
-          }
-          if (state.content.mathjax) {
-            mj.render()
-          }
+          $('body').classList.add('_toc-left')
+        }
+        if (state.content.mathjax) {
+          mj.render()
         }
       }
 
