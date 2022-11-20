@@ -33,6 +33,8 @@ md.inject = ({storage: {state}}) => (id) => {
       state.content.mermaid && ['/vendor/mermaid.min.js', '/content/mermaid.js'],
       state.content.mathjax && ['/content/mathjax.js', '/vendor/mathjax/tex-mml-chtml.js'],
       '/content/index.js',
+      '/content/scroll.js',
+      state.content.autoreload && '/content/autoreload.js',
     ].filter(Boolean).flat(),
     injectImmediately: true
   })

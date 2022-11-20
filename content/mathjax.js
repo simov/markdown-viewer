@@ -28,17 +28,10 @@ var MathJax = {
 }
 
 var mj = {
-  loading: false,
+  loaded: false,
   render: () => {
-    if (mj.loading) {
-      return
-    }
-    mj.loading = true
-    var timeout = setInterval(() => {
-      if (!!MathJax) {
-        clearInterval(timeout)
-        MathJax.typesetPromise()
-      }
-    }, 0)
+    MathJax.typesetPromise().then(() => {
+      setTimeout(() => mj.loaded = true, 20)
+    })
   }
 }

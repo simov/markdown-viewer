@@ -76,21 +76,16 @@ var oncreate = {
   html: () => {
     scroll.body()
 
-    if (state.content.toc && !state.toc) {
-      state.toc = toc()
-      m.redraw()
+    if (state.content.syntax) {
+      setTimeout(() => Prism.highlightAll(), 20)
     }
 
     if (state.content.mermaid) {
-      mmd.render()
-    }
-
-    if (state.content.syntax) {
-      Prism.highlightAll()
+      setTimeout(() => mmd.render(), 40)
     }
 
     if (state.content.mathjax) {
-      mj.render()
+      setTimeout(() => mj.render(), 60)
     }
 
     anchors()
@@ -121,6 +116,9 @@ function mount () {
             /<code class="language-(?:mermaid|mmd)">/gi,
             '<code class="mermaid">'
           )
+        }
+        if (state.content.toc) {
+          state.toc = toc.render(state.html)
         }
         m.redraw()
       })
@@ -163,7 +161,7 @@ function mount () {
           m.trust(state.html)
         ))
 
-        if (state.content.toc && state.toc) {
+        if (state.content.toc) {
           dom.push(m('#_toc.tex2jax-ignore', {oncreate: oncreate.toc},
             m.trust(state.toc)
           ))
@@ -175,96 +173,6 @@ function mount () {
     }
   })
 }
-
-var scroll = (() => {
-  function race (done) {
-    Promise.race([
-      Promise.all([
-        new Promise((resolve) => {
-          var diagrams = Array.from(document.querySelectorAll('code.language-mmd, code.language-mermaid'))
-          if (!state.content.mermaid || !diagrams.length) {
-            resolve()
-          }
-          else {
-            var timeout = setInterval(() => {
-              var svg = Array.from(document.querySelectorAll('code.language-mmd svg, code.language-mermaid svg'))
-              if (diagrams.length === svg.length) {
-                clearInterval(timeout)
-                resolve()
-              }
-            }, 50)
-          }
-        }),
-        new Promise((resolve) => {
-          var images = Array.from(document.querySelectorAll('img'))
-          if (!images.length) {
-            resolve()
-          }
-          else {
-            var loaded = 0
-            images.forEach((img) => {
-              img.addEventListener('load', () => {
-                if (++loaded === images.length) {
-                  resolve()
-                }
-              }, {once: true})
-            })
-          }
-        }),
-      ]),
-      new Promise((resolve) => setTimeout(resolve, 500))
-    ])
-    .then(done)
-  }
-  function debounce (container, done) {
-    var listener = /html|body/i.test(container.nodeName) ? window : container
-    var timeout = null
-    listener.addEventListener('scroll', () => {
-      clearTimeout(timeout)
-      timeout = setTimeout(done, 100)
-    })
-  }
-  function listen (container, prefix) {
-    var key = prefix + location.origin + location.pathname
-    try {
-      container.scrollTop = parseInt(localStorage.getItem(key))
-      debounce(container, () => {
-        localStorage.setItem(key, container.scrollTop)
-      })
-    }
-    catch (err) {
-      chrome.storage.local.get(key, (res) => {
-        container.scrollTop = parseInt(res[key])
-      })
-      debounce(container, () => {
-        chrome.storage.local.set({[key]: container.scrollTop})
-      })
-    }
-  }
-  return {
-    body: () => {
-      var loaded
-      race(() => {
-        if (!loaded) {
-          loaded = true
-          var container = ((html = $('html')) => (
-            html.scrollTop = 1,
-            html.scrollTop ? (html.scrollTop = 0, html) : $('body')
-          ))()
-          if (state.content.scroll) {
-            listen(container, 'md-')
-          }
-          else if (location.hash && $(location.hash)) {
-            container.scrollTop = $(location.hash).offsetTop
-          }
-        }
-      })
-    },
-    toc: () => {
-      listen($('#_toc'), 'md-toc-')
-    }
-  }
-})()
 
 function anchors () {
   Array.from($('#_html').childNodes)
@@ -279,21 +187,24 @@ function anchors () {
   })
 }
 
-var toc = (
-  link = (header) => '<a href="#' + header.id + '">' + header.title + '</a>') =>
-  Array.from($('#_html').childNodes)
-  .filter((node) => /h[1-6]/i.test(node.tagName))
-  .map((node) => ({
-    id: node.getAttribute('id'),
-    level: parseInt(node.tagName.replace('H', '')),
-    title: node.innerText.replace(/</g, '&lt;').replace(/>/g, '&gt;')
-  }))
-  .reduce((html, header) => {
-    html += '<div class="_ul">'.repeat(header.level)
-    html += link(header)
-    html += '</div>'.repeat(header.level)
-    return html
-  }, '')
+var toc = (() => {
+  var walk = (regex, string, group, result = [], match = regex.exec(string)) =>
+    !match ? result : walk(regex, string, group, result.concat(!group ? match[1] :
+      group.reduce((all, name, index) => (all[name] = match[index + 1], all), {})))
+  return {
+    render: (html) =>
+      walk(
+        /<h([1-6]) id="(.*?)">(.*?)<\/h[1-6]>/gs,
+        html,
+        ['level', 'id', 'title']
+      )
+      .reduce((toc, {id, title, level}) => toc +=
+        '<div class="_ul">'.repeat(level) +
+        '<a href="#' + id + '">' + title + '</a>' +
+        '</div>'.repeat(level)
+      , '')
+  }
+})()
 
 if (document.readyState === 'complete') {
   mount()
@@ -305,56 +216,4 @@ else {
       mount()
     }
   }, 0)
-}
-
-if (state.content.autoreload) {
-  ;(() => {
-    var initial = ''
-
-    var response = (body) => {
-      if (!initial) {
-        initial = body
-      }
-      else if (initial !== body) {
-        location.reload(true)
-      }
-    }
-
-    var xhr = new XMLHttpRequest()
-    xhr.onreadystatechange = () => {
-      if (xhr.readyState === 4) {
-        response(xhr.responseText)
-      }
-    }
-
-    var get = () => {
-      if (location.protocol === 'file:') {
-        chrome.runtime.sendMessage({
-          message: 'autoreload',
-          location: location.href
-        }, (res) => {
-          if (res.err) {
-            console.error(res.err)
-            clearInterval(state.interval)
-          }
-          else {
-            response(res.body)
-          }
-        })
-      }
-      else {
-        xhr.open('GET', location.href + '?preventCache=' + Date.now(), true)
-        try {
-          xhr.send()
-        }
-        catch (err) {
-          console.error(err)
-          clearInterval(state.interval)
-        }
-      }
-    }
-
-    get()
-    state.interval = setInterval(get, state.ms)
-  })()
 }
