@@ -134,16 +134,22 @@ body._toc-right { padding-right: 300px !important; }
   overflow-x: hidden;
 }
 #_toc ._ul {
-  padding: 0 0 0 20px !important;
+  padding-left: 20px !important;
   margin: 0 !important;
+}
+#_toc > ._ul {
+  padding: 0 0 0 10px !important;
+}
+#_toc > ._ul:first-child {
+  padding-top: 15px !important;
+}
+#_toc > ._ul:last-child {
+  padding-bottom: 15px !important;
 }
 #_toc ._ul a {
   border: 0 !important;
   padding: 5px 10px !important;
   display: block !important;
-}
-#_toc > ._ul {
-  padding: 0 0 0 10px !important;
 }
 
 /*light*/

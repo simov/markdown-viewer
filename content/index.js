@@ -86,7 +86,11 @@ var oncreate = {
     }
 
     if (state.content.syntax) {
-      setTimeout(() => Prism.highlightAll(), 20)
+      Prism.highlightAll()
+    }
+
+    if (state.content.mathjax) {
+      mj.render()
     }
 
     anchors()
@@ -129,43 +133,41 @@ function mount () {
         $('body').classList.remove('_toc-left', '_toc-right')
       }
       else if (state.html) {
-        if (state.theme) {
-          var loaded = Array.from($('body').classList).filter((name) => /^_theme/.test(name))[0]
-          $('body').classList.remove(loaded)
-          dom.push(m('link#_theme', {
-            rel: 'stylesheet', type: 'text/css',
-            href: chrome.runtime.getURL(`/themes/${state.theme}.css`),
-          }))
-          $('body').classList.add(`_theme-${state.theme}`)
+        var loaded = Array.from($('body').classList).filter((name) => /^_theme/.test(name))[0]
+        $('body').classList.remove(loaded)
+        dom.push(m('link#_theme', {
+          rel: 'stylesheet', type: 'text/css',
+          href: chrome.runtime.getURL(`/themes/${state.theme}.css`),
+        }))
+        $('body').classList.add(`_theme-${state.theme}`)
 
-          if (state.content.syntax) {
-            var prism =
-              state._themes[state.theme] === 'dark' ||
-              (state._themes[state.theme] === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)
-              ? 'prism-okaidia' : 'prism'
-            dom.push(m('link#_prism', {
-              rel: 'stylesheet', type: 'text/css',
-              href: chrome.runtime.getURL(`/vendor/${prism}.min.css`),
-            }))
-          }
-          if (state.content.mermaid && loaded && loaded !== `_theme-${state.theme}`) {
-            mmd.refresh()
-          }
+        if (state.content.syntax) {
+          var prism =
+            state._themes[state.theme] === 'dark' ||
+            (state._themes[state.theme] === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+            ? 'prism-okaidia' : 'prism'
+          dom.push(m('link#_prism', {
+            rel: 'stylesheet', type: 'text/css',
+            href: chrome.runtime.getURL(`/vendor/${prism}.min.css`),
+          }))
         }
+
+        if (state.content.mermaid && loaded && loaded !== `_theme-${state.theme}`) {
+          mmd.refresh()
+        }
+
         dom.push(m('#_html', {oncreate: oncreate.html,
           class: (/github(-dark)?/.test(state.theme) ? 'markdown-body' : 'markdown-theme') +
           (state.themes.width !== 'auto' ? ` _width-${state.themes.width}` : '')
         },
           m.trust(state.html)
         ))
+
         if (state.content.toc && state.toc) {
           dom.push(m('#_toc.tex2jax-ignore', {oncreate: oncreate.toc},
             m.trust(state.toc)
           ))
           $('body').classList.add('_toc-left')
-        }
-        if (state.content.mathjax) {
-          mj.render()
         }
       }
 

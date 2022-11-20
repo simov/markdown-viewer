@@ -153,7 +153,6 @@ body a.mdc-tab {
   height: 50px;
   background: #afbdc3;
   -webkit-border-radius: 8px;
-  outline: 2px solid #333;
   outline-offset: -2px;
 }
 ::-webkit-scrollbar-thumb:hover {
