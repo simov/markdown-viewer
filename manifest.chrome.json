@@ -39,7 +39,7 @@
       ],
       "resources": [
         "/themes/*",
-        "/vendor/mathjax/es5/output/chtml/fonts/*",
+        "/vendor/mathjax/fonts/*",
         "/vendor/prism.min.css",
         "/vendor/prism-okaidia.min.css"
       ]

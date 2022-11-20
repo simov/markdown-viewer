@@ -19,8 +19,8 @@ var MathJax = {
   options: {
     ignoreHtmlClass: 'tex2jax-ignore'
   },
-  loader: {
-    paths: {mathjax: chrome.runtime.getURL('/vendor/mathjax/es5')},
+  chtml: {
+    fontURL: chrome.runtime.getURL('/vendor/mathjax/fonts')
   },
   startup: {
     typeset: false
