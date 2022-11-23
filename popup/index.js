@@ -8,7 +8,7 @@ var state = {
   _themes: [
     'github',
     'github-dark',
-    'air',
+    // 'air',
     'almond',
     'awsm',
     'axist',
@@ -28,7 +28,7 @@ var state = {
     'sakura-vader',
     'semantic',
     'simple',
-    'splendor',
+    // 'splendor',
     'style-sans',
     'style-serif',
     'stylize',
@@ -116,13 +116,6 @@ var events = {
       message: 'popup.theme',
       theme: state.theme
     })
-    if (/^github/.test(state.theme) && !['auto', 'full'].includes(state.themes.width)) {
-      state.themes.width = 'auto'
-      chrome.runtime.sendMessage({
-        message: 'popup.themes',
-        themes: state.themes,
-      })
-    }
   },
 
   raw: () => {
@@ -236,7 +229,6 @@ m.mount(document.querySelector('body'), {
             state._width.map((width) =>
               m('option', {
                 selected: state.themes.width === width,
-                disabled: /^github/.test(state.theme) && !['auto', 'full'].includes(width) ? 'disabled' : null
               }, width)
             )
           ),

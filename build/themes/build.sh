@@ -21,10 +21,10 @@ npx csso --input cleanrmd/inst/resources/bullframe/bullframe.css --output ../../
 npx csso --input cleanrmd/inst/resources/holiday/holiday.css --output ../../themes/holiday.css
 npx csso --input cleanrmd/inst/resources/kacit/kacit.css --output ../../themes/kacit.css
 npx csso --input cleanrmd/inst/resources/latex.css/latex.css --output ../../themes/latex.css
-npx csso --input cleanrmd/inst/resources/markdown-air/markdown-air.css --output ../../themes/air.css
+# npx csso --input cleanrmd/inst/resources/markdown-air/markdown-air.css --output ../../themes/air.css
 npx csso --input cleanrmd/inst/resources/markdown-modest/markdown-modest.css --output ../../themes/modest.css
 npx csso --input cleanrmd/inst/resources/markdown-retro/markdown-retro.css --output ../../themes/retro.css
-npx csso --input cleanrmd/inst/resources/markdown-splendor/markdown-splendor.css --output ../../themes/splendor.css
+# npx csso --input cleanrmd/inst/resources/markdown-splendor/markdown-splendor.css --output ../../themes/splendor.css
 npx csso --input cleanrmd/inst/resources/marx/marx.css --output ../../themes/marx.css
 npx csso --input cleanrmd/inst/resources/minicss/minicss.css --output ../../themes/mini.css
 npx csso --input cleanrmd/inst/resources/new.css/new.css --output ../../themes/new.css
@@ -45,3 +45,5 @@ npx csso --input cleanrmd/inst/resources/water-dark/water-dark.css --output ../.
 npx csso --input cleanrmd/inst/resources/writ/writ.css --output ../../themes/writ.css
 
 rm -rf cleanrmd/ node_modules/ package-lock.json
+
+node fix.js
