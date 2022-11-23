@@ -74,13 +74,10 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
 
 var oncreate = {
   markdown: () => {
-    scroll.body()
+    setTimeout(() => scroll(), 0)
   },
   html: () => {
     update()
-  },
-  toc: () => {
-    scroll.toc()
   }
 }
 
@@ -91,9 +88,6 @@ var onupdate = {
       update()
     }
   },
-  toc: () => {
-    scroll.toc()
-  },
   theme: () => {
     if (state.content.mermaid) {
       setTimeout(() => mmd.render(), 0)
@@ -102,7 +96,7 @@ var onupdate = {
 }
 
 var update = () => {
-  scroll.body()
+  scroll()
 
   if (state.content.syntax) {
     setTimeout(() => Prism.highlightAll(), 20)
@@ -186,9 +180,7 @@ function mount () {
         ))
 
         if (state.content.toc) {
-          dom.push(m('#_toc.tex2jax-ignore', {oncreate: oncreate.toc, onupdate: onupdate.toc},
-            m.trust(state.toc)
-          ))
+          dom.push(m('#_toc.tex2jax-ignore', m.trust(state.toc)))
           $('body').classList.add('_toc-left')
         }
       }

@@ -77,27 +77,25 @@ var scroll = (() => {
       })
     }
   }
-  return {
-    body: () => {
-      var loaded
-      race(() => {
-        if (!loaded) {
-          loaded = true
-          var container = ((html = $('html')) => (
-            html.scrollTop = 1,
-            html.scrollTop ? (html.scrollTop = 0, html) : $('body')
-          ))()
-          if (state.content.scroll) {
-            listen(container, 'md-')
-          }
-          else if (location.hash && $(location.hash)) {
-            container.scrollTop = $(location.hash).offsetTop
-          }
+  return () => {
+    var loaded
+    race(() => {
+      if (!loaded) {
+        loaded = true
+        var container = ((html = $('html')) => (
+          html.scrollTop = 1,
+          html.scrollTop ? (html.scrollTop = 0, html) : $('body')
+        ))()
+        if (state.content.scroll) {
+          listen(container, 'md-')
         }
-      })
-    },
-    toc: () => {
-      listen($('#_toc'), 'md-toc-')
-    }
+        else if (location.hash && $(location.hash)) {
+          container.scrollTop = $(location.hash).offsetTop
+        }
+        if (state.content.toc) {
+          setTimeout(() => listen($('#_toc'), 'md-toc-'), 10)
+        }
+      }
+    })
   }
 })()
