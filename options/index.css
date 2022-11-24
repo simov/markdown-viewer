@@ -137,26 +137,21 @@ footer .icon-hidden {
 
 
 /*custom scrollbars in WebKit*/
-::-webkit-scrollbar {
-  width: 13px;
-  height: 13px;
+::-webkit-scrollbar,
+::-webkit-scrollbar-corner {
+  height: 10px;
+  width: 10px;
 }
 ::-webkit-scrollbar-track-piece {
   background: #ececec;
-  -webkit-border-radius: 2px;
+  border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb {
-  height: 50px;
   background: #afbdc3;
-  -webkit-border-radius: 8px;
-  outline: 2px solid #333;
-  outline-offset: -2px;
-  border: 2px solid #ececec;
+  border-radius: 6px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  height: 50px;
   background-color: #607d8b;
-  -webkit-border-radius: 8px;
 }
 
 

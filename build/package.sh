@@ -18,7 +18,8 @@ cd "$(dirname "$0")"
 # cleanup
 rm -rf ../themes
 rm -rf ../vendor
-rm ../background/index-compilers.js
+rm -f ../markdown-viewer.zip
+rm -f ../background/index-compilers.js
 mkdir -p ../themes
 mkdir -p ../vendor
 
@@ -36,7 +37,7 @@ sh themes/build.sh
 mkdir -p tmp
 mkdir -p tmp/markdown-viewer
 cd ..
-cp -r background content icons options popup themes vendor build/tmp/markdown-viewer/
+cp -r background content icons options popup themes vendor LICENSE build/tmp/markdown-viewer/
 
 if [ "$browser" = "chrome" ]; then
   cp manifest.chrome.json build/tmp/markdown-viewer/manifest.json

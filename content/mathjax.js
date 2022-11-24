@@ -30,6 +30,7 @@ var MathJax = {
 var mj = {
   loaded: false,
   render: () => {
+    mj.loaded = false
     MathJax.typesetPromise().then(() => {
       setTimeout(() => mj.loaded = true, 20)
     })

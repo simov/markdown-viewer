@@ -221,8 +221,9 @@ var Origins = () => {
         (
           (
             // header detection - ff: disabled
-            !/Firefox/.test(navigator.userAgent) &&
-            Object.keys(state.origins).length > 1
+            !/Firefox/.test(navigator.userAgent) && (
+              Object.keys(state.origins).length > 1 ||
+              Object.keys(state.origins).length === 1 && state.file)
           )
           || null
         ) &&
