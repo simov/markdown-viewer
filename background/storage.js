@@ -137,4 +137,7 @@ md.storage.migrations = (state) => {
   if (state.icon === undefined) {
     state.icon = false
   }
+  if (state.remark.footnotes !== undefined) {
+    delete state.remark.footnotes
+  }
 }
