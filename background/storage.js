@@ -51,6 +51,7 @@ md.storage.defaults = (compilers) => {
       emoji: false,
       scroll: true,
       toc: false,
+      tocc: false,
       mathjax: false,
       autoreload: false,
       mermaid: false,

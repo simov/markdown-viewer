@@ -180,3 +180,29 @@ img.emojione {
   /* prevent img stretch */
   width: auto;
 }
+
+details>summary {
+
+  list-style: none;
+}
+summary::-webkit-details-marker {
+  display: none
+}
+
+summary {
+  position: relative;
+}
+
+summary::before {
+  font-size: 14px;
+  content: "▷";
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+  left: 5%;
+}
+
+details[open]>summary:before {
+  content: "▽";
+}
