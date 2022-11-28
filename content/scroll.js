@@ -20,6 +20,15 @@ var scroll = (() => {
           }
         }),
         new Promise((resolve) => {
+          var code = Array.from(document.querySelectorAll('code[class^=language-]'))
+          if (!state.content.syntax || !code.length) {
+            resolve()
+          }
+          else {
+            setTimeout(() => resolve(), 40)
+          }
+        }),
+        new Promise((resolve) => {
           var diagrams = Array.from(document.querySelectorAll('code.mermaid'))
           if (!state.content.mermaid || !diagrams.length) {
             resolve()
