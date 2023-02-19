@@ -4,36 +4,38 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Markdown Viewer</title>
+  <link href="/vendor/bootstrap.min.css" rel="stylesheet" type="text/css" media="all" />
   <link href="/vendor/mdc.min.css" rel="stylesheet" type="text/css" media="all" />
-  <link href="/options/icons.css" rel="stylesheet" type="text/css" media="all" />
   <link href="/options/index.css" rel="stylesheet" type="text/css" media="all" />
   <script src="/vendor/mdc.min.js" type="text/javascript" charset="utf-8"></script>
   <script src="/vendor/mithril.min.js" type="text/javascript" charset="utf-8"></script>
 </head>
-<body class="mdc-typography">
+<body>
   <div id="wrapper">
-    <div id="header" class="mdc-elevation--z2">
-      <div class="holder">
-        <span>Markdown Viewer</span>
+    <nav class="navbar navbar-dark bg-dark fixed-top">
+      <div class="container">
+        <a href="https://github.com/simov/markdown-viewer" class="navbar-brand">Markdown Viewer</a>
         <a href="#" id="menu">
           <span>☰</span>
           <div class="hidden">
-            <em class="active">Manage Origins</em>
+            <em class="active">Origins</em>
             <em>Settings</em>
             <em>Help</em>
           </div>
         </a>
       </div>
+    </nav>
+    <div class="container">
+      <main></main>
     </div>
-    <main></main>
     <div id="footer-push">&nbsp;</div>
   </div>
   <footer>
     <nav>
-      <a href="https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk" class="icon-chrome icon-hidden">Chrome Store</a>
-      <a href="https://addons.mozilla.org/en-US/firefox/addon/markdown-viewer-chrome/" class="icon-firefox icon-hidden">Firefox Store</a>
-      <a href="https://microsoftedge.microsoft.com/addons/detail/markdown-viewer/cgfmehpekedojlmjepoimbfcafopimdg" class="icon-edge icon-hidden">Edge</a>
-      <a href="https://github.com/simov/markdown-viewer" class="icon-github">GitHub</a>
+      <a href="https://github.com/simov/markdown-viewer">GitHub</a> &bullet;
+      <a href="https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk">Chrome</a> &bullet;
+      <a href="https://microsoftedge.microsoft.com/addons/detail/markdown-viewer/cgfmehpekedojlmjepoimbfcafopimdg">Edge</a> &bullet;
+      <a href="https://addons.mozilla.org/en-US/firefox/addon/markdown-viewer-chrome/">Firefox</a>
     </nav>
   </footer>
 </body>

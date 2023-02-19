@@ -18,7 +18,7 @@ document.querySelector('#menu div').addEventListener('click', (e) => {
   Array.from(document.querySelectorAll('#menu em')).forEach((link) => {
     link.classList.remove('active')
   })
-  if (e.target.innerText === 'Manage Origins') {
+  if (e.target.innerText === 'Origins') {
     document.querySelector('.m-origins').classList.remove('hidden')
     document.querySelector('.m-settings').classList.add('hidden')
     e.target.classList.add('active')
@@ -33,10 +33,3 @@ document.querySelector('#menu div').addEventListener('click', (e) => {
   }
   document.querySelector('#menu div').classList.add('hidden')
 })
-
-// ff: set appropriate footer icon
-document.querySelector('.icon-' + (
-  /Firefox/.test(navigator.userAgent) ? 'firefox' :
-  /Edg/.test(navigator.userAgent) ? 'edge' :
-  'chrome'
-)).classList.remove('icon-hidden')

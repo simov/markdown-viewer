@@ -28,6 +28,7 @@ sh build/package.sh
 | @material/switch    | ^0.36.1
 | @material/tabs      | ^0.37.1
 | @material/textfield | ^0.37.1
+| bootstrap           |  5.2.3
 | cleanrmd            |  0.1.0
 | emojione            |  2.2.7
 | github-markdown-css |  5.1.0

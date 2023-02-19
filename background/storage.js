@@ -42,7 +42,6 @@ md.storage.defaults = (compilers) => {
     theme: 'github',
     compiler: 'marked',
     raw: false,
-    header: true,
     match,
     themes: {
       width: 'auto',
@@ -58,9 +57,9 @@ md.storage.defaults = (compilers) => {
     },
     origins: {
       'file://': {
+        header: true,
+        path: true,
         match,
-        csp: false,
-        encoding: '',
       }
     },
     icon: false,
@@ -139,5 +138,15 @@ md.storage.migrations = (state) => {
   }
   if (state.remark.footnotes !== undefined) {
     delete state.remark.footnotes
+  }
+  // v5.0 -> v5.1
+  if (state.header !== null) {
+    Object.keys(state.origins).forEach((origin) => {
+      state.origins[origin].header = true
+      state.origins[origin].path = true
+      delete state.origins[origin].csp
+      delete state.origins[origin].encoding
+    })
+    state.header = null
   }
 }

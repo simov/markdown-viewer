@@ -86,37 +86,19 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, xhr, webreq
       sendResponse()
     }
 
-    // options
+    // origins view
     else if (req.message === 'options.origins') {
       sendResponse({
         origins: state.origins,
-        header: state.header,
         match: state.match,
       })
     }
-    else if (req.message === 'options.header') {
-      set({header: req.header})
-      sendResponse()
-    }
-
-    // settings
-    else if (req.message === 'options.settings') {
-      sendResponse({
-        icon: state.icon,
-      })
-    }
-    else if (req.message === 'options.icon') {
-      set({icon: req.icon})
-      icon()
-      sendResponse()
-    }
-
-    // origins
+    // origins options
     else if (req.message === 'origin.add') {
       state.origins[req.origin] = {
+        header: true,
+        path: true,
         match: defaults.match,
-        csp: false,
-        encoding: '',
       }
       set({origins: state.origins})
       sendResponse()
@@ -131,6 +113,19 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, xhr, webreq
       state.origins[req.origin] = req.options
       set({origins: state.origins})
       webrequest()
+      sendResponse()
+    }
+
+    // settings view
+    else if (req.message === 'options.settings') {
+      sendResponse({
+        icon: state.icon,
+      })
+    }
+    // settings options
+    else if (req.message === 'options.icon') {
+      set({icon: req.icon})
+      icon()
       sendResponse()
     }
 

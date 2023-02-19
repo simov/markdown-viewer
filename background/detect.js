@@ -33,7 +33,7 @@ md.detect = ({storage: {state}, inject}) => {
           return
         }
 
-        if (header(win.header) || match(win.url)) {
+        if (detect(win.header, win.url)) {
           if (onwakeup && chrome.webRequest) {
             onwakeup = false
             chrome.tabs.reload(id)
@@ -46,11 +46,7 @@ md.detect = ({storage: {state}, inject}) => {
     }
   }
 
-  var header = (value) => {
-    return state.header && value && /text\/(?:x-)?markdown/i.test(value)
-  }
-
-  var match = (url) => {
+  var detect = (content, url) => {
     var location = new URL(url)
 
     var origin =
@@ -60,10 +56,14 @@ md.detect = ({storage: {state}, inject}) => {
       state.origins['*://' + location.hostname] ||
       state.origins['*://*']
 
-    if (origin && origin.match && new RegExp(origin.match).test(location.href)) {
-      return origin
-    }
+    return (
+      (origin && origin.header && origin.path && origin.match && /\btext\/(?:(?:(?:x-)?markdown)|plain)\b/i.test(content) && new RegExp(origin.match).test(location.href)) ||
+      (origin && origin.header && !origin.path && /\btext\/(?:(?:(?:x-)?markdown)|plain)\b/i.test(content)) ||
+      (origin && origin.path && origin.match && !origin.header && new RegExp(origin.match).test(location.href))
+        ? origin
+        : undefined
+    )
   }
 
-  return {tab, header, match}
+  return {tab}
 }

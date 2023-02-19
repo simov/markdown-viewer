@@ -36,21 +36,27 @@ var Settings = () => {
   }
 
   var render = () =>
-    m('.bs-callout m-settings hidden',
-      m('h4.mdc-typography--headline5', 'Settings'),
-      m('.m-option m-icon',
-        m('.m-control',
-          m('label.mdc-switch m-switch', {
-            onupdate: onupdate.icon(),
-            },
-            m('input.mdc-switch__native-control', {
-              type: 'checkbox',
-              checked: state.icon,
-              onchange: events.icon()
-            }),
-            m('.mdc-switch__background', m('.mdc-switch__knob')),
-            m('span.mdc-switch-label',
-              m('code', 'Light Extension Icon for Dark Browser Theme')
+    m('.m-settings hidden',
+      m('.row',
+        m('h3', 'Settings')
+      ),
+      m('.bs-callout',
+        m('.row',
+          m('.col-sm-12',
+            m('.overflow',
+              m('label.mdc-switch m-switch', {
+                onupdate: onupdate.icon(),
+                },
+                m('input.mdc-switch__native-control', {
+                  type: 'checkbox',
+                  checked: state.icon,
+                  onchange: events.icon()
+                }),
+                m('.mdc-switch__background', m('.mdc-switch__knob')),
+                m('span.mdc-switch-label',
+                  'Light Extension Icon for Dark Browser Theme'
+                )
+              )
             )
           )
         )

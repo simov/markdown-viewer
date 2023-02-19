@@ -3,36 +3,11 @@ var Origins = () => {
   var defaults = {
     // storage
     origins: {},
-    header: false,
     match: '',
     // UI
-    scheme: 'https',
     host: '',
     timeout: null,
     file: true,
-    // static
-    schemes: ['https', 'http', '*'],
-    // encodings: {
-    //   'Unicode': ['UTF-8', 'UTF-16LE'],
-    //   'Arabic': ['ISO-8859-6', 'Windows-1256'],
-    //   'Baltic': ['ISO-8859-4', 'ISO-8859-13', 'Windows-1257'],
-    //   'Celtic': ['ISO-8859-14'],
-    //   'Central European': ['ISO-8859-2', 'Windows-1250'],
-    //   'Chinese Simplified': ['GB18030', 'GBK'],
-    //   'Chinese Traditional': ['BIG5'],
-    //   'Cyrillic': ['ISO-8859-5', 'IBM866', 'KOI8-R', 'KOI8-U', 'Windows-1251'],
-    //   'Greek': ['ISO-8859-7', 'Windows-1253'],
-    //   'Hebrew': ['Windows-1255', 'ISO-8859-8', 'ISO-8859-8-I'],
-    //   'Japanese': ['EUC-JP', 'ISO-2022-JP', 'Shift_JIS'],
-    //   'Korean': ['EUC-KR'],
-    //   'Nordic': ['ISO-8859-10'],
-    //   'Romanian': ['ISO-8859-16'],
-    //   'South European': ['ISO-8859-3'],
-    //   'Thai': ['Windows-874'],
-    //   'Turkish': ['Windows-1254'],
-    //   'Vietnamese': ['Windows-1258'],
-    //   'Western': ['ISO-8859-15', 'Windows-1252', 'Macintosh'],
-    // },
     // chrome
     permissions: {},
   }
@@ -60,25 +35,14 @@ var Origins = () => {
       chrome.tabs.create({url: `chrome://extensions/?id=${chrome.runtime.id}`})
     },
 
-    header: (e) => {
-      state.header = !state.header
-      chrome.runtime.sendMessage({
-        message: 'options.header',
-        header: state.header,
-      })
-    },
-
     origin: {
-      scheme: (e) => {
-        state.scheme = state.schemes[e.target.selectedIndex]
-      },
-
       host: (e) => {
+        state.scheme = e.target.value.replace(/(.*):\/\/.*/i, '$1')
         state.host = e.target.value.replace(/.*:\/\/([^/]+).*/i, '$1')
       },
 
       add: (all) => () => {
-        if (!all && !state.host) {
+        if (!all && !state.host && !['https', 'http', '*'].includes(state.scheme)) {
           return
         }
         var origin = all ? '*://*' : `${state.scheme}://${state.host}`
@@ -86,9 +50,9 @@ var Origins = () => {
           if (granted) {
             chrome.runtime.sendMessage({message: 'origin.add', origin})
             state.origins[origin] = {
+              header: true,
+              path: true,
               match: state.match,
-              csp: false,
-              encoding: '',
             }
             state.host = ''
             state.permissions[origin] = true
@@ -117,37 +81,37 @@ var Origins = () => {
         })
       },
 
+      header: (origin) => () => {
+        state.origins[origin].header = !state.origins[origin].header
+        var {header, path, match} = state.origins[origin]
+        chrome.runtime.sendMessage({
+          message: 'origin.update',
+          origin,
+          options: {header, path, match},
+        })
+      },
+
+      path: (origin) => () => {
+        state.origins[origin].path = !state.origins[origin].path
+        var {header, path, match} = state.origins[origin]
+        chrome.runtime.sendMessage({
+          message: 'origin.update',
+          origin,
+          options: {header, path, match},
+        })
+      },
+
       match: (origin) => (e) => {
         state.origins[origin].match = e.target.value
         clearTimeout(state.timeout)
         state.timeout = setTimeout(() => {
-          var {match, csp, encoding} = state.origins[origin]
+          var {header, path, match} = state.origins[origin]
           chrome.runtime.sendMessage({
             message: 'origin.update',
             origin,
-            options: {match, csp, encoding},
+            options: {header, path, match},
           })
         }, 750)
-      },
-
-      csp: (origin) => () => {
-        state.origins[origin].csp = !state.origins[origin].csp
-        var {match, csp, encoding} = state.origins[origin]
-        chrome.runtime.sendMessage({
-          message: 'origin.update',
-          origin,
-          options: {match, csp, encoding},
-        })
-      },
-
-      encoding: (origin) => (e) => {
-        state.origins[origin].encoding = e.target.value
-        var {match, csp, encoding} = state.origins[origin]
-        chrome.runtime.sendMessage({
-          message: 'origin.update',
-          origin,
-          options: {match, csp, encoding},
-        })
       },
     },
   }
@@ -162,211 +126,228 @@ var Origins = () => {
   }
 
   var onupdate = {
-    header: (vnode) => {
-      if (vnode.dom.classList.contains('is-checked') !== state.header) {
+    header: (origin) => (vnode) => {
+      if (vnode.dom.classList.contains('is-checked') !== state.origins[origin].header) {
         vnode.dom.classList.toggle('is-checked')
       }
     },
-    csp: (origin) => (vnode) => {
-      if (vnode.dom.classList.contains('is-checked') !== state.origins[origin].csp) {
+    path: (origin) => (vnode) => {
+      if (vnode.dom.classList.contains('is-checked') !== state.origins[origin].path) {
         vnode.dom.classList.toggle('is-checked')
       }
     }
   }
 
   var render = () =>
-    m('.bs-callout m-origins',
+    m('.m-origins',
 
-      // add origin
-      m('.m-add-origin',
-        m('h4.mdc-typography--headline5', 'Allowed Origins'),
-        m('select.mdc-elevation--z2 m-select', {
-          onchange: events.origin.scheme
-          },
-          state.schemes.map((scheme) =>
-          m('option', {
-            value: scheme,
-            selected: scheme === state.scheme
+      // file access
+      m('.row',
+        m('.col-xxl-10.col-xl-10.col-lg-9.col-md-8.col-sm-12',
+          m('h3', 'File Access'),
+        ),
+        m('.col-xxl-2.col-xl-2.col-lg-3.col-md-4.col-sm-12',
+          // file access is disabled
+          (!state.file || null) &&
+          m('button.mdc-button mdc-button--raised m-button m-btn-file', {
+            oncreate: oncreate.ripple,
+            onclick: events.file
             },
-            scheme + '://'
+            'Allow Access'
           )
-        )),
-        m('.mdc-text-field m-textfield', {
-          oncreate: oncreate.textfield,
-          },
-          m('input.mdc-text-field__input', {
-            type: 'text',
-            value: state.host,
-            onchange: events.origin.host,
-            placeholder: 'raw.githubusercontent.com'
-          }),
-          m('.mdc-line-ripple')
         ),
-        m('button.mdc-button mdc-button--raised m-button', {
-          oncreate: oncreate.ripple,
-          onclick: events.origin.add()
-          },
-          'Add'
+      ),
+      state.file &&
+      Object.keys(state.origins).filter((origin) => origin === 'file://').map((origin) =>
+        m('.bs-callout',
+          // origin
+          m('.row',
+            m('.col-xxl-8.col-xl-8.col-lg-8.col-md-8.col-sm-12', m('span.m-origin', origin)),
+            m('.col-xxl-4.col-xl-4.col-lg-4.col-md-4.col-sm-12')
+          ),
+          // header detection
+          m('.row',
+            m('.col-sm-12',
+              m('.overflow',
+                m('label.mdc-switch m-switch', {
+                  onupdate: onupdate.header,
+                  title: 'Toggle Header Detection'
+                  },
+                  m('input.mdc-switch__native-control', {
+                    type: 'checkbox',
+                    checked: state.origins[origin].header,
+                    onchange: events.origin.header(origin)
+                  }),
+                  m('.mdc-switch__background', m('.mdc-switch__knob')),
+                  m('span.mdc-switch-label',
+                    'Content Type Detection: ',
+                    m('span', 'text/markdown'),
+                    ', ',
+                    m('span', 'text/x-markdown'),
+                    ', ',
+                    m('span', 'text/plain'),
+                  )
+                ),
+              )
+            )
+          ),
+          // path matching regexp
+          m('.row',
+            m('.col-sm-12',
+              m('.overflow',
+                m('label.mdc-switch m-switch', {
+                  onupdate: onupdate.path,
+                  title: 'Toggle Path Detection'
+                  },
+                  m('input.mdc-switch__native-control', {
+                    type: 'checkbox',
+                    checked: state.origins[origin].path,
+                    onchange: events.origin.path(origin)
+                  }),
+                  m('.mdc-switch__background', m('.mdc-switch__knob')),
+                  m('span.mdc-switch-label',
+                    'Path Matching RegExp: '
+                  )
+                ),
+                m('.mdc-text-field m-textfield', {
+                  oncreate: oncreate.textfield
+                  },
+                  m('input.mdc-text-field__input', {
+                    type: 'text',
+                    onkeyup: events.origin.match(origin),
+                    value: state.origins[origin].match,
+                  }),
+                  m('.mdc-line-ripple')
+                )
+              )
+            )
+          )
         ),
-        m('button.mdc-button mdc-button--raised m-button', {
-          oncreate: oncreate.ripple,
-          onclick: events.origin.add(true)
-          },
-          'Allow All'
-        )
       ),
 
-      // global options
-      m('.m-global',
-        (
-          (
-            // header detection - ff: disabled
-            !/Firefox/.test(navigator.userAgent) && (
-              Object.keys(state.origins).length > 1 ||
-              Object.keys(state.origins).length === 1 && state.file)
-          )
-          || null
-        ) &&
-        m('label.mdc-switch m-switch', {
-          onupdate: onupdate.header,
-          title: 'Toggle header detection'
-          },
-          m('input.mdc-switch__native-control', {
-            type: 'checkbox',
-            checked: state.header,
-            onchange: events.header
-          }),
-          m('.mdc-switch__background', m('.mdc-switch__knob')),
-          m('span.mdc-switch-label',
-            'Detect ',
-            m('code', 'text/markdown'),
-            ' and ',
-            m('code', 'text/x-markdown'),
-            ' content type'
-          )
+      // site access
+      m('.row',
+        m('.col-xxl-10.col-xl-10.col-lg-10.col-md-9.col-sm-8',
+          m('h3', 'Site Access'),
         ),
+        (!Object.keys(state.origins).includes('*://*') || null) &&
+        m('.col-xxl-2.col-xl-2.col-lg-2.col-md-3.col-sm-4',
+          m('button.mdc-button mdc-button--raised m-button m-btn-all', {
+            oncreate: oncreate.ripple,
+            onclick: events.origin.add(true)
+            },
+            'Allow All'
+          ),
+        ),
+      ),
 
-        // file access is disabled
-        (!state.file || null) &&
-        m('button.mdc-button mdc-button--raised m-button', {
-          oncreate: oncreate.ripple,
-          onclick: events.file
-          },
-          'Allow Access to file:// URLs'
+      // add origin
+      m('.bs-callout m-box-add',
+        m('.row',
+          m('.col-xxl-11.col-xl-11.col-lg-10.col-md-10.col-sm-12',
+            m('.mdc-text-field m-textfield', {
+              oncreate: oncreate.textfield,
+              },
+              m('input.mdc-text-field__input', {
+                type: 'text',
+                value: state.host,
+                onchange: events.origin.host,
+                placeholder: 'Copy URL address and paste it here'
+              }),
+              m('.mdc-line-ripple')
+            ),
+          ),
+          m('.col-xxl-1.col-xl-1.col-lg-2.col-md-2.col-sm-12',
+            m('button.mdc-button mdc-button--raised m-button m-btn-add', {
+              oncreate: oncreate.ripple,
+              onclick: events.origin.add()
+              },
+              'Add'
+            ),
+          )
         )
       ),
 
       // allowed origins
-      (state.file || Object.keys(state.origins).length > 1 || null) &&
-      m('ul.m-list',
-        Object.keys(state.origins).sort((a, b) => a < b ? 1 : a > b ? -1 : 0).map((origin) =>
-          (
-            (
-              state.file && origin === 'file://' &&
-              // ff: access to file:// URLs is not allowed
-              !/Firefox/.test(navigator.userAgent)
+      Object.keys(state.origins)
+        .sort((a, b) => a < b ? 1 : a > b ? -1 : 0)
+        .filter((origin) => origin !== 'file://')
+        .map((origin) =>
+        m('.bs-callout', {class: !state.permissions[origin] ? 'm-box-refresh' : undefined},
+          // origin
+          m('.row',
+            m('.col-xxl-8.col-xl-8.col-lg-8.col-md-7.col-sm-12', m('span.m-origin', origin)),
+            m('.col-xxl-4.col-xl-4.col-lg-4.col-md-5.col-sm-12',
+              // remove
+              m('button.mdc-button mdc-button--raised m-button m-btn-remove', {
+                oncreate: oncreate.ripple,
+                onclick: events.origin.remove(origin)
+                },
+                'Remove'
+              ),
+              // refresh
+              (!state.permissions[origin] || null) &&
+              m('button.mdc-button mdc-button--raised m-button m-btn-refresh', {
+                oncreate: oncreate.ripple,
+                onclick: events.origin.refresh(origin)
+                },
+                'Refresh'
+              )
             )
-            || origin !== 'file://' || null
-          ) &&
-          m('li.mdc-elevation--z2', {
-            class: state.origins[origin].expanded ? 'm-expanded' : null,
-            },
-            m('.m-summary', {
-              onclick: (e) => state.origins[origin].expanded = !state.origins[origin].expanded
-              },
-              m('.m-title', origin),
-              m('.m-options',
-                !state.permissions[origin] ? m('span', m('strong', 'refresh')) : null,
-                state.origins[origin].match !== state.match ? m('span', 'match') : null,
-                state.origins[origin].csp ? m('span', 'csp') : null,
-                state.origins[origin].encoding ? m('span', 'encoding') : null
-              ),
-              m('i.material-icons', {
-                class: state.origins[origin].expanded ? 'icon-arrow-up' : 'icon-arrow-down'
-              })
-            ),
-            m('.m-content',
-              // match
-              m('.m-option m-match',
-                m('.m-name', m('span', 'match')),
-                m('.m-control',
-                  m('.mdc-text-field m-textfield', {
-                    oncreate: oncreate.textfield
-                    },
-                    m('input.mdc-text-field__input', {
-                      type: 'text',
-                      onkeyup: events.origin.match(origin),
-                      value: state.origins[origin].match,
-                    }),
-                    m('.mdc-line-ripple')
+          ),
+          // header detection
+          m('.row',
+            m('.col-sm-12',
+              m('.overflow',
+                m('label.mdc-switch m-switch', {
+                  onupdate: onupdate.header,
+                  title: 'Toggle Header Detection'
+                  },
+                  m('input.mdc-switch__native-control', {
+                    type: 'checkbox',
+                    checked: state.origins[origin].header,
+                    onchange: events.origin.header(origin)
+                  }),
+                  m('.mdc-switch__background', m('.mdc-switch__knob')),
+                  m('span.mdc-switch-label',
+                    'Content Type Detection: ',
+                    m('span', 'text/markdown'),
+                    ', ',
+                    m('span', 'text/x-markdown'),
+                    ', ',
+                    m('span', 'text/plain'),
                   )
-                )
-              ),
-              // csp
-              // (origin !== 'file://' || null) &&
-              // m('.m-option m-csp',
-              //   m('.m-name', m('span', 'csp')),
-              //   m('.m-control',
-              //     m('label.mdc-switch m-switch', {
-              //       onupdate: onupdate.csp(origin),
-              //       },
-              //       m('input.mdc-switch__native-control', {
-              //         type: 'checkbox',
-              //         checked: state.origins[origin].csp,
-              //         onchange: events.origin.csp(origin)
-              //       }),
-              //       m('.mdc-switch__background', m('.mdc-switch__knob')),
-              //       m('span.mdc-switch-label',
-              //         'Disable ',
-              //         m('code', 'Content Security Policy')
-              //       )
-              //     )
-              //   )
-              // ),
-              // encoding
-              // (origin !== 'file://' || null) &&
-              // m('.m-option m-encoding',
-              //   m('.m-name', m('span', 'encoding')),
-              //   m('.m-control',
-              //     m('select.mdc-elevation--z2 m-select', {
-              //       onchange: events.origin.encoding(origin),
-              //       },
-              //       m('option', {
-              //         value: '',
-              //         selected: state.origins[origin].encoding === ''
-              //         },
-              //         'auto'
-              //       ),
-              //       Object.keys(state.encodings).map((label) =>
-              //         m('optgroup', {label}, state.encodings[label].map((encoding) =>
-              //           m('option', {
-              //             value: encoding,
-              //             selected: state.origins[origin].encoding === encoding
-              //             },
-              //             encoding
-              //           )
-              //         ))
-              //       )
-              //     )
-              //   )
-              // ),
-              // refresh/remove
-              (origin !== 'file://' || null) &&
-              m('.m-footer',
-                m('span',
-                  (!state.permissions[origin] || null) &&
-                  m('button.mdc-button mdc-button--raised m-button', {
-                    oncreate: oncreate.ripple,
-                    onclick: events.origin.refresh(origin)
-                    },
-                    'Refresh'
-                  ),
-                  m('button.mdc-button mdc-button--raised m-button', {
-                    oncreate: oncreate.ripple,
-                    onclick: events.origin.remove(origin)
-                    },
-                    'Remove'
+                ),
+              )
+            )
+          ),
+          // path matching regexp
+          m('.row',
+            m('.col-sm-12',
+              m('.overflow',
+                m('label.mdc-switch m-switch', {
+                  onupdate: onupdate.path,
+                  title: 'Toggle Path Detection'
+                  },
+                  m('input.mdc-switch__native-control', {
+                    type: 'checkbox',
+                    checked: state.origins[origin].path,
+                    onchange: events.origin.path(origin)
+                  }),
+                  m('.mdc-switch__background', m('.mdc-switch__knob')),
+                  m('span.mdc-switch-label',
+                    'Path Matching RegExp: '
                   )
+                ),
+                m('.mdc-text-field m-textfield', {
+                  oncreate: oncreate.textfield
+                  },
+                  m('input.mdc-text-field__input', {
+                    type: 'text',
+                    onkeyup: events.origin.match(origin),
+                    value: state.origins[origin].match,
+                  }),
+                  m('.mdc-line-ripple')
                 )
               )
             )

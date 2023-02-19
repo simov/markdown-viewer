@@ -1,5 +1,34 @@
 
+/*---------------------------------------------------------------------------*/
+/*global*/
+
+body,
+body label,
+body input {
+  font-family: 'Monospace', monospace !important;
+}
+body button {
+  font-family: sans-serif !important;
+}
+
+/*content*/
+main {
+  padding-top: 120px;
+}
+
+/*misc*/
+.hidden {
+  display: none;
+}
+.overflow {
+  white-space: nowrap;
+  overflow: hidden;
+  min-height: 52px;
+}
+
+/*---------------------------------------------------------------------------*/
 /*sticky footer*/
+
 html, body {
   height: 100%;
   padding: 0;
@@ -16,72 +45,22 @@ footer, #footer-push {
   text-align: center;
 }
 
-
-/*center content on large screens*/
-main {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-/*font family*/
-body,
-body label,
-body input {
-  font-family: 'Monospace', monospace !important;
-}
-body select,
-body button,
-.m-name {
-  font-family: sans-serif !important;
-}
-
-
-/*content*/
-main {
-  padding: 90px 0 30px 0;
-}
-a { text-decoration: none; }
-a:hover { text-decoration: none; }
-
-
-/*global*/
-.hidden {
-  display: none;
-}
-
-/*header*/
-#header {
-  background: #607d8b;
-  position: fixed;
-  z-index: 100;
-  width: 100%;
-  height: 60px;
-  font-size: 20px;
-  line-height: 60px;
-  color: #fff;
-}
-#header .holder {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-}
-
-
+/*---------------------------------------------------------------------------*/
 /*header menu*/
+
 #menu {
   position: relative;
   color: #fff;
 }
 #menu span {
+  font-size: 20px;
   display: inline-block;
   line-height: 60px;
   padding: 0 20px;
 }
 #menu div {
   position: absolute;
-  top: 60px;
+  top: 68px;
   right: 0;
   z-index: 10;
   width: 200px;
@@ -92,7 +71,8 @@ a:hover { text-decoration: none; }
 }
 #menu em {
   display: block;
-  font-size: 16px;
+  font-size: 20px;
+  line-height: 50px;
   font-style: normal;
   color: #333;
   cursor: pointer;
@@ -109,34 +89,9 @@ a:hover { text-decoration: none; }
   background: #ececec;
 }
 
+/*---------------------------------------------------------------------------*/
+/*scrollbar*/
 
-/*footer*/
-footer {
-  font-size: 14px;
-  line-height: 40px;
-  color: #9e9e9e;
-  text-align: center;
-  background: #424242;
-}
-footer a {
-  color: #9e9e9e;
-  text-decoration: none;
-}
-footer .icon-chrome { margin-right: 10px; }
-footer .icon-chrome:before { font-size: 17px; }
-footer .icon-firefox { margin-right: 10px; }
-footer .icon-firefox:before {
-  font-size: 18px; position: relative; top: 1px;
-}
-footer .icon-github:before {
-  font-size: 20px; position: relative; top: 1px;
-}
-footer .icon-hidden {
-  display: none;
-}
-
-
-/*custom scrollbars in WebKit*/
 ::-webkit-scrollbar,
 ::-webkit-scrollbar-corner {
   height: 10px;
@@ -154,31 +109,21 @@ footer .icon-hidden {
   background-color: #607d8b;
 }
 
-
+/*---------------------------------------------------------------------------*/
 /*bootstrap callout*/
+
 .bs-callout {
   border: 1px solid #eee;
   border-left-width: 5px;
   border-left-color: #607d8b;
   border-radius: 3px;
   background: #fcfcfc;
-  padding: 20px;
+  padding: 20px 20px 10px 20px;
   margin: 0 0 30px 0;
 }
-.bs-callout h4 {
-  font-size: 24px;
-  line-height: 36px;
-  font-weight: normal;
-  margin: 0 !important;
-}
 
-.mdc-elevation--z2 {
-  box-shadow:
-    0 3px 1px -2px rgba(0,0,0,.2),
-    0 2px 2px 0 rgba(0,0,0,.14),
-    0 1px 5px 0 rgba(0,0,0,.12);
-}
-
+/*---------------------------------------------------------------------------*/
+/*mdc controls*/
 
 /*button*/
 .m-button {
@@ -192,234 +137,91 @@ footer .icon-hidden {
   background-color: rgba(96, 125, 139, 0.56) !important;
 }
 
-
 /*switch*/
 .m-switch {
   cursor: pointer;
-  display: table;
-  margin: 7px 0;
+  /*display: table;*/
+  margin: 14px 0;
 }
 .m-switch .mdc-switch__background {
   display: inline-block;
-  bottom: 5px;
+  bottom: 0px;
   left: 15px;
 }
 .m-switch .mdc-switch-label {
   font-size: 1rem;
   line-height: 1.5rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: inline-block;
   padding: 0 0 0 30px;
 }
-.m-switch .mdc-switch-label code {
-  font-size: 16px;
-}
-
-
-/*select*/
-.m-select {
-  font-size: 14px;
-  line-height: 17px;
-  color: #000;
-  text-transform: uppercase;
-  background-color: #ececec;
-  border: none;
-  border-radius: 2px;
-  cursor: pointer;
-  padding: 9px 12px;
-}
-
 
 /*textfield*/
 .m-textfield {
   font-size: 1rem;
   line-height: 1.5rem;
-  height: auto;
-  margin: 0;
+  width: 100%;
+  height: 26px !important;
+  margin-left: 10px;
 }
-
-
-/*add origin*/
-
-.m-add-origin {}
-.m-add-origin:after { content: ''; display: block; clear: both; }
-.m-add-origin h4 {
-  float: left;
-  padding: 0 100px 0 0;
-}
-.m-add-origin .m-select {
-  width: 110px;
-  position: relative;
-  top: -1px;
-}
-.m-add-origin .m-textfield {
-  width: 400px;
-  height: auto !important;
-  padding: 0 !important;
-  margin: 0 10px !important;
-}
-.m-add-origin .m-textfield input {
-  padding-top: 3px;
-}
-.m-add-origin button:nth-of-type(1) {
-  position: relative;
-  top: -3px;
-}
-.m-add-origin button:nth-of-type(2) {
-  float: right;
-}
-
-
-/*global*/
-.m-global {
-  margin: 20px 0 0 0;
-}
-.m-global:after { content: ''; display: block; clear: both; }
-.m-global .m-switch {
-  float: left;
-}
-.m-global button {
-  float: right;
-}
-
-
-/*list*/
-
-.m-list {
-  list-style: none;
-  padding: 0;
-  margin: 20px 0 0 0;
-}
-
-.m-list li {
-  background: #fff;
-  transition-duration: .28s;
-  transition-timing-function: cubic-bezier(.4,0,.2,1);
-  transition-property: background-color box-shadow;
-  border-bottom: 1px solid #ececec;
-}
-.m-list li:first-child {
-
-}
-.m-list li:last-child {
-  margin-bottom: 0 !important;
-}
-.m-list li:hover:not(.m-expanded) { background: #ececec; }
-.m-list li:after { content: ''; display: block; clear: both; }
-.m-list li.m-expanded {
-  border: 0;
-  margin: 20px 0;
-}
-
-/*list summary*/
-
-.m-list .m-summary {
-  display: block;
-  height: 36px;
-  padding: 10px 20px 0 20px;
-  cursor: pointer;
-  position: relative;
-}
-.m-list .m-summary:after { content: ''; display: block; clear: both; }
-.m-list .m-summary .m-title {
-  float: left;
-  font-size: 16px;
-  line-height: 28px;
-}
-.m-list .m-summary .m-options {
-  float: right;
-  padding: 6px 25px 0 0;
-}
-.m-list .m-summary .m-options span {
-  background: #ececec;
-  font-size: 12px;
-  line-height: 15px;
-  padding: 2px 5px;
-  border-radius: 3px;
-  margin: 0 5px 0 0;
-}
-.m-list .m-summary i {
-  position: absolute;
-  top: 17px;
-  right: 17px;
-}
-
-/*list content*/
-
-.m-list .m-content {
-  display: none;
-  background: #fff;
-  padding: 0 20px 12px 20px;
-  position: relative;
-}
-.m-list .m-expanded .m-summary {
-  background: #ececec;
-}
-.m-list .m-expanded .m-content {
-  display: block;
-}
-
-/*list option*/
-
-.m-list .m-content .m-option {
-  min-height: 50px;
-}
-.m-list .m-content .m-option:after { content: ''; display: block; clear: both; }
-.m-list .m-content .m-option .m-name {
-  float: left;
-  width: 10%;
-  font-size: 14px;
-  line-height: 50px;
-  text-align: right;
-}
-.m-list .m-content .m-option .m-name span {
-  font-size: 12px;
-  line-height: 15px;
-  text-transform: uppercase;
-}
-.m-list .m-content .m-option .m-control {
-  float: left;
-  width: 90%;
-}
-.m-list .m-content .m-option .m-control .m-textfield {
-  height: 43px;
-  margin: 0 0 7px 10px;
-}
-.m-list .m-content .m-option .m-control .m-textfield input {
+.m-textfield input {
   border-bottom: 1px solid #ececec !important;
   padding-top: 3px;
 }
 
+/*---------------------------------------------------------------------------*/
+/*misc*/
 
-/*list options - origin*/
-
-.m-list .m-content .m-option.m-match .m-control {
-  width: 80%;
-  margin: 0 0 0 15px;
-}
-.m-list .m-content .m-option.m-match .m-textfield {
-  width: 100%;
-}
-.m-list .m-content .m-option.m-csp label {
-  margin: 12px 0 0 10px;
-}
-.m-list .m-content .m-option.m-encoding select {
-  width: 200px;
-  margin: 6px 0 0 25px;
+.navbar-brand {
+  font-size: 1.5rem;
 }
 
-
-/*list footer*/
-
-.m-list .m-footer {
-  text-align: right;
-  margin: 10px 0 8px 0;
-  /*position: absolute;
-  bottom: 20px;
-  right: 20px;*/
+h4 {
+  margin-bottom: 1.5rem;
 }
-.m-list .m-footer .m-button:last-child {
-  margin: 0 0 0 20px;
+
+.m-box-add {
+  border-left-color: #f1b100;
+}
+
+.m-box-refresh {
+  border-left-color: #d9534f;
+}
+
+.m-origin {
+  font-size: 1.3rem;
+  padding-left: 10px;
+}
+
+.m-btn-file {
+  float: right;
+  margin-bottom: 12px;
+}
+
+.m-btn-all {
+  float: right;
+  margin-bottom: 12px;
+}
+
+.m-btn-add {
+  float: right;
+}
+
+.m-btn-remove {
+  float: right;
+}
+
+.m-btn-refresh {
+  float: right;
+  margin-right: 20px;
+}
+
+footer nav {
+  font-size: .8rem;
+  color: #212529;
+}
+footer nav a {
+  text-decoration: none;
+  color: #212529;
+}
+footer nav a:hover {
+  text-decoration: underline;
 }

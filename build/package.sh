@@ -24,6 +24,7 @@ mkdir -p ../themes
 mkdir -p ../vendor
 
 # build deps
+sh bootstrap/build.sh
 sh marked/build.sh
 sh mathjax/build.sh
 sh mdc/build.sh
