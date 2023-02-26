@@ -16,7 +16,7 @@ var state = {
     md: false,
   },
   _themes: {
-    'github': 'auto',
+    'github': 'light',
     'github-dark': 'dark',
     'almond': 'light',
     // 'air': 'light',

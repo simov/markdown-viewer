@@ -6,7 +6,7 @@ cd "$(dirname "$0")"
 mkdir -p ../../themes
 
 # https://github.com/sindresorhus/github-markdown-css
-curl https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.1.0/github-markdown.min.css --output ../../themes/github.css
+curl https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.1.0/github-markdown-light.min.css --output ../../themes/github.css
 curl https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.1.0/github-markdown-dark.min.css --output ../../themes/github-dark.css
 
 # https://github.com/gadenbuie/cleanrmd

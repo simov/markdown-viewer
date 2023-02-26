@@ -28,9 +28,6 @@ pre#_markdown {
   min-width: 830px;
   max-width: 830px;
 
-  background-color: #fff;
-  border: 1px solid var(--toc-delimiter);
-
   padding: 32px;
   margin: 20px auto !important;
 }
@@ -161,6 +158,7 @@ body._toc-right { padding-right: 300px !important; }
 }
 
 /*light*/
+._theme-github #_toc,
 ._theme-air #_toc,
 ._theme-almond #_toc,
 ._theme-awsm #_toc,
@@ -261,6 +259,7 @@ body._toc-right { padding-right: 300px !important; }
 }
 
 /*light*/
+._theme-github::-webkit-scrollbar-track, ._theme-github *::-webkit-scrollbar-track,
 ._theme-air::-webkit-scrollbar-track, ._theme-air *::-webkit-scrollbar-track,
 ._theme-almond::-webkit-scrollbar-track, ._theme-almond *::-webkit-scrollbar-track,
 ._theme-awsm::-webkit-scrollbar-track, ._theme-awsm *::-webkit-scrollbar-track,
@@ -283,6 +282,7 @@ body._toc-right { padding-right: 300px !important; }
 {
   background: #efefef;
 }
+._theme-github::-webkit-scrollbar-thumb, ._theme-github *::-webkit-scrollbar-thumb,
 ._theme-air::-webkit-scrollbar-thumb, ._theme-air *::-webkit-scrollbar-thumb,
 ._theme-almond::-webkit-scrollbar-thumb, ._theme-almond *::-webkit-scrollbar-thumb,
 ._theme-awsm::-webkit-scrollbar-thumb, ._theme-awsm *::-webkit-scrollbar-thumb,
@@ -305,6 +305,7 @@ body._toc-right { padding-right: 300px !important; }
 {
   background: #d5d5d5;
 }
+._theme-github::-webkit-scrollbar-thumb:hover, ._theme-github *::-webkit-scrollbar-thumb:hover,
 ._theme-air::-webkit-scrollbar-thumb:hover, ._theme-air *::-webkit-scrollbar-thumb:hover,
 ._theme-almond::-webkit-scrollbar-thumb:hover, ._theme-almond *::-webkit-scrollbar-thumb:hover,
 ._theme-awsm::-webkit-scrollbar-thumb:hover, ._theme-awsm *::-webkit-scrollbar-thumb:hover,
@@ -563,6 +564,25 @@ body._toc-right { padding-right: 300px !important; }
 
 /*---------------------------------------------------------------------------*/
 /*theme fixes*/
+
+@media (prefers-color-scheme: dark) {
+  /*no-class - fix code block*/
+  ._theme-no-class pre {
+    background: #303030;
+  }
+  /*no-class - fix table*/
+  ._theme-no-class tbody tr:nth-of-type(odd) {
+    background-color: #303030;
+  }
+}
+
+/*github*/
+._theme-github {
+  background-color: #fff;
+}
+._theme-github .markdown-body {
+  border: 1px solid #e1e4e8;
+}
 
 /*github-dark*/
 ._theme-github-dark {
