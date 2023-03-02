@@ -7,6 +7,7 @@ var state = {
   themes: args.themes,
   content: args.content,
   compiler: args.compiler,
+  icon: args.icon,
   html: '',
   markdown: '',
   toc: '',
@@ -139,6 +140,7 @@ var render = (md) => {
 function mount () {
   $('pre').style.display = 'none'
   var md = $('pre').innerText
+  favicon()
 
   m.mount($('body'), {
     oninit: () => {
@@ -215,6 +217,13 @@ var toc = (() => {
       , '')
   }
 })()
+
+var favicon = () => {
+  var favicon = document.createElement('link')
+  favicon.rel = 'icon'
+  favicon.href = chrome.runtime.getURL(`/icons/${state.icon ? 'light' : 'dark'}/16x16.png`)
+  $('head').appendChild(favicon)
+}
 
 if (document.readyState === 'complete') {
   mount()

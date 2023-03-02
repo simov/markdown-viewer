@@ -38,6 +38,8 @@
         "<all_urls>"
       ],
       "resources": [
+        "/icons/dark/16x16.png",
+        "/icons/light/16x16.png",
         "/themes/*",
         "/vendor/mathjax/fonts/*",
         "/vendor/prism.min.css",
