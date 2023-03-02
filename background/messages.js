@@ -25,6 +25,15 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, xhr, webreq
         sendResponse({err, body})
       })
     }
+    else if (req.message === 'mathjax') {
+      chrome.scripting.executeScript({
+        target: {tabId: sender.tab.id},
+        files: [
+          `/vendor/mathjax/extensions/${req.extension}.js`,
+        ],
+        injectImmediately: true
+      }, sendResponse)
+    }
 
     // popup
     else if (req.message === 'popup') {

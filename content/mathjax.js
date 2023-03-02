@@ -1,5 +1,15 @@
 
 var MathJax = {
+  loader: {
+    pathFilters: [
+      ({name}) => name.startsWith('[tex]') ? false : true // keep the name
+    ],
+    require: (path) => path.startsWith('[tex]') ?
+      chrome.runtime.sendMessage({
+        message: 'mathjax',
+        extension: path.replace('[tex]/', '')
+      }) : null
+  },
   tex: {
     inlineMath: [
       ['$', '$'],
