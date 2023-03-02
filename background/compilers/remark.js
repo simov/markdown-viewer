@@ -22,7 +22,6 @@ md.compilers.remark = (() => {
         .use(state.remark.breaks ? remark.breaks : undefined)
         .use(remark.stringify)
         .use(remark.slug)
-        .use(remark.frontmatter, ['yaml', 'toml'])
         .use(remark.html, state.remark) // sanitize
         .processSync(markdown)
         .value

@@ -113,7 +113,7 @@ var update = () => {
 }
 
 var render = (md) => {
-  state.markdown = md
+  state.markdown = frontmatter(md)
   chrome.runtime.sendMessage({
     message: 'markdown',
     compiler: state.compiler,
@@ -217,6 +217,20 @@ var toc = (() => {
       , '')
   }
 })()
+
+var frontmatter = (md) => {
+  if (/^-{3}[\s\S]+?-{3}/.test(md)) {
+    var [, yaml] = /^-{3}([\s\S]+?)-{3}/.exec(md)
+    var title = /title: (?:'|")*(.*)(?:'|")*/.exec(yaml)
+    title && (document.title = title[1])
+  }
+  else if (/^\+{3}[\s\S]+?\+{3}/.test(md)) {
+    var [, toml] = /^\+{3}([\s\S]+?)\+{3}/.exec(md)
+    var title = /title = (?:'|"|`)*(.*)(?:'|"|`)*/.exec(toml)
+    title && (document.title = title[1])
+  }
+  return md.replace(/^(?:-|\+){3}[\s\S]+?(?:-|\+){3}/, '')
+}
 
 var favicon = () => {
   var favicon = document.createElement('link')

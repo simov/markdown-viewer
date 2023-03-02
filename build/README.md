@@ -40,7 +40,6 @@ sh build/package.sh
 | remark              | ^14.0.2
 | remark-breaks       | ^3.0.2
 | remark-footnotes    | ^4.0.1
-| remark-frontmatter  | ^4.0.1
 | remark-gfm          | ^3.0.1
 | remark-html         | ^15.0.1
 | remark-slug         | ^7.0.1
