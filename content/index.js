@@ -212,7 +212,7 @@ var toc = (() => {
       )
       .reduce((toc, {id, title, level}) => toc +=
         '<div class="_ul">'.repeat(level) +
-        '<a href="#' + id + '">' + title + '</a>' +
+        '<a href="#' + id + '">' + title.replace(/<a[^>]+>/g, '').replace(/<\/a>/g, '') + '</a>' +
         '</div>'.repeat(level)
       , '')
   }
