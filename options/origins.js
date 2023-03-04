@@ -35,84 +35,83 @@ var Origins = () => {
       chrome.tabs.create({url: `chrome://extensions/?id=${chrome.runtime.id}`})
     },
 
-    origin: {
-      host: (e) => {
-        state.scheme = e.target.value.replace(/(.*):\/\/.*/i, '$1')
-        state.host = e.target.value.replace(/.*:\/\/([^/]+).*/i, '$1')
-      },
+    host: (e) => {
+      state.scheme = e.target.value.replace(/(.*):\/\/.*/i, '$1')
+      state.domain = e.target.value.replace(/.*:\/\/([^/]+).*/i, '$1')
+      state.host = e.target.value
+    },
 
-      add: (all) => () => {
-        if (!all && !state.host && !['https', 'http', '*'].includes(state.scheme)) {
-          return
+    add: (all) => () => {
+      if (!all && !state.host && !['https', 'http', '*'].includes(state.scheme)) {
+        return
+      }
+      var origin = all ? '*://*' : `${state.scheme}://${state.domain}`
+      chrome.permissions.request({origins: [`${origin}/*`]}, (granted) => {
+        if (granted) {
+          chrome.runtime.sendMessage({message: 'origin.add', origin})
+          state.origins[origin] = {
+            header: true,
+            path: true,
+            match: state.match,
+          }
+          state.host = ''
+          state.permissions[origin] = true
+          m.redraw()
         }
-        var origin = all ? '*://*' : `${state.scheme}://${state.host}`
-        chrome.permissions.request({origins: [`${origin}/*`]}, (granted) => {
-          if (granted) {
-            chrome.runtime.sendMessage({message: 'origin.add', origin})
-            state.origins[origin] = {
-              header: true,
-              path: true,
-              match: state.match,
-            }
-            state.host = ''
-            state.permissions[origin] = true
-            m.redraw()
-          }
-        })
-      },
+      })
+    },
 
-      remove: (origin) => () => {
-        chrome.permissions.remove({origins: [`${origin}/*`]}, (removed) => {
-          if (removed) {
-            chrome.runtime.sendMessage({message: 'origin.remove', origin})
-            delete state.origins[origin]
-            delete state.permissions[origin]
-            m.redraw()
-          }
-        })
-      },
+    remove: (origin) => () => {
+      chrome.permissions.remove({origins: [`${origin}/*`]}, (removed) => {
+        if (removed) {
+          chrome.runtime.sendMessage({message: 'origin.remove', origin})
+          delete state.origins[origin]
+          delete state.permissions[origin]
+          m.redraw()
+        }
+      })
+    },
 
-      refresh: (origin) => () => {
-        chrome.permissions.request({origins: [`${origin}/*`]}, (granted) => {
-          if (granted) {
-            state.permissions[origin] = true
-            m.redraw()
-          }
-        })
-      },
+    refresh: (origin) => () => {
+      chrome.permissions.request({origins: [`${origin}/*`]}, (granted) => {
+        if (granted) {
+          state.permissions[origin] = true
+          m.redraw()
+        }
+      })
+    },
 
-      header: (origin) => () => {
-        state.origins[origin].header = !state.origins[origin].header
+    header: (origin) => () => {
+      state.origins[origin].header = !state.origins[origin].header
+      var {header, path, match} = state.origins[origin]
+      chrome.runtime.sendMessage({
+        message: 'origin.update',
+        origin,
+        options: {header, path, match},
+      })
+    },
+
+    path: (origin) => () => {
+      state.origins[origin].path = !state.origins[origin].path
+      var {header, path, match} = state.origins[origin]
+      chrome.runtime.sendMessage({
+        message: 'origin.update',
+        origin,
+        options: {header, path, match},
+      })
+    },
+
+    match: (origin) => (e) => {
+      state.origins[origin].match = e.target.value
+      clearTimeout(state.timeout)
+      state.timeout = setTimeout(() => {
         var {header, path, match} = state.origins[origin]
         chrome.runtime.sendMessage({
           message: 'origin.update',
           origin,
           options: {header, path, match},
         })
-      },
-
-      path: (origin) => () => {
-        state.origins[origin].path = !state.origins[origin].path
-        var {header, path, match} = state.origins[origin]
-        chrome.runtime.sendMessage({
-          message: 'origin.update',
-          origin,
-          options: {header, path, match},
-        })
-      },
-
-      match: (origin) => (e) => {
-        state.origins[origin].match = e.target.value
-        clearTimeout(state.timeout)
-        state.timeout = setTimeout(() => {
-          var {header, path, match} = state.origins[origin]
-          chrome.runtime.sendMessage({
-            message: 'origin.update',
-            origin,
-            options: {header, path, match},
-          })
-        }, 750)
-      },
+      }, 750)
     },
   }
 
@@ -157,73 +156,9 @@ var Origins = () => {
           )
         ),
       ),
-      state.file &&
-      Object.keys(state.origins).filter((origin) => origin === 'file://').map((origin) =>
-        m('.bs-callout',
-          // origin
-          m('.row',
-            m('.col-xxl-8.col-xl-8.col-lg-8.col-md-8.col-sm-12', m('span.m-origin', origin)),
-            m('.col-xxl-4.col-xl-4.col-lg-4.col-md-4.col-sm-12')
-          ),
-          // header detection
-          m('.row',
-            m('.col-sm-12',
-              m('.overflow',
-                m('label.mdc-switch m-switch', {
-                  onupdate: onupdate.header,
-                  title: 'Toggle Header Detection'
-                  },
-                  m('input.mdc-switch__native-control', {
-                    type: 'checkbox',
-                    checked: state.origins[origin].header,
-                    onchange: events.origin.header(origin)
-                  }),
-                  m('.mdc-switch__background', m('.mdc-switch__knob')),
-                  m('span.mdc-switch-label',
-                    'Content Type Detection: ',
-                    m('span', 'text/markdown'),
-                    ', ',
-                    m('span', 'text/x-markdown'),
-                    ', ',
-                    m('span', 'text/plain'),
-                  )
-                ),
-              )
-            )
-          ),
-          // path matching regexp
-          m('.row',
-            m('.col-sm-12',
-              m('.overflow',
-                m('label.mdc-switch m-switch', {
-                  onupdate: onupdate.path,
-                  title: 'Toggle Path Detection'
-                  },
-                  m('input.mdc-switch__native-control', {
-                    type: 'checkbox',
-                    checked: state.origins[origin].path,
-                    onchange: events.origin.path(origin)
-                  }),
-                  m('.mdc-switch__background', m('.mdc-switch__knob')),
-                  m('span.mdc-switch-label',
-                    'Path Matching RegExp: '
-                  )
-                ),
-                m('.mdc-text-field m-textfield', {
-                  oncreate: oncreate.textfield
-                  },
-                  m('input.mdc-text-field__input', {
-                    type: 'text',
-                    onkeyup: events.origin.match(origin),
-                    value: state.origins[origin].match,
-                  }),
-                  m('.mdc-line-ripple')
-                )
-              )
-            )
-          )
-        ),
-      ),
+      ...Object.keys(state.origins)
+        .filter((origin) => origin === 'file://' && state.file)
+        .map(callout),
 
       // site access
       m('.row',
@@ -234,7 +169,7 @@ var Origins = () => {
         m('.col-xxl-2.col-xl-2.col-lg-2.col-md-3.col-sm-4',
           m('button.mdc-button mdc-button--raised m-button m-btn-all', {
             oncreate: oncreate.ripple,
-            onclick: events.origin.add(true)
+            onclick: events.add(true)
             },
             'Allow All'
           ),
@@ -251,7 +186,7 @@ var Origins = () => {
               m('input.mdc-text-field__input', {
                 type: 'text',
                 value: state.host,
-                onchange: events.origin.host,
+                onchange: events.host,
                 placeholder: 'Copy URL address and paste it here'
               }),
               m('.mdc-line-ripple')
@@ -260,7 +195,7 @@ var Origins = () => {
           m('.col-xxl-1.col-xl-1.col-lg-2.col-md-2.col-sm-12',
             m('button.mdc-button mdc-button--raised m-button m-btn-add', {
               oncreate: oncreate.ripple,
-              onclick: events.origin.add()
+              onclick: events.add()
               },
               'Add'
             ),
@@ -269,87 +204,89 @@ var Origins = () => {
       ),
 
       // allowed origins
-      Object.keys(state.origins)
-        .sort((a, b) => a < b ? 1 : a > b ? -1 : 0)
+      ...Object.keys(state.origins)
         .filter((origin) => origin !== 'file://')
-        .map((origin) =>
-        m('.bs-callout', {class: !state.permissions[origin] ? 'm-box-refresh' : undefined},
-          // origin
-          m('.row',
-            m('.col-xxl-8.col-xl-8.col-lg-8.col-md-7.col-sm-12', m('span.m-origin', origin)),
-            m('.col-xxl-4.col-xl-4.col-lg-4.col-md-5.col-sm-12',
-              // remove
-              m('button.mdc-button mdc-button--raised m-button m-btn-remove', {
-                oncreate: oncreate.ripple,
-                onclick: events.origin.remove(origin)
-                },
-                'Remove'
-              ),
-              // refresh
-              (!state.permissions[origin] || null) &&
-              m('button.mdc-button mdc-button--raised m-button m-btn-refresh', {
-                oncreate: oncreate.ripple,
-                onclick: events.origin.refresh(origin)
-                },
-                'Refresh'
-              )
-            )
+        .sort((a, b) => a < b ? 1 : a > b ? -1 : 0)
+        .map(callout)
+    )
+
+  var callout = (origin) =>
+    m('.bs-callout', {class: !state.permissions[origin] ? 'm-box-refresh' : undefined},
+      // origin
+      m('.row',
+        m('.col-xxl-8.col-xl-8.col-lg-8.col-md-7.col-sm-12', m('span.m-origin', origin)),
+        m('.col-xxl-4.col-xl-4.col-lg-4.col-md-5.col-sm-12',
+          // remove
+          (origin !== 'file://' || null) &&
+          m('button.mdc-button mdc-button--raised m-button m-btn-remove', {
+            oncreate: oncreate.ripple,
+            onclick: events.remove(origin)
+            },
+            'Remove'
           ),
-          // header detection
-          m('.row',
-            m('.col-sm-12',
-              m('.overflow',
-                m('label.mdc-switch m-switch', {
-                  onupdate: onupdate.header,
-                  title: 'Toggle Header Detection'
-                  },
-                  m('input.mdc-switch__native-control', {
-                    type: 'checkbox',
-                    checked: state.origins[origin].header,
-                    onchange: events.origin.header(origin)
-                  }),
-                  m('.mdc-switch__background', m('.mdc-switch__knob')),
-                  m('span.mdc-switch-label',
-                    'Content Type Detection: ',
-                    m('span', 'text/markdown'),
-                    ', ',
-                    m('span', 'text/x-markdown'),
-                    ', ',
-                    m('span', 'text/plain'),
-                  )
-                ),
+          // refresh
+          (!state.permissions[origin] || null) &&
+          m('button.mdc-button mdc-button--raised m-button m-btn-refresh', {
+            oncreate: oncreate.ripple,
+            onclick: events.refresh(origin)
+            },
+            'Refresh'
+          )
+        )
+      ),
+      // header detection
+      m('.row',
+        m('.col-sm-12',
+          m('.overflow',
+            m('label.mdc-switch m-switch', {
+              onupdate: onupdate.header,
+              title: 'Toggle Header Detection'
+              },
+              m('input.mdc-switch__native-control', {
+                type: 'checkbox',
+                checked: state.origins[origin].header,
+                onchange: events.header(origin)
+              }),
+              m('.mdc-switch__background', m('.mdc-switch__knob')),
+              m('span.mdc-switch-label',
+                'Content Type Detection: ',
+                m('span', 'text/markdown'),
+                ', ',
+                m('span', 'text/x-markdown'),
+                ', ',
+                m('span', 'text/plain'),
               )
-            )
-          ),
-          // path matching regexp
-          m('.row',
-            m('.col-sm-12',
-              m('.overflow',
-                m('label.mdc-switch m-switch', {
-                  onupdate: onupdate.path,
-                  title: 'Toggle Path Detection'
-                  },
-                  m('input.mdc-switch__native-control', {
-                    type: 'checkbox',
-                    checked: state.origins[origin].path,
-                    onchange: events.origin.path(origin)
-                  }),
-                  m('.mdc-switch__background', m('.mdc-switch__knob')),
-                  m('span.mdc-switch-label',
-                    'Path Matching RegExp: '
-                  )
-                ),
-                m('.mdc-text-field m-textfield', {
-                  oncreate: oncreate.textfield
-                  },
-                  m('input.mdc-text-field__input', {
-                    type: 'text',
-                    onkeyup: events.origin.match(origin),
-                    value: state.origins[origin].match,
-                  }),
-                  m('.mdc-line-ripple')
-                )
+            ),
+          )
+        )
+      ),
+      // path matching regexp
+      m('.row',
+        m('.col-sm-12',
+          m('.overflow',
+            m('label.mdc-switch m-switch', {
+              onupdate: onupdate.path,
+              title: 'Toggle Path Detection'
+              },
+              m('input.mdc-switch__native-control', {
+                type: 'checkbox',
+                checked: state.origins[origin].path,
+                onchange: events.path(origin)
+              }),
+              m('.mdc-switch__background', m('.mdc-switch__knob')),
+              m('span.mdc-switch-label',
+                'Path Matching RegExp: '
               )
+            ),
+            m('.mdc-text-field m-textfield', {
+              oncreate: oncreate.textfield
+              },
+              m('input.mdc-text-field__input', {
+                type: 'text',
+                onkeyup: events.match(origin),
+                value: state.origins[origin].match,
+              }),
+              m('.mdc-line-ripple')
             )
           )
         )

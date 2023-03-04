@@ -42,7 +42,6 @@ html, body {
 }
 footer, #footer-push {
   height: 40px;
-  text-align: center;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -207,13 +206,17 @@ h4 {
 
 .m-btn-remove {
   float: right;
+  margin-left: 20px;
 }
 
 .m-btn-refresh {
   float: right;
-  margin-right: 20px;
 }
 
+footer {
+  text-align: center;
+  margin: 0 auto;
+}
 footer nav {
   font-size: .8rem;
   color: #212529;
