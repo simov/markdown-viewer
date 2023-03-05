@@ -61,7 +61,10 @@ md.storage.defaults = (compilers) => {
         match,
       }
     },
-    icon: false,
+    settings: {
+      icon: 'dark',
+      theme: 'light',
+    }
   }
 
   Object.keys(compilers).forEach((compiler) => {
@@ -150,5 +153,11 @@ md.storage.migrations = (state) => {
   }
   if (state.content.scroll !== undefined) {
     delete state.content.scroll
+  }
+  if (state.settings === undefined) {
+    state.settings = {
+      icon: state.icon === true ? 'light' : 'dark',
+      theme: 'light'
+    }
   }
 }

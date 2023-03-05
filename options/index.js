@@ -15,6 +15,7 @@ document.querySelector('#menu span').addEventListener('click', (e) => {
   document.querySelector('#menu div').classList.toggle('hidden')
 })
 document.querySelector('#menu div').addEventListener('click', (e) => {
+  e.preventDefault()
   Array.from(document.querySelectorAll('#menu em')).forEach((link) => {
     link.classList.remove('active')
   })

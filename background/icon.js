@@ -1,11 +1,10 @@
 
 md.icon = ({storage: {state}}) => () => {
 
-  setTimeout((color) =>
+  setTimeout(() =>
     chrome.action.setIcon({
       path: [16, 19, 38, 48, 128].reduce((all, size) => (
-        color = state.icon ? 'light' : 'dark',
-        all[size] = `/icons/${color}/${size}x${size}.png`,
+        all[size] = `/icons/${state.settings.icon}/${size}x${size}.png`,
         all
       ), {})
     })

@@ -1,60 +1,90 @@
 
 var Settings = () => {
   var defaults = {
-    icons: false
+    icon: false,
+    theme: 'light',
+    _icons: ['light', 'dark'],
+    _themes: ['light', 'dark', 'auto'],
   }
 
   var state = Object.assign({}, defaults)
 
   chrome.runtime.sendMessage({message: 'options.settings'}, (res) => {
     Object.assign(state, res)
+    document.querySelector('body').classList.add(state.theme)
     m.redraw()
   })
 
   var events = {
-    icon: () => (e) => {
-      state.icon = !state.icon
+    icon: (e) => {
+      state.icon = state._icons[e.target.selectedIndex]
       chrome.runtime.sendMessage({
         message: 'options.icon',
-        icon: state.icon,
+        settings: {
+          icon: state.icon,
+          theme: state.theme,
+        },
       })
+    },
+    theme: (e) => {
+      state.theme = state._themes[e.target.selectedIndex]
+      chrome.runtime.sendMessage({
+        message: 'options.theme',
+        settings: {
+          icon: state.icon,
+          theme: state.theme,
+        },
+      })
+      document.querySelector('body').classList.remove(...state._themes)
+      document.querySelector('body').classList.add(state.theme)
     }
   }
 
-  var oncreate = {
-    ripple: (vnode) => {
-      mdc.ripple.MDCRipple.attachTo(vnode.dom)
-    }
-  }
+  var oncreate = {}
 
-  var onupdate = {
-    icon: () => (vnode) => {
-      if (vnode.dom.classList.contains('is-checked') !== state.icon) {
-        vnode.dom.classList.toggle('is-checked')
-      }
-    }
-  }
+  var onupdate = {}
 
   var render = () =>
     m('.m-settings hidden',
       m('.row',
         m('h3', 'Settings')
       ),
+      // icon
       m('.bs-callout',
         m('.row',
           m('.col-sm-12',
             m('.overflow',
-              m('label.mdc-switch m-switch', {
-                onupdate: onupdate.icon(),
-                },
-                m('input.mdc-switch__native-control', {
-                  type: 'checkbox',
-                  checked: state.icon,
-                  onchange: events.icon()
-                }),
-                m('.mdc-switch__background', m('.mdc-switch__knob')),
+              m('label.mdc-switch',
+                m('select.mdc-elevation--z2 m-select', {
+                  onchange: events.icon
+                  },
+                  state._icons.map((icon) =>
+                    m('option', {selected: state.icon === icon}, icon)
+                  )
+                ),
                 m('span.mdc-switch-label',
-                  'Light Extension Icon for Dark Browser Theme'
+                  'Extension Icon and Content Favicon Color'
+                )
+              )
+            )
+          )
+        )
+      ),
+      // theme
+      m('.bs-callout',
+        m('.row',
+          m('.col-sm-12',
+            m('.overflow',
+              m('label.mdc-switch',
+                m('select.mdc-elevation--z2 m-select', {
+                  onchange: events.theme
+                  },
+                  state._themes.map((theme) =>
+                    m('option', {selected: state.theme === theme}, theme)
+                  )
+                ),
+                m('span.mdc-switch-label',
+                  'Popup and Options Page Color Mode'
                 )
               )
             )

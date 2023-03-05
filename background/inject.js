@@ -9,7 +9,7 @@ md.inject = ({storage: {state}}) => (id) => {
       themes: state.themes,
       content: state.content,
       compiler: state.compiler,
-      icon: state.icon,
+      icon: state.settings.icon,
     }],
     func: (_args) => {
       document.querySelector('pre').style.visibility = 'hidden'

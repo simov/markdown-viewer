@@ -42,6 +42,7 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, xhr, webreq
         description: compilers[state.compiler].description,
         compilers: Object.keys(compilers),
         themes: state.themes,
+        settings: {theme: state.settings.theme}
       }))
     }
     else if (req.message === 'popup.theme') {
@@ -127,14 +128,16 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, xhr, webreq
 
     // settings view
     else if (req.message === 'options.settings') {
-      sendResponse({
-        icon: state.icon,
-      })
+      sendResponse(state.settings)
     }
     // settings options
     else if (req.message === 'options.icon') {
-      set({icon: req.icon})
+      set({settings: req.settings})
       icon()
+      sendResponse()
+    }
+    else if (req.message === 'options.theme') {
+      set({settings: req.settings})
       sendResponse()
     }
 

@@ -63,7 +63,8 @@ var state = {
       mermaid: 'Mermaid diagrams',
       syntax: 'Syntax highlighting for fenced code blocks',
     }
-  }
+  },
+  settings: {}
 }
 
 var events = {
@@ -151,6 +152,9 @@ var init = (res) => {
   state.tab = localStorage.getItem('tab') || 'theme'
   state.compilers = res.compilers
   state.description.compiler = res.description
+
+  state.settings = res.settings
+  document.querySelector('body').classList.add(state.settings.theme)
 
   m.redraw()
 }

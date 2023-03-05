@@ -1,4 +1,7 @@
 
+/*---------------------------------------------------------------------------*/
+/*global*/
+
 html, body {
   height: auto;
   min-height: auto;
@@ -8,7 +11,6 @@ html, body {
   margin: 0;
 }
 
-/*font family*/
 body,
 body label,
 body input {
@@ -34,8 +36,29 @@ body a.mdc-tab {
 }
 #popup:after { content: ''; display: block; clear: both; }
 
+/*---------------------------------------------------------------------------*/
+/*color modes*/
 
+body.dark {
+  filter: invert(100%) hue-rotate(180deg);
+  background-color: #e4e4e4;
+}
+
+@media (prefers-color-scheme: dark) {
+  body.auto {
+    filter: invert(100%) hue-rotate(180deg);
+    background-color: #e4e4e4;
+  }
+}
+
+/*---------------------------------------------------------------------------*/
 /*button*/
+
+/*defaults button*/
+#popup button:nth-child(2) { float: right; }
+/*advanced options button*/
+#popup button:nth-child(2n+3) { float: right; margin-top: 20px; }
+
 .m-button {
   background-color: #ececec !important;
   color: #000 !important;
@@ -47,8 +70,9 @@ body a.mdc-tab {
   background-color: rgba(96, 125, 139, 0.56) !important;
 }
 
-
+/*---------------------------------------------------------------------------*/
 /*select*/
+
 .m-select {
   font-size: 14px;
   line-height: 17px;
@@ -66,8 +90,9 @@ body a.mdc-tab {
   margin: 20px 0 0 0;
 }
 
-
+/*---------------------------------------------------------------------------*/
 /*switch*/
+
 .m-switch {
   cursor: pointer;
   margin: 7px 0;
@@ -95,14 +120,9 @@ body a.mdc-tab {
 
 #popup .m-switch .mdc-switch-label { width: 276px; }
 
-
-/*defaults button*/
-#popup button:nth-child(2) { float: right; }
-/*advanced options button*/
-#popup button:nth-child(2n+3) { float: right; margin-top: 20px; }
-
-
+/*---------------------------------------------------------------------------*/
 /*tabs*/
+
 .m-tabs {
   border: 0;
   height: 36px;
@@ -128,8 +148,9 @@ body a.mdc-tab {
 .m-panel { display: none; }
 .m-panel.is-active { display: block; }
 
-
+/*---------------------------------------------------------------------------*/
 /*options scroll*/
+
 .scroll {
   margin-top: 10px;
   overflow-y: auto;
@@ -139,8 +160,9 @@ body a.mdc-tab {
   height: 324px;
 }
 
+/*---------------------------------------------------------------------------*/
+/*scrollbar*/
 
-/*custom scrollbars in WebKit*/
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;

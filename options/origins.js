@@ -187,7 +187,7 @@ var Origins = () => {
                 type: 'text',
                 value: state.host,
                 onchange: events.host,
-                placeholder: 'Copy URL address and paste it here'
+                placeholder: 'Copy/paste URL address here'
               }),
               m('.mdc-line-ripple')
             ),
