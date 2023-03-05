@@ -58,7 +58,6 @@ var state = {
     content: {
       autoreload: 'Auto reload on file change',
       emoji: 'Convert emoji :shortnames: into EmojiOne images',
-      scroll: 'Remember scroll position',
       toc: 'Generate Table of Contents',
       mathjax: 'Render MathJax formulas',
       mermaid: 'Mermaid diagrams',

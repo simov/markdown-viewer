@@ -61,7 +61,7 @@ var scroll = (() => {
     ])
     .then(done)
   }
-  function debounce (container, done) {
+  function listen (container, done) {
     var listener = /html|body/i.test(container.nodeName) ? window : container
     var timeout = null
     listener.addEventListener('scroll', () => {
@@ -69,40 +69,58 @@ var scroll = (() => {
       timeout = setTimeout(done, 100)
     })
   }
-  function listen (container, prefix) {
+  function get (container, prefix, offset) {
     var key = prefix + location.origin + location.pathname
+    if (offset) {
+      container.scrollTop = offset
+      return
+    }
     try {
       container.scrollTop = parseInt(localStorage.getItem(key))
-      debounce(container, () => {
-        localStorage.setItem(key, container.scrollTop)
-      })
     }
     catch (err) {
       chrome.storage.local.get(key, (res) => {
         container.scrollTop = parseInt(res[key])
       })
-      debounce(container, () => {
+    }
+  }
+  function set (container, prefix) {
+    var key = prefix + location.origin + location.pathname
+    try {
+      listen(container, () => {
+        localStorage.setItem(key, container.scrollTop)
+      })
+    }
+    catch (err) {
+      listen(container, () => {
         chrome.storage.local.set({[key]: container.scrollTop})
       })
     }
   }
-  return () => {
-    var loaded
+  var listening = false
+  return (update) => {
     race(() => {
-      if (!loaded) {
-        loaded = true
-        var container = ((html = $('html')) => (
-          html.scrollTop = 1,
-          html.scrollTop ? (html.scrollTop = 0, html) : $('body')
-        ))()
-        if (state.content.scroll) {
-          listen(container, 'md-')
-        }
-        else if (location.hash && $(location.hash)) {
-          container.scrollTop = $(location.hash).offsetTop
-        }
+      var container = ((html = $('html')) => (
+        html.scrollTop = 1,
+        html.scrollTop ? (html.scrollTop = 0, html) : $('body')
+      ))()
+
+      if (!update && location.hash && $(location.hash)) {
+        get(container, 'md-', $(location.hash).offsetTop)
+      }
+      else {
+        get(container, 'md-')
+      }
+
+      if (state.content.toc) {
+        setTimeout(() => get($('#_toc'), 'md-toc-'), 10)
+      }
+
+      if (!listening) {
+        listening = true
+        set(container, 'md-')
         if (state.content.toc) {
-          setTimeout(() => listen($('#_toc'), 'md-toc-'), 10)
+          setTimeout(() => set($('#_toc'), 'md-toc-'), 10)
         }
       }
     })

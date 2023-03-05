@@ -86,7 +86,7 @@ var onupdate = {
   html: () => {
     if (state.reload.md) {
       state.reload.md = false
-      update()
+      update(true)
     }
   },
   theme: () => {
@@ -96,8 +96,8 @@ var onupdate = {
   }
 }
 
-var update = () => {
-  scroll()
+var update = (update) => {
+  scroll(update)
 
   if (state.content.syntax) {
     setTimeout(() => Prism.highlightAll(), 20)

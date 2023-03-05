@@ -51,7 +51,6 @@ md.storage.defaults = (compilers) => {
       emoji: false,
       mathjax: false,
       mermaid: false,
-      scroll: true,
       syntax: true,
       toc: false,
     },
@@ -148,5 +147,8 @@ md.storage.migrations = (state) => {
       delete state.origins[origin].encoding
     })
     state.header = null
+  }
+  if (state.content.scroll !== undefined) {
+    delete state.content.scroll
   }
 }
