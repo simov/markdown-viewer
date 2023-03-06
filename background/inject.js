@@ -29,7 +29,7 @@ md.inject = ({storage: {state}}) => (id) => {
     target: {tabId: id},
     files: [
       '/vendor/mithril.min.js',
-      state.content.syntax && '/vendor/prism.min.js',
+      state.content.syntax && ['/vendor/prism.min.js', '/vendor/prism-autoloader.min.js', '/content/prism.js'],
       state.content.emoji && '/content/emoji.js',
       state.content.mermaid && ['/vendor/mermaid.min.js', '/content/mermaid.js'],
       state.content.mathjax && ['/content/mathjax.js', '/vendor/mathjax/tex-mml-chtml.js'],
