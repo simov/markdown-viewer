@@ -22,6 +22,9 @@ md.detect = ({storage: {state}, inject}) => {
 
         try {
           var win = JSON.parse(res[0].result)
+          if (!win) {
+            return
+          }
         }
         catch (err) {
           // JSON parse error

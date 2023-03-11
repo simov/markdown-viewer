@@ -43,11 +43,23 @@ body.dark {
   filter: invert(100%) hue-rotate(180deg);
   background-color: #e4e4e4;
 }
+body.dark .m-select {
+  background-color: #c5c5c5;
+}
+body.dark .m-button {
+  background-color: #c5c5c5 !important;
+}
 
 @media (prefers-color-scheme: dark) {
   body.auto {
     filter: invert(100%) hue-rotate(180deg);
     background-color: #e4e4e4;
+  }
+  body.auto .m-select {
+    background-color: #c5c5c5;
+  }
+  body.auto .m-button {
+    background-color: #c5c5c5 !important;
   }
 }
 

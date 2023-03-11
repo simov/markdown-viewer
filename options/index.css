@@ -47,6 +47,12 @@ body.dark .navbar {
 body.dark .navbar #menu > div {
   filter: invert(100%) hue-rotate(180deg);
 }
+body.dark .m-select {
+  background-color: #c5c5c5;
+}
+body.dark .m-button {
+  background-color: #c5c5c5 !important;
+}
 
 @media (prefers-color-scheme: dark) {
   body.auto {
@@ -59,6 +65,12 @@ body.dark .navbar #menu > div {
   }
   body.auto .navbar #menu > div {
     filter: invert(100%) hue-rotate(180deg);
+  }
+  body.auto .m-select {
+    background-color: #c5c5c5;
+  }
+  body.auto .m-button {
+    background-color: #c5c5c5 !important;
   }
 }
 

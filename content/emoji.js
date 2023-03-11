@@ -7,7 +7,7 @@ var emojinator = (() => {
   var ext = 'svg'
 
   return (str) => str
-    .replace(/(?<!(?:code>[^<]*?)|(?:<[^>]+?)):[a-z0-9_+-]+:/g, (shortcode) => {
+    .replace(/(?<!(?:<code>[^<]*?)|(?:<[^>]+?)):[a-z0-9_+-]+:/g, (shortcode) => {
       var key = shortcode.replace(/:/g, '')
       var file = emoji[key]
 
