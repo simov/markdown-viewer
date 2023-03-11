@@ -12,6 +12,33 @@ details summary {
 }
 
 /*---------------------------------------------------------------------------*/
+/*print*/
+
+@media print {
+  /*avoid page breaks immediately after these tags*/
+  h1, h2, h3, h4 {
+    break-after: avoid;
+  }
+  /*avoid page breaks within these tags*/
+  pre, blockquote, summary, table, math, svg {
+    break-inside: avoid;
+  }
+  /*hide sidebar*/
+  html body._toc-left { padding-left: 0px !important; }
+  html body._toc-right { padding-right: 0px !important; }
+  #_toc { display: none; }
+  /*fix github themes auto*/
+  body._theme-github .markdown-body { border: 0; padding: 20px; }
+  body._theme-github-dark .markdown-body { border: 0; padding: 20px; }
+  /*wrap long code lines*/
+  pre, pre code, pre[class*=language-], code[class*=language-]
+  {
+    word-wrap: break-word !important;
+    white-space: pre-wrap !important;
+  }
+}
+
+/*---------------------------------------------------------------------------*/
 /*raw markdown view*/
 
 pre#_markdown {
