@@ -1,21 +1,29 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name"            : "Markdown Viewer",
-  "version"         : "4.0",
+  "version"         : "5.0",
   "description"     : "Markdown Viewer",
 
-  "browser_action": {
-    "browser_style": false,
+  "homepage_url": "https://addons.mozilla.org/en-US/firefox/addon/markdown-viewer-chrome/",
+
+  "icons": {
+    "16" : "/icons/dark/16x16.png",
+    "19" : "/icons/dark/19x19.png",
+    "38" : "/icons/dark/38x38.png",
+    "48" : "/icons/dark/48x48.png",
+    "128": "/icons/dark/128x128.png"
+  },
+
+  "action": {
     "default_icon": {
-      "19" : "/icons/icon19.png",
-      "38" : "/icons/icon38.png"
+      "16" : "/icons/dark/16x16.png",
+      "19" : "/icons/dark/19x19.png",
+      "38" : "/icons/dark/38x38.png",
+      "48" : "/icons/dark/48x48.png",
+      "128" : "/icons/dark/128x128.png"
     },
     "default_title": "Markdown Viewer",
     "default_popup": "/popup/index.html"
-  },
-
-  "options_ui": {
-    "page": "/options/index.html"
   },
 
   "background" : {
@@ -33,62 +41,50 @@
       "/background/messages.js",
       "/background/mathjax.js",
       "/background/xhr.js",
+      "/background/icon.js",
 
       "/background/index.js"
     ]
   },
 
-  "web_accessible_resources": [
-    "/themes/github.css",
-    "/themes/github-dark.css",
-
-    "/themes/godspeed.css",
-    "/themes/new-modern.css",
-    "/themes/torpedo.css",
-    "/themes/vostok.css",
-
-    "/themes/ghostwriter.css",
-    "/themes/radar.css",
-    "/themes/foghorn.css",
-    "/themes/markdown.css",
-    "/themes/markedapp-byword.css",
-    "/themes/solarized-dark.css",
-    "/themes/solarized-light.css",
-
-    "/themes/screen.css",
-    "/themes/markdown5.css",
-    "/themes/markdown6.css",
-    "/themes/markdown7.css",
-    "/themes/markdown8.css",
-    "/themes/markdown9.css",
-    "/themes/markdown-alt.css"
-  ],
-
-  "icons": {
-    "16" : "/icons/icon16.png",
-    "48" : "/icons/icon48.png",
-    "128": "/icons/icon128.png"
+  "options_ui": {
+    "page": "/options/index.html"
   },
 
-  "homepage_url": "https://github.com/simov/markdown-viewer",
+  "web_accessible_resources": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "resources": [
+        "/icons/dark/16x16.png",
+        "/icons/light/16x16.png",
+        "/themes/*",
+        "/vendor/mathjax/fonts/*",
+        "/vendor/prism.min.css",
+        "/vendor/prism-okaidia.min.css"
+      ]
+    }
+  ],
 
   "permissions": [
     "storage",
-    "file:///*",
-    "webRequest",
-    "webRequestBlocking"
+    "scripting"
+  ],
+
+  "host_permissions": [
+    "file:///*"
   ],
 
   "optional_permissions": [
-    "https://*/",
-    "http://*/",
+    "webRequest",
     "*://*/"
   ],
 
-  "applications": {
+  "browser_specific_settings": {
     "gecko": {
       "id": "markdown-viewer@outofindex.com",
-      "strict_min_version": "57.0"
+      "strict_min_version": "110.0"
     }
   }
 }
