@@ -31,17 +31,17 @@ sh build/package.sh
 | bootstrap           |  5.2.3
 | cleanrmd            |  0.1.0
 | emojione            |  2.2.7
-| github-markdown-css |  5.1.0
-| marked              |  4.1.1
+| github-markdown-css |  5.2.0
+| marked              |  4.2.5
 | mathjax             |  3.2.2
-| mermaid             |  9.2.2
+| mermaid             |  9.4.0
 | mithril             |  1.1.6
 | prismjs             | ^1.29.0
 | remark              | ^14.0.2
 | remark-breaks       | ^3.0.2
 | remark-footnotes    | ^4.0.1
 | remark-gfm          | ^3.0.1
-| remark-html         | ^15.0.1
+| remark-html         | ^15.0.2
 | remark-slug         | ^7.0.1
 
 ## Additional Compilers
