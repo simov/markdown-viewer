@@ -3,48 +3,77 @@ md.detect = ({storage: {state}, inject}) => {
 
   var onwakeup = true
 
+  var ff = (id, info, done) => {
+    if (chrome.runtime.getBrowserInfo === undefined) {
+      // chrome
+      done('load')
+    }
+    else {
+      var manifest = chrome.runtime.getManifest()
+      if (manifest.browser_specific_settings && manifest.browser_specific_settings.gecko) {
+        if (!info.url) {
+          done('noop')
+        }
+        else {
+          chrome.tabs.sendMessage(id, {message: 'ping'})
+            .then(() => done('noop'))
+            .catch(() => done('load'))
+        }
+      }
+      else {
+        done('load')
+      }
+    }
+  }
+
   var tab = (id, info, tab) => {
+
     if (info.status === 'loading') {
-      // try
-      chrome.scripting.executeScript({
-        target: {tabId: id},
-        func: () =>
-          JSON.stringify({
-            url: window.location.href,
-            header: document.contentType,
-            loaded: !!window.state,
-          })
-      }, (res) => {
-        if (chrome.runtime.lastError) {
-          // origin not allowed
+      ff(id, info, (action) => {
+        if (action === 'noop') {
           return
         }
-
-        try {
-          var win = JSON.parse(res[0].result)
-          if (!win) {
+        // try
+        chrome.scripting.executeScript({
+          target: {tabId: id},
+          func: () =>
+            JSON.stringify({
+              url: window.location.href,
+              header: document.contentType,
+              loaded: !!window.state,
+            })
+        }, (res) => {
+          if (chrome.runtime.lastError) {
+            // origin not allowed
             return
           }
-        }
-        catch (err) {
-          // JSON parse error
-          return
-        }
 
-        if (win.loaded) {
-          // anchor
-          return
-        }
+          try {
+            var win = JSON.parse(res[0].result)
+            if (!win) {
+              return
+            }
+          }
+          catch (err) {
+            // JSON parse error
+            return
+          }
 
-        if (detect(win.header, win.url)) {
-          if (onwakeup && chrome.webRequest) {
-            onwakeup = false
-            chrome.tabs.reload(id)
+          if (win.loaded) {
+            // anchor
+            return
           }
-          else {
-            inject(id)
+
+          if (detect(win.header, win.url)) {
+            if (onwakeup && chrome.webRequest) {
+              onwakeup = false
+              chrome.tabs.reload(id)
+            }
+            else {
+              inject(id)
+            }
           }
-        }
+        })
       })
     }
   }
