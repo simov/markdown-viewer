@@ -37,7 +37,7 @@ var Origins = () => {
 
     host: (e) => {
       state.scheme = e.target.value.replace(/(.*):\/\/.*/i, '$1')
-      state.domain = e.target.value.replace(/.*:\/\/([^/]+).*/i, '$1')
+      state.domain = e.target.value.replace(/.*:\/\/([^:/]+).*/i, '$1')
       state.host = e.target.value
     },
 
