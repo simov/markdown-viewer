@@ -1,6 +1,25 @@
 
 # Change Log
 
+## v5.1 - 2023-03-14
+- new advanced options page for managing the enabled origins
+- each enabled origin now can have its own header and path detection setup
+- the header detection now includes the text/plain content type
+- header and path detection are now being applied together instead of one or the other
+- on hard reload automatically scroll to hash fragment or last known position
+- add missing tex/latex extensions for mathjax
+- strip yaml/toml frontmatter and use the title variable to set the page title
+- add favicon to markdown content pages
+- dark mode for the popup and the options page
+- bundle all prism languages and load them on demand
+- fix emoji regex to exclude html tags and code blocks
+- fix toc regex picking up header links
+- fix default github theme to be always light
+- print style fixes and other theme fixes
+- update marked from v4.1.1 to v4.2.5
+- update mermaid from v9.2.2 to v9.4.0
+- update github theme from v5.1.0 to v5.2.0
+
 ## v5.0 - 2022-12-05
 - migrate to manifest v3
 - update mathjax from v2 to v3
@@ -11,6 +30,7 @@
 - add 30 new themes + update github themes
 - add dark theme support for prism and mermaid
 - add content width option
+- update table of content styles to match theme
 - expose syntax highlighting option
 - add hot autoreloading
 - add light icon option for dark browser theme
