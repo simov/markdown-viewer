@@ -4,7 +4,7 @@
   "version"         : "5.1",
   "description"     : "Markdown Viewer",
 
-  "homepage_url": "https://addons.mozilla.org/en-US/firefox/addon/markdown-viewer-chrome/",
+  "homepage_url": "https://github.com/simov/markdown-viewer",
 
   "icons": {
     "16" : "/icons/dark/16x16.png",
