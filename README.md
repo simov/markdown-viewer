@@ -32,8 +32,9 @@
 - **[Content Options](#content-options)**
 - **[Themes](#themes)**
 - **[Manage Origins](#manage-origins)**
-- **[Markdown Detection](#markdown-detection)**
 - **[Syntax Examples](#syntax-examples)**
+
+> Additional documentation specific to [Firefox][firefox-docs]
 
 # After Install
 
@@ -75,7 +76,7 @@ Markdown Viewer can be used with any markdown parser/compiler. Currently the fol
 | **gfm**         | `true`  | Enable [GFM] GitHub Flavored Markdown.
 | **sanitize**    | `false` | Sanitize the output. Ignore any HTML that has been input.
 
-For any other supported compiler that you may want to use, follow the [Manual Install](#manual-install) steps.
+> For the rest of the supported compilers follow the [Manual Install](#manual-install) steps.
 
 ---
 
@@ -84,12 +85,11 @@ For any other supported compiler that you may want to use, follow the [Manual In
 | Option          | Default | Description
 | :-              | :-:     | :-
 | **autoreload**  | `false` | Auto reload on file change
-| **toc**         | `false` | Generate Table of Contents
-| **syntax**      | `true`  | Syntax highlighted fenced code blocks
+| **emoji**       | `false` | Convert emoji :shortnames: into EmojiOne images
 | **mathjax**     | `false` | Render MathJax formulas
 | **mermaid**     | `false` | Render Mermaid diagrams
-| **emoji**       | `false` | Convert emoji :shortnames: into EmojiOne images
-| **scroll**      | `true`  | Remember scroll position
+| **syntax**      | `true`  | Syntax highlighted fenced code blocks
+| **toc**         | `false` | Generate Table of Contents
 
 ## Autoreload
 
@@ -102,8 +102,8 @@ When enabled the extension will make a GET request every second to markdown file
 
 Convert emoji :shortnames: into EmojiOne images:
 
-- Emoji shortnames like: `:sparkles:` will be converted to :sparkles: using EmojiOne images.
-- Currently unicode symbols like `✨` and ASCII emoji like `:D` are not supported.
+- Emoji shortnames like `:smile:` will be converted to :smile: using EmojiOne images.
+- Currently unicode symbols like `😄` and ASCII emoji like `:D` are not supported.
 
 ## MathJax
 
@@ -125,12 +125,13 @@ Render Mermaid diagrams wrapped in `mmd` or `mermaid` fenced code blocks:
     sequenceDiagram
     ```
 
-## Scroll
+Alternatively diagrams can be wrapped in HTML tags:
 
-Remember scroll position:
-
-- When enabled, the `scroll` option remembers the current scroll position and scrolls back to it after page reload.
-- When disabled, the `scroll` option will either scroll to the top of the document or to a certain header (anchor) if a hash URL fragment was present.
+```html
+<pre><code class="mermaid">
+  sequenceDiagram
+</code></pre>
+```
 
 ## Syntax
 
@@ -140,7 +141,13 @@ Syntax highlighting for fenced code blocks:
     var hello = 'hi'
     ```
 
-The full list of enabled languages and their names can be found [here][prism-lang].
+Alternatively code blocks can be wrapped in HTML tags:
+
+```html
+<pre class="language-js"><code class="language-js">var hello = 'hi'</code></pre>
+```
+
+> Full list of supported languages and their corresponding [aliases][prism-lang] to use.
 
 ## ToC
 
@@ -160,61 +167,59 @@ All themes support the following width options:
 - `small` - fixed at 768px
 - `tiny` - fixed at 576px
 
-The `auto` option on the `github` and `github-dark` themes has a fixed width with a surrounding border identical to a rendered README.md file for a repository on github.com
+The `auto` option on the `github` and `github-dark` themes has a fixed width with a surrounding border identical to a rendered README.md file for a repository hosted on github.com
 
 ---
 
 # Manage Origins
 
-Access to [local file URLs](#local-files) can be enabled by using the `Allow access to file URLs` option for the extension.
+Click on the Markdown Viewer icon and select [Advanced Options](#manage-origins).
 
-Access to remote origins, however, have to be enabled explicitly.
+By default Markdown Viewer does not have access to any content:
 
-## Add Origin
+![img-no-access]
 
-Here is how you can enable the extension on the `https://raw.githubusercontent.com` origin:
+## Enable File Access
 
-![img-add-origin]
+To enable access to file URLs follow [these steps](#local-files).
 
-The origin consists of a *protocol* and a *domain* part. The *protocol* can be either `https`, `http`, or a `*` to match both `https` and `http`.
+In case access to local files was not enabled you will see an additional `Allow Access` button next to the File Access header:
 
-## Allow All Origins
+![img-file-access-allow]
 
-In case you really want to you can enable the extension for **all** origins:
+Clicking on it will point you to the built-in management page for the extension where you can toggle the `Allow access to file URLs` switch to enable it.
 
-![img-all-origins]
+## Enable Site Access
 
-Alternatively you can use the `Allow All` button.
+Access to individual sites can be enabled by copy/pasting a URL address into the Site Access text box and then clicking on the `Add` button next to it:
 
-Take a look at the [Path Matching Priority](#path-matching-priority) section below on how the Markdown content can be included for or excluded from rendering when access to all origins is enabled!
+![img-site-access-add]
 
-## Remove Origin
+> Additionally the URL scheme can be replaced with a `*` to enable access to both `http` and `https`.
 
-Click on the `REMOVE` button for the origin that you want to remove. This removes the permission itself so that the extension no longer has access to that origin.
+> Access to all subdomains for a host can be specified immediately after the protocol part: `https://*.mydomain.com`
 
-## Refresh Origin
+## Allow on All Sites
 
-The extension synchronizes your preferences across all of your devices using Google Sync. The list of your allowed origins is being synced too. However, the actual permissions that you grant using the Chrome's consent popup cannot be synced.
+Access to **all** sites can be enabled by clicking on the `Allow All` button next to the Site Access header:
 
-In case you have added a new origin on some of your devices you will have to explicitly allow it on your other devices. In this case an additional **`refresh`** label will be shown on each origin that needs to be _refreshed_. This label will be present only on those devices and origins that needs to be _refreshed_, meaning currently the extension does not have access to those origins. Expanding the origin will reveal an additional `REFRESH` button:
+![img-site-allow-all]
 
-![img-refresh-origin]
+> This is identical to adding the `*://*` pattern into the text box.
 
----
+## Content Detection
 
-# Markdown Detection
+Each enabled origin has an option for content type header detection and path matching regular expression:
 
-Markdown Viewer can only access explicitly allowed remote origins and the file origin, if enabled. However, not all content served on those origins will be a Markdown file.
+![img-site-access-enabled]
 
-## Header Detection
+### Header Detection
 
-When this option is enabled the extension will check for the existence of the `text/markdown` and `text/x-markdown` *content-type* header before trying to match the path:
+When this option is enabled the extension will check for the existence of the `content-type` header with a value set to either the `text/markdown`, `text/x-markdown` or `text/plain` content type.
 
-![header-detection]
+### Path Matching
 
-## Path Matching
-
-If the header detection is disabled or a proper *content-type* header is missing, the extension will check if the URL is ending with a markdown file extension.
+When this option is enabled the extension will check if the page URL matches the Path Matching RegExp.
 
 The default regular expression is: `\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\?.*)?$`
 
@@ -227,91 +232,47 @@ It is a simple regular expression that matches URLs ending with:
 
 You can modify the path matching regular expression for each enabled origin individually. The settings are being updated as you type.
 
-## Path Matching Priority
+### Path Matching Priority
 
-The enabled origins are matched from most to least specific:
+The enabled origins are matched from most specific to least specific:
 
 1. `https://raw.githubusercontent.com` or `http://raw.githubusercontent.com`
 2. `*://raw.githubusercontent.com`
 3. `*://*`
 
-Only the first matching origin is picked and then its Path Matching RegExp is used to match the entire URL. If it fails then no other attempts are being made to match the URL.
+The matching origin with the highest priority will be picked and its header detection and path matching settings will be used to determine if the content should be rendered or not.
 
 > It is recommended to explicitly allow only the origins that you want the extension to have access to.
 
-### Custom Path
+## Remove Origin
 
-- **`*://website.com`** - specific origin with custom Path Matching RegExp:<br>
-  `\/some\/custom\/path\/to\/serve\/markdown\/$`
+Click on the `Remove` button for the origin that you want to remove. This removes the permission itself so that the extension can no longer access that origin.
 
-- **`*://*`** - match all origins using the default Path Matching RegExp:<br>
-  `\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\?.*)?$`
+## Refresh Origin
 
-In case we want to match a custom path we have to add a more specific origin and set its Path Matching RegExp accordingly.
+The extension synchronizes your preferences across all of your devices using Google Sync. The list of your allowed origins is being synced too. However, the actual permissions that you grant using the Chrome's consent popup cannot be synced.
 
-### Exclude Origin
+In case you have added a new origin on some of your devices you will have to explicitly allow it on your other devices. In this case the origin will be highlighted and an additional `Refresh` button will be present:
 
-- **`*://github.com`** - specific origin with invalid Path Matching RegExp:<br>
-  `something impossible to match !!!`
+![img-site-refresh]
 
-- **`*://*`** - match all origins using the default Path Matching RegExp:<br>
-  `\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\?.*)?$`
+Only origins that needs to be refreshed will be highlighted. The extension cannot access highlighted origins unless you click on the `Refresh` button.
 
-Some origins may serve rendered HTML content on URLs ending with markdown file extension:
-
-GitHub:
-- https://github.com/simov/markdown-syntax/blob/main/README.md - *HTML*
-- https://raw.githubusercontent.com/simov/markdown-syntax/main/README.md - *Markdown*
-
-In this case we want to exclude the `github.com` origin altogether and for that we have to add a more specific origin and set its Path Matching RegExp to something that's impossible to match.
-
-### Exclude Path
-
-- **`*://bitbucket.org`** - specific origin with custom Path Matching RegExp:<br>
-  `.*\/raw\/.*\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\?.*)?$`
-
-- **`*://gitlab.com`** - specific origin with custom Path Matching RegExp:<br>
-  `.*\/raw\/.*\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\?.*)?$`
-
-- **`*://*`** - match all origins using the default Path Matching RegExp:<br>
-  `\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\?.*)?$`
-
-Some origins may serve rendered HTML content on URLs ending with markdown file extension:
-
-BitBucket:
-- https://bitbucket.org/simovelichkov/markdown-syntax/src/main/README.md - *HTML*
-- https://bitbucket.org/simovelichkov/markdown-syntax/raw/main/README.md - *Markdown*
-
-GitLab:
-- https://gitlab.com/simovelichkov/markdown-syntax/blob/main/README.md - *HTML*
-- https://gitlab.com/simovelichkov/markdown-syntax/raw/main/README.md - *Markdown*
-
-In this case we want to match Markdown files only when their path contains the `raw` word, and for that we have to add a more specific origin and update its Path Matching RegExp accordingly.
+> In some cases access to previously allowed origins may get disabled. Make sure you check back the advanced options page or reload it and look for highlighted origins that needs to be refreshed.
 
 ---
 
 # Syntax Examples
 
-A separate repository containing examples about the Markdown syntax and all features available in Markdown Viewer can be found on [GitHub][syntax-github], [GitLab][syntax-gitlab] and [BitBucket][syntax-bitbucket]:
+Examples about the Markdown syntax and all features available in Markdown Viewer can be found on [GitHub][syntax-github], [GitLab][syntax-gitlab] and [BitBucket][syntax-bitbucket]:
 
-- **elements.md** - quick overview of the Markdown syntax and all features available in Markdown Viewer
+- **elements.md** - quick overview of the Markdown syntax and a summary of the Markdown Viewer features
 - **syntax.md** - extensive list of Markdown syntax examples with different combinations and edge cases
-- **prism.md** - syntax highlighting examples, for the full list of currently supported languages take a look at [this file][prism-lang]
+- **prism.md** - syntax highlighting examples
 - **mermaid.md** - different types of Mermaid diagrams
 - **mathjax.md** - MathJax examples and support documentation
 
-Allow the appropriate remote origin and update its path matching regexp if needed:
-
-- **`raw.githubusercontent.com`** using the default Path Matching RegExp:<br>
-  `\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\?.*)?$`
-
-- **`bitbucket.org`** only paths containing the `raw` word and ending with the default Path Matching RegExp:<br>
-  `.*\/raw\/.*\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\?.*)?$`
-
-- **`gitlab.com`** only paths containing the `raw` word and ending with the default Path Matching RegExp:<br>
-  `.*\/raw\/.*\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\?.*)?$`
-
-Alternatively, pull any of those repositories and access them on the `file:///` origin locally.
+Allow the appropriate remote origin or pull any of those repositories and access them on the `file:///` origin locally.
 
 ---
 
@@ -324,15 +285,14 @@ Note that in any of the following cases you won't receive any future updates aut
 ## Load packed .crx
 
 1. Go to [releases] and pick a release that you want to install
-2. Download the markdown-viewer.crx file
+2. Download the `markdown-viewer.crx` file
 3. Navigate to `chrome://extensions`
-4. Make sure that the `Developer mode` switch is enabled
-5. Drag and drop the markdown-viewer.crx file into the chrome://extensions page
+4. Drag and drop the `markdown-viewer.crx` file into the `chrome://extensions` page
 
 ## Load unpacked .zip
 
 1. Go to [releases] and pick a release that you want to install
-2. Download the markdown-viewer.zip file and extract it
+2. Download the `markdown-viewer.zip` file and extract it
 3. Navigate to `chrome://extensions`
 4. Make sure that the `Developer mode` switch is enabled
 5. Click on the `Load unpacked` button and select the extracted directory
@@ -396,17 +356,18 @@ SOFTWARE.
 
   [emojione]: https://emojione.com
   [mathjax]: https://www.mathjax.org
-  [mermaid]: https://mermaid-js.github.io/mermaid/
+  [mermaid]: https://mermaid.js.org
   [prism]: https://prismjs.com
   [github-theme]: https://github.com/sindresorhus/github-markdown-css
   [cleanrmd]: https://pkg.garrickadenbuie.com/cleanrmd/#themes
 
   [gfm]: https://github.github.com/gfm/
+  [prism-lang]: https://prismjs.com/#supported-languages
   [compilers]: https://github.com/simov/markdown-viewer/tree/compilers
   [releases]: https://github.com/simov/markdown-viewer/releases
   [mv2]: https://github.com/simov/markdown-viewer/tree/mv2
   [compilers-mv2]: https://github.com/simov/markdown-viewer/tree/compilers-mv2
-  [prism-lang]: https://github.com/simov/markdown-viewer/blob/main/build/prism/prism.json
+  [firefox-docs]: https://github.com/simov/markdown-viewer/blob/main/firefox.md
 
   [syntax-github]: https://github.com/simov/markdown-syntax
   [syntax-gitlab]: https://gitlab.com/simovelichkov/markdown-syntax
@@ -414,7 +375,9 @@ SOFTWARE.
 
   [img-extensions]: https://i.imgur.com/kzullaI.png
   [img-file-access]: https://i.imgur.com/VVcPv0T.png
-  [img-add-origin]: https://i.imgur.com/GnKmkRG.png
-  [img-all-origins]: https://i.imgur.com/4GH3EuP.png
-  [img-refresh-origin]: https://i.imgur.com/6COtyrP.png
-  [header-detection]: https://i.imgur.com/bdz3Reg.png
+  [img-no-access]: https://i.imgur.com/U6mjgX0.png
+  [img-file-access-allow]: https://i.imgur.com/2bStHeb.png
+  [img-site-access-add]: https://i.imgur.com/CFg9JBt.png
+  [img-site-allow-all]: https://i.imgur.com/MXZqFOB.png
+  [img-site-access-enabled]: https://i.imgur.com/tFMzJ3l.png
+  [img-site-refresh]: https://i.imgur.com/j0gATxT.png
