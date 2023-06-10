@@ -105,8 +105,8 @@ var scroll = (() => {
         html.scrollTop ? (html.scrollTop = 0, html) : $('body')
       ))()
 
-      if (!update && location.hash && $(location.hash)) {
-        get(container, 'md-', $(location.hash).offsetTop)
+      if (!update && location.hash && document.getElementById(location.hash.slice(1))) {
+        get(container, 'md-', document.getElementById(location.hash.slice(1)).offsetTop)
       }
       else {
         get(container, 'md-')
