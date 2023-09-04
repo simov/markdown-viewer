@@ -1,65 +1,74 @@
 
 var scroll = (() => {
-  function race (done) {
-    Promise.race([
-      Promise.all([
-        new Promise((resolve) => {
-          var images = Array.from(document.querySelectorAll('img'))
-          if (!images.length) {
+  function onload (done) {
+    Promise.all([
+      new Promise((resolve) => {
+        var timeout = setInterval(() => {
+          if (document.styleSheets.length) {
+            clearInterval(timeout)
             resolve()
           }
-          else {
-            var loaded = 0
-            images.forEach((img) => {
-              img.addEventListener('load', () => {
-                if (++loaded === images.length) {
-                  resolve()
-                }
-              }, {once: true})
-            })
-          }
-        }),
-        new Promise((resolve) => {
-          var code = Array.from(document.querySelectorAll('code[class^=language-]'))
-          if (!state.content.syntax || !code.length) {
-            resolve()
-          }
-          else {
-            setTimeout(() => resolve(), 40)
-          }
-        }),
-        new Promise((resolve) => {
-          var diagrams = Array.from(document.querySelectorAll('code.mermaid'))
-          if (!state.content.mermaid || !diagrams.length) {
-            resolve()
-          }
-          else {
-            var timeout = setInterval(() => {
-              var svg = Array.from(document.querySelectorAll('code.mermaid svg'))
-              if (diagrams.length === svg.length) {
-                clearInterval(timeout)
-                resolve()
-              }
-            }, 50)
-          }
-        }),
-        new Promise((resolve) => {
-          if (!state.content.mathjax) {
-            resolve()
-          }
-          else {
-            var timeout = setInterval(() => {
-              if (mj.loaded) {
-                clearInterval(timeout)
-                resolve()
-              }
-            }, 50)
-          }
-        })
-      ]),
-      new Promise((resolve) => setTimeout(resolve, 500))
-    ])
-    .then(done)
+        }, 0)
+      }),
+      new Promise((resolve) => {
+        var images = Array.from(document.querySelectorAll('img'))
+        if (!images.length) {
+          resolve()
+        }
+        else {
+          Promise.race([
+            new Promise((resolve) => {
+              var loaded = 0
+              images.forEach((img) => {
+                img.addEventListener('load', () => {
+                  if (++loaded === images.length) {
+                    resolve()
+                  }
+                }, {once: true})
+              })
+            }),
+            new Promise((resolve) => setTimeout(resolve, 500))
+          ]).then(resolve)
+        }
+      }),
+      new Promise((resolve) => {
+        var code = Array.from(document.querySelectorAll('code[class^=language-]'))
+        if (!state.content.syntax || !code.length) {
+          resolve()
+        }
+        else {
+          setTimeout(() => resolve(), 40)
+        }
+      }),
+      new Promise((resolve) => {
+        var diagrams = Array.from(document.querySelectorAll('code.mermaid'))
+        if (!state.content.mermaid || !diagrams.length) {
+          resolve()
+        }
+        else {
+          var timeout = setInterval(() => {
+            var svg = Array.from(document.querySelectorAll('code.mermaid svg'))
+            if (diagrams.length === svg.length) {
+              clearInterval(timeout)
+              resolve()
+            }
+          }, 50)
+        }
+      }),
+      new Promise((resolve) => {
+        if (!state.content.mathjax) {
+          resolve()
+        }
+        else {
+          var timeout = setInterval(() => {
+            if (mj.loaded) {
+              clearInterval(timeout)
+              resolve()
+            }
+          }, 50)
+        }
+      })
+    ]).then(done)
   }
   function listen (container, done) {
     var listener = /html|body/i.test(container.nodeName) ? window : container
@@ -86,20 +95,18 @@ var scroll = (() => {
   }
   function set (container, prefix) {
     var key = prefix + location.origin + location.pathname
-    try {
-      listen(container, () => {
+    listen(container, () => {
+      try {
         localStorage.setItem(key, container.scrollTop)
-      })
-    }
-    catch (err) {
-      listen(container, () => {
+      }
+      catch (err) {
         chrome.storage.local.set({[key]: container.scrollTop})
-      })
-    }
+      }
+    })
   }
   var listening = false
   return (update) => {
-    race(() => {
+    onload(() => {
       var container = ((html = $('html')) => (
         html.scrollTop = 1,
         html.scrollTop ? (html.scrollTop = 0, html) : $('body')
