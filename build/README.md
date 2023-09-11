@@ -32,6 +32,18 @@ sh build/package.sh
 | cleanrmd            |  0.1.0
 | emojione            |  2.2.7
 | github-markdown-css |  5.2.0
+| markdown-it         | ^13.0.1
+| markdown-it-abbr    | ^1.0.4
+| markdown-it-anchor  | ^8.6.7
+| markdown-it-attrs   | ^4.1.6
+| markdown-it-cjk-breaks | ^1.1.3
+| markdown-it-deflist | ^2.1.0
+| markdown-it-footnote| ^3.0.3
+| markdown-it-ins     | ^3.0.1
+| markdown-it-mark    | ^3.0.1
+| markdown-it-sub     | ^1.0.0
+| markdown-it-sup     | ^1.0.0
+| markdown-it-task-lists | ^2.1.1
 | marked              |  4.2.5
 | mathjax             |  3.2.2
 | mermaid             |  9.4.0
@@ -49,6 +61,5 @@ sh build/package.sh
 | Module              | Version
 | :-                  | :-
 | commonmark          | 0.29.3
-| markdown-it         | 13.0.1
 | remarkable          | 1.7.4
 | showdown            | 2.1.0

@@ -10,11 +10,9 @@ var fpath = {
 
 var compilers = `
 importScripts('/vendor/showdown.min.js')
-importScripts('/vendor/markdown-it.min.js')
 importScripts('/vendor/remarkable.min.js')
 importScripts('/vendor/commonmark.min.js')
 importScripts('/background/compilers/showdown.js')
-importScripts('/background/compilers/markdown-it.js')
 importScripts('/background/compilers/remarkable.js')
 importScripts('/background/compilers/commonmark.js')
 `

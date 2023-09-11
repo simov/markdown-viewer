@@ -19,15 +19,15 @@ md.storage = ({compilers}) => {
     Object.assign(state, JSON.parse(JSON.stringify(
       !Object.keys(res).length ? defaults : res)))
 
-    // mutate
-    md.storage.migrations(state)
-
     // in case of new providers from the compilers branch
     Object.keys(compilers).forEach((compiler) => {
       if (!state[compiler]) {
         state[compiler] = compilers[compiler].defaults
       }
     })
+
+    // mutate
+    md.storage.migrations(state)
 
     set(state)
   })
@@ -159,5 +159,20 @@ md.storage.migrations = (state) => {
       icon: state.icon === true ? 'light' : 'dark',
       theme: 'light'
     }
+  }
+  // v5.1 -> v5.2
+  if (state['markdown-it'].abbr === undefined) {
+    Object.assign(state['markdown-it'], {
+      abbr: false,
+      attrs: false,
+      cjk: false,
+      deflist: false,
+      footnote: false,
+      ins: false,
+      mark: false,
+      sub: false,
+      sup: false,
+      tasklists: false,
+    })
   }
 }
