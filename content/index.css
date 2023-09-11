@@ -11,6 +11,8 @@ details summary {
   cursor: pointer;
 }
 
+#_html, #_toc { visibility: hidden; }
+
 /*---------------------------------------------------------------------------*/
 /*print*/
 

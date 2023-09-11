@@ -130,6 +130,9 @@ var scroll = (() => {
           setTimeout(() => set($('#_toc'), 'md-toc-'), 10)
         }
       }
+
+      if ($('#_html')) $('#_html').style.visibility = 'visible'
+      if ($('#_toc')) $('#_toc').style.visibility = 'visible'
     })
   }
 })()
