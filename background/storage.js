@@ -174,5 +174,12 @@ md.storage.migrations = (state) => {
       sup: false,
       tasklists: false,
     })
+
+  }
+  if (state.marked.linkify === undefined) {
+    Object.assign(state.marked, {
+      linkify: true,
+    })
+    delete state.marked.sanitize
   }
 }
