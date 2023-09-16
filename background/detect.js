@@ -83,9 +83,17 @@ md.detect = ({storage: {state}, inject}) => {
 
     var origin =
       state.origins[location.origin] ||
+
       state.origins[location.protocol + '//' + location.hostname] ||
-      state.origins['*://' + location.host] ||
+      state.origins[location.protocol + '//' + location.host] ||
+      state.origins[location.protocol + '//*.' + location.hostname.replace(/^[^.]+\.(.*)/, '$1')] ||
+      state.origins[location.protocol + '//*.' + location.host.replace(/^[^.]+\.(.*)/, '$1')] ||
+
       state.origins['*://' + location.hostname] ||
+      state.origins['*://' + location.host] ||
+      state.origins['*://*.' + location.hostname.replace(/^[^.]+\.(.*)/, '$1')] ||
+      state.origins['*://*.' + location.host.replace(/^[^.]+\.(.*)/, '$1')] ||
+
       state.origins['*://*']
 
     return (
