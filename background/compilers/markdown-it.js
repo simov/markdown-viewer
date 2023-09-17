@@ -1,4 +1,6 @@
 
+var md = {compilers: {}}
+
 md.compilers['markdown-it'] = (() => {
   var defaults = {
     breaks: false,
@@ -28,16 +30,16 @@ md.compilers['markdown-it'] = (() => {
     typographer: 'Enable some language-neutral replacement + quotes beautification',
     xhtmlOut: 'Use / to close single tags (<br />)',
     // plugins
-    abbr: 'Abbreviation <abbr> support',
-    attrs: 'Custom attributes using {} curly brackets',
+    abbr: 'Abbreviation <abbr>\n*[word]: Text',
+    attrs: 'Custom attributes\n# header {#id}',
     cjk: 'Suppress linebreaks between east asian characters',
-    deflist: 'Definition list <dl> support',
-    footnote: 'Footnotes support',
-    ins: 'Inserted text <ins> support',
-    mark: 'Marked text <mark> support',
-    sub: 'Subscript <sub> support',
-    sup: 'Superscript <sup> support',
-    tasklists: 'Task lists support',
+    deflist: 'Definition list <dl>\ntitle\n: definition',
+    footnote: 'Footnotes\nword[^1]\n[^1]: text',
+    ins: 'Inserted text <ins>\n++text++',
+    mark: 'Marked text <mark>\n==text==',
+    sub: 'Subscript <sub>\n~text~',
+    sup: 'Superscript <sup>\n^text^',
+    tasklists: 'Task lists\n- [x]\n- [ ]',
   }
 
   var ctor = ({storage: {state}}) => ({
@@ -45,7 +47,9 @@ md.compilers['markdown-it'] = (() => {
     description,
     compile: (markdown) =>
       mdit.mdit(state['markdown-it'])
-        .use(mdit.anchor, {})
+        .use(mdit.anchor, {
+          slugify: (s) => new mdit.slugger().slug(s)
+        })
         .use(state['markdown-it'].abbr ? mdit.abbr : () => {})
         .use(state['markdown-it'].attrs ? mdit.attrs : () => {})
         .use(state['markdown-it'].cjk ? mdit.cjk : () => {})

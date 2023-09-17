@@ -40,7 +40,7 @@ md.storage.defaults = (compilers) => {
 
   var defaults = {
     theme: 'github',
-    compiler: 'marked',
+    compiler: 'markdown-it',
     raw: false,
     match,
     themes: {

@@ -1,6 +1,4 @@
 
-var md = {compilers: {}}
-
 md.compilers.marked = (() => {
   var defaults = {
     breaks: false,
