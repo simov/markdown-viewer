@@ -49,7 +49,7 @@ sh build/package.sh
 | marked-linkify-it     | ^3.1.4
 | marked-smartypants    | ^1.1.3
 | mathjax             |  3.2.2
-| mermaid             |  9.4.0
+| mermaid             | 10.4.0
 | mithril             |  1.1.6
 | prismjs             | ^1.29.0
 | remark              | ^14.0.2
