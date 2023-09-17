@@ -15,13 +15,12 @@ var mmd = (() => {
           diagram.innerHTML = definitions[index]
         })
       }
-      mermaid.initialize({
-        theme:
-          state._themes[state.theme] === 'dark' ||
-          (state._themes[state.theme] === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)
-          ? 'dark' : 'default'
-      })
-      mermaid.init({}, 'code.mermaid')
+      var theme =
+        state._themes[state.theme] === 'dark' ||
+        (state._themes[state.theme] === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+        ? 'dark' : 'default'
+      mermaid.initialize({theme})
+      mermaid.init({theme}, 'code.mermaid')
       loaded = true
     }
   }
