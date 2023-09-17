@@ -11,7 +11,7 @@ import mark from 'markdown-it-mark'
 import sub from 'markdown-it-sub'
 import sup from 'markdown-it-sup'
 import tasklists from 'markdown-it-task-lists'
-
+import slugger from 'github-slugger'
 
 export {
   mdit,
@@ -26,4 +26,5 @@ export {
   sub,
   sup,
   tasklists,
+  slugger,
 }

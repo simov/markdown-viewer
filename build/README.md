@@ -32,6 +32,7 @@ sh build/package.sh
 | cleanrmd            |  0.1.0
 | emojione            |  2.2.7
 | github-markdown-css |  5.2.0
+| github-slugger      | ^2.0.0
 | markdown-it         | ^13.0.1
 | markdown-it-abbr    | ^1.0.4
 | markdown-it-anchor  | ^8.6.7
