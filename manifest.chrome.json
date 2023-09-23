@@ -7,20 +7,20 @@
   "homepage_url": "https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk",
 
   "icons": {
-    "16" : "/icons/dark/16x16.png",
-    "19" : "/icons/dark/19x19.png",
-    "38" : "/icons/dark/38x38.png",
-    "48" : "/icons/dark/48x48.png",
-    "128": "/icons/dark/128x128.png"
+    "16" : "/icons/default/16x16.png",
+    "19" : "/icons/default/19x19.png",
+    "38" : "/icons/default/38x38.png",
+    "48" : "/icons/default/48x48.png",
+    "128": "/icons/default/128x128.png"
   },
 
   "action": {
     "default_icon": {
-      "16" : "/icons/dark/16x16.png",
-      "19" : "/icons/dark/19x19.png",
-      "38" : "/icons/dark/38x38.png",
-      "48" : "/icons/dark/48x48.png",
-      "128" : "/icons/dark/128x128.png"
+      "16" : "/icons/default/16x16.png",
+      "19" : "/icons/default/19x19.png",
+      "38" : "/icons/default/38x38.png",
+      "48" : "/icons/default/48x48.png",
+      "128" : "/icons/default/128x128.png"
     },
     "default_title": "Markdown Viewer",
     "default_popup": "/popup/index.html"

@@ -62,7 +62,7 @@ md.storage.defaults = (compilers) => {
       }
     },
     settings: {
-      icon: 'dark',
+      icon: 'default',
       theme: 'light',
     }
   }
