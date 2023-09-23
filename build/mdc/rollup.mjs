@@ -1,6 +1,6 @@
 
-var common = require('rollup-plugin-commonjs')
-var resolve = require('rollup-plugin-node-resolve')
+import common from '@rollup/plugin-commonjs'
+import resolve from '@rollup/plugin-node-resolve'
 
 
 export default {

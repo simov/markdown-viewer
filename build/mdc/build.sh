@@ -8,7 +8,7 @@ npm install
 mkdir -p tmp
 
 # mdc.min.js
-npx rollup --config rollup.js --input mdc.js --file tmp/mdc.js
+npx rollup --config rollup.mjs --input mdc.js --file tmp/mdc.js
 npx babel tmp/mdc.js --out-file tmp/mdc.min.js
 
 # mdc.min.css

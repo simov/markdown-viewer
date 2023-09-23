@@ -7,10 +7,10 @@
     "prismjs": "^1.29.0"
   },
   "devDependencies": {
-    "csso-cli": "^4.0.1",
-    "terser": "^5.5.1"
+    "csso-cli": "^4.0.2",
+    "terser": "^5.20.0"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=18.0.0"
   }
 }

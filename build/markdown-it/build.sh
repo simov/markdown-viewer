@@ -8,7 +8,7 @@ npm install
 mkdir -p tmp
 
 # markdown-it.min.js
-npx rollup --config rollup.js --input markdown-it.mjs --file tmp/markdown-it.js
+npx rollup --config rollup.mjs --input markdown-it.mjs --file tmp/markdown-it.js
 npx terser --compress --mangle -- tmp/markdown-it.js > tmp/markdown-it.min.js
 
 # copy

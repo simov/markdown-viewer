@@ -13,8 +13,8 @@ sh build/package.sh
 
 ## Build Dependencies
 
-- node >= 14
-- npm
+- node >= 18
+- npm >= 10
 - git
 - curl
 - zip
@@ -45,7 +45,7 @@ sh build/package.sh
 | markdown-it-sub     | ^1.0.0
 | markdown-it-sup     | ^1.0.0
 | markdown-it-task-lists | ^2.1.1
-| marked                | ^9.0.0
+| marked                | ^9.0.3
 | marked-gfm-heading-id | ^3.0.8
 | marked-linkify-it     | ^3.1.4
 | marked-smartypants    | ^1.1.3

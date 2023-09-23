@@ -8,7 +8,7 @@ npm install
 mkdir -p tmp
 
 # marked.min.js
-npx rollup --config rollup.js --input marked.mjs --file tmp/marked.js
+npx rollup --config rollup.mjs --input marked.mjs --file tmp/marked.js
 npx terser --compress --mangle -- tmp/marked.js > tmp/marked.min.js
 
 # copy

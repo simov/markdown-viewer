@@ -1,7 +1,7 @@
 
-var common = require('@rollup/plugin-commonjs')
-var resolve = require('@rollup/plugin-node-resolve')
-var node = require('rollup-plugin-polyfill-node')
+import common from '@rollup/plugin-commonjs'
+import resolve from '@rollup/plugin-node-resolve'
+import node from 'rollup-plugin-polyfill-node'
 
 
 export default {

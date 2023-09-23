@@ -8,7 +8,7 @@ npm install
 mkdir -p tmp
 
 # remark.min.js
-npx rollup --config rollup.js --input remark.mjs --file tmp/remark.js
+npx rollup --config rollup.mjs --input remark.mjs --file tmp/remark.js
 npx terser --compress --mangle -- tmp/remark.js > tmp/remark.min.js
 
 # copy
