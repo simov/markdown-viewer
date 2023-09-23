@@ -11,7 +11,10 @@ details summary {
   cursor: pointer;
 }
 
-#_html, #_toc { visibility: hidden; }
+#_html, #_toc {
+  word-wrap: break-word;
+  visibility: hidden;
+}
 
 /*---------------------------------------------------------------------------*/
 /*print*/
@@ -143,13 +146,11 @@ pre#_markdown {
 
 @media (prefers-color-scheme: light) {
   body {
-    --toc-link: #0969da;
     --toc-delimiter: #e1e4e8;
   }
 }
 @media (prefers-color-scheme: dark) {
   body {
-    --toc-link: #58a6ff;
     --toc-delimiter: #30363d;
   }
 }
@@ -228,7 +229,7 @@ body._toc-right { padding-right: 300px !important; }
 }
 ._theme-github #_toc a { /*.markdown-body a {*/
   background-color: transparent;
-  color: var(--toc-link);
+  color: #0969da;
   text-decoration: none;
 }
 ._theme-github #_toc a:hover {
@@ -609,6 +610,9 @@ body._toc-right { padding-right: 300px !important; }
 ._theme-github {
   background-color: #fff;
 }
+._theme-github > pre {
+  color: #000;
+}
 ._theme-github .markdown-body {
   border: 1px solid #e1e4e8;
 }
@@ -617,11 +621,11 @@ body._toc-right { padding-right: 300px !important; }
 ._theme-github-dark {
   background-color: #0d1117;
 }
+._theme-github-dark > pre {
+  color: #fff;
+}
 ._theme-github-dark .markdown-body {
   border: 1px solid #30363d;
-}
-._theme-github-dark #_markdown {
-  background-color: #fff;
 }
 
 /*markdown-air - fix images*/
