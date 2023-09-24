@@ -1,14 +1,6 @@
 
 # Markdown Viewer on Firefox
 
-Unlike Chromium based browsers Firefox will try to download files with `text/markdown` content type. For that reason all markdown content have to be served with `text/plain` content type instead.
-
-On Linux [additional setup](#access-to-local-file-urls-on-linux) is needed on the local computer in order to serve local `file:///` URLs with `text/plain` content type.
-
-The `autoreload` feature won't work on `file:///` URLs because of CSP limitations, and it can only work on [local file server](#autoreload-on-localhost) setup on `http://localhost:[port]` or a host name that resolves to localhost.
-
-Lastly, remote origins that serve their content with [strict CSP](#remote-origins-with-strict-csp) won't be rendered at all even if they were enabled for the extension.
-
 ## Table of Contents
 
 - **[Access to local file:/// URLs on Linux](#access-to-local-file-urls-on-linux)**
@@ -17,18 +9,20 @@ Lastly, remote origins that serve their content with [strict CSP](#remote-origin
 
 ## Compatibility Matrix
 
-| Origin       | Type   | Headers                         | Render | Autoreload
-| :-           | :-     | :-                              | :-     | :-
-| `file:///`   | local  | requires mime type fix on Linux | ✔      | ✖
-| `http(s)://` | local  | text/plain                      | ✔      | ✔
-| `http(s)://` | remote | text/plain + non strict CSP     | ✔      | ✖
-| `http(s)://` | remote | strict CSP                      | ✖      | ✖
+| Origin       | Type   | Headers                                     | Render | Autoreload
+| :-           | :-:    | :-                                          | :-     | :-
+| `file:///`   | local  | requires mime type fix on Linux             | ✔      | ✖
+| `http(s)://` | local  | `content-type: text/plain`                  | ✔      | ✔
+| `http(s)://` | remote | `content-type: text/plain` + non strict CSP | ✔      | ✖
+| `http(s)://` | remote | strict CSP                                  | ✖      | ✖
 
 ---
 
 # Access to local file:/// URLs on Linux
 
-Firefox will try to download unknown file types by default. The following are a few methods to enable `file:///` access on Linux.
+Unlike Chromium based browsers Firefox will prompt you to download or open files with an external app, that are served with the `text/markdown` content type. For that reason markdown files have to be served using the `text/plain` content type instead.
+
+The following are a few methods to enable `file:///` access on Linux:
 
 ## Method 1
 
@@ -42,7 +36,7 @@ Restart Firefox
 
 ## Method 2
 
-In case Firefox was installed as a snap _Method 1_ from above won't work.
+In case Firefox was installed as a snap _Method 1_ won't work.
 
 Create `/home/me/snap/firefox/common/mime.types` file with the following content (replace `me` with your user):
 
@@ -84,9 +78,11 @@ update-mime-database ~/.local/share/mime
 
 # Autoreload on localhost
 
-The `autoreload` feature is available only for content served on `localhost`. You can use any file server as long as it serves the markdown files with `text/plain` content type.
+The `autoreload` feature is available only for content served on `localhost` and it won't work on `file:///` URLs because of CSP (Content Security Policy) limitations.
 
-Here is an example file server with Node.js (replace `me` with your user):
+Any file server can be used locally as long as it serves the markdown files with the `text/plain` content type.
+
+Here is an example file server using Node.js (replace `me` with your user):
 
 ```js
 var express = require('express')
@@ -113,17 +109,17 @@ express()
 
 Go to the Advanced Options page for the extension and enable the `http://localhost` origin (note that port is omitted).
 
-Run the above JavaScript file with Node.js and navigate to `http://localhost:8000` in Firefox.
+Run the above JavaScript file using Node.js and navigate to `http://localhost:8000` in Firefox.
 
-Note that you can use any other host name set in your `hosts` file that resolves to localhost:
+You can use any other host name configured in your `hosts` file that resolves to localhost:
 
 ```hosts
 127.0.0.1    ssd
 ```
 
-Then you only need to enable that origin `http://ssd` in the Advanced Options page.
+Then you only need to enable that origin `http://ssd` in the Advanced Options page as well.
 
-The above script can be run on system startup with SystemD or any other service manager.
+The above script can be run on system startup using SystemD or any other service manager.
 
 ---
 
@@ -131,14 +127,14 @@ The above script can be run on system startup with SystemD or any other service 
 
 Remote origins that serve markdown files with `text/plain` content type and do not enforce strict CSP (Content Security Policy) can be enabled using the Advanced Options page.
 
-For example, content on `gitlab.com` and `bitbucket.org` can be enabled and subsequently it will be rendered:
+For example, content hosted on `gitlab.com` and `bitbucket.org` can be enabled and subsequently it will get rendered:
 
 - https://gitlab.com/simovelichkov/markdown-syntax/-/raw/main/README.md
 - https://bitbucket.org/simovelichkov/markdown-syntax/raw/main/README.md
 
-Remote origins with strict CSP, however, such as `default-src 'none'; style-src 'unsafe-inline'; sandbox ` are blocked by Firefox.
+Remote origins with strict CSP however, such as `content-security-policy: default-src 'none'; style-src 'unsafe-inline'; sandbox` will be blocked by Firefox.
 
-For example, content on GitHub's `raw.githubusercontent.com` won't be rendered even if that origin was enabled inside the Advanced Options page:
+For example, content hosted on GitHub's `raw.githubusercontent.com` cannot be rendered even if that origin was enabled in the Advanced Options page:
 
 - https://raw.githubusercontent.com/simov/markdown-syntax/main/README.md
 

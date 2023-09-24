@@ -9,7 +9,7 @@
 - Render local and remote file URLs
 - Granular access to remote origins
 - Multiple markdown parsers
-- Full control over the compiler options ([marked][marked], [remark][remark])
+- Full control over the compiler options ([markdown-it], [marked], [remark])
 - 30+ Themes ([cleanrmd], [GitHub][github-theme])
 - GitHub Flavored Markdown (GFM)
 - Auto reload on file change
@@ -28,9 +28,9 @@
 # Table of Contents
 
 - **[After Install](#after-install)**
+- **[Themes](#themes)**
 - **[Compiler Options](#compiler-options)**
 - **[Content Options](#content-options)**
-- **[Themes](#themes)**
 - **[Manage Origins](#manage-origins)**
 - **[Syntax Examples](#syntax-examples)**
 
@@ -42,9 +42,11 @@
 
 1. Navigate to `chrome://extensions`
 2. Locate the Markdown Viewer extension and click on the `Details` button
-3. Make sure that the `Allow access to file URLs` switch is turned on
 
 ![img-extensions]
+
+3. Make sure that the `Allow access to file URLs` switch is turned on
+
 ![img-file-access]
 
 ## Remote Files
@@ -54,42 +56,56 @@
 
 ---
 
+# Themes
+
+All themes support the following width options:
+
+- `auto` - automatically adjust the content width based on the screen size
+- `full` - 100% screen width
+- `wide` - fixed at 1400px
+- `large` - fixed at 1200px
+- `medium` - fixed at 992px
+- `small` - fixed at 768px
+- `tiny` - fixed at 576px
+
+The `auto` option on the `github` and `github-dark` themes has a fixed width with a surrounding border identical to a rendered `README.md` file for a repository hosted on github.com
+
+---
+
 # Compiler Options
 
-Markdown Viewer can be used with any markdown parser/compiler. Currently the following compilers are supported: [marked], [remark], [showdown], [markdown-it], [remarkable], [commonmark], and officially it ships with Marked and Remark:
+Full **CommonMark** support including **GFM** tables and strikethrough **+**
 
-## Marked
-
-| Option          | Default | Description
-| :-              | :-:     | :-
-| **breaks**      | `false` | Enable [GFM] line breaks. This option requires the gfm option to be true.
-| **gfm**         | `true`  | Enable [GFM] GitHub Flavored Markdown.
-| **pedantic**    | `false` | Conform to obscure parts of markdown.pl as much as possible. Don't fix any of the original markdown bugs or poor behavior.
-| **sanitize**    | `false` | Sanitize the output. Ignore any HTML that has been input.
-| **smartypants** | `false` | Use "smart" typographic punctuation for things like quotes and dashes.
-
-## Remark
-
-| Option          | Default | Description
-| :-              | :-:     | :-
-| **breaks**      | `false` | Enable [GFM] line breaks. This option requires the gfm option to be true.
-| **gfm**         | `true`  | Enable [GFM] GitHub Flavored Markdown.
-| **sanitize**    | `false` | Sanitize the output. Ignore any HTML that has been input.
-
-> For the rest of the supported compilers follow the [Manual Install](#manual-install) steps.
+| Option         | Default | Description
+| :-             | :-:     | :-
+| **abbr**       | `false` | Abbreviation using `*[word]: Text` `<abbr>`
+| **attr**       | `false` | Custom attributes using `{}` curly brackets
+| **breaks**     | `false` | Convert new lines `\n` in paragraphs into line breaks `<br>`
+| **cjk**        | `false` | Suppress linebreaks between east asian characters
+| **deflist**    | `false` | Definition list `<dl>`
+| **footnote**   | `false` | Footnotes `[^1]` `[^1]: a`
+| **html**       | **`true`**  | Enable HTML tags in source
+| **ins**        | `false` | Inserted text `++a++` `<ins>`
+| **linkify**    | **`true`**  | Autoconvert URL-like text to links
+| **mark**       | `false` | Marked text `==a==` `<mark>`
+| **sub**        | `false` | Subscript `~a~` `<sub>`
+| **sup**        | `false` | Superscript `^a^` `<sup>`
+| **tasklists**  | `false` | Task lists `- [x]`
+| **typographer**| `false` | Enable some language-neutral replacement + quotes beautification
+| **xhtmlOut**   | `false` | Use `/` to close single tags (`<br />`)
 
 ---
 
 # Content Options
 
-| Option          | Default | Description
-| :-              | :-:     | :-
-| **autoreload**  | `false` | Auto reload on file change
-| **emoji**       | `false` | Convert emoji :shortnames: into EmojiOne images
-| **mathjax**     | `false` | Render MathJax formulas
-| **mermaid**     | `false` | Render Mermaid diagrams
-| **syntax**      | `true`  | Syntax highlighted fenced code blocks
-| **toc**         | `false` | Generate Table of Contents
+| Option         | Default | Description
+| :-             | :-:     | :-
+| **autoreload** | `false` | Auto reload on file change
+| **emoji**      | `false` | Convert emoji `:shortnames:` into EmojiOne images
+| **mathjax**    | `false` | Render MathJax formulas
+| **mermaid**    | `false` | Render Mermaid diagrams
+| **syntax**     | **`true`**  | Syntax highlighted fenced code blocks
+| **toc**        | `false` | Generate Table of Contents
 
 ## Autoreload
 
@@ -155,25 +171,9 @@ Generates Table of Contents (ToC) based on the headers found in the markdown doc
 
 ---
 
-# Themes
-
-All themes support the following width options:
-
-- `auto` - automatically adjust the content width based on the screen size
-- `full` - 100% screen width
-- `wide` - fixed at 1400px
-- `large` - fixed at 1200px
-- `medium` - fixed at 992px
-- `small` - fixed at 768px
-- `tiny` - fixed at 576px
-
-The `auto` option on the `github` and `github-dark` themes has a fixed width with a surrounding border identical to a rendered README.md file for a repository hosted on github.com
-
----
-
 # Manage Origins
 
-Click on the Markdown Viewer icon and select [Advanced Options](#manage-origins).
+Click on the Markdown Viewer icon and select `Advanced Options`.
 
 By default Markdown Viewer does not have access to any content:
 
@@ -183,7 +183,7 @@ By default Markdown Viewer does not have access to any content:
 
 To enable access to file URLs follow [these steps](#local-files).
 
-In case access to local files was not enabled you will see an additional `Allow Access` button next to the File Access header:
+In case access to local files was not enabled, an additional `Allow Access` button will be present next to the File Access header:
 
 ![img-file-access-allow]
 
@@ -195,9 +195,11 @@ Access to individual sites can be enabled by copy/pasting a URL address into the
 
 ![img-site-access-add]
 
-> Additionally the URL scheme can be replaced with a `*` to enable access to both `http` and `https`.
+> Access to both `http` and `https` protocols can be enabled by using a wildcard `*://raw.githubusercontent.com`
 
-> Access to all subdomains for a host can be specified immediately after the protocol part: `https://*.mydomain.com`
+> Access to all subdomains for a given hostname can be enabled by using a wildcard `https://*.githubusercontent.com`
+
+> Access to all ports on `localhost` can be enabled by specifying `http://localhost`, and access only to a specific port by specifying `http://localhost:3000`
 
 ## Allow on All Sites
 
@@ -230,15 +232,17 @@ It is a simple regular expression that matches URLs ending with:
 
 > The `?:` used in `(?:match)` stands for *non-capturing group* and it's there for performance reasons.
 
-You can modify the path matching regular expression for each enabled origin individually. The settings are being updated as you type.
+You can modify the path matching regular expression for each enabled origin. The settings are being updated as you type.
 
 ### Path Matching Priority
 
 The enabled origins are matched from most specific to least specific:
 
-1. `https://raw.githubusercontent.com` or `http://raw.githubusercontent.com`
-2. `*://raw.githubusercontent.com`
-3. `*://*`
+1. `https://raw.githubusercontent.com`
+2. `https://*.githubusercontent.com`
+3. `*://raw.githubusercontent.com`
+4. `*://*.githubusercontent.com`
+5. `*://*`
 
 The matching origin with the highest priority will be picked and its header detection and path matching settings will be used to determine if the content should be rendered or not.
 
@@ -250,9 +254,9 @@ Click on the `Remove` button for the origin that you want to remove. This remove
 
 ## Refresh Origin
 
-The extension synchronizes your preferences across all of your devices using Google Sync. The list of your allowed origins is being synced too. However, the actual permissions that you grant using the Chrome's consent popup cannot be synced.
+The extension synchronizes your preferences across all of your devices if you have logged into your browser and enabled the sync feature. The list of your allowed origins is being synced too. However, the actual permissions that you grant using the consent popup cannot be synced.
 
-In case you have added a new origin on some of your devices you will have to explicitly allow it on your other devices. In this case the origin will be highlighted and an additional `Refresh` button will be present:
+In case you have enabled a new origin on some of your devices you will have to explicitly allow it on your other devices. In this case the origin will be highlighted and an additional `Refresh` button will be present:
 
 ![img-site-refresh]
 
@@ -272,7 +276,7 @@ Examples about the Markdown syntax and all features available in Markdown Viewer
 - **mermaid.md** - different types of Mermaid diagrams
 - **mathjax.md** - MathJax examples and support documentation
 
-Allow the appropriate remote origin or pull any of those repositories and access them on the `file:///` origin locally.
+Allow the appropriate remote origin or pull any of the above repositories and access it on the `file:///` origin locally.
 
 ---
 
@@ -300,7 +304,7 @@ Note that in any of the following cases you won't receive any future updates aut
 ## Build
 
 1. Clone this repository
-2. Execute `sh build/package.sh chrome` (append `compilers` to include all available compilers)
+2. Execute `sh build/package.sh chrome` (or `firefox` to build for Firefox)
 3. Navigate to `chrome://extensions`
 4. Make sure that the `Developer mode` switch is enabled
 5. Click on the `Load unpacked` button and select the cloned directory
@@ -349,10 +353,10 @@ SOFTWARE.
 
   [marked]: https://github.com/markedjs/marked
   [remark]: https://github.com/remarkjs/remark
-  [showdown]: https://github.com/showdownjs/showdown
   [markdown-it]: https://github.com/markdown-it/markdown-it
-  [remarkable]: https://github.com/jonschlinkert/remarkable
   [commonmark]: https://github.com/commonmark/commonmark.js
+  [showdown]: https://github.com/showdownjs/showdown
+  [remarkable]: https://github.com/jonschlinkert/remarkable
 
   [emojione]: https://emojione.com
   [mathjax]: https://www.mathjax.org
