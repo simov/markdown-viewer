@@ -1,6 +1,17 @@
 
 # Change Log
 
+## v5.2 - 2023-09-26
+- add markdown-it as default compiler
+- add support for markdown extended syntax
+- fix auto scroll on very large pages
+- fix detect wildcard subdomains in origin
+- fix allow port in origin
+- theme fixes
+- new default icon with an overlay
+- update mermaid from v9.4.0 to v10.4.0
+- update marked from v4 to v9
+
 ## v5.1 - 2023-03-14
 - new advanced options page for managing the enabled origins
 - each enabled origin now can have its own header and path detection setup
