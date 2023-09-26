@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name"            : "Markdown Viewer",
-  "version"         : "5.1",
+  "version"         : "5.2",
   "description"     : "Markdown Viewer",
 
   "homepage_url": "https://github.com/simov/markdown-viewer",
@@ -28,9 +28,11 @@
 
   "background" : {
     "scripts": [
+      "/vendor/markdown-it.min.js",
       "/vendor/marked.min.js",
       "/vendor/remark.min.js",
 
+      "/background/compilers/markdown-it.js",
       "/background/compilers/marked.js",
       "/background/compilers/remark.js",
 
@@ -48,7 +50,8 @@
   },
 
   "options_ui": {
-    "page": "/options/index.html"
+    "page": "/options/index.html",
+    "browser_style": false
   },
 
   "web_accessible_resources": [
@@ -57,6 +60,7 @@
         "<all_urls>"
       ],
       "resources": [
+        "/icons/default/16x16.png",
         "/icons/dark/16x16.png",
         "/icons/light/16x16.png",
         "/themes/*",

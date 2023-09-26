@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name"            : "Markdown Viewer",
-  "version"         : "5.1",
+  "version"         : "5.2",
   "description"     : "Markdown Viewer",
 
   "homepage_url": "https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk",
@@ -38,6 +38,7 @@
         "<all_urls>"
       ],
       "resources": [
+        "/icons/default/16x16.png",
         "/icons/dark/16x16.png",
         "/icons/light/16x16.png",
         "/themes/*",
