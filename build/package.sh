@@ -4,7 +4,6 @@
 set -e
 
 browser=$1
-compilers=$2
 
 if [ -z "$browser" ]; then
   echo "Specify target browser"
@@ -19,7 +18,6 @@ cd "$(dirname "$0")"
 rm -rf ../themes
 rm -rf ../vendor
 rm -f ../markdown-viewer.zip
-rm -f ../background/index-compilers.js
 mkdir -p ../themes
 mkdir -p ../vendor
 
@@ -41,6 +39,7 @@ mkdir -p tmp/markdown-viewer
 cd ..
 cp -r background content icons options popup themes vendor LICENSE build/tmp/markdown-viewer/
 
+# copy manifest.json
 if [ "$browser" = "chrome" ]; then
   cp manifest.chrome.json build/tmp/markdown-viewer/manifest.json
   cp manifest.chrome.json manifest.json
@@ -63,8 +62,3 @@ fi
 
 # cleanup
 rm -rf tmp/
-
-# compilers
-if [ "$compilers" = "compilers" ]; then
-  sh compilers/build.sh
-fi

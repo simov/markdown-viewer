@@ -4,7 +4,7 @@
 cd "$(dirname "$0")"
 
 # before
-npm install
+npm ci 2> /dev/null || npm i
 mkdir -p tmp
 
 # marked.min.js
@@ -15,5 +15,4 @@ npx terser --compress --mangle -- tmp/marked.js > tmp/marked.min.js
 cp tmp/marked.min.js ../../vendor/
 
 # after
-rm -r tmp/
-rm -rf node_modules/ package-lock.json
+rm -rf node_modules/ tmp/

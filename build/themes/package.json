@@ -3,8 +3,11 @@
   "version": "0.0.0",
   "description": "Markdown Viewer / Browser Extension",
   "private": true,
+  "dependencies": {
+    "github-markdown-css": "5.2.0"
+  },
   "devDependencies": {
-    "csso-cli": "^4.0.2"
+    "csso-cli": "4.0.2"
   },
   "engines": {
     "node": ">=14.0.0"

@@ -4,20 +4,19 @@
   "description": "Markdown Viewer / Browser Extension",
   "private": true,
   "dependencies": {
-    "@material/button": "^0.37.1",
-    "@material/ripple": "^0.37.1",
-    "@material/switch": "^0.36.1",
-    "@material/tabs": "^0.37.1",
-    "@material/textfield": "^0.37.1"
+    "@material/button": "0.37.1",
+    "@material/ripple": "0.37.1",
+    "@material/switch": "0.36.1",
+    "@material/tabs": "0.37.1",
+    "@material/textfield": "0.37.1"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^23.0.2",
-    "@rollup/plugin-node-resolve": "^15.0.1",
-    "babel-cli": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
-    "csso-cli": "^4.0.2",
-    "node-sass": "^9.0.0",
-    "rollup": "^3.29.2"
+    "@rollup/plugin-commonjs": "23.0.2",
+    "@rollup/plugin-node-resolve": "15.0.1",
+    "csso-cli": "4.0.2",
+    "node-sass": "9.0.0",
+    "rollup": "3.29.2",
+    "terser": "5.20.0"
   },
   "engines": {
     "node": ">=18.0.0"

@@ -4,11 +4,7 @@
   "description": "Markdown Viewer / Browser Extension",
   "private": true,
   "dependencies": {
-    "prismjs": "1.29.0"
-  },
-  "devDependencies": {
-    "csso-cli": "4.0.2",
-    "terser": "5.20.0"
+    "bootstrap": "5.2.3"
   },
   "engines": {
     "node": ">=18.0.0"

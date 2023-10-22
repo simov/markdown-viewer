@@ -3,16 +3,18 @@
 # set current working directory to directory of the shell script
 cd "$(dirname "$0")"
 
+# before
+npm ci 2> /dev/null || npm i
+git -c https.proxy="" clone --depth 1 --branch v0.1.0 https://github.com/gadenbuie/cleanrmd.git
 mkdir -p ../../themes
 
-# https://github.com/sindresorhus/github-markdown-css
-curl https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.2.0/github-markdown-light.min.css --output ../../themes/github.css
-curl https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.2.0/github-markdown-dark.min.css --output ../../themes/github-dark.css
+# minify
 
-# https://github.com/gadenbuie/cleanrmd
-git clone --depth 1 --branch v0.1.0 https://github.com/gadenbuie/cleanrmd.git
+# github
+npx csso --input node_modules/github-markdown-css/github-markdown-light.css --output ../../themes/github.css
+npx csso --input node_modules/github-markdown-css/github-markdown-dark.css --output ../../themes/github-dark.css
 
-npm install
+# themes
 npx csso --input cleanrmd/inst/resources/almond/almond.css --output ../../themes/almond.css
 npx csso --input cleanrmd/inst/resources/awsm.css/awsm.css --output ../../themes/awsm.css
 npx csso --input cleanrmd/inst/resources/axist/axist.css --output ../../themes/axist.css
@@ -44,6 +46,7 @@ npx csso --input cleanrmd/inst/resources/water/water.css --output ../../themes/w
 npx csso --input cleanrmd/inst/resources/water-dark/water-dark.css --output ../../themes/water-dark.css
 npx csso --input cleanrmd/inst/resources/writ/writ.css --output ../../themes/writ.css
 
-rm -rf cleanrmd/ node_modules/ package-lock.json
+# after
+rm -rf node_modules/ cleanrmd/
 
-node fix.js
+node fix-themes.js
