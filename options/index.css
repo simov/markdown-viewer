@@ -26,6 +26,11 @@ main {
   min-height: 52px;
 }
 
+.col-sm-12.m-overflow {
+  white-space: nowrap;
+  overflow: hidden;
+}
+
 .mdc-elevation--z2 {
   box-shadow:
     0 3px 1px -2px rgba(0,0,0,.2),
@@ -44,9 +49,6 @@ body.dark .navbar {
   filter: invert(90%) hue-rotate(180deg);
   background-color: transparent;
 }
-body.dark .navbar #menu > div {
-  filter: invert(100%) hue-rotate(180deg);
-}
 body.dark .m-select {
   background-color: #c5c5c5;
 }
@@ -62,9 +64,6 @@ body.dark .m-button {
   body.auto .navbar {
     filter: invert(90%) hue-rotate(180deg);
     background-color: transparent;
-  }
-  body.auto .navbar #menu > div {
-    filter: invert(100%) hue-rotate(180deg);
   }
   body.auto .m-select {
     background-color: #c5c5c5;
@@ -95,45 +94,11 @@ footer, #footer-push {
 /*---------------------------------------------------------------------------*/
 /*header menu*/
 
-#menu {
-  position: relative;
+.nav a,
+.nav a:hover,
+.nav a:visited,
+.nav-underline .nav-link.active {
   color: #fff;
-}
-#menu span {
-  font-size: 20px;
-  display: inline-block;
-  line-height: 60px;
-  padding: 0 20px;
-}
-#menu div {
-  position: absolute;
-  top: 68px;
-  right: 0;
-  z-index: 10;
-  width: 200px;
-  box-shadow:
-    0 3px 1px -2px rgba(0,0,0,.2),
-    0 2px 2px 0 rgba(0,0,0,.14),
-    0 1px 5px 0 rgba(0,0,0,.12);
-}
-#menu em {
-  display: block;
-  font-size: 20px;
-  line-height: 50px;
-  font-style: normal;
-  color: #333;
-  cursor: pointer;
-  padding: 0 20px;
-  background: #fff;
-  transition-duration: .28s;
-  transition-timing-function: cubic-bezier(.4,0,.2,1);
-  transition-property: background-color box-shadow;
-}
-#menu em:hover {
-  background: #ececec;
-}
-#menu em.active {
-  background: #ececec;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -229,10 +194,6 @@ footer, #footer-push {
   padding: 9px 12px;
 }
 
-.bs-callout .m-select {
-  margin: 2px 20px 3px 10px;
-}
-
 /*---------------------------------------------------------------------------*/
 /*misc*/
 
@@ -279,6 +240,37 @@ h4 {
 .m-btn-refresh {
   float: right;
 }
+
+/*---------------------------------------------------------------------------*/
+/*settings*/
+
+.m-settings .m-label {
+  display: inline-block;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  padding: 5px 0 5px 0;
+}
+.m-settings .m-select {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.m-content .m-switch,
+.m-compiler .m-switch {
+  width: 100%;
+}
+
+.m-compiler .scroll {
+  margin-top: 10px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.m-compiler .scroll.max {
+  height: 324px;
+}
+
+/*---------------------------------------------------------------------------*/
+/*footer*/
 
 footer {
   text-align: center;

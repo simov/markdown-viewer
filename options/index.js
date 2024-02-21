@@ -1,22 +1,18 @@
 
 var origins = Origins()
-var settings = Settings()
+var popup = Popup()
 
 m.mount(document.querySelector('main'), {
   view: () => [
     origins.render(),
-    settings.render(),
+    popup.options(),
   ]
 })
 
 // header menu
-document.querySelector('#menu span').addEventListener('click', (e) => {
+document.querySelector('.nav').addEventListener('click', (e) => {
   e.preventDefault()
-  document.querySelector('#menu div').classList.toggle('hidden')
-})
-document.querySelector('#menu div').addEventListener('click', (e) => {
-  e.preventDefault()
-  Array.from(document.querySelectorAll('#menu em')).forEach((link) => {
+  Array.from(document.querySelectorAll('.nav a')).forEach((link) => {
     link.classList.remove('active')
   })
   if (e.target.innerText === 'Origins') {
@@ -32,5 +28,4 @@ document.querySelector('#menu div').addEventListener('click', (e) => {
   else if (e.target.innerText === 'Help') {
     window.location = 'https://github.com/simov/markdown-viewer#table-of-contents'
   }
-  document.querySelector('#menu div').classList.add('hidden')
 })

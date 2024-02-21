@@ -214,7 +214,7 @@ var Origins = () => {
     m('.bs-callout', {class: !state.permissions[origin] ? 'm-box-refresh' : undefined},
       // origin
       m('.row',
-        m('.col-xxl-8.col-xl-8.col-lg-8.col-md-7.col-sm-12', m('span.m-origin', origin)),
+        m('.col-xxl-8.col-xl-8.col-lg-8.col-md-7.col-sm-12 m-overflow', m('span.m-origin', origin)),
         m('.col-xxl-4.col-xl-4.col-lg-4.col-md-5.col-sm-12',
           // remove
           (origin !== 'file://' || null) &&

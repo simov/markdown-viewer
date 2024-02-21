@@ -15,14 +15,11 @@
     <nav class="navbar navbar-dark bg-dark fixed-top">
       <div class="container">
         <a href="https://github.com/simov/markdown-viewer" class="navbar-brand">Markdown Viewer</a>
-        <a href="#" id="menu">
-          <span>☰</span>
-          <div class="hidden">
-            <em class="active">Origins</em>
-            <em>Settings</em>
-            <em>Help</em>
-          </div>
-        </a>
+        <ul class="nav nav-underline">
+          <li class="nav-item"><a href="#" class="nav-link active">Origins</a></li>
+          <li class="nav-item"><a href="#" class="nav-link">Settings</a></li>
+          <li class="nav-item"><a href="#" class="nav-link">Help</a></li>
+        </ul>
       </div>
     </nav>
     <div class="container">
@@ -33,7 +30,7 @@
   <footer>
     <nav>
       <a href="https://github.com/simov/markdown-viewer">GitHub</a> &bullet;
-      <a href="https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk">Chrome</a> &bullet;
+      <a href="https://chromewebstore.google.com/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk">Chrome</a> &bullet;
       <a href="https://microsoftedge.microsoft.com/addons/detail/markdown-viewer/cgfmehpekedojlmjepoimbfcafopimdg">Edge</a> &bullet;
       <a href="https://addons.mozilla.org/en-US/firefox/addon/markdown-viewer-chrome/">Firefox</a>
     </nav>
@@ -41,5 +38,6 @@
 </body>
 <script src="/options/origins.js" type="text/javascript" charset="utf-8"></script>
 <script src="/options/settings.js" type="text/javascript" charset="utf-8"></script>
+<script src="/popup/index.js" type="text/javascript" charset="utf-8"></script>
 <script src="/options/index.js" type="text/javascript" charset="utf-8"></script>
 </html>

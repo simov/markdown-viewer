@@ -44,54 +44,40 @@ var Settings = () => {
 
   var onupdate = {}
 
-  var render = () =>
-    m('.m-settings hidden',
-      m('.row',
-        m('h3', 'Settings')
+  var render = () => [
+    m('.row',
+      m('.col-xxl-6.col-xl-6.col-lg-6.col-md-6.col-sm-12',
+        m('span.m-label',
+          'Extension Icon'
+        )
       ),
-      // icon
-      m('.bs-callout',
-        m('.row',
-          m('.col-sm-12',
-            m('.overflow',
-              m('label.mdc-switch',
-                m('select.mdc-elevation--z2 m-select', {
-                  onchange: events.icon
-                  },
-                  state._icons.map((icon) =>
-                    m('option', {selected: state.icon === icon}, icon)
-                  )
-                ),
-                m('span.mdc-switch-label',
-                  'Extension Icon and Content Favicon Color'
-                )
-              )
-            )
+      m('.col-xxl-6.col-xl-6.col-lg-6.col-md-6.col-sm-12',
+        m('select.mdc-elevation--z2 m-select', {
+          onchange: events.icon
+          },
+          state._icons.map((icon) =>
+            m('option', {selected: state.icon === icon}, icon)
           )
         )
       ),
-      // theme
-      m('.bs-callout',
-        m('.row',
-          m('.col-sm-12',
-            m('.overflow',
-              m('label.mdc-switch',
-                m('select.mdc-elevation--z2 m-select', {
-                  onchange: events.theme
-                  },
-                  state._themes.map((theme) =>
-                    m('option', {selected: state.theme === theme}, theme)
-                  )
-                ),
-                m('span.mdc-switch-label',
-                  'Popup and Options Page Color Mode'
-                )
-              )
-            )
+    ),
+    m('.row',
+      m('.col-xxl-6.col-xl-6.col-lg-6.col-md-6.col-sm-12',
+        m('span.m-label',
+          'Popup & Options Page'
+        )
+      ),
+      m('.col-xxl-6.col-xl-6.col-lg-6.col-md-6.col-sm-12',
+        m('select.mdc-elevation--z2 m-select', {
+          onchange: events.theme
+          },
+          state._themes.map((theme) =>
+            m('option', {selected: state.theme === theme}, theme)
           )
         )
-      )
-    )
+      ),
+    ),
+  ]
 
   return {state, render}
 }
