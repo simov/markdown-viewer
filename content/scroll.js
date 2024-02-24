@@ -106,6 +106,7 @@ var scroll = (() => {
   }
   var listening = false
   return (update) => {
+    if ($('#_toc') && state.raw) $('#_toc').style.visibility = 'hidden'
     onload(() => {
       var container = ((html = $('html')) => (
         html.scrollTop = 1,
@@ -132,7 +133,7 @@ var scroll = (() => {
       }
 
       if ($('#_html')) $('#_html').style.visibility = 'visible'
-      if ($('#_toc')) $('#_toc').style.visibility = 'visible'
+      if ($('#_toc') && !state.raw) $('#_toc').style.visibility = 'visible'
     })
   }
 })()

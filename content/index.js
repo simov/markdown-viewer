@@ -66,6 +66,7 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
   }
   else if (req.message === 'raw') {
     state.raw = req.raw
+    state.reload.md = true
     m.redraw()
   }
   else if (req.message === 'autoreload') {
@@ -74,9 +75,6 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
 })
 
 var oncreate = {
-  markdown: () => {
-    setTimeout(() => scroll(), 0)
-  },
   html: () => {
     update()
   }
@@ -113,11 +111,11 @@ var update = (update) => {
 }
 
 var render = (md) => {
-  state.markdown = frontmatter(md)
+  state.markdown = md
   chrome.runtime.sendMessage({
     message: 'markdown',
     compiler: state.compiler,
-    markdown: state.markdown
+    markdown: frontmatter(state.markdown)
   }, (res) => {
     state.html = res.html
     if (state.content.emoji) {
@@ -149,11 +147,7 @@ function mount () {
     view: () => {
       var dom = []
 
-      if (state.raw) {
-        dom.push(m('pre#_markdown', {oncreate: oncreate.markdown}, state.markdown))
-        $('body').classList.remove('_toc-left', '_toc-right')
-      }
-      else if (state.html) {
+      if (state.html) {
         var loaded = Array.from($('body').classList).filter((name) => /^_theme/.test(name))[0]
         $('body').classList.remove(loaded)
         dom.push(m('link#_theme', {
@@ -174,16 +168,29 @@ function mount () {
           }))
         }
 
-        dom.push(m('#_html', {oncreate: oncreate.html, onupdate: onupdate.html,
-          class: (/github(-dark)?/.test(state.theme) ? 'markdown-body' : 'markdown-theme') +
+        var theme =
+          (/github(-dark)?/.test(state.theme) ? 'markdown-body' : 'markdown-theme') +
           (state.themes.width !== 'auto' ? ` _width-${state.themes.width}` : '')
-        },
-          m.trust(state.html)
-        ))
+
+        if (state.raw) {
+          if (state.content.syntax) {
+            dom.push(m('#_markdown', {oncreate: oncreate.html, onupdate: onupdate.html, class: theme},
+              m.trust(`<pre class="language-md"><code class="language-md">${_escape(state.markdown)}</code></pre>`)
+            ))
+          }
+          else {
+            dom.push(m('pre#_markdown', {oncreate: oncreate.html, onupdate: onupdate.html}, state.markdown))
+          }
+        }
+        else {
+          dom.push(m('#_html', {oncreate: oncreate.html, onupdate: onupdate.html, class: theme},
+            m.trust(state.html)
+          ))
+        }
 
         if (state.content.toc) {
           dom.push(m('#_toc.tex2jax-ignore', m.trust(state.toc)))
-          $('body').classList.add('_toc-left')
+          state.raw ? $('body').classList.remove('_toc-left') : $('body').classList.add('_toc-left')
         }
       }
 
@@ -238,6 +245,13 @@ var favicon = () => {
   favicon.href = chrome.runtime.getURL(`/icons/${state.icon}/16x16.png`)
   $('head').appendChild(favicon)
 }
+
+var _escape = (str) =>
+  str.replace(/[&<>]/g, (tag) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;'
+  }[tag] || tag))
 
 if (document.readyState === 'complete') {
   mount()

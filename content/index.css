@@ -46,7 +46,8 @@ details summary {
 /*---------------------------------------------------------------------------*/
 /*raw markdown view*/
 
-pre#_markdown {
+pre#_markdown,
+#_markdown > pre > code {
   word-wrap: break-word;
   white-space: pre-wrap;
 }
