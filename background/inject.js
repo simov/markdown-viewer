@@ -22,6 +22,7 @@ md.inject = ({storage: {state}}) => (id) => {
     target: {tabId: id},
     files: [
       '/content/index.css',
+      '/content/themes.css',
     ]
   })
 

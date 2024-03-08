@@ -40,6 +40,7 @@ var Popup = () => {
       'water',
       'water-dark',
       'writ',
+      'custom',
     ],
     _width: [
       'auto',

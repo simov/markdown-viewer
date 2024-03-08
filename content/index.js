@@ -49,6 +49,7 @@ var state = {
     'water': 'light',
     'water-dark': 'dark',
     'writ': 'light',
+    'custom': 'auto',
   }
 }
 
@@ -148,23 +149,23 @@ function mount () {
       var dom = []
 
       if (state.html) {
-        var loaded = Array.from($('body').classList).filter((name) => /^_theme/.test(name))[0]
-        $('body').classList.remove(loaded)
+        var color =
+          state._themes[state.theme] === 'dark' ||
+          (state._themes[state.theme] === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+          ? 'dark' : 'light'
+
+        $('body').classList.remove(...Array.from($('body').classList).filter((name) => /^_theme|_color/.test(name)))
         dom.push(m('link#_theme', {
           onupdate: onupdate.theme,
           rel: 'stylesheet', type: 'text/css',
-          href: chrome.runtime.getURL(`/themes/${state.theme}.css`),
+          href: state.theme !== 'custom' ? chrome.runtime.getURL(`/themes/${state.theme}.css`) : '',
         }))
-        $('body').classList.add(`_theme-${state.theme}`)
+        $('body').classList.add(`_theme-${state.theme}`, `_color-${color}`)
 
         if (state.content.syntax) {
-          var prism =
-            state._themes[state.theme] === 'dark' ||
-            (state._themes[state.theme] === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)
-            ? 'prism-okaidia' : 'prism'
           dom.push(m('link#_prism', {
             rel: 'stylesheet', type: 'text/css',
-            href: chrome.runtime.getURL(`/vendor/${prism}.min.css`),
+            href: chrome.runtime.getURL(`/vendor/${color === 'dark' ? 'prism-okaidia' : 'prism'}.min.css`),
           }))
         }
 
