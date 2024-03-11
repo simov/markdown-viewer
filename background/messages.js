@@ -149,6 +149,16 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, xhr, webreq
       set({settings: req.settings})
       sendResponse()
     }
+    else if (req.message === 'custom.get') {
+      sendResponse(state.custom)
+    }
+    else if (req.message === 'custom.set') {
+      set({custom: req.custom}).then(sendResponse).catch((err) => {
+        if (/QUOTA_BYTES_PER_ITEM quota exceeded/.test(err.message)) {
+          sendResponse({error: 'Minified theme exceeded 8KB in size!'})
+        }
+      })
+    }
 
     return true
   }

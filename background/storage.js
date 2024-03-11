@@ -8,8 +8,8 @@ md.storage = ({compilers}) => {
 
   var state = {}
 
-  function set (options) {
-    chrome.storage.sync.set(options)
+  async function set (options) {
+    await chrome.storage.sync.set(options)
     Object.assign(state, options)
   }
 
@@ -64,6 +64,10 @@ md.storage.defaults = (compilers) => {
     settings: {
       icon: 'default',
       theme: 'light',
+    },
+    custom: {
+      theme: '',
+      color: 'auto',
     }
   }
 
@@ -181,5 +185,12 @@ md.storage.migrations = (state) => {
       linkify: true,
     })
     delete state.marked.sanitize
+  }
+  // v5.2 -> v5.3
+  if (state.custom === undefined) {
+    state.custom = {
+      theme: '',
+      color: 'auto'
+    }
   }
 }

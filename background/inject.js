@@ -9,6 +9,7 @@ md.inject = ({storage: {state}}) => (id) => {
       themes: state.themes,
       content: state.content,
       compiler: state.compiler,
+      custom: state.custom,
       icon: state.settings.icon,
     }],
     func: (_args) => {

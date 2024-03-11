@@ -7,6 +7,7 @@ var state = {
   themes: args.themes,
   content: args.content,
   compiler: args.compiler,
+  custom: args.custom,
   icon: args.icon,
   html: '',
   markdown: '',
@@ -149,6 +150,8 @@ function mount () {
       var dom = []
 
       if (state.html) {
+        state._themes.custom = state.custom.color
+
         var color =
           state._themes[state.theme] === 'dark' ||
           (state._themes[state.theme] === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)
@@ -192,6 +195,10 @@ function mount () {
         if (state.content.toc) {
           dom.push(m('#_toc.tex2jax-ignore', m.trust(state.toc)))
           state.raw ? $('body').classList.remove('_toc-left') : $('body').classList.add('_toc-left')
+        }
+
+        if (state.theme === 'custom') {
+          dom.push(m('style', {type: 'text/css'}, state.custom.theme))
         }
       }
 

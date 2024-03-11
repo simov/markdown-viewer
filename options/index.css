@@ -270,6 +270,25 @@ h4 {
 }
 
 /*---------------------------------------------------------------------------*/
+/*custom*/
+
+.m-custom input[type=file] {
+  display: none;
+}
+.m-custom .m-button {
+  letter-spacing: 0;
+  padding: 0 11px;
+  margin-bottom: 20px;
+}
+.m-custom .m-button:first-of-type {
+  margin-right: 10px;
+}
+.m-custom .m-error {
+  color: #dc3545;
+  margin-bottom: 10px;
+}
+
+/*---------------------------------------------------------------------------*/
 /*footer*/
 
 footer {

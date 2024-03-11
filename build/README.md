@@ -29,6 +29,7 @@ sh build/package.sh
 | mermaid             | 10.4.0
 | mithril             | 1.1.7
 | prismjs             | 1.29.0
+| csso                | 5.0.5
 | **markdown-it**
 | markdown-it            | 13.0.1
 | markdown-it-abbr       | 1.0.4

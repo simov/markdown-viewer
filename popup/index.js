@@ -346,6 +346,8 @@ var Popup = () => {
           ),
           settings.render()
         ),
+        state.theme === 'custom' &&
+        custom.render()
       ),
 
       m('.col-xxl-4.col-xl-4.col-lg-6.col-md-6.col-sm-12',
@@ -418,4 +420,5 @@ if (document.querySelector('.is-popup')) {
 }
 else {
   var settings = Settings()
+  var custom = Custom()
 }
