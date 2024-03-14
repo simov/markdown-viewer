@@ -4,7 +4,7 @@
   "description": "Markdown Viewer / Browser Extension",
   "private": true,
   "dependencies": {
-    "mermaid": "10.4.0"
+    "mermaid": "10.8.0"
   },
   "engines": {
     "node": ">=18.0.0"
