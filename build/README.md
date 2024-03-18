@@ -37,6 +37,7 @@ sh build/package.sh
 | markdown-it-cjk-breaks | 1.1.3
 | markdown-it-deflist    | 2.1.0
 | markdown-it-footnote   | 3.0.3
+| markdown-it-gridtables | 0.4.0
 | markdown-it-ins        | 3.0.1
 | markdown-it-mark       | 3.0.1
 | markdown-it-sub        | 1.0.0
