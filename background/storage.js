@@ -168,6 +168,7 @@ md.storage.migrations = (state) => {
       cjk: false,
       deflist: false,
       footnote: false,
+      gridTableRulePlugin: false,
       ins: false,
       mark: false,
       sub: false,
