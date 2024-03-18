@@ -46,6 +46,9 @@ var Origins = () => {
         return
       }
       var origin = all ? '*://*' : `${state.scheme}://${state.domain}`
+      if (/Firefox/.test(navigator.userAgent) && /:\d{2,4}/.test(origin)) {
+        origin = origin.replace(/(:\d{2,4})/, '')
+      }
       chrome.permissions.request({origins: [`${origin}/*`]}, (granted) => {
         if (granted) {
           chrome.runtime.sendMessage({message: 'origin.add', origin})
