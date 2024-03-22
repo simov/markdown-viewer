@@ -22,6 +22,21 @@ var mmd = (() => {
       mermaid.initialize({theme})
       mermaid.init({theme}, 'code.mermaid')
       loaded = true
+
+      var diagrams = Array.from(document.querySelectorAll('code.mermaid'))
+      var timeout = setInterval(() => {
+        var svg = Array.from(document.querySelectorAll('pre code.mermaid svg'))
+        if (diagrams.length === svg.length) {
+          clearInterval(timeout)
+          svg.forEach((diagram) => {
+            var panzoom = Panzoom(diagram, {canvas: true})
+            diagram.parentElement.parentElement.addEventListener('wheel', (e) => {
+              if (!e.shiftKey) return
+              panzoom.zoomWithWheel(e)
+            })
+          })
+        }
+      }, 50)
     }
   }
 })()

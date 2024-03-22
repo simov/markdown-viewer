@@ -315,6 +315,17 @@ body._toc-right { padding-right: 300px !important; }
 /*---------------------------------------------------------------------------*/
 /*misc*/
 
+/*resize*/
+pre:has(> code.mermaid) {
+  resize: vertical;
+}
+/*pan/zoom*/
+.markdown-body code.mermaid,
+.markdown-theme code.mermaid {
+  display: block;
+  height: 100%;
+}
+
 /*mermaid text bold effect*/
 svg[id^=mermaid] text {
   stroke: none !important;

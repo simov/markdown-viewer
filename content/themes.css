@@ -171,6 +171,20 @@
 ._theme-semantic a:active { color: #ff0000; }
 
 /*---------------------------------------------------------------------------*/
+/*mermaid pan/zoom*/
+
+._theme-mini pre > code.mermaid { padding: 0; }
+._theme-superstylin pre > code.mermaid { background: none; padding: 0; margin: 0; border-radius: 0; }
+._theme-superstylin pre:has(> code.mermaid) { background: #f6f6f6; padding: 1rem; margin-bottom: 1.563rem; border-radius: 10px; }
+._theme-water pre > code.mermaid { padding: 0; background: none; border-radius: 0; }
+._theme-water pre:has(> code.mermaid) { padding: 10px; background: #efefef; border-radius: 6px; }
+._theme-water-dark pre > code.mermaid { padding: 0; background: none; border-radius: 0; }
+._theme-water-dark pre:has(> code.mermaid) { padding: 10px; background: #161f27; border-radius: 6px; }
+@media (prefers-color-scheme: dark) {
+  ._theme-superstylin pre:has(> code.mermaid) { background: #595859; }
+}
+
+/*---------------------------------------------------------------------------*/
 /*theme fixes*/
 
 @media (prefers-color-scheme: dark) {

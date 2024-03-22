@@ -30,6 +30,7 @@ sh mathjax/build.sh
 sh mdc/build.sh
 sh mermaid/build.sh
 sh mithril/build.sh
+sh panzoom/build.sh
 sh prism/build.sh
 sh remark/build.sh
 sh themes/build.sh
