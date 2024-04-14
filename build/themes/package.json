@@ -4,12 +4,12 @@
   "description": "Markdown Viewer / Browser Extension",
   "private": true,
   "dependencies": {
-    "github-markdown-css": "5.2.0"
+    "github-markdown-css": "5.5.1"
   },
   "devDependencies": {
     "csso-cli": "4.0.2"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=18.0.0"
   }
 }
