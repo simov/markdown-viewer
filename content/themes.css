@@ -216,6 +216,9 @@
 ._theme-github-dark > pre {
   color: #fff;
 }
+._theme-github-dark a {
+  color: #4493f8 !important;
+}
 ._theme-github-dark .markdown-body {
   border: 1px solid #30363d;
 }

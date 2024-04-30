@@ -1,7 +1,7 @@
 
 var Settings = () => {
   var defaults = {
-    icon: false,
+    icon: 'default',
     theme: 'light',
     _icons: ['default', 'light', 'dark'],
     _themes: ['light', 'dark', 'auto'],
