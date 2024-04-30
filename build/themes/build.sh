@@ -1,5 +1,7 @@
 #!/bin/bash
 
+browser=$1
+
 # set current working directory to directory of the shell script
 cd "$(dirname "$0")"
 
@@ -49,4 +51,4 @@ npx csso --input cleanrmd/inst/resources/writ/writ.css --output ../../themes/wri
 # after
 rm -rf node_modules/ cleanrmd/
 
-node fix-themes.js
+node fix-themes.js $browser

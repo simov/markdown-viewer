@@ -259,8 +259,17 @@ body._toc-right { padding-right: 300px !important; }
   content: ' ';
   display: inline-block;
   background-color: currentColor;
-  -webkit-mask-image: url("chrome-extension://__MSG_@@extension_id__/content/anchor.svg");
   mask-image: url("chrome-extension://__MSG_@@extension_id__/content/anchor.svg");
+}
+@supports (-moz-appearance: none) {
+  .markdown-theme h1:hover .anchor .octicon-link:before,
+  .markdown-theme h2:hover .anchor .octicon-link:before,
+  .markdown-theme h3:hover .anchor .octicon-link:before,
+  .markdown-theme h4:hover .anchor .octicon-link:before,
+  .markdown-theme h5:hover .anchor .octicon-link:before,
+  .markdown-theme h6:hover .anchor .octicon-link:before {
+    mask-image: url("moz-extension://__MSG_@@extension_id__/content/anchor.svg");
+  }
 }
 
 .markdown-theme h1 .octicon-link,

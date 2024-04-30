@@ -3,17 +3,22 @@ var fs = require('fs')
 var path = require('path')
 var themes = path.resolve(__dirname, '../../themes/')
 
+var prefix = {
+  chrome: 'chrome',
+  firefox: 'moz'
+}[process.argv[2] || 'chrome']
+
 fs.writeFileSync(
   path.resolve(themes, 'github.css'),
   fs.readFileSync(path.resolve(themes, 'github.css'), 'utf8')
-    .replaceAll(/mask-image:url\(".*?"\)/g, 'mask-image:url("chrome-extension://__MSG_@@extension_id__/content/anchor.svg")'),
+    .replaceAll(/mask-image:url\(".*?"\)/g, `mask-image:url("${prefix}-extension://__MSG_@@extension_id__/content/anchor.svg")`),
   'utf8'
 )
 
 fs.writeFileSync(
   path.resolve(themes, 'github-dark.css'),
   fs.readFileSync(path.resolve(themes, 'github-dark.css'), 'utf8')
-    .replaceAll(/mask-image:url\(".*?"\)/g, 'mask-image:url("chrome-extension://__MSG_@@extension_id__/content/anchor.svg")'),
+    .replaceAll(/mask-image:url\(".*?"\)/g, `mask-image:url("${prefix}-extension://__MSG_@@extension_id__/content/anchor.svg")`),
   'utf8'
 )
 
