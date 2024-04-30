@@ -9,20 +9,20 @@
 
 ## Compatibility Matrix
 
-| Origin       | Type   | Headers                                     | Render | Autoreload
-| :-           | :-:    | :-                                          | :-     | :-
-| `file:///`   | local  | requires mime type fix on Linux             | ✔      | ✖
-| `http(s)://` | local  | `content-type: text/plain`                  | ✔      | ✔
-| `http(s)://` | remote | `content-type: text/plain` + non strict CSP | ✔      | ✖
-| `http(s)://` | remote | strict CSP                                  | ✖      | ✖
+| Origin       | Type   | Headers                                              | Render | Autoreload
+| :-           | :-:    | :-                                                   | :-     | :-
+| `file:///`   | local  | requires mime type fix on Linux                      | ✔      | ✖
+| `http(s)://` | local  | requires `content-type: text/plain`                  | ✔      | ✔
+| `http(s)://` | remote | requires `content-type: text/plain` + non strict CSP | ✔      | ✖
+| `http(s)://` | remote | strict CSP (Content Security Policy)                 | ✖      | ✖
 
 ---
 
 # Access to local file:/// URLs on Linux
 
-Unlike Chromium based browsers Firefox will prompt you to download or open files with an external app, that are served with the `text/markdown` content type. For that reason markdown files have to be served using the `text/plain` content type instead.
+Unlike Chromium based browsers, files served with `text/markdown` content type on Firefox will prompt you to download or open the file with an external app. For that reason markdown files have to be served with the `text/plain` content type instead.
 
-The following are a few methods to enable `file:///` access on Linux:
+The following are some methods to enable local `file:///` access on Linux:
 
 ## Method 1
 
@@ -78,9 +78,9 @@ update-mime-database ~/.local/share/mime
 
 # Autoreload on localhost
 
-The `autoreload` feature is available only for content served on `localhost` and it won't work on `file:///` URLs because of CSP (Content Security Policy) limitations.
+The `autoreload` feature is available only for content served on `localhost` and it won't work on `file:///` URLs due to CSP (Content Security Policy) limitations.
 
-Any file server can be used locally as long as it serves the markdown files with the `text/plain` content type.
+Any file server can be used locally as long as it serves the markdown files with `text/plain` content type.
 
 Here is an example file server using Node.js (replace `me` with your user):
 
@@ -107,7 +107,7 @@ express()
   .listen(8000)
 ```
 
-Go to the Advanced Options page for the extension and enable the `http://localhost` origin (note that port is omitted).
+Go to the Advanced Options page for the extension and add the `http://localhost` origin (note that port is omitted).
 
 Run the above JavaScript file using Node.js and navigate to `http://localhost:8000` in Firefox.
 
@@ -117,7 +117,7 @@ You can use any other host name configured in your `hosts` file that resolves to
 127.0.0.1    ssd
 ```
 
-Then you only need to enable that origin `http://ssd` in the Advanced Options page as well.
+Then you only need to add that origin `http://ssd` in the Advanced Options page as well.
 
 The above script can be run on system startup using SystemD or any other service manager.
 
@@ -127,7 +127,7 @@ The above script can be run on system startup using SystemD or any other service
 
 Remote origins that serve markdown files with `text/plain` content type and do not enforce strict CSP (Content Security Policy) can be enabled using the Advanced Options page.
 
-For example, content hosted on `gitlab.com` and `bitbucket.org` can be enabled and subsequently it will get rendered:
+For example, content hosted on `gitlab.com` and `bitbucket.org` can be enabled and subsequently it will be rendered:
 
 - https://gitlab.com/simovelichkov/markdown-syntax/-/raw/main/README.md
 - https://bitbucket.org/simovelichkov/markdown-syntax/raw/main/README.md

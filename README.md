@@ -11,6 +11,7 @@
 - Multiple markdown parsers
 - Full control over the compiler options ([markdown-it], [marked], [remark])
 - 30+ Themes ([cleanrmd], [GitHub][github-theme])
+- Custom theme support
 - GitHub Flavored Markdown (GFM)
 - Auto reload on file change
 - Syntax highlighted code blocks ([prism][prism])
@@ -69,6 +70,17 @@ All themes support the following width options:
 - `tiny` - fixed at 576px
 
 The `auto` option on the `github` and `github-dark` themes has a fixed width with a surrounding border identical to a rendered `README.md` file for a repository hosted on github.com
+
+## Custom Theme
+
+1. Go to the Advanced Options and click on Settings
+2. Select `CUSTOM` for Content Theme
+3. Upload your Custom Theme below
+4. Specify the Color Scheme of your theme
+
+> Your custom theme will be minified automatically on upload and it can be up to 8KB in size.
+
+> You can add `<link rel="stylesheet" type="text/css" href="file:///home/me/custom-theme.css">` to your markdown document to speed up development while working on your theme.
 
 ---
 
@@ -149,6 +161,10 @@ Alternatively diagrams can be wrapped in HTML tags:
 </code></pre>
 ```
 
+- resize the diagram container vertically by dragging the bottom right corner of the code block up or down
+- zoom in and out by holding down the Shift key and then using your mouse wheel
+- pan by holding down the left mouse button and drag in any direction
+
 ## Syntax
 
 Syntax highlighting for fenced code blocks:
@@ -199,7 +215,8 @@ Access to individual sites can be enabled by copy/pasting a URL address into the
 
 > Access to all subdomains for a given hostname can be enabled by using a wildcard `https://*.githubusercontent.com`
 
-> Access to all ports on `localhost` can be enabled by specifying `http://localhost`, and access only to a specific port by specifying `http://localhost:3000`
+> Access to all ports on `localhost` can be enabled by adding `http://localhost`.
+> Access to a specific port can be enabled by adding `http://localhost:3000`
 
 ## Allow on All Sites
 
@@ -217,7 +234,7 @@ Each enabled origin has an option for content type header detection and path mat
 
 ### Header Detection
 
-When this option is enabled the extension will check for the existence of the `content-type` header with a value set to either the `text/markdown`, `text/x-markdown` or `text/plain` content type.
+When this option is enabled the extension will check if the `content-type` header with a value of `text/markdown`, `text/x-markdown` or `text/plain` is present.
 
 ### Path Matching
 
@@ -230,13 +247,13 @@ It is a simple regular expression that matches URLs ending with:
 - markdown file extension: `\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)`
 - and optionally a hash or a querystring after that: `(?:#.*|\?.*)?`
 
-> The `?:` used in `(?:match)` stands for *non-capturing group* and it's there for performance reasons.
+> The `?:` used in `(?:match)` stands for *non-capturing group* and it is there for performance reasons.
 
 You can modify the path matching regular expression for each enabled origin. The settings are being updated as you type.
 
 ### Path Matching Priority
 
-The enabled origins are matched from most specific to least specific:
+The enabled origins are matched from most to least specific:
 
 1. `https://raw.githubusercontent.com`
 2. `https://*.githubusercontent.com`
@@ -343,13 +360,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
-  [chrome]: https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk
+  [chrome]: https://chromewebstore.google.com/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk
   [firefox]: https://addons.mozilla.org/en-US/firefox/addon/markdown-viewer-chrome/
   [edge]: https://microsoftedge.microsoft.com/addons/detail/markdown-viewer/cgfmehpekedojlmjepoimbfcafopimdg
-  [opera]: https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk
-  [brave]: https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk
-  [chromium]: https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk
-  [vivaldi]: https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk
+  [opera]: https://chromewebstore.google.com/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk
+  [brave]: https://chromewebstore.google.com/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk
+  [chromium]: https://chromewebstore.google.com/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk
+  [vivaldi]: https://chromewebstore.google.com/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk
 
   [marked]: https://github.com/markedjs/marked
   [remark]: https://github.com/remarkjs/remark
