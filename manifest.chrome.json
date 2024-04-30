@@ -1,10 +1,10 @@
 {
   "manifest_version": 3,
   "name"            : "Markdown Viewer",
-  "version"         : "5.2",
-  "description"     : "Markdown Viewer",
+  "version"         : "5.3",
+  "description"     : "Dark Mode • Themes • Autoreload • Mermaid Diagrams • MathJax • ToC • Syntax Highlighting",
 
-  "homepage_url": "https://chrome.google.com/webstore/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk",
+  "homepage_url": "https://chromewebstore.google.com/detail/markdown-viewer/ckkdlimhmcjmikdlpkmbgfkaikojcbjk",
 
   "icons": {
     "16" : "/icons/default/16x16.png",

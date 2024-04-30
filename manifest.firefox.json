@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name"            : "Markdown Viewer",
-  "version"         : "5.2",
-  "description"     : "Markdown Viewer",
+  "version"         : "5.3",
+  "description"     : "Dark Mode • Themes • Autoreload • Mermaid Diagrams • MathJax • ToC • Syntax Highlighting",
 
   "homepage_url": "https://github.com/simov/markdown-viewer",
 
