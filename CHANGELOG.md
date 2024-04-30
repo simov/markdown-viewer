@@ -1,6 +1,17 @@
 
 # Change Log
 
+## v5.3 - 2024-04-30
+- custom theme support
+- syntax highlighted raw markdown view
+- pan, zoom and resize mermaid diagrams
+- improved settings page
+- fix frontmatter being stripped in raw markdown view
+- fix anchor icon missing on origins with strict csp
+- fix emoji rendered in prism code blocks
+- update mermaid from v10.4.0 to v10.8.0
+- update marked from v9.0.3 to v12.0.1
+
 ## v5.2 - 2023-09-26
 - add markdown-it as default compiler
 - add support for markdown extended syntax
