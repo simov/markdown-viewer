@@ -171,7 +171,13 @@
 ._theme-semantic a:active { color: #ff0000; }
 
 /*---------------------------------------------------------------------------*/
-/*mermaid pan/zoom*/
+/*mermaid*/
+._theme-mini code { line-height: normal; }
+._theme-tacit * { max-width: none; }
+._theme-kacit * { max-width: none; }
+
+/*---------------------------------------------------------------------------*/
+/*panzoom*/
 
 ._theme-mini pre > code.mermaid { padding: 0; }
 ._theme-superstylin pre > code.mermaid { background: none; padding: 0; margin: 0; border-radius: 0; }

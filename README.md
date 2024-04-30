@@ -80,7 +80,7 @@ The `auto` option on the `github` and `github-dark` themes has a fixed width wit
 
 > Your custom theme will be minified automatically on upload and it can be up to 8KB in size.
 
-> You can add `<link rel="stylesheet" type="text/css" href="file:///home/me/custom-theme.css">` to your markdown document to speed up development while working on your theme.
+> You can add `<link rel="stylesheet" type="text/css" href="file:///home/me/custom-theme.css">` to your markdown document to speed up development while working on your theme. Custom theme [example][custom-theme].
 
 ---
 
@@ -389,6 +389,7 @@ SOFTWARE.
   [mv2]: https://github.com/simov/markdown-viewer/tree/mv2
   [compilers-mv2]: https://github.com/simov/markdown-viewer/tree/compilers-mv2
   [firefox-docs]: https://github.com/simov/markdown-viewer/blob/main/firefox.md
+  [custom-theme]: https://gist.github.com/simov/2a074a1c0123e6ba4bc2bfa6a67d3203
 
   [syntax-github]: https://github.com/simov/markdown-syntax
   [syntax-gitlab]: https://gitlab.com/simovelichkov/markdown-syntax

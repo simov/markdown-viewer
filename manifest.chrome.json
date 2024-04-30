@@ -38,6 +38,7 @@
         "<all_urls>"
       ],
       "resources": [
+        "/content/anchor.svg",
         "/icons/default/16x16.png",
         "/icons/dark/16x16.png",
         "/icons/light/16x16.png",
