@@ -67,7 +67,8 @@
         "/themes/*",
         "/vendor/mathjax/fonts/*",
         "/vendor/prism.min.css",
-        "/vendor/prism-okaidia.min.css"
+        "/vendor/prism-okaidia.min.css",
+        "/vendor/prism-toolbar.min.css"
       ]
     }
   ],
