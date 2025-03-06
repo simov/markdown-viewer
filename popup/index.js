@@ -1,4 +1,3 @@
-
 var Popup = () => {
 
   var state = {
@@ -65,6 +64,7 @@ var Popup = () => {
         mathjax: 'Render MathJax formulas',
         mermaid: 'Mermaid diagrams',
         syntax: 'Syntax highlighting for fenced code blocks',
+        plotly: 'Plotly charts',
       }
     },
     settings: {}
@@ -145,6 +145,10 @@ var Popup = () => {
   }
 
   var init = (res) => {
+    if (!res) {
+      console.log('Failed to get initial state');
+      return;
+    }
     state.compiler = res.compiler
     state.options = res.options
     state.content = res.content
@@ -171,7 +175,10 @@ var Popup = () => {
     tabs: (vnode) => {
       state._tabs = mdc.tabs.MDCTabBar.attachTo(vnode.dom)
       setTimeout(() => {
-        state._tabs.activeTabIndex = state.tabs.indexOf(state.tab)
+        const tabIndex = state.tabs.indexOf(state.tab)
+        if (tabIndex >= 0) {
+          state._tabs.activeTabIndex = tabIndex
+        }
       }, 250)
     }
   }

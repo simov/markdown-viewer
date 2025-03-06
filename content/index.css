@@ -1,4 +1,3 @@
-
 /*---------------------------------------------------------------------------*/
 /*global*/
 
@@ -358,4 +357,11 @@ svg[id^=mermaid] text {
 img.emojione {
   /* prevent img stretch */
   width: auto;
+}
+
+.plotly-container {
+  width: 100%;
+  min-height: 400px;
+  resize: vertical;
+  overflow: hidden;
 }

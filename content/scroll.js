@@ -1,4 +1,3 @@
-
 var scroll = (() => {
   function onload (done) {
     Promise.all([
@@ -62,6 +61,21 @@ var scroll = (() => {
         else {
           var timeout = setInterval(() => {
             if (mj.loaded) {
+              clearInterval(timeout)
+              resolve()
+            }
+          }, 50)
+        }
+      }),
+      new Promise((resolve) => {
+        var plots = Array.from(document.querySelectorAll('code.plotly'))
+        if (!state.content.plotly || !plots.length) {
+          resolve()
+        }
+        else {
+          var timeout = setInterval(() => {
+            var containers = Array.from(document.querySelectorAll('.plotly-container'))
+            if (plots.length === containers.length) {
               clearInterval(timeout)
               resolve()
             }

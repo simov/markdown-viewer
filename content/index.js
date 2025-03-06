@@ -1,4 +1,3 @@
-
 var $ = document.querySelector.bind(document)
 
 var state = {
@@ -110,6 +109,10 @@ var update = (update) => {
   if (state.content.mathjax) {
     setTimeout(() => mj.render(), 60)
   }
+
+  if (state.content.plotly) {
+    setTimeout(() => plt.render(), 80)
+  }
 }
 
 var render = (md) => {
@@ -127,6 +130,12 @@ var render = (md) => {
       state.html = state.html.replace(
         /<code class="language-(?:mermaid|mmd)">/gi,
         '<code class="mermaid">'
+      )
+    }
+    if (state.content.plotly) {
+      state.html = state.html.replace(
+        /<code class="language-(?:plotly)">/gi,
+        '<code class="plotly">'
       )
     }
     if (state.content.toc) {

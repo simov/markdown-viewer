@@ -53,6 +53,7 @@ md.storage.defaults = (compilers) => {
       mermaid: false,
       syntax: true,
       toc: false,
+      plotly: false,
     },
     origins: {
       'file://': {

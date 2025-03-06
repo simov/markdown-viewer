@@ -1,0 +1,12 @@
+{
+  "name": "markdown-viewer",
+  "version": "0.0.0",
+  "description": "Markdown Viewer / Browser Extension",
+  "private": true,
+  "dependencies": {
+    "plotly.js-dist-min": "2.30.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+} 

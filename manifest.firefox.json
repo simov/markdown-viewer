@@ -26,16 +26,14 @@
     "default_popup": "/popup/index.html"
   },
 
-  "background" : {
+  "background": {
     "scripts": [
       "/vendor/markdown-it.min.js",
       "/vendor/marked.min.js",
       "/vendor/remark.min.js",
-
       "/background/compilers/markdown-it.js",
       "/background/compilers/marked.js",
       "/background/compilers/remark.js",
-
       "/background/storage.js",
       "/background/webrequest.js",
       "/background/detect.js",
@@ -44,7 +42,6 @@
       "/background/mathjax.js",
       "/background/xhr.js",
       "/background/icon.js",
-
       "/background/index.js"
     ]
   },
