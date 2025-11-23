@@ -36,7 +36,7 @@ md.storage = ({compilers}) => {
 }
 
 md.storage.defaults = (compilers) => {
-  var match = '\\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text)(?:#.*|\\?.*)?$'
+  var match = '\\.(?:markdown|mdown|mkdn|md|mkd|mdwn|mdtxt|mdtext|text|txt)(?:#.*|\\?.*)?$'
 
   var defaults = {
     theme: 'github',

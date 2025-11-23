@@ -81,6 +81,11 @@ md.detect = ({storage: {state}, inject}) => {
   var detect = (content, url) => {
     var location = new URL(url)
 
+    // Don't process directory listings (URLs ending with /)
+    if (location.pathname.endsWith('/')) {
+      return undefined
+    }
+
     var origin =
       state.origins[location.origin] ||
 
