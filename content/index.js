@@ -117,7 +117,7 @@ var render = (md) => {
   chrome.runtime.sendMessage({
     message: 'markdown',
     compiler: state.compiler,
-    markdown: frontmatter(state.markdown)
+    markdown: frontmatter(state.markdown, state.content.frontmatter)
   }, (res) => {
     state.html = res.html
     if (state.content.emoji) {
@@ -233,18 +233,29 @@ var toc = (() => {
   }
 })()
 
-var frontmatter = (md) => {
-  if (/^-{3}[\s\S]+?-{3}/.test(md)) {
-    var [, yaml] = /^-{3}([\s\S]+?)-{3}/.exec(md)
-    var title = /title: (?:'|")*(.*)(?:'|")*/.exec(yaml)
+var frontmatter = (md, show) => {
+  var yamlMatch = /^(-{3})([\s\S]+?)(-{3})/.exec(md)
+  var tomlMatch = /^(\+{3})([\s\S]+?)(\+{3})/.exec(md)
+
+  if (yamlMatch) {
+    var [full, , content] = yamlMatch
+    var title = /title: (?:'|")*(.*)(?:'|")*/.exec(content)
     title && (document.title = title[1])
+    if (show) {
+      return md.replace(full, '<div class="frontmatter">\n\n```yaml\n' + content.trim() + '\n```\n\n</div>\n\n')
+    }
+    return md.replace(full, '')
   }
-  else if (/^\+{3}[\s\S]+?\+{3}/.test(md)) {
-    var [, toml] = /^\+{3}([\s\S]+?)\+{3}/.exec(md)
-    var title = /title = (?:'|"|`)*(.*)(?:'|"|`)*/.exec(toml)
+  else if (tomlMatch) {
+    var [full, , content] = tomlMatch
+    var title = /title = (?:'|"|`)*(.*)(?:'|"|`)*/.exec(content)
     title && (document.title = title[1])
+    if (show) {
+      return md.replace(full, '<div class="frontmatter">\n\n```toml\n' + content.trim() + '\n```\n\n</div>\n\n')
+    }
+    return md.replace(full, '')
   }
-  return md.replace(/^(?:-|\+){3}[\s\S]+?(?:-|\+){3}/, '')
+  return md
 }
 
 var favicon = () => {
