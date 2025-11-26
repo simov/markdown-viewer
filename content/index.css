@@ -68,6 +68,13 @@ pre#_markdown,
   overflow-y: auto;
 }
 
+.frontmatter pre,
+.frontmatter pre code {
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
 @media (max-width: 576px) { /*Extra small - none*/
   .markdown-theme { width: auto !important; }
 }

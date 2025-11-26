@@ -61,6 +61,7 @@ var Popup = () => {
       content: {
         autoreload: 'Auto reload on file change',
         emoji: 'Convert emoji :shortnames: into EmojiOne images',
+        frontmatter: 'Display yaml/toml frontmatter',
         toc: 'Generate Table of Contents',
         mathjax: 'Render MathJax formulas',
         mermaid: 'Mermaid diagrams',
