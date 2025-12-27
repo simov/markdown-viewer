@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name"            : "Markdown Viewer",
-  "version"         : "5.3",
+  "version"         : "5.3.1",
   "description"     : "Dark Mode • Themes • Autoreload • Mermaid Diagrams • MathJax • ToC • Syntax Highlighting",
 
   "homepage_url": "https://github.com/simov/markdown-viewer",
@@ -28,13 +28,21 @@
 
   "background" : {
     "scripts": [
-      "/vendor/markdown-it.min.js",
-      "/vendor/marked.min.js",
-      "/vendor/remark.min.js",
+      "/vendor/markdown-it/markdown-it.min.js",
+      "/vendor/markdown-it/markdown-it-abbr.js",
+      "/vendor/markdown-it/markdown-it-anchor.js",
+      "/vendor/markdown-it/markdown-it-attrs.js",
+      "/vendor/markdown-it/markdown-it-cjk-breaks.js",
+      "/vendor/markdown-it/markdown-it-deflist.js",
+      "/vendor/markdown-it/markdown-it-footnote.js",
+      "/vendor/markdown-it/markdown-it-ins.js",
+      "/vendor/markdown-it/markdown-it-mark.js",
+      "/vendor/markdown-it/markdown-it-sub.js",
+      "/vendor/markdown-it/markdown-it-sup.js",
+      "/vendor/markdown-it/markdown-it-task-lists.js",
+      "/background/slugger.js",
 
       "/background/compilers/markdown-it.js",
-      "/background/compilers/marked.js",
-      "/background/compilers/remark.js",
 
       "/background/storage.js",
       "/background/webrequest.js",

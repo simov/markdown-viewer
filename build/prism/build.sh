@@ -9,14 +9,8 @@ mkdir -p tmp
 
 # build
 
-# prism.min.js
-npx terser --compress --mangle -- node_modules/prismjs/prism.js > tmp/prism.min.js
-
-# prism-autoloader.min.js
-node fix-autoloader.js \
-  node_modules/prismjs/plugins/autoloader/prism-autoloader.js \
-  tmp/prism-autoloader.js
-npx terser --compress --mangle -- tmp/prism-autoloader.js > tmp/prism-autoloader.min.js
+# copy
+cp node_modules/prismjs/prism.js ../../vendor/prism.js
 
 # prism.min.css
 # prism-okaidia.min.css
@@ -27,8 +21,6 @@ node fix-themes.js \
   tmp/prism-okaidia.min.css
 
 # copy
-cp tmp/prism.min.js ../../vendor/
-cp tmp/prism-autoloader.min.js ../../vendor/
 cp tmp/prism.min.css ../../vendor/
 cp tmp/prism-okaidia.min.css ../../vendor/
 # languages

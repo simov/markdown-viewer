@@ -7,9 +7,11 @@ cd "$(dirname "$0")"
 npm ci 2> /dev/null || npm i
 mkdir -p tmp
 
-# mdc.min.js
-npx rollup --config rollup.mjs --input mdc.mjs --file tmp/mdc.js
-npx terser --compress --mangle -- tmp/mdc.js > tmp/mdc.min.js
+# copy
+mkdir -p ../../vendor/mdc
+cp node_modules/@material/ripple/dist/mdc.ripple.min.js ../../vendor/mdc/mdc.ripple.min.js
+cp node_modules/@material/tabs/dist/mdc.tabs.min.js ../../vendor/mdc/mdc.tabs.min.js
+cp node_modules/@material/textfield/dist/mdc.textfield.min.js ../../vendor/mdc/mdc.textfield.min.js
 
 # mdc.min.css
 npx node-sass --include-path node_modules/ mdc.scss tmp/mdc.css

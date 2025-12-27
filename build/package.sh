@@ -25,14 +25,14 @@ mkdir -p ../vendor
 sh bootstrap/build.sh
 sh csso/build.sh
 sh markdown-it/build.sh
-sh marked/build.sh
+# sh marked/build.sh
 sh mathjax/build.sh
 sh mdc/build.sh
 sh mermaid/build.sh
 sh mithril/build.sh
 sh panzoom/build.sh
 sh prism/build.sh
-sh remark/build.sh
+# sh remark/build.sh
 sh themes/build.sh $browser
 
 # copy files

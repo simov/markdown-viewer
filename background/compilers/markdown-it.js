@@ -1,6 +1,21 @@
 
 var md = {compilers: {}}
 
+var mdit = {
+  mdit: window.markdownit,
+  abbr: window.markdownitAbbr,
+  anchor: window.markdownItAnchor,
+  attrs: window.markdownItAttrs,
+  cjk: window.markdownitCjkBreaks,
+  deflist: window.markdownitDeflist,
+  footnote: window.markdownitFootnote,
+  ins: window.markdownitIns,
+  mark: window.markdownitMark,
+  sub: window.markdownitSub,
+  sup: window.markdownitSup,
+  tasklists: window.markdownitTaskLists,
+}
+
 md.compilers['markdown-it'] = (() => {
   var defaults = {
     breaks: false,
@@ -48,7 +63,7 @@ md.compilers['markdown-it'] = (() => {
     compile: (markdown) =>
       mdit.mdit(state['markdown-it'])
         .use(mdit.anchor, {
-          slugify: (s) => new mdit.slugger().slug(s)
+          slugify: (s) => slugger(s)
         })
         .use(state['markdown-it'].abbr ? mdit.abbr : () => {})
         .use(state['markdown-it'].attrs ? mdit.attrs : () => {})
