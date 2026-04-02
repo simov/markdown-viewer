@@ -5,6 +5,18 @@ var mmd = (() => {
   var walk = (regex, string, result = [], match = regex.exec(string)) =>
     !match ? result : walk(regex, string, result.concat(match[1]))
 
+  var fixMermaidViewBox = () => {
+    document.querySelectorAll('pre code.mermaid svg').forEach((svg) => {
+      var bbox = svg.getBBox()
+      if (bbox.height > 0) {
+        var pad = 16
+        svg.setAttribute('viewBox',
+          (bbox.x - pad) + ' ' + (bbox.y - pad) + ' ' +
+          (bbox.width + pad * 2) + ' ' + (bbox.height + pad * 2))
+      }
+    })
+  }
+
   return {
     render: () => {
       if (loaded) {
@@ -19,7 +31,7 @@ var mmd = (() => {
         state._themes[state.theme] === 'dark' ||
         (state._themes[state.theme] === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)
         ? 'dark' : 'default'
-      mermaid.initialize({theme})
+      mermaid.initialize({theme, securityLevel: 'loose'})
       mermaid.init({theme}, 'code.mermaid')
       loaded = true
 
@@ -28,6 +40,7 @@ var mmd = (() => {
         var svg = Array.from(document.querySelectorAll('pre code.mermaid svg'))
         if (diagrams.length === svg.length) {
           clearInterval(timeout)
+          setTimeout(fixMermaidViewBox, 100)
           svg.forEach((diagram) => {
             var panzoom = Panzoom(diagram, {canvas: true})
             diagram.parentElement.parentElement.addEventListener('wheel', (e) => {

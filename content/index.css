@@ -335,6 +335,15 @@ pre:has(> code.mermaid) {
   height: 100%;
 }
 
+/*fix: allow <br> line breaks inside mermaid node labels
+  The github theme sets `code br { display: none }` which hides <br> inside
+  mermaid `<code>` elements, preventing multi-line node labels from rendering.
+  See: https://github.com/simov/markdown-viewer/issues/263 */
+.markdown-body code.mermaid br,
+.markdown-theme code.mermaid br {
+  display: inline !important;
+}
+
 /*mermaid text bold effect*/
 svg[id^=mermaid] text {
   stroke: none !important;
