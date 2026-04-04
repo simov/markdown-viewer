@@ -165,7 +165,19 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, xhr, webreq
 
   function notifyContent (req, res) {
     chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-      chrome.tabs.sendMessage(tabs[0].id, req, res)
+      if (!tabs.length) {
+        res && res()
+        return
+      }
+
+      chrome.tabs.sendMessage(tabs[0].id, req, (response) => {
+        if (chrome.runtime.lastError) {
+          res && res()
+          return
+        }
+
+        res && res(response)
+      })
     })
   }
 }

@@ -79,6 +79,10 @@ md.detect = ({storage: {state}, inject}) => {
   }
 
   var detect = (content, url) => {
+    if (!url || !state.origins) {
+      return
+    }
+
     var location = new URL(url)
 
     var origin =
