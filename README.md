@@ -14,6 +14,7 @@
 - Custom theme support
 - GitHub Flavored Markdown (GFM)
 - Auto reload on file change
+- Optional copy buttons for fenced code blocks
 - Syntax highlighted code blocks ([prism][prism])
 - Table of Contents (ToC)
 - MathJax formulas ([mathjax])
@@ -113,6 +114,7 @@ Full **CommonMark** support including **GFM** tables and strikethrough **+**
 | Option         | Default | Description
 | :-             | :-:     | :-
 | **autoreload** | `false` | Auto reload on file change
+| **copy**       | `false` | Show copy buttons on fenced code blocks
 | **emoji**      | `false` | Convert emoji `:shortnames:` into EmojiOne images
 | **mathjax**    | `false` | Render MathJax formulas
 | **mermaid**    | `false` | Render Mermaid diagrams

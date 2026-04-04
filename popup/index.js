@@ -60,6 +60,7 @@ var Popup = () => {
       compiler: {},
       content: {
         autoreload: 'Auto reload on file change',
+        copy: 'Show copy buttons on fenced code blocks',
         emoji: 'Convert emoji :shortnames: into EmojiOne images',
         toc: 'Generate Table of Contents',
         mathjax: 'Render MathJax formulas',

@@ -103,6 +103,8 @@ var update = (update) => {
     setTimeout(() => Prism.highlightAll(), 20)
   }
 
+  setTimeout(() => copybuttons.render(), 30)
+
   if (state.content.mermaid) {
     setTimeout(() => mmd.render(), 40)
   }
@@ -230,6 +232,97 @@ var toc = (() => {
         '<a href="#' + id + '">' + title.replace(/<a[^>]+>/g, '').replace(/<\/a>/g, '') + '</a>' +
         '</div>'.repeat(level)
       , '')
+  }
+})()
+
+var copybuttons = (() => {
+  var copied = (value) =>
+    value.replace(/[\r\n]+$/, '')
+
+  var text = (button, next) => {
+    button.textContent = next
+    clearTimeout(button._timeout)
+    if (next !== 'Copy') {
+      button._timeout = setTimeout(() => {
+        button.textContent = 'Copy'
+      }, 1500)
+    }
+  }
+
+  var fallback = (value) => {
+    var textarea = document.createElement('textarea')
+    textarea.value = value
+    textarea.setAttribute('readonly', '')
+    textarea.style.position = 'fixed'
+    textarea.style.top = '-9999px'
+    textarea.style.left = '-9999px'
+    document.body.appendChild(textarea)
+    textarea.select()
+    var ok = false
+    try {
+      ok = document.execCommand('copy')
+    }
+    catch (_) {}
+    document.body.removeChild(textarea)
+    return ok
+  }
+
+  var write = async (value) => {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      try {
+        await navigator.clipboard.writeText(value)
+        return true
+      }
+      catch (_) {}
+    }
+    return fallback(value)
+  }
+
+  var click = async (event) => {
+    var button = event.currentTarget
+    var value = button._code ? copied(button._code.textContent || '') : ''
+    var ok = value && await write(value)
+    if (ok) {
+      button.classList.toggle('_copy-button-marked')
+    }
+    text(button, ok ? 'Copied' : 'Error')
+  }
+
+  var clear = (root) => {
+    root.querySelectorAll('._copy-button').forEach((button) => button.remove())
+    root.querySelectorAll('pre._copy-enabled').forEach((block) => block.classList.remove('_copy-enabled'))
+  }
+
+  return {
+    render: () => {
+      var root = document.querySelector('#_html')
+      if (!root) {
+        return
+      }
+
+      clear(root)
+
+      if (state.raw || !state.content.copy) {
+        return
+      }
+
+      root.querySelectorAll('pre > code[class*="language-"]').forEach((code) => {
+        var pre = code.parentElement
+        if (!pre || pre.querySelector('._copy-button')) {
+          return
+        }
+
+        pre.classList.add('_copy-enabled')
+
+        var button = document.createElement('button')
+        button.type = 'button'
+        button.className = '_copy-button'
+        button.textContent = 'Copy'
+        button._code = code
+        button.addEventListener('click', click)
+        pre.insertBefore(button, pre.firstChild)
+      })
+    }
   }
 })()
 
