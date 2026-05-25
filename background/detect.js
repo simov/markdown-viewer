@@ -40,7 +40,7 @@ md.detect = ({storage: {state}, inject}) => {
             JSON.stringify({
               url: window.location.href,
               header: document.contentType,
-              loaded: !!window.state,
+              loaded: !!window.state || !!window.__mdSidebar,
             })
         }, (res) => {
           if (chrome.runtime.lastError) {
@@ -64,18 +64,36 @@ md.detect = ({storage: {state}, inject}) => {
             return
           }
 
+          // local html files / folder listings: add the sidebar overlay
+          if (detectOverlay(win.header, win.url)) {
+            inject(id, 'html')
+            return
+          }
+
           if (detect(win.header, win.url)) {
             if (onwakeup && chrome.webRequest) {
               onwakeup = false
               chrome.tabs.reload(id)
             }
             else {
-              inject(id)
+              inject(id, 'md')
             }
           }
         })
       })
     }
+  }
+
+  // local pages the browser renders itself but we still want the sidebar on:
+  // .html files and folder listings (file:// only — never inject on the web)
+  var detectOverlay = (content, url) => {
+    var location = new URL(url)
+    return (
+      location.protocol === 'file:' &&
+      !!state.origins['file://'] &&
+      /text\/html/i.test(content) &&
+      (/\.(?:html?|xhtml)$/i.test(location.pathname) || /\/$/.test(location.pathname))
+    )
   }
 
   var detect = (content, url) => {

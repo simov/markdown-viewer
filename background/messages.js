@@ -25,6 +25,14 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, xhr, webreq
         sendResponse({err, body})
       })
     }
+    else if (req.message === 'listdir') {
+      // fetch Chrome's auto-generated file:// directory listing (no cache-buster
+      // query string, which directory URLs don't accept)
+      fetch(req.location)
+        .then((res) => res.text())
+        .then((body) => sendResponse({body}))
+        .catch((err) => sendResponse({err: String(err)}))
+    }
     else if (req.message === 'prism') {
       chrome.scripting.executeScript({
         target: {tabId: sender.tab.id},

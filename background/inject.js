@@ -1,5 +1,24 @@
 
-md.inject = ({storage: {state}}) => (id) => {
+md.inject = ({storage: {state}}) => (id, mode) => {
+
+  // local html files: only add the sidebar overlay; the browser renders the
+  // page itself, so we must not run the markdown mount (which replaces <body>)
+  if (mode === 'html') {
+    chrome.scripting.insertCSS({
+      target: {tabId: id},
+      files: ['/content/sidebar.css'],
+    })
+    chrome.scripting.executeScript({
+      target: {tabId: id},
+      files: [
+        '/vendor/mithril.min.js',
+        '/content/sidebar.js',
+        '/content/html.js',
+      ],
+      injectImmediately: true
+    })
+    return
+  }
 
   chrome.scripting.executeScript({
     target: {tabId: id},
@@ -24,6 +43,7 @@ md.inject = ({storage: {state}}) => (id) => {
     files: [
       '/content/index.css',
       '/content/themes.css',
+      '/content/sidebar.css',
     ]
   })
 
@@ -35,6 +55,7 @@ md.inject = ({storage: {state}}) => (id) => {
       state.content.emoji && '/content/emoji.js',
       state.content.mermaid && ['/vendor/mermaid.min.js', '/vendor/panzoom.min.js', '/content/mermaid.js'],
       state.content.mathjax && ['/content/mathjax.js', '/vendor/mathjax/tex-mml-chtml.js'],
+      '/content/sidebar.js',
       '/content/index.js',
       '/content/scroll.js',
       state.content.autoreload && '/content/autoreload.js',

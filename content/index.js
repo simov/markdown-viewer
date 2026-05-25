@@ -144,6 +144,7 @@ function mount () {
 
   m.mount($('body'), {
     oninit: () => {
+      sidebar.init()
       render(md)
     },
     view: () => {
@@ -192,9 +193,18 @@ function mount () {
           ))
         }
 
+        if (sidebar.active) {
+          dom.push(sidebar.topbar())
+          dom.push(sidebar.tree())
+          $('body').classList.add('_md-topbar', '_md-sidebar')
+        }
+
         if (state.content.toc) {
           dom.push(m('#_toc.tex2jax-ignore', m.trust(state.toc)))
-          state.raw ? $('body').classList.remove('_toc-left') : $('body').classList.add('_toc-left')
+          // when the file tree occupies the left, move the toc to the right
+          var tocSide = sidebar.active ? '_toc-right' : '_toc-left'
+          $('body').classList.remove(sidebar.active ? '_toc-left' : '_toc-right')
+          state.raw ? $('body').classList.remove(tocSide) : $('body').classList.add(tocSide)
         }
 
         if (state.theme === 'custom') {

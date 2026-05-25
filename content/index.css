@@ -172,6 +172,20 @@ body._toc-right { padding-right: 300px !important; }
   border-right: 1px solid #30363d;
 }
 
+/*toc on the right (when the file tree takes the left)*/
+body._toc-right #_toc {
+  left: auto;
+  right: 0;
+  border-right: none;
+  border-left: 1px solid var(--toc-delimiter);
+}
+body._toc-right._color-light #_toc {
+  border-left: 1px solid #e1e4e8;
+}
+body._toc-right._color-dark #_toc {
+  border-left: 1px solid #30363d;
+}
+
 /*---------------------------------------------------------------------------*/
 /*scrollbar*/
 

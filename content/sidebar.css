@@ -1,0 +1,136 @@
+
+/*---------------------------------------------------------------------------*/
+/* file tree sidebar + folder path top bar (file:// pages only)              */
+
+:root {
+  --md-topbar-h: 34px;
+  --md-sidebar-w: 280px;
+}
+
+/* make room for the fixed chrome */
+body._md-topbar { padding-top: var(--md-topbar-h) !important; }
+body._md-sidebar { padding-left: var(--md-sidebar-w) !important; }
+
+/* keep the table of contents clear of the top bar when both are present */
+body._md-topbar #_toc { top: var(--md-topbar-h); }
+
+/* folder with no index.md: hide the native listing, show only the sidebar */
+body._md-blank > *:not(#_md_chrome) { display: none !important; }
+
+/*--- top bar ---------------------------------------------------------------*/
+
+#_md_topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--md-topbar-h);
+  z-index: 2147483646;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  font: 13px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+#_md_topbar .md-tb-icon { flex: none; font-size: 14px; }
+#_md_topbar .md-tb-path {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  user-select: text;
+}
+
+/*--- sidebar ---------------------------------------------------------------*/
+
+#_md_sidebar {
+  position: fixed;
+  top: var(--md-topbar-h); left: 0; bottom: 0;
+  width: var(--md-sidebar-w);
+  z-index: 2147483645;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  font: 13px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.md-sb-head {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+}
+.md-sb-title {
+  font-weight: 600;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.md-sb-toggle { flex: none; display: flex; }
+.md-sb-toggle button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 3px 9px;
+  font: inherit;
+  line-height: 1.4;
+}
+.md-sb-toggle button:first-child { border-radius: 5px 0 0 5px; }
+.md-sb-toggle button:last-child { border-radius: 0 5px 5px 0; }
+
+.md-sb-tree {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 12px;
+}
+
+.md-sb-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding-right: 8px;
+  height: 26px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.md-sb-caret { flex: none; width: 12px; text-align: center; font-size: 10px; opacity: .8; }
+.md-sb-icon  { flex: none; font-size: 12px; }
+.md-sb-name  { overflow: hidden; text-overflow: ellipsis; }
+
+.md-sb-note {
+  padding: 8px 12px;
+  font-size: 12px;
+  opacity: .7;
+}
+
+/*--- light theme -----------------------------------------------------------*/
+
+@media (prefers-color-scheme: light) {
+  #_md_topbar  { background: #f6f8fa; color: #24292f; border-bottom: 1px solid #d0d7de; }
+  #_md_sidebar { background: #f6f8fa; color: #24292f; border-right: 1px solid #d0d7de; }
+}
+body._color-light #_md_topbar  { background: #f6f8fa; color: #24292f; border-bottom: 1px solid #d0d7de; }
+body._color-light #_md_sidebar { background: #f6f8fa; color: #24292f; border-right: 1px solid #d0d7de; }
+body._color-light .md-sb-row:hover { background: #eaeef2; }
+body._color-light .md-sb-active    { background: #ddf4ff; }
+body._color-light .md-sb-toggle    { border: 1px solid #d0d7de; border-radius: 6px; overflow: hidden; }
+body._color-light .md-sb-toggle button.on { background: #0969da; color: #fff; }
+
+/*--- dark theme ------------------------------------------------------------*/
+
+@media (prefers-color-scheme: dark) {
+  #_md_topbar  { background: #161b22; color: #c9d1d9; border-bottom: 1px solid #30363d; }
+  #_md_sidebar { background: #161b22; color: #c9d1d9; border-right: 1px solid #30363d; }
+}
+body._color-dark #_md_topbar  { background: #161b22; color: #c9d1d9; border-bottom: 1px solid #30363d; }
+body._color-dark #_md_sidebar { background: #161b22; color: #c9d1d9; border-right: 1px solid #30363d; }
+body._color-dark .md-sb-row:hover { background: #21262d; }
+body._color-dark .md-sb-active    { background: #1f3a5f; }
+body._color-dark .md-sb-toggle    { border: 1px solid #30363d; border-radius: 6px; overflow: hidden; }
+body._color-dark .md-sb-toggle button { color: #c9d1d9; }
+body._color-dark .md-sb-toggle button.on { background: #1f6feb; color: #fff; }
