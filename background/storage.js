@@ -6,7 +6,11 @@ md.storage = ({compilers}) => {
 
   var defaults = md.storage.defaults(compilers)
 
-  var state = {}
+  // Pre-seed state with defaults so it's never empty during the gap between
+  // the service worker booting and chrome.storage.sync.get() resolving.
+  // Without this, popup / detect handlers can race the storage callback and
+  // observe state.compiler === undefined.
+  var state = JSON.parse(JSON.stringify(defaults))
 
   async function set (options) {
     await chrome.storage.sync.set(options)
