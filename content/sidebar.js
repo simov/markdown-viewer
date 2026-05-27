@@ -23,11 +23,15 @@ var sidebar = (() => {
     rootUrl: '',      // stable workspace root      (file://…/, trailing slash)
     rootName: '',     // root basename              (sidebar head)
     folderPath: '',   // current folder, decoded    (top bar)
+    currentFolder: '',// current folder url         (search scope)
     currentHref: '',  // current file/folder href, decoded (highlight)
     mdOnly: true,
     error: '',
     tree: null,       // null = loading, [] = empty, [node, ...] = entries
     expanded: {},     // {folderUrl: true}
+    search: '',       // current search query
+    searchAll: null,  // flat node list under currentFolder; null = not loaded
+    searchLoading: false,
   }
 
   // url helpers (all folder urls keep a trailing slash)
@@ -98,6 +102,26 @@ var sidebar = (() => {
         })
       ))
 
+  // recursive load of every subdirectory under folderUrl (for search)
+  var loadAll = (folderUrl) =>
+    loadDir(folderUrl).then((res) => {
+      if (res.err) return []
+      var entries = res.entries
+      return Promise.all(entries
+        .filter((n) => n.isDir)
+        .map((n) => loadAll(n.url).then((kids) => { n.children = kids }))
+      ).then(() => entries)
+    })
+
+  var flatten = (nodes) => {
+    var out = []
+    nodes.forEach((n) => {
+      out.push(n)
+      if (n.isDir && n.children) out.push.apply(out, flatten(n.children))
+    })
+    return out
+  }
+
   var init = () => {
     if (data.inited || location.protocol !== 'file:') return
     data.inited = true
@@ -105,6 +129,7 @@ var sidebar = (() => {
     var href = location.href.replace(/[?#].*$/, '')
     data.currentHref = decodeURIComponent(href)
     var currentFolder = folderOf(href)
+    data.currentFolder = currentFolder
     data.folderPath = decode(currentFolder)
 
     chrome.storage.local.get(KEYS, (res) => {
@@ -160,6 +185,27 @@ var sidebar = (() => {
     chrome.storage.local.set({'md-sidebar-mdonly': val})
   }
 
+  // lazy-load the recursive listing the first time the user types
+  var onSearch = (q) => {
+    data.search = q
+    if (q && data.searchAll === null && !data.searchLoading) {
+      data.searchLoading = true
+      loadAll(data.currentFolder).then((nodes) => {
+        data.searchAll = flatten(nodes)
+        data.searchLoading = false
+        m.redraw()
+      })
+    }
+  }
+
+  // path of n relative to the current folder, without the trailing name
+  var relDir = (n) => {
+    var rel = n.url.replace(data.currentFolder, '')
+    rel = decodeURIComponent(rel).replace(/\/$/, '')
+    var slash = rel.lastIndexOf('/')
+    return slash > 0 ? rel.slice(0, slash) : ''
+  }
+
   var visible = (n) => n.isDir || !data.mdOnly || DOC(n.name)
   var isActive = (n) => decodeURIComponent(n.url) === data.currentHref
 
@@ -182,11 +228,41 @@ var sidebar = (() => {
         : null,
     ])
 
+  // opens the WYSIWYG editor on a chrome-extension:// page (FSA works there;
+  // it's blocked on this file:// page's opaque origin)
+  var openEditor = () => {
+    var path = decodeURIComponent(location.pathname)
+    chrome.runtime.sendMessage({message: 'edit.open', path: path})
+  }
+
   var topbar = () =>
     m('#_md_topbar.tex2jax-ignore',
       m('span.md-tb-icon', '📂'),
-      m('span.md-tb-path', {title: data.folderPath}, data.folderPath)
+      m('span.md-tb-path', {title: data.folderPath}, data.folderPath),
+      MD.test(data.currentHref)
+        ? m('button.md-tb-edit', {onclick: openEditor, title: 'Edit this file'}, '✎ Edit')
+        : null
     )
+
+  var searchRows = () => {
+    if (data.searchAll === null) return m('.md-sb-note', 'Searching…')
+    var q = data.search.toLowerCase()
+    var matches = data.searchAll
+      .filter((n) => visible(n) && n.name.toLowerCase().indexOf(q) !== -1)
+    if (!matches.length) return m('.md-sb-note', 'No matches')
+    return matches.slice(0, 200).map((n) => {
+      var dir = relDir(n)
+      return m('.md-sb-row.md-sb-result', {
+        class: isActive(n) ? 'md-sb-active' : '',
+        title: decodeURIComponent(n.url),
+        onclick: () => n.isDir ? clickFolder(n) : (location.href = n.url),
+      },
+        m('span.md-sb-icon', n.isDir ? '📁' : HTML.test(n.name) ? '🌐' : MD.test(n.name) ? '📄' : '🗎'),
+        m('span.md-sb-name', n.name),
+        dir ? m('span.md-sb-relpath', dir) : null
+      )
+    })
+  }
 
   var tree = () =>
     m('#_md_sidebar.tex2jax-ignore',
@@ -197,8 +273,18 @@ var sidebar = (() => {
           m('button', {class: !data.mdOnly ? 'on' : '', onclick: () => setMdOnly(false)}, 'All')
         )
       ),
+      m('.md-sb-search',
+        m('input', {
+          type: 'search',
+          placeholder: 'Search files…',
+          value: data.search,
+          oninput: (e) => onSearch(e.target.value),
+          onkeydown: (e) => { if (e.key === 'Escape') onSearch('') },
+        })
+      ),
       m('.md-sb-tree',
         data.error ? m('.md-sb-note', 'Could not read folder')
+        : data.search ? searchRows()
         : data.tree === null ? m('.md-sb-note', 'Loading…')
         : data.tree.length === 0 ? m('.md-sb-note', 'Empty folder')
         : rows(data.tree, 0)

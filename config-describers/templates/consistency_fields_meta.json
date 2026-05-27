@@ -1,0 +1,265 @@
+{
+  "$description": "Meta-schema for consistency_fields.json — describes the metadata properties attached to every config field and how to interpret them.",
+
+  "$how_to_read": [
+    "Each field in consistency_fields.json carries a set of metadata properties beyond 'type' and 'description'.",
+    "This file documents what those properties mean, what values they can take, and how to use them when reading or editing the config.",
+    "",
+    "Start with 'visibility' to understand WHO a field is for.",
+    "Then check 'mutability' to understand WHETHER you can safely change it.",
+    "Then check 'serialized' to understand WHETHER changing it will drift from what's already stored in the database.",
+    "Then check 'affects' to understand WHAT will be impacted by a change.",
+    "Then check 'overridable_per' to understand WHERE the override should live (global config vs. per-lens record).",
+    "Then check 'stability' to understand HOW SETTLED the field is — experimental fields may change or disappear.",
+    "Finally, read 'notes' for human context: trade-offs, edge cases, and gotchas specific to that field.",
+    "",
+    "Rule of thumb: if 'mutability' is 'immutable' and 'serialized' is true, DO NOT rename or remove the field — it will orphan database records.",
+    "If 'visibility' is 'user', the value is writer-facing copy — tone and clarity matter.",
+    "If 'stability' is 'experimental', the field may change shape or be removed in a future version — don't build critical features on it yet."
+  ],
+
+  "metadata_properties": {
+    "visibility": {
+      "purpose": "Identifies the intended audience for this field's value or effect. Answers: 'Who is this for?'",
+      "type": "string",
+      "required_on": "all fields",
+      "values": {
+        "user": {
+          "meaning": "The writer (end user) sees this field's value or its effect directly in the UI.",
+          "examples": ["template.label (shown in template picker)", "chart.label (shown as chart title)", "chart.y_items (shown as Y-axis ticks)", "chart.math_rule_explain (shown when trend is violated)", "scaffold beat labels (shown in outline preview)"],
+          "implication": "Treat as user-facing copy. Tone, clarity, and wording matter. Changes here affect what the writer reads — review for plain-language readability before shipping."
+        },
+        "developer": {
+          "meaning": "A developer or admin tunes this field to control engine behaviour. Not shown to end users, but affects their experience indirectly.",
+          "examples": ["tunables.roles (which LLM role each pass uses)", "tunables.batch_scene_probes (performance toggle)"],
+          "implication": "Safe to change without user-facing copy review. But test the downstream effect — a role change alters quality/cost/latency."
+        },
+        "system": {
+          "meaning": "Purely engine-internal. Neither the writer nor the developer needs to think about this field day-to-day — it's consumed by code only.",
+          "examples": ["template.id (DB foreign key)", "chart.backend (selects the rendering pipeline)", "bit_dependency (controls which bits the outline pass fetches)", "snap weights (entity resolution algorithm internals)"],
+          "implication": "Changes here are invisible to users but can break internal contracts. Validate against code that reads the field."
+        }
+      },
+      "how_to_read": "Ask: 'If I change this value, who will notice?' If the answer is 'the writer, immediately, in the UI' → user. If 'a developer tuning the engine' → developer. If 'only the code' → system."
+    },
+
+    "mutability": {
+      "purpose": "Describes how and when this field can be changed. Answers: 'Can I safely change this, and what does it take?'",
+      "type": "string",
+      "required_on": "all fields",
+      "values": {
+        "config": {
+          "meaning": "Change by editing the yml file. Takes effect on next server restart or config reload.",
+          "risk": "low",
+          "examples": ["tunables.rule_min_confidence", "template.label", "scaffold beat labels"],
+          "implication": "Safe to change freely. No migration needed. But if 'serialized' is also true, check whether existing DB records will drift from the new config value."
+        },
+        "runtime": {
+          "meaning": "Can be changed via API or UI without restarting the server. Takes effect immediately.",
+          "risk": "low",
+          "examples": ["(currently no fields are runtime-mutable — reserved for future per-project settings)"],
+          "implication": "Changes are immediate and reversible. No restart needed."
+        },
+        "immutable": {
+          "meaning": "Changing this field's value will break references in the database or in other config sections. Treat as a permanent identifier.",
+          "risk": "high",
+          "examples": ["template.id (saved lenses reference it)", "chart.id (saved chart data references it)"],
+          "implication": "NEVER rename or remove without a data migration. If you must change it, write a migration that updates all referencing DB rows first."
+        }
+      },
+      "how_to_read": "Ask: 'What breaks if I change this?' If nothing → config. If a restart is needed but nothing breaks → config. If DB records become orphans → immutable."
+    },
+
+    "affects": {
+      "purpose": "Lists which system layers are impacted when this field changes. Answers: 'What will be different after I change this?'",
+      "type": "array of strings",
+      "required_on": "all fields",
+      "values": {
+        "ai_pipeline": {
+          "meaning": "Changes how the LLM is called — prompt construction, model selection, what context is sent, or how responses are parsed.",
+          "downstream_impact": "Probe results, extraction quality, outline generation quality. May affect cost and latency.",
+          "how_to_verify": "Re-run a consistency scan on a test project and compare probe outputs before/after."
+        },
+        "ui_display": {
+          "meaning": "Changes what the writer sees in the frontend — labels, chart shapes, warnings, available options in pickers.",
+          "downstream_impact": "Writer experience. No data-layer or AI-layer change.",
+          "how_to_verify": "Open the consistency lab in the browser and visually inspect the affected area."
+        },
+        "data_model": {
+          "meaning": "Changes how bits, scopes, or charts are structured, typed, or filtered. May change what data is produced or consumed.",
+          "downstream_impact": "Existing saved data may become inconsistent with the new structure. New scans will produce different-shaped results.",
+          "how_to_verify": "Check that existing DB records still load correctly. Run a fresh scan and inspect the data shape."
+        },
+        "performance": {
+          "meaning": "Changes speed, cost, or resource usage of engine runs. No functional change to results.",
+          "downstream_impact": "Faster/slower scans, higher/lower API costs.",
+          "how_to_verify": "Time a consistency scan before/after. Check API usage metrics."
+        },
+        "outline_generation": {
+          "meaning": "Changes how the grand outline flow scaffolds or generates scene structure.",
+          "downstream_impact": "Different outline shapes for the same synopsis. Only affects templates with grand_fit=true.",
+          "how_to_verify": "Generate a grand outline from a test synopsis and inspect the structure."
+        }
+      },
+      "how_to_read": "Read the list to understand the blast radius of a change. A field that affects only ['ui_display'] is cosmetic. A field that affects ['ai_pipeline', 'data_model'] changes both what the AI does and how results are stored — higher risk, test more thoroughly."
+    },
+
+    "serialized": {
+      "purpose": "Whether this field's value is persisted to the database (in saved lens or chart data records). Answers: 'Will the DB and the config disagree if I change this?'",
+      "type": "boolean",
+      "required_on": "all fields",
+      "values": {
+        "true": {
+          "meaning": "This field's value (or a derivative) is stored in the database when a writer saves a lens or when chart data is computed.",
+          "examples": ["template.id → stored as lens.template_id", "chart.id → stored as chart_data.chart_id", "chart.y_items → stored in chart_overrides", "chart.math_rule → stored in chart_data metadata"],
+          "implication": "If you change the config value, existing DB records will still hold the OLD value. This can cause mismatches. Either: (a) write a data migration, (b) accept that old records use old values, or (c) don't change it."
+        },
+        "false": {
+          "meaning": "This field lives only in the config file. The database never stores it. Changing it takes effect cleanly on next load.",
+          "examples": ["template.label (re-read from config on every page load)", "tunables.* (engine reads from config at scan time)", "scaffold beat labels"],
+          "implication": "Safe to change without worrying about DB drift. The new value takes effect everywhere immediately on reload."
+        }
+      },
+      "how_to_read": "If serialized=true AND you're changing the value: check whether a migration is needed. If serialized=false: change freely, the config is the single source of truth."
+    },
+
+    "overridable_per": {
+      "purpose": "Whether a per-project or per-lens override can replace the global config value. Answers: 'Can different lenses use different values for this field?'",
+      "type": "string",
+      "required_on": "all fields",
+      "values": {
+        "no": {
+          "meaning": "This field is global — all lenses and all projects use the same value from the config file.",
+          "examples": ["template.id", "template.scope_type", "bit_dependency", "tunables.*"],
+          "implication": "One value, everywhere. If you need per-lens variation, you'd need to create a separate template."
+        },
+        "per_lens": {
+          "meaning": "A saved lens can override this field's value via the chart_overrides JSON column. The config value acts as the default; the override wins when present.",
+          "examples": ["chart.y_items (custom charts fill bespoke scales)", "chart.label (lens can have a custom title)", "chart.render (lens can switch line↔bar)"],
+          "implication": "The config value is the fallback. When reading this field at runtime, code checks chart_overrides first, then falls back to config. Changes to the config only affect lenses that haven't overridden the field."
+        }
+      },
+      "how_to_read": "If overridable_per='per_lens': the config value is a default, not a mandate. Some saved lenses may have their own value in chart_overrides. Changing the config won't affect those lenses."
+    },
+
+    "stability": {
+      "purpose": "How settled this field is. Answers: 'Can I rely on this field still being here and working the same way next month?'",
+      "type": "string",
+      "required_on": "all fields",
+      "values": {
+        "stable": {
+          "meaning": "Finalized and safe to depend on. The field's name, type, and semantics are not expected to change.",
+          "implication": "Build features and write tests against this field confidently."
+        },
+        "experimental": {
+          "meaning": "Feature-gated, partially implemented, or likely to change shape. May be removed or restructured.",
+          "examples": ["tunables.batch_scene_probes (implementation not yet landed)"],
+          "implication": "Don't build critical features on this field. Check the implementation status before using it. If the feature gate is off, the field has no effect."
+        },
+        "reserved": {
+          "meaning": "Declared in the schema but not yet consumed by any template or code path. Placeholder for future use.",
+          "examples": ["bit_kinds.state.emotional (no template consumes it yet — emotional_journey is probe-only)"],
+          "implication": "The field exists in config but does nothing today. Don't remove it (it signals intent), but don't expect it to work either."
+        }
+      },
+      "how_to_read": "If stability='stable': use freely. If 'experimental': check whether the backing code is ready before relying on it. If 'reserved': it's a placeholder — don't build on it, but don't delete it either."
+    },
+
+    "notes": {
+      "purpose": "Free-form human context — trade-offs, edge cases, gotchas, and reasoning that don't fit into structured metadata.",
+      "type": "string",
+      "required_on": "optional (present when the field has non-obvious behaviour)",
+      "how_to_read": "Read notes when you're about to change a field or when you're confused about why it exists. Notes often explain: why the default was chosen, what goes wrong at extreme values, or what other fields this one interacts with."
+    }
+  },
+
+  "$reading_order": {
+    "description": "Recommended order for reading metadata when evaluating a config change.",
+    "steps": [
+      {
+        "step": 1,
+        "property": "visibility",
+        "question": "WHO is this field for?",
+        "decision": "If 'user': review wording as copy. If 'developer'/'system': focus on functional correctness."
+      },
+      {
+        "step": 2,
+        "property": "mutability",
+        "question": "CAN I safely change this?",
+        "decision": "If 'immutable': stop — you need a migration plan before touching it. If 'config': proceed with a restart. If 'runtime': proceed, takes effect immediately."
+      },
+      {
+        "step": 3,
+        "property": "serialized",
+        "question": "WILL the database and config disagree after I change this?",
+        "decision": "If true: check existing DB records. Either migrate them, accept drift, or don't change. If false: safe to change, config is the single source of truth."
+      },
+      {
+        "step": 4,
+        "property": "affects",
+        "question": "WHAT will be different?",
+        "decision": "Read the list to gauge blast radius. ['ui_display'] only = cosmetic, low risk. ['ai_pipeline', 'data_model'] = functional change, test thoroughly."
+      },
+      {
+        "step": 5,
+        "property": "overridable_per",
+        "question": "WHERE does the override live?",
+        "decision": "If 'no': one value globally. If 'per_lens': some saved lenses may ignore your config change because they have their own override."
+      },
+      {
+        "step": 6,
+        "property": "stability",
+        "question": "HOW SETTLED is this field?",
+        "decision": "If 'experimental' or 'reserved': check implementation status before depending on it."
+      },
+      {
+        "step": 7,
+        "property": "notes",
+        "question": "ANYTHING ELSE I should know?",
+        "decision": "Read for trade-offs, edge cases, and interaction effects with other fields."
+      }
+    ]
+  },
+
+  "$cross_references": {
+    "description": "How metadata properties interact with each other — combinations that signal specific situations.",
+    "patterns": [
+      {
+        "pattern": "immutable + serialized",
+        "meaning": "This is a database identifier. Changing it orphans stored records.",
+        "action": "Write a data migration before changing. Or don't change it.",
+        "fields_with_this_pattern": ["template.id", "chart.id"]
+      },
+      {
+        "pattern": "user + config",
+        "meaning": "User-facing copy that lives in the config file. Changing it is safe but affects what writers read.",
+        "action": "Review for plain-language clarity. No migration needed.",
+        "fields_with_this_pattern": ["template.label", "chart.label", "chart.math_rule_explain", "scaffold.*"]
+      },
+      {
+        "pattern": "system + config + affects:['data_model']",
+        "meaning": "Engine-internal structural field. Changing it alters how data is shaped but users won't notice directly.",
+        "action": "Test with a fresh scan. Check that existing data still loads.",
+        "fields_with_this_pattern": ["bit_dependency", "bit_kinds_consumed", "element_branches", "bit_kinds"]
+      },
+      {
+        "pattern": "serialized + overridable_per:'per_lens'",
+        "meaning": "Config value is the default, but saved lenses may have overrides. Changing config only affects lenses without overrides.",
+        "action": "If you want the change to affect ALL lenses (including those with overrides), you need to clear the override from those lens records too.",
+        "fields_with_this_pattern": ["chart.y_items", "chart.label", "chart.render"]
+      },
+      {
+        "pattern": "experimental + serialized:false",
+        "meaning": "Feature-gated config knob. Safe to change — nothing is stored — but the backing code may not be ready.",
+        "action": "Check implementation status before flipping. If the code isn't landed, the field has no effect (or may break).",
+        "fields_with_this_pattern": ["tunables.batch_scene_probes"]
+      },
+      {
+        "pattern": "developer + affects:['performance']",
+        "meaning": "Tuning knob that trades quality for speed/cost. No user-visible change in UI, but scan times and API bills will shift.",
+        "action": "Benchmark before and after. Consider A/B testing on a representative project.",
+        "fields_with_this_pattern": ["tunables.roles.*", "tunables.batch_scene_probes"]
+      }
+    ]
+  }
+}

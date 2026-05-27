@@ -1,0 +1,83 @@
+# AI Configuration
+providers:
+  openai:
+    enabled: true
+    api_key_env: OPENAI_API_KEY
+    models:
+      gpt-4o-mini:
+        max_tokens: 16000
+        temperature: 0.7
+        timeout: 60
+        cost_per_1k: 0.0001
+      gpt-4o:
+        max_tokens: 128000
+        temperature: 0.7
+        timeout: 120
+        cost_per_1k: 0.005
+  
+  anthropic:
+    enabled: false
+    api_key_env: ANTHROPIC_API_KEY
+    models:
+      claude-3-haiku-20240307:
+        max_tokens: 4096
+        temperature: 0.7
+        timeout: 60
+        cost_per_1k: 0.00025
+      claude-3-5-sonnet-20241022:
+        max_tokens: 8192
+        temperature: 0.7
+        timeout: 120
+        cost_per_1k: 0.003
+
+# Role to model mapping - Using smaller models for cost efficiency
+roles:
+  small:
+    provider: openai
+    model: gpt-4o-mini
+    use_case: "Fast classification, compression, simple verdicts"
+  
+  draft:
+    provider: openai
+    model: gpt-4o-mini
+    use_case: "General drafting and continuation"
+  
+  expert:
+    provider: openai
+    model: gpt-4o-mini  # Using mini for testing to save costs
+    use_case: "Deep critique, complex reasoning, outline alignment"
+
+# RAG Configuration
+rag:
+  chunk_size: 800
+  chunk_overlap: 120
+  max_context_tokens: 8000
+  embedding_model: text-embedding-3-small
+  top_k: 10
+  hybrid_alpha: 0.5  # Balance between BM25 and vector search (0=BM25, 1=vector)
+  rerank:
+    enabled: true
+    role: small         # LLM role used for listwise reranking
+    max_candidates: 20  # cap candidates sent to the reranker (token bound)
+
+# Tool Configuration
+tools:
+  style_meter:
+    enabled: true
+    timeout: 5
+  
+  constraints_tool:
+    enabled: true
+    timeout: 10
+  
+  timeline_tool:
+    enabled: true
+    timeout: 5
+  
+  quote_tool:
+    enabled: true
+    max_quotes: 5
+  
+  search_tool:
+    enabled: true
+    timeout: 10

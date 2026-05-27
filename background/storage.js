@@ -11,6 +11,8 @@ md.storage = ({compilers}) => {
   // Without this, popup / detect handlers can race the storage callback and
   // observe state.compiler === undefined.
   var state = JSON.parse(JSON.stringify(defaults))
+  console.log('[mdv] storage pre-seeded — state.compiler =', state.compiler,
+              'state keys =', Object.keys(state).length)
 
   async function set (options) {
     await chrome.storage.sync.set(options)
@@ -18,6 +20,8 @@ md.storage = ({compilers}) => {
   }
 
   chrome.storage.sync.get((res) => {
+    console.log('[mdv] storage.get callback — res empty? =', !Object.keys(res).length,
+                'res.compiler =', res.compiler)
     md.storage.bug(res)
 
     Object.assign(state, JSON.parse(JSON.stringify(
@@ -83,12 +87,22 @@ md.storage.defaults = (compilers) => {
 }
 
 md.storage.bug = (res) => {
-  // reload extension bug
+  // Reconcile granted optional host_permissions with stored origins on reload.
+  // Skip on first-install (empty storage) — there's nothing to reconcile, and
+  // asking Chrome to remove a *required* permission like file:///* throws
+  // "You cannot remove required permissions."
+  if (!Object.keys(res).length) return
   chrome.permissions.getAll((permissions) => {
     var origins = Object.keys(res.origins || {})
-    chrome.permissions.remove({
-      origins: permissions.origins
-        .filter((origin) => origins.indexOf(origin.slice(0, -2)) === -1)
+    var toRemove = permissions.origins
+      .filter((origin) => origins.indexOf(origin.slice(0, -2)) === -1)
+    if (!toRemove.length) return
+    chrome.permissions.remove({origins: toRemove}, () => {
+      // Some entries may be required and refuse removal — swallow lastError so
+      // it doesn't surface as an Uncaught (in promise) error.
+      if (chrome.runtime.lastError) {
+        console.warn('[mdv] storage.bug: permissions.remove —', chrome.runtime.lastError.message)
+      }
     })
   })
 }

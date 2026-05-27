@@ -145,6 +145,14 @@ var Popup = () => {
   }
 
   var init = (res) => {
+    console.log('[mdv] popup got response — typeof res =', typeof res,
+                'keys =', res ? Object.keys(res) : '(none)',
+                'lastError =', chrome.runtime.lastError && chrome.runtime.lastError.message,
+                'mdc loaded? =', typeof mdc)
+    if (!res) {
+      console.error('[mdv] popup got undefined response from background — aborting init')
+      return
+    }
     state.compiler = res.compiler
     state.options = res.options
     state.content = res.content
@@ -162,6 +170,7 @@ var Popup = () => {
     m.redraw()
   }
 
+  console.log('[mdv] popup sending {message:popup} — mdc available? =', typeof mdc)
   chrome.runtime.sendMessage({message: 'popup'}, init)
 
   var oncreate = {

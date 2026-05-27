@@ -54,13 +54,26 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, xhr, webreq
 
     // popup
     else if (req.message === 'popup') {
-      sendResponse(Object.assign({}, state, {
-        options: state[state.compiler],
-        description: compilers[state.compiler].description,
-        compilers: Object.keys(compilers),
-        themes: state.themes,
-        settings: {theme: state.settings.theme}
-      }))
+      console.log('[mdv] popup msg — state.compiler =', state.compiler,
+                  'state.settings =', JSON.stringify(state.settings),
+                  'compilers keys =', Object.keys(compilers),
+                  'compilers[state.compiler] =', !!compilers[state.compiler])
+      try {
+        var response = Object.assign({}, state, {
+          options: state[state.compiler],
+          description: compilers[state.compiler].description,
+          compilers: Object.keys(compilers),
+          themes: state.themes,
+          settings: {theme: state.settings.theme}
+        })
+        console.log('[mdv] popup msg — sending response, compiler =', response.compiler)
+        sendResponse(response)
+      } catch (err) {
+        console.error('[mdv] popup msg — handler threw:', err.message, err.stack)
+        // still send something so popup doesn't choke on undefined res
+        sendResponse({error: err.message, compiler: state.compiler || 'markdown-it',
+                      compilers: Object.keys(compilers), settings: {theme: 'light'}})
+      }
     }
     else if (req.message === 'popup.theme') {
       set({theme: req.theme})
@@ -110,6 +123,27 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, xhr, webreq
       else {
         chrome.runtime.openOptionsPage()
       }
+      sendResponse()
+    }
+
+    // editor
+    else if (req.message === 'edit.open') {
+      var url = chrome.runtime.getURL('/editor/editor.html')
+        + '?path=' + encodeURIComponent(req.path)
+        + (sender.tab ? '&tab=' + sender.tab.id : '')
+      chrome.tabs.create({url})
+      sendResponse()
+    }
+    else if (req.message === 'edit.saved') {
+      // reload any viewer tab(s) currently showing this file so the rendered
+      // markdown updates without a manual refresh
+      chrome.tabs.query({}, (tabs) => {
+        tabs.forEach((t) => {
+          if (!t.url || t.url.indexOf('file://') !== 0) return
+          var path = decodeURIComponent(t.url.replace(/^file:\/\//, '').replace(/[?#].*$/, ''))
+          if (path === req.path) chrome.tabs.reload(t.id)
+        })
+      })
       sendResponse()
     }
 

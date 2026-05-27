@@ -1,0 +1,835 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>configurum · layout gallery</title>
+<style>
+  :root {
+    --bg:        #0d1117;
+    --surface:   #161b22;
+    --surface-2: #1c232c;
+    --surface-3: #232a35;
+    --border:    #2a313c;
+    --border-2:  #3a424f;
+    --text:      #e6edf3;
+    --text-2:    #9aa6b2;
+    --text-3:    #6b7682;
+
+    --accent-name:  #ffffff;
+    --accent-value: #7dd3fc;        /* cyan-ish for values */
+    --accent-warn:  #fcd34d;
+
+    --vis-user:      #fbbf24;
+    --vis-developer: #60a5fa;
+    --vis-system:    #94a3b8;
+
+    --mut-config:    #34d399;
+    --mut-runtime:   #22d3ee;
+    --mut-immutable: #f87171;
+
+    --aff-ai_pipeline:        #a78bfa;
+    --aff-ui_display:         #f472b6;
+    --aff-data_model:         #fb923c;
+    --aff-performance:        #fde047;
+    --aff-outline_generation: #38bdf8;
+
+    --stab-stable: #34d399;
+
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.5 var(--sans); -webkit-font-smoothing: antialiased; }
+  code { font-family: var(--mono); }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 10;
+    padding: 12px 24px;
+    background: rgba(13,17,23,0.85);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .topbar__brand { font-weight: 600; letter-spacing: -0.01em; }
+  .topbar__brand .sub { color: var(--text-3); font-weight: 400; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; margin-left: 6px; }
+  .topbar__nav a { color: var(--text-2); text-decoration: none; font-size: 12px; margin-left: 16px; }
+  .topbar__nav a:hover { color: var(--text); }
+
+  main { max-width: 980px; margin: 0 auto; padding: 32px 24px 96px; }
+
+  .intro {
+    margin-bottom: 32px;
+  }
+  .intro h1 {
+    font-size: 22px; font-weight: 600; margin: 0 0 6px; letter-spacing: -0.01em;
+  }
+  .intro p { color: var(--text-2); margin: 0 0 8px; max-width: 720px; }
+
+  /* ─── the example field (metadata recap) ──────────────────────────── */
+  .example-field {
+    margin: 24px 0 40px;
+    padding: 18px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .example-field__label {
+    font-family: var(--mono); font-size: 11px; color: var(--text-3);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+  .example-field__title {
+    font-family: var(--mono); font-size: 16px; color: var(--text);
+    margin-bottom: 4px;
+  }
+  .example-field__title .key { color: var(--accent-name); font-weight: 600; }
+  .example-field__title .val { color: var(--accent-value); }
+  .example-field__meta {
+    font-family: var(--mono); font-size: 12px; color: var(--text-2);
+    margin-top: 8px;
+  }
+  .example-field__meta .lbl { color: var(--text-3); }
+
+  /* ─── demo wrapper ─────────────────────────────────────────────── */
+  .demo {
+    margin-bottom: 36px;
+  }
+  .demo__head {
+    display: flex; align-items: baseline; gap: 12px;
+    margin-bottom: 6px;
+  }
+  .demo__num {
+    font-family: var(--mono); color: var(--text-3); font-size: 12px;
+    width: 28px; text-align: right; flex-shrink: 0;
+  }
+  .demo__name {
+    font-weight: 600; font-size: 15px; color: var(--text);
+  }
+  .demo__use {
+    color: var(--text-2); font-size: 12px;
+    margin-left: auto;
+  }
+  .demo__why {
+    color: var(--text-2);
+    margin: 0 0 14px 40px;
+    font-size: 13px;
+    max-width: 720px;
+  }
+  .demo__stage {
+    margin-left: 40px;
+    padding: 28px;
+    background: linear-gradient(180deg, var(--surface), var(--surface-2));
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    position: relative;
+  }
+  .demo__stage::before {
+    content: ""; position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 16px 16px;
+    pointer-events: none;
+    border-radius: 8px;
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     SHARED MICRO-PRIMITIVES (used by multiple layouts)
+     ════════════════════════════════════════════════════════════════ */
+  .chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-family: var(--mono); font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border-2);
+    background: rgba(255,255,255,0.03);
+  }
+  .chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .chip[data-aff="ai_pipeline"] { color: var(--aff-ai_pipeline); }
+  .chip[data-aff="performance"] { color: var(--aff-performance); }
+  .chip[data-vis="developer"]   { color: var(--vis-developer); }
+  .chip[data-mut="config"]      { color: var(--mut-config); }
+  .chip[data-trig="cron"]       { color: var(--stab-stable); }
+  .chip--plain { color: var(--text-2); }
+  .chip--plain::before { display: none; }
+
+
+  /* ════════════════════════════════════════════════════════════════
+     LAYOUT 0 — CURRENT CARD (for reference / comparison)
+     ════════════════════════════════════════════════════════════════ */
+  .l0 {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+  }
+  .l0::before {
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    background: #c084fc;
+  }
+  .l0__head {
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .l0__path { font-family: var(--mono); font-size: 13px; }
+  .l0__path .dim { color: var(--text-3); }
+  .l0__path .key { color: var(--text); font-weight: 600; }
+  .l0__value-row {
+    padding: 10px 18px; background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
+    display: flex; gap: 12px; align-items: baseline;
+  }
+  .l0__value { font-family: var(--mono); font-size: 13px; }
+  .l0__type  { font-family: var(--mono); font-size: 10.5px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; }
+  .l0__desc  { padding: 12px 18px; color: var(--text-2); font-size: 13px; border-bottom: 1px solid var(--border); }
+  .l0__grid  { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .l0__cell  { padding: 10px 14px; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); font-size: 12px; }
+  .l0__cell:nth-child(3n) { border-right: none; }
+  .l0__cell:nth-last-child(-n+3) { border-bottom: none; }
+  .l0__lbl   { font-family: var(--mono); font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+
+  /* ════════════════════════════════════════════════════════════════
+     LAYOUT 1 — HEADLINE  (name and value dominate, meta is a footer)
+     ════════════════════════════════════════════════════════════════ */
+  .l1 { padding: 4px 8px; }
+  .l1__crumb {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-3);
+    margin-bottom: 4px;
+  }
+  .l1__name {
+    font-family: var(--mono);
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--accent-name);
+    margin: 0 0 14px;
+    letter-spacing: -0.01em;
+  }
+  .l1__value {
+    font-family: var(--mono);
+    font-size: 18px;
+    color: var(--accent-value);
+    background: rgba(125, 211, 252, 0.08);
+    padding: 8px 14px;
+    border-radius: 6px;
+    display: inline-block;
+    margin-bottom: 18px;
+  }
+  .l1__meta {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--text-2);
+    display: flex; flex-wrap: wrap; gap: 4px 14px;
+  }
+  .l1__meta span { color: var(--text); }
+  .l1__meta .sep { color: var(--text-3); }
+  .l1__meta .lbl { color: var(--text-3); margin-right: 4px; }
+
+  /* ════════════════════════════════════════════════════════════════
+     LAYOUT 2 — STAT TILE  (value is the hero, name is the label)
+     ════════════════════════════════════════════════════════════════ */
+  .l2 {
+    max-width: 380px;
+    padding: 22px 24px;
+    background: var(--surface-2);
+    border: 1px solid var(--border-2);
+    border-radius: 10px;
+  }
+  .l2__name {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+  .l2__value {
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--accent-value);
+    word-break: break-all;
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+  .l2__icons {
+    display: flex; align-items: center; gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  .l2__icon {
+    width: 22px; height: 22px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 5px;
+    background: rgba(255,255,255,0.04);
+    font-size: 12px;
+    cursor: help;
+  }
+  .l2__icon[data-kind="vis"]  { color: var(--vis-developer); }
+  .l2__icon[data-kind="mut"]  { color: var(--mut-config); }
+  .l2__icon[data-kind="trig"] { color: var(--stab-stable); }
+  .l2__icon[data-kind="op"]   { color: #c084fc; }
+  .l2__icon[data-kind="aff"]  { color: var(--aff-ai_pipeline); }
+  .l2__icon[data-kind="stab"] { color: var(--stab-stable); }
+
+  /* ════════════════════════════════════════════════════════════════
+     LAYOUT 3 — COMPACT ROW  (one line per field; for scanning lists)
+     ════════════════════════════════════════════════════════════════ */
+  .l3 {
+    display: flex; align-items: center;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: var(--mono); font-size: 13px;
+    gap: 16px;
+  }
+  .l3__name  { color: var(--text); min-width: 220px; }
+  .l3__name .dim { color: var(--text-3); }
+  .l3__eq    { color: var(--text-3); }
+  .l3__value { color: var(--accent-value); flex: 1; }
+  .l3__meta  { display: flex; gap: 4px; align-items: center; }
+  .l3__list  {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     LAYOUT 4 — ANNOTATED YAML  (keep the yaml form; chips beside it)
+     ════════════════════════════════════════════════════════════════ */
+  .l4 {
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .l4__line {
+    display: flex; align-items: center; gap: 14px;
+    padding: 2px 0;
+  }
+  .l4__line--indent { padding-left: 24px; }
+  .l4__code { color: var(--text); flex-shrink: 0; }
+  .l4__code .yk { color: #e879f9; }
+  .l4__code .yv { color: var(--accent-value); }
+  .l4__chips {
+    margin-left: auto;
+    display: flex; gap: 4px; align-items: center;
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     LAYOUT 5 — RECIPE CARD  (readable, narrative; meta as labels)
+     ════════════════════════════════════════════════════════════════ */
+  .l5 {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 22px 26px;
+    max-width: 560px;
+  }
+  .l5__name {
+    font-family: var(--mono);
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--accent-name);
+    margin: 0 0 4px;
+  }
+  .l5__value {
+    font-family: var(--mono);
+    font-size: 15px;
+    color: var(--accent-value);
+    margin-bottom: 18px;
+  }
+  .l5__dl {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 6px 14px;
+    margin: 0;
+  }
+  .l5__dl dt {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding-top: 2px;
+  }
+  .l5__dl dd {
+    margin: 0;
+    color: var(--text);
+    font-size: 13px;
+  }
+  .l5__note {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--border-2);
+    color: var(--text-2);
+    font-size: 12.5px;
+    line-height: 1.55;
+  }
+  .l5__note .warn { color: var(--accent-warn); font-weight: 600; }
+
+  /* ════════════════════════════════════════════════════════════════
+     LAYOUT 6 — POSTCARD  (clean by default; hover reveals meta)
+     ════════════════════════════════════════════════════════════════ */
+  .l6 {
+    max-width: 460px;
+    padding: 28px 30px;
+    background: var(--surface-2);
+    border: 1px solid var(--border-2);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: border-color 0.15s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .l6:hover { border-color: var(--accent-value); }
+  .l6__name {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--text-2);
+    margin-bottom: 6px;
+  }
+  .l6__value {
+    font-family: var(--mono);
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--accent-value);
+    letter-spacing: -0.01em;
+    word-break: break-all;
+  }
+  .l6__hint {
+    position: absolute; right: 14px; top: 14px;
+    font-size: 10.5px;
+    color: var(--text-3);
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .l6__reveal {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    display: flex; flex-wrap: wrap; gap: 6px;
+    opacity: 0;
+    max-height: 0;
+    transition: opacity 0.2s ease, max-height 0.2s ease;
+    overflow: hidden;
+  }
+  .l6:hover .l6__reveal {
+    opacity: 1;
+    max-height: 120px;
+  }
+
+  /* ════════════════════════════════════════════════════════════════
+     LAYOUT 7 — DIFF / TERMINAL  (monospace, comments for meta)
+     ════════════════════════════════════════════════════════════════ */
+  .l7 {
+    font-family: var(--mono);
+    font-size: 13.5px;
+    background: #0a0e14;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 18px 22px;
+    line-height: 1.7;
+  }
+  .l7__line { display: block; }
+  .l7__key  { color: #e879f9; }
+  .l7__val  { color: var(--accent-value); font-weight: 600; }
+  .l7__cmt  { color: var(--text-3); }
+  .l7__cmt .em { color: var(--text-2); }
+  .l7__warn { color: var(--accent-warn); }
+
+  /* ════════════════════════════════════════════════════════════════
+     LAYOUT 8 — TAG CLOUD  (meta wreathes the value)
+     ════════════════════════════════════════════════════════════════ */
+  .l8 {
+    max-width: 540px;
+    padding: 24px 26px;
+    background: radial-gradient(ellipse at center, var(--surface-2) 0%, var(--surface) 80%);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    text-align: center;
+  }
+  .l8__name {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-3);
+    margin-bottom: 8px;
+  }
+  .l8__value {
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--accent-value);
+    margin-bottom: 20px;
+    letter-spacing: -0.01em;
+  }
+  .l8__tags {
+    display: flex; flex-wrap: wrap; gap: 5px; justify-content: center;
+  }
+  .l8 .tag {
+    display: inline-block;
+    font-family: var(--mono); font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border-2);
+    color: var(--text-2);
+  }
+  .l8 .tag[data-aff="ai_pipeline"]   { color: var(--aff-ai_pipeline); }
+  .l8 .tag[data-aff="performance"]   { color: var(--aff-performance); }
+  .l8 .tag[data-vis="developer"]     { color: var(--vis-developer); }
+  .l8 .tag[data-mut="config"]        { color: var(--mut-config); }
+  .l8 .tag--warn { color: var(--accent-warn); border-color: color-mix(in srgb, var(--accent-warn) 30%, var(--border-2)); }
+
+  /* footer */
+  .footnote {
+    margin-top: 56px;
+    padding: 20px 22px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-2);
+    font-size: 13px;
+  }
+  .footnote strong { color: var(--text); }
+  .footnote code { color: var(--accent-value); background: rgba(125,211,252,0.08); padding: 1px 5px; border-radius: 3px; }
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="topbar__brand">
+    configurum <span class="sub">layout gallery</span>
+  </div>
+  <nav class="topbar__nav">
+    <a href="./index.html">← back to card mockup</a>
+  </nav>
+</header>
+
+<main>
+
+  <section class="intro">
+    <h1>Pick a layout for your config items</h1>
+    <p>
+      Same field, nine layouts. Each emphasizes <em>different</em> parts of the field
+      — sometimes the name and value should dominate; sometimes the metadata should.
+      Pick one (or two — list view + detail view is a common combo) and the library
+      will use it for every field in your config.
+    </p>
+  </section>
+
+  <!-- the example field, for reference -->
+  <div class="example-field">
+    <div class="example-field__label">example field — every layout below renders THIS</div>
+    <div class="example-field__title">
+      <span class="key">rag.embedding_model</span>
+      <span class="lbl">=</span>
+      <span class="val">"text-embedding-3-small"</span>
+    </div>
+    <div class="example-field__meta">
+      <span class="lbl">audience:</span> developer  &nbsp;
+      <span class="lbl">mutability:</span> config  &nbsp;
+      <span class="lbl">affects:</span> ai_pipeline, performance  &nbsp;
+      <span class="lbl">triggered_by:</span> cron  &nbsp;
+      <span class="lbl">op_type:</span> action  &nbsp;
+      <span class="lbl">serialized:</span> false  &nbsp;
+      <span class="lbl">stability:</span> stable
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       LAYOUT 0 — CURRENT (for comparison)
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="demo">
+    <div class="demo__head">
+      <div class="demo__num">0</div>
+      <div class="demo__name">Current card  <span style="color: var(--text-3); font-weight: 400; font-size: 12px;">(what you didn't like)</span></div>
+      <div class="demo__use">use: nothing — for comparison</div>
+    </div>
+    <p class="demo__why">All metadata shown at once in a grid. Name and value compete with the meta chrome — the name in particular gets buried in a dotted breadcrumb.</p>
+    <div class="demo__stage">
+      <div class="l0">
+        <div class="l0__head">
+          <div class="l0__path"><span class="dim">rag.</span><span class="key">embedding_model</span></div>
+        </div>
+        <div class="l0__value-row">
+          <code class="l0__value">"text-embedding-3-small"</code>
+          <span class="l0__type">string</span>
+        </div>
+        <div class="l0__desc">The embedding model used to vectorize text chunks for pgvector storage.</div>
+        <div class="l0__grid">
+          <div class="l0__cell"><div class="l0__lbl">audience</div>developer</div>
+          <div class="l0__cell"><div class="l0__lbl">mutability</div>config</div>
+          <div class="l0__cell"><div class="l0__lbl">op type</div>action</div>
+          <div class="l0__cell"><div class="l0__lbl">affects</div>ai_pipeline, performance</div>
+          <div class="l0__cell"><div class="l0__lbl">triggers</div>cron</div>
+          <div class="l0__cell"><div class="l0__lbl">persistence</div>config-only</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       LAYOUT 1 — HEADLINE
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="demo">
+    <div class="demo__head">
+      <div class="demo__num">1</div>
+      <div class="demo__name">Headline</div>
+      <div class="demo__use">use: detail page, one field at a time</div>
+    </div>
+    <p class="demo__why">Name and value are the only things you see first. Metadata collapses to a single inline footer line. Use this on a per-field detail page where someone has clicked through to read one field deeply.</p>
+    <div class="demo__stage">
+      <div class="l1">
+        <div class="l1__crumb">rag /</div>
+        <h2 class="l1__name">embedding_model</h2>
+        <div class="l1__value">"text-embedding-3-small"</div>
+        <div class="l1__meta">
+          <span><span class="lbl">audience</span>developer</span>
+          <span class="sep">·</span>
+          <span><span class="lbl">edit</span>config</span>
+          <span class="sep">·</span>
+          <span><span class="lbl">affects</span>ai_pipeline, performance</span>
+          <span class="sep">·</span>
+          <span><span class="lbl">triggered by</span>cron</span>
+          <span class="sep">·</span>
+          <span><span class="lbl">stability</span>stable</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       LAYOUT 2 — STAT TILE
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="demo">
+    <div class="demo__head">
+      <div class="demo__num">2</div>
+      <div class="demo__name">Stat tile</div>
+      <div class="demo__use">use: dashboard / grid of fields at-a-glance</div>
+    </div>
+    <p class="demo__why">Value is the hero — large, isolated, instantly scannable. Name acts as a small label. Metadata becomes a row of icon-only badges along the bottom. Use this when you want a grid of fields and need someone to read the VALUE first.</p>
+    <div class="demo__stage" style="display:flex; gap: 16px; flex-wrap: wrap;">
+      <div class="l2">
+        <div class="l2__name">rag.embedding_model</div>
+        <div class="l2__value">text-embedding-3-small</div>
+        <div class="l2__icons">
+          <span class="l2__icon" data-kind="vis"  title="developer">🛠</span>
+          <span class="l2__icon" data-kind="mut"  title="config-editable">🔧</span>
+          <span class="l2__icon" data-kind="op"   title="action">⚡</span>
+          <span class="l2__icon" data-kind="trig" title="cron-triggered">⏱</span>
+          <span class="l2__icon" data-kind="aff"  title="ai_pipeline">🧠</span>
+          <span class="l2__icon" data-kind="aff"  title="performance">⚡</span>
+          <span class="l2__icon" data-kind="stab" title="stable" style="background:var(--stab-stable); box-shadow:0 0 6px color-mix(in srgb, var(--stab-stable) 60%, transparent);"></span>
+        </div>
+      </div>
+      <!-- a sibling tile to show how a grid looks -->
+      <div class="l2" style="opacity:0.6;">
+        <div class="l2__name">rag.chunk_size</div>
+        <div class="l2__value">800</div>
+        <div class="l2__icons">
+          <span class="l2__icon" data-kind="vis"  title="developer">🛠</span>
+          <span class="l2__icon" data-kind="mut"  title="config">🔧</span>
+          <span class="l2__icon" data-kind="op"   title="read">◌</span>
+          <span class="l2__icon" data-kind="stab" title="stable" style="background:var(--stab-stable);"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       LAYOUT 3 — COMPACT ROW
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="demo">
+    <div class="demo__head">
+      <div class="demo__num">3</div>
+      <div class="demo__name">Compact row</div>
+      <div class="demo__use">use: scanning a long list of fields, table-style</div>
+    </div>
+    <p class="demo__why">One field per row. Name on the left, value next, meta on the right. Spreadsheet feel. Use when someone needs to scan 30+ fields and find one — eyes move left-to-right, name first, value second.</p>
+    <div class="demo__stage">
+      <div class="l3__list">
+        <div class="l3">
+          <span class="l3__name"><span class="dim">rag.</span>embedding_model</span>
+          <span class="l3__eq">=</span>
+          <span class="l3__value">"text-embedding-3-small"</span>
+          <span class="l3__meta">
+            <span class="chip" data-vis="developer">dev</span>
+            <span class="chip" data-aff="ai_pipeline">ai_pipeline</span>
+            <span class="chip" data-aff="performance">performance</span>
+            <span class="chip" data-trig="cron">⏱ cron</span>
+          </span>
+        </div>
+        <!-- siblings to show density -->
+        <div class="l3" style="opacity:0.55">
+          <span class="l3__name"><span class="dim">rag.</span>chunk_size</span>
+          <span class="l3__eq">=</span>
+          <span class="l3__value">800</span>
+          <span class="l3__meta">
+            <span class="chip" data-vis="developer">dev</span>
+            <span class="chip" data-aff="ai_pipeline">ai_pipeline</span>
+          </span>
+        </div>
+        <div class="l3" style="opacity:0.55">
+          <span class="l3__name"><span class="dim">rag.</span>top_k</span>
+          <span class="l3__eq">=</span>
+          <span class="l3__value">10</span>
+          <span class="l3__meta">
+            <span class="chip" data-vis="developer">dev</span>
+            <span class="chip" data-aff="performance">performance</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       LAYOUT 4 — ANNOTATED YAML
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="demo">
+    <div class="demo__head">
+      <div class="demo__num">4</div>
+      <div class="demo__name">Annotated YAML</div>
+      <div class="demo__use">use: when readers already know yaml; keep their mental model</div>
+    </div>
+    <p class="demo__why">Render the file verbatim, then float metadata chips beside each line. Familiar to anyone who already reads the yaml file — you don't transform the syntax, you add a layer on top.</p>
+    <div class="demo__stage">
+      <div class="l4">
+        <div class="l4__line">
+          <span class="l4__code"><span class="yk">rag</span>:</span>
+        </div>
+        <div class="l4__line l4__line--indent" style="opacity:0.5">
+          <span class="l4__code"><span class="yk">chunk_size</span>: <span class="yv">800</span></span>
+        </div>
+        <div class="l4__line l4__line--indent">
+          <span class="l4__code"><span class="yk">embedding_model</span>: <span class="yv">text-embedding-3-small</span></span>
+          <span class="l4__chips">
+            <span class="chip" data-vis="developer">dev</span>
+            <span class="chip" data-aff="ai_pipeline">ai_pipeline</span>
+            <span class="chip" data-aff="performance">performance</span>
+            <span class="chip" data-trig="cron">⏱ cron</span>
+          </span>
+        </div>
+        <div class="l4__line l4__line--indent" style="opacity:0.5">
+          <span class="l4__code"><span class="yk">top_k</span>: <span class="yv">10</span></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       LAYOUT 5 — RECIPE CARD
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="demo">
+    <div class="demo__head">
+      <div class="demo__num">5</div>
+      <div class="demo__name">Recipe card</div>
+      <div class="demo__use">use: documentation page; readable narrative</div>
+    </div>
+    <p class="demo__why">Name and value on top, metadata as a labeled definition list below. Reads like a doc page — each meta property is named in plain language, not just visually encoded. Use when this view doubles as documentation.</p>
+    <div class="demo__stage">
+      <div class="l5">
+        <h3 class="l5__name">rag.embedding_model</h3>
+        <div class="l5__value">"text-embedding-3-small"</div>
+        <dl class="l5__dl">
+          <dt>For</dt>          <dd>developers tuning the engine</dd>
+          <dt>Editable</dt>     <dd>yes — config file, reload required</dd>
+          <dt>Impacts</dt>      <dd>ai_pipeline · performance</dd>
+          <dt>Triggered by</dt> <dd>scheduled re-embedding job (cron)</dd>
+          <dt>Persistence</dt>  <dd>config-only (not stored in DB)</dd>
+          <dt>Stability</dt>    <dd>stable</dd>
+        </dl>
+        <p class="l5__note">
+          <span class="warn">⚠</span> Changing the embedding model invalidates all existing vectors — they were computed with the old model's geometry. After changing, you must re-embed all documents.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       LAYOUT 6 — POSTCARD (hover reveals)
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="demo">
+    <div class="demo__head">
+      <div class="demo__num">6</div>
+      <div class="demo__name">Postcard <span style="color: var(--text-3); font-weight: 400; font-size: 12px;">(hover to reveal)</span></div>
+      <div class="demo__use">use: minimalist list; details on demand</div>
+    </div>
+    <p class="demo__why">By default just name + value, beautifully clean. Hover (or click) reveals the metadata. Use when you want to scan a long list with zero distraction, but still have the full info one gesture away.</p>
+    <div class="demo__stage">
+      <div class="l6">
+        <span class="l6__hint">hover ↗</span>
+        <div class="l6__name">rag.embedding_model</div>
+        <div class="l6__value">"text-embedding-3-small"</div>
+        <div class="l6__reveal">
+          <span class="chip" data-vis="developer">developer</span>
+          <span class="chip" data-mut="config">config</span>
+          <span class="chip" data-aff="ai_pipeline">ai_pipeline</span>
+          <span class="chip" data-aff="performance">performance</span>
+          <span class="chip" data-trig="cron">⏱ cron</span>
+          <span class="chip chip--plain">stable</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       LAYOUT 7 — DIFF / TERMINAL
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="demo">
+    <div class="demo__head">
+      <div class="demo__num">7</div>
+      <div class="demo__name">Diff / terminal</div>
+      <div class="demo__use">use: engineers; CLI vibe; metadata as comments</div>
+    </div>
+    <p class="demo__why">Monospace, code-style. Metadata becomes inline comments beneath the field. Use for engineer-facing tools where the audience reads `git diff` output for breakfast.</p>
+    <div class="demo__stage">
+      <pre class="l7"><span class="l7__line"><span class="l7__key">rag.embedding_model</span>: <span class="l7__val">"text-embedding-3-small"</span></span><span class="l7__line"><span class="l7__cmt"># audience: <span class="em">developer</span>  ·  mutability: <span class="em">config</span>  ·  serialized: <span class="em">false</span>  ·  stability: <span class="em">stable</span></span></span><span class="l7__line"><span class="l7__cmt"># affects:      <span class="em">ai_pipeline, performance</span></span></span><span class="l7__line"><span class="l7__cmt"># triggered by: <span class="em">cron (scheduled re-embedding job)</span></span></span><span class="l7__line"><span class="l7__warn"># ⚠ changing this invalidates all stored vectors — must re-embed all documents</span></span></pre>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       LAYOUT 8 — TAG CLOUD
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="demo">
+    <div class="demo__head">
+      <div class="demo__num">8</div>
+      <div class="demo__name">Tag cloud</div>
+      <div class="demo__use">use: when filtering matters more than reading</div>
+    </div>
+    <p class="demo__why">Metadata wreathes the value as filterable tags. Click a tag to filter the whole config to fields sharing it. Use when discovery (“show me everything cron-triggered”) is the primary use case.</p>
+    <div class="demo__stage">
+      <div class="l8">
+        <div class="l8__name">rag.embedding_model</div>
+        <div class="l8__value">"text-embedding-3-small"</div>
+        <div class="l8__tags">
+          <span class="tag" data-vis="developer">developer</span>
+          <span class="tag" data-mut="config">config</span>
+          <span class="tag" data-aff="ai_pipeline">ai_pipeline</span>
+          <span class="tag" data-aff="performance">performance</span>
+          <span class="tag">cron-triggered</span>
+          <span class="tag">action</span>
+          <span class="tag">stable</span>
+          <span class="tag tag--warn">⚠ DB drift hazard</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── footnote ────────────────────────────────────────────────── -->
+  <div class="footnote">
+    <p style="margin: 0 0 8px;"><strong>How the library would expose this</strong></p>
+    <p style="margin: 0;">
+      Pick one layout per <code>view</code> in your <code>config.viz.json</code>. A common pattern is two:
+      a <code>list_view</code> (e.g. <strong>Compact row</strong> or <strong>Postcard</strong>) for scanning,
+      and a <code>detail_view</code> (e.g. <strong>Headline</strong> or <strong>Recipe card</strong>) for when someone drills in.
+      You can also pick different layouts per section — flat scalars get tiles, nested objects get YAML, list-of-objects get cards.
+    </p>
+  </div>
+
+</main>
+
+</body>
+</html>

@@ -1,0 +1,375 @@
+# Consistency engine config — tune HERE, not in code.
+# Loaded by ai_engine/story_consistency.py (mirrors providers.yml pattern).
+# Deterministic invariant LOGIC stays in code; everything parametric is here.
+# (Prompt templates are the next config chunk — see story_consistency.py.)
+
+tunables:
+  # which LLM role each pass uses
+  roles:
+    extract: small
+    scopes: small
+    outline: small
+    probe: small
+    coverage: small
+    dependency: small
+  rule_min_confidence: 0.8      # a `rule` bit must be this confident to chart
+  scope_min_occurrences: 2      # entity must recur this often to be a scope
+  chars_per_token: 4            # ~tok estimate for the usage panel
+  batch_scene_probes: false     # #1: flip on when per-chart batching lands
+  snap:
+    leaf_weight: 2.0
+    path_weight: 1.0
+    kind_prior_bonus: 1.5
+    min_confidence: 0.2           # below this → dangling (UI flags for the writer)
+
+# v2 — element branches (Phase 1: synopsis → structured elements).
+# See spec/consistency/history/BIT_LOGIC_V2.md §3. Minimal set; grow as needed.
+element_branches:
+  - story
+  - character
+  - item
+  - rule
+
+# v2 — bit kinds + their valid sub values. Each sub is justified by at least
+# one template in the registry below that consumes it.
+#   state.location     → location_tracker
+#   state.knowledge    → character_knowledge, dramatic_irony
+#   state.emotional    → (reserved — emotional_journey today is probe-only,
+#                        could promote to tracker)
+#   state.possession   → item_custody
+#   state.condition    → condition_tracker
+#   state.alliance     → alliance_tracker
+#   thread.plant/payoff→ chekhov (optional), red_herring, mice_threads,
+#                        promise_progress_payoff
+#   thread.progress    → promise_progress_payoff (middle phase)
+#   rule.hard_rule     → hard_magic_rules
+bit_kinds:
+  rule: [hard_rule]
+  state: [location, knowledge, emotional, possession, condition, alliance]
+  thread: [plant, progress, payoff]
+
+# Structural beat sets. Used as the coverage chart's `required` set AND shown
+# as the outline-scaffold preview at template-selection time.
+scaffold:
+  three_act:
+    - "Act I — Setup"
+    - "Inciting Incident"
+    - "Act II — Confrontation"
+    - "Midpoint"
+    - "Crisis"
+    - "Act III — Resolution"
+    - "Climax"
+    - "Denouement"
+  hero_journey:
+    - "Ordinary World"
+    - "Call to Adventure"
+    - "Refusal of the Call"
+    - "Meeting the Mentor"
+    - "Crossing the Threshold"
+    - "Tests, Allies, Enemies"
+    - "Approach"
+    - "Ordeal"
+    - "Reward"
+    - "The Road Back"
+    - "Resurrection"
+    - "Return with the Elixir"
+  save_the_cat:
+    - "Opening Image"
+    - "Theme Stated"
+    - "Set-Up"
+    - "Catalyst"
+    - "Debate"
+    - "Break into Two"
+    - "B Story"
+    - "Fun and Games"
+    - "Midpoint"
+    - "Bad Guys Close In"
+    - "All Is Lost"
+    - "Dark Night of the Soul"
+    - "Break into Three"
+    - "Finale"
+    - "Final Image"
+  tragedy:
+    - "Anticipation"
+    - "Dream"
+    - "Frustration"
+    - "Nightmare"
+    - "Destruction"
+
+# Flat template registry. template = scope_type + a BUNDLE of candidate charts.
+# `scaffold:` and a chart's `required:` are scaffold keys, resolved at load.
+#
+# bit_dependency (v2 — see spec/consistency/history/BIT_LOGIC_V2.md):
+#   Engine NEVER judges. All charts are probe-driven (trajectory/coverage).
+#   bit_dependency declares what bits, if any, the OUTLINE pass needs to
+#   honour as constraints when drafting scenes.
+#     none     — chart template (probe-driven), no bits read
+#     state    — outline tracker; needs `state` bits (sub: location|emotional|...)
+#     thread   — outline tracker; needs `thread` bits (sub: plant|payoff)
+#     rule     — outline tracker; needs `rule` bits as invariants the outline
+#                must not violate
+#     optional — chart template that can be augmented by bits if writer adds them
+templates:
+  # ---- story ----
+  - id: three_act
+    label: "Three-Act Structure"
+    scope_type: story
+    scaffold: three_act
+    grand_fit: true
+    grand_outline_base_fit: true   # v3 §6 — last-level heading (scene) can hold beats
+    bit_dependency: none
+    charts:
+      - {id: three_act.coverage, label: "Required beats present", backend: coverage, mode: consistency, required: three_act}
+  - id: hero_journey
+    label: "Hero's Journey"
+    scope_type: story
+    scaffold: hero_journey
+    grand_fit: true
+    grand_outline_base_fit: true   # v3 §6 — last-level heading can hold beats
+    bit_dependency: none
+    charts:
+      - {id: hero_journey.coverage, label: "Required beats present", backend: coverage, mode: consistency, required: hero_journey}
+      - {id: hero_journey.tension, label: "Tension shape", backend: trajectory, mode: descriptive}
+  - id: save_the_cat
+    label: "Save the Cat"
+    scope_type: story
+    scaffold: save_the_cat
+    grand_fit: true
+    grand_outline_base_fit: false  # v3 §6 — leaves are terminal beats, no scene container
+    bit_dependency: none
+    charts:
+      - {id: save_the_cat.coverage, label: "Required beats present", backend: coverage, mode: consistency, required: save_the_cat}
+  - id: tragedy
+    label: "Tragedy (Booker)"
+    scope_type: story
+    scaffold: tragedy
+    grand_fit: true
+    grand_outline_base_fit: false  # v3 §6 — five terminal beats, no container level
+    bit_dependency: none
+    charts:
+      - {id: tragedy.coverage, label: "Required beats present", backend: coverage, mode: consistency, required: tragedy}
+      # v3 §11 — y_items ORDERED LOW→HIGH on the axis. `falling` rule expects
+      # value to descend along the axis (thriving → destroyed = index 5→0).
+      - {id: tragedy.fall, label: "Protagonist fortune falls", backend: trajectory, mode: consistency,
+         y_items: [destroyed, ruined, struggling, shaken, secure, thriving],
+         math_rule: falling,
+         math_rule_explain: "A tragedy expects the protagonist's fortune to fall across the story. If the chart trends flat or up, check whether the descent is being staged convincingly enough."}
+  - id: chekhov
+    label: "Setup -> Payoff (Chekhov)"
+    scope_type: story
+    grand_fit: false
+    bit_dependency: optional
+    charts:
+      - {id: chekhov, label: "Every setup pays off", backend: dependency, mode: consistency}
+  - id: pacing
+    label: "Pacing / Tension"
+    scope_type: story
+    grand_fit: false
+    bit_dependency: none
+    charts:
+      - {id: pacing, label: "Tension envelope", backend: trajectory, mode: descriptive}
+  - id: red_herring
+    label: "Red Herring -> Reveal-as-False"
+    scope_type: story
+    grand_fit: false
+    bit_dependency: thread
+    bit_kinds_consumed: [{kind: thread, sub: plant}, {kind: thread, sub: payoff}]
+    charts:
+      - {id: red_herring, label: "Every false clue is revealed as false", backend: dependency, mode: consistency}
+  - id: mice_threads
+    label: "MICE Threads (Card)"
+    scope_type: story
+    grand_fit: false
+    bit_dependency: thread
+    bit_kinds_consumed: [{kind: thread, sub: plant}, {kind: thread, sub: payoff}]
+    charts:
+      - {id: mice_threads, label: "Threads open and close in nest order", backend: dependency, mode: consistency}
+  - id: promise_progress_payoff
+    label: "Promise -> Progress -> Payoff (Sanderson)"
+    scope_type: story
+    grand_fit: false
+    bit_dependency: thread
+    bit_kinds_consumed: [{kind: thread, sub: plant}, {kind: thread, sub: progress}, {kind: thread, sub: payoff}]
+    charts:
+      - {id: promise_progress_payoff, label: "Every promise reaches all three phases", backend: coverage, mode: consistency}
+  - id: hard_magic_rules
+    label: "Magic / World Rules (hard)"
+    scope_type: story
+    grand_fit: false
+    bit_dependency: rule
+    bit_kinds_consumed: [{kind: rule, sub: hard_rule}]
+    charts:
+      - {id: hard_magic_rules, label: "Outline honours declared rules", backend: ledger, mode: consistency}
+  - id: dramatic_irony
+    label: "Dramatic Irony Gap"
+    scope_type: story
+    grand_fit: false
+    bit_dependency: state
+    bit_kinds_consumed: [{kind: state, sub: knowledge}]
+    charts:
+      - {id: dramatic_irony, label: "Reader-vs-character knowledge gap", backend: trajectory, mode: descriptive}
+  # ---- character ----
+  - id: power_corrupts
+    label: "Power Corrupts"
+    scope_type: character
+    bit_dependency: none
+    charts:
+      # v3 §3 — ordered vocab y_items + math_rule. The order defines the axis.
+      - {id: power_corrupts, label: "Corruption rises", backend: trajectory, mode: consistency,
+         y_items: [principled, tempted, compromised, tyrannical],
+         math_rule: rising,
+         math_rule_explain: "A 'power corrupts' arc expects the character to slide from principled toward tyrannical. If the chart trends flat or down, ask whether the corruption is being motivated convincingly."}
+  - id: redemption_arc
+    label: "Redemption Arc"
+    scope_type: character
+    bit_dependency: none
+    charts:
+      - {id: redemption_arc, label: "Moral standing rises", backend: trajectory, mode: consistency,
+         y_items: [unredeemed, conflicted, contrite, redeemed],
+         math_rule: rising,
+         math_rule_explain: "A redemption arc expects moral standing to climb across the story. If the chart trends flat or down, ask whether the character is earning each step toward redemption."}
+  - id: tragic_fall
+    label: "Tragic Fall"
+    scope_type: character
+    bit_dependency: none
+    charts:
+      # y_items LOW→HIGH on the fortune axis. falling = value descends.
+      - {id: tragic_fall, label: "Fortune falls", backend: trajectory, mode: consistency,
+         y_items: [ruined, struggling, shaken, secure, thriving],
+         math_rule: falling,
+         math_rule_explain: "A tragic-fall arc expects fortune to drop from thriving toward ruined. If the chart trends flat or up, the fall isn't being staged."}
+  - id: lie_to_truth
+    label: "Lie -> Truth Arc"
+    scope_type: character
+    bit_dependency: none
+    charts:
+      - {id: lie_to_truth, label: "Belief moves lie to truth", backend: trajectory, mode: consistency,
+         y_items: [denial, doubting, confronting, accepting, integrated],
+         math_rule: rising,
+         math_rule_explain: "A lie-to-truth arc expects self-knowledge to rise — the character moves from denial toward integrated truth. Flat or downward trends suggest the character isn't being pushed."}
+  - id: emotional_journey
+    label: "Emotional Journey"
+    scope_type: character
+    bit_dependency: none
+    charts:
+      # v3 §3 — descriptive trajectory: predefined vocab (no math rule, no ordering).
+      - {id: emotional_journey, label: "Emotion mirror", backend: trajectory, mode: descriptive,
+         y_items: [joy, sorrow, fear, anger, love, dread, hope, resolve]}
+  - id: character_knowledge
+    label: "Knowledge Tracker"
+    scope_type: character
+    bit_dependency: state    # needs `state` sub: knowledge bits
+    bit_kinds_consumed: [{kind: state, sub: knowledge}]
+    charts:
+      - {id: character_knowledge, label: "Who knows what", backend: ledger, mode: consistency}
+  - id: location_tracker
+    label: "Where they are"
+    scope_type: character
+    bit_dependency: state    # needs `state` sub: location bits
+    bit_kinds_consumed: [{kind: state, sub: location}]
+    charts:
+      - {id: location_tracker, label: "Location across scenes", backend: ledger, mode: consistency}
+  - id: condition_tracker
+    label: "Body / mind condition"
+    scope_type: character
+    bit_dependency: state    # needs `state` sub: condition bits
+    bit_kinds_consumed: [{kind: state, sub: condition}]
+    charts:
+      - {id: condition_tracker, label: "Condition across scenes (wound, illness, transformation)", backend: ledger, mode: consistency}
+  # ---- character arcs ported from the legacy story-arc page ----
+  # Descriptive trajectories (no math_rule — they rise AND fall). Numeric legacy
+  # scales (e.g. tension 0-10) are collapsed to 5-tick enums by design. `render`
+  # is the frontend draw type: line (default) | bar — set per chart_def.
+  - id: emotional_intensity
+    label: "Emotional Intensity"
+    scope_type: character
+    bit_dependency: none
+    charts:
+      - {id: emotional_intensity, label: "How strongly they feel", backend: trajectory, mode: descriptive,
+         render: line,
+         y_items: [numb, faint, present, strong, overwhelming]}
+  - id: tension_arc
+    label: "Tension (per character)"
+    scope_type: character
+    bit_dependency: none
+    charts:
+      - {id: tension_arc, label: "Tension they're under", backend: trajectory, mode: descriptive,
+         render: line,
+         y_items: [calm, uneasy, tense, alarmed, critical]}
+  - id: agency_arc
+    label: "Agency"
+    scope_type: character
+    bit_dependency: none
+    charts:
+      - {id: agency_arc, label: "How much they drive events", backend: trajectory, mode: descriptive,
+         render: line,
+         y_items: [passive, reactive, deciding, acting, driving]}
+  # ---- relationship ----
+  - id: relationship
+    label: "Relationship Arc"
+    scope_type: relationship
+    bit_dependency: none
+    charts:
+      - {id: relationship, label: "Closeness over time", backend: trajectory, mode: descriptive}
+  - id: rivalry
+    label: "Rivalry -> Resolution"
+    scope_type: relationship
+    bit_dependency: none
+    charts:
+      # y_items LOW→HIGH on the antagonism axis. falling = antagonism drops.
+      - {id: rivalry, label: "Antagonism resolves", backend: trajectory, mode: consistency,
+         y_items: [allied, civil, wary, hostile, enemies],
+         math_rule: falling,
+         math_rule_explain: "A rivalry-to-resolution arc expects antagonism to fall — the pair moves from enemies toward allied. Flat or rising trends mean the rivalry isn't resolving."}
+  - id: alliance_tracker
+    label: "Alliance / faction state"
+    scope_type: relationship
+    bit_dependency: state    # needs `state` sub: alliance bits
+    bit_kinds_consumed: [{kind: state, sub: alliance}]
+    charts:
+      - {id: alliance_tracker, label: "Allied -> enemy state shifts", backend: ledger, mode: consistency}
+  # ---- object ----
+  - id: item_custody
+    label: "Item Custody"
+    scope_type: object
+    bit_dependency: state    # needs `state` sub: possession bits
+    bit_kinds_consumed: [{kind: state, sub: possession}]
+    charts:
+      - {id: item_custody, label: "Chain of custody", backend: ledger, mode: consistency}
+  # ---- custom (special charts) ----
+  # Hidden generic vehicles for AI-suggested "special charts" — bespoke
+  # scales the template library can't express (e.g. a "secretly alike"
+  # relationship arc on a custom worlds-apart->mirror-images scale). One
+  # per scope_type. `hidden: true` keeps them off the suggester menu and
+  # the manual-bind UI; they're reached only via run_suggest_special_charts
+  # + the bind_special endpoint, which fills y_items/title/target into
+  # chart_overrides. Descriptive trajectory => chart_type `state`,
+  # y_items_source `user-defined`.
+  - id: custom_story
+    label: "Custom chart"
+    scope_type: story
+    hidden: true
+    bit_dependency: none
+    charts:
+      - {id: custom, label: "Custom scale", backend: trajectory, mode: descriptive}
+  - id: custom_character
+    label: "Custom chart"
+    scope_type: character
+    hidden: true
+    bit_dependency: none
+    charts:
+      - {id: custom, label: "Custom scale", backend: trajectory, mode: descriptive}
+  - id: custom_object
+    label: "Custom chart"
+    scope_type: object
+    hidden: true
+    bit_dependency: none
+    charts:
+      - {id: custom, label: "Custom scale", backend: trajectory, mode: descriptive}
+  - id: custom_relationship
+    label: "Custom chart"
+    scope_type: relationship
+    hidden: true
+    bit_dependency: none
+    charts:
+      - {id: custom, label: "Custom scale", backend: trajectory, mode: descriptive}

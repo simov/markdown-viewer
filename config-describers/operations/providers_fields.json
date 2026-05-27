@@ -1,0 +1,482 @@
+{
+  "$description": "Field-level documentation for providers.yml — the operations config for AI providers, role mapping, RAG pipeline, and tool toggles.",
+  "$meta_schema": "../templates/consistency_fields_meta.json — the same metadata property definitions apply here.",
+
+  "sections": {
+    "providers": {
+      "description": "Registry of AI provider connections. Each key is a provider name (e.g. 'openai', 'anthropic') mapping to its connection config and available models.",
+      "visibility": "developer",
+      "mutability": "config",
+      "affects": ["ai_pipeline", "performance"],
+      "serialized": false,
+      "stability": "stable",
+      "overridable_per": "no",
+      "notes": "Adding a provider here doesn't activate it — roles must also be pointed at it. Multiple providers can be enabled simultaneously; the role mapping decides which one is actually used for each task.",
+      "item_schema": {
+        "enabled": {
+          "type": "boolean",
+          "required": true,
+          "description": "Whether this provider is available for use. When false, roles pointing at this provider will fail at runtime.",
+          "visibility": "developer",
+          "mutability": "config",
+          "affects": ["ai_pipeline"],
+          "serialized": false,
+          "stability": "stable",
+          "overridable_per": "no",
+          "notes": "Acts as a kill switch. Set to false to disable a provider without removing its config. Roles that reference a disabled provider will error — check role mappings before disabling."
+        },
+        "api_key_env": {
+          "type": "string",
+          "required": true,
+          "description": "Name of the environment variable that holds the API key for this provider. The key itself is never stored in config.",
+          "visibility": "developer",
+          "mutability": "config",
+          "affects": ["ai_pipeline"],
+          "serialized": false,
+          "stability": "stable",
+          "overridable_per": "no",
+          "notes": "The env var must be set in .env (local) or the deployment environment. If missing, all calls to this provider will fail with an auth error."
+        },
+        "models": {
+          "type": "object",
+          "required": true,
+          "description": "Map of model identifiers to their per-model config. Keys are the exact model IDs the provider's API expects (e.g. 'gpt-4o-mini', 'claude-3-haiku-20240307').",
+          "visibility": "developer",
+          "mutability": "config",
+          "affects": ["ai_pipeline", "performance"],
+          "serialized": false,
+          "stability": "stable",
+          "overridable_per": "no",
+          "notes": "Model IDs must match the provider's API exactly. Adding a model here doesn't use it — a role must reference it.",
+          "item_schema": {
+            "max_tokens": {
+              "type": "integer",
+              "required": true,
+              "description": "Maximum number of tokens the model can produce in a single response. Passed as the max_tokens parameter to the provider API.",
+              "visibility": "developer",
+              "mutability": "config",
+              "affects": ["ai_pipeline", "performance"],
+              "serialized": false,
+              "stability": "stable",
+              "overridable_per": "no",
+              "notes": "Set to the model's actual limit or lower if you want to cap output length for cost control. Too low → truncated responses. Too high → unnecessary cost on models that bill per output token."
+            },
+            "temperature": {
+              "type": "number",
+              "required": true,
+              "description": "Sampling temperature (0–2). Lower = more deterministic, higher = more creative/random. Passed directly to the provider API.",
+              "visibility": "developer",
+              "mutability": "config",
+              "affects": ["ai_pipeline"],
+              "serialized": false,
+              "stability": "stable",
+              "overridable_per": "no",
+              "notes": "0.7 is a reasonable default for creative-adjacent tasks (extraction, probing). Lower (0.2–0.3) for classification/verdict tasks. Higher (0.9+) for brainstorming. Individual engine passes do NOT override this — the config value is used globally per model."
+            },
+            "timeout": {
+              "type": "integer",
+              "required": true,
+              "description": "Maximum seconds to wait for a response from the provider before aborting the call.",
+              "visibility": "developer",
+              "mutability": "config",
+              "affects": ["performance"],
+              "serialized": false,
+              "stability": "stable",
+              "overridable_per": "no",
+              "notes": "Set relative to expected response time. Smaller/faster models (mini, haiku) can use shorter timeouts (60s). Larger models (gpt-4o, sonnet) need more headroom (120s+). Too short → false timeout errors on complex prompts."
+            },
+            "cost_per_1k": {
+              "type": "number",
+              "required": true,
+              "description": "Approximate cost per 1,000 tokens (combined input+output estimate) in USD. Used for the usage panel's cost estimate — not for billing.",
+              "visibility": "user",
+              "mutability": "config",
+              "affects": ["ui_display"],
+              "serialized": false,
+              "stability": "stable",
+              "overridable_per": "no",
+              "notes": "Cosmetic only — shown in the usage panel so writers can see approximate cost. Not used for actual billing or rate limiting. Update when provider pricing changes."
+            }
+          }
+        }
+      }
+    },
+
+    "roles": {
+      "description": "Maps abstract role names to concrete provider + model pairs. All engine code requests a role, never a specific model — this indirection allows swapping models without touching code.",
+      "visibility": "developer",
+      "mutability": "config",
+      "affects": ["ai_pipeline", "performance"],
+      "serialized": false,
+      "stability": "stable",
+      "overridable_per": "no",
+      "notes": "The consistency engine's tunables.roles reference these role names. Changing a role's model here changes every engine pass that uses that role. During development/testing, all roles can point at the cheapest model (e.g. gpt-4o-mini) to save costs.",
+      "item_schema": {
+        "provider": {
+          "type": "string",
+          "required": true,
+          "description": "Which provider to use for this role. Must match a key in the top-level 'providers' section.",
+          "visibility": "developer",
+          "mutability": "config",
+          "affects": ["ai_pipeline"],
+          "serialized": false,
+          "stability": "stable",
+          "overridable_per": "no",
+          "notes": "The referenced provider must have enabled=true. Pointing a role at a disabled provider will cause runtime errors."
+        },
+        "model": {
+          "type": "string",
+          "required": true,
+          "description": "Which model to use for this role. Must match a key in the referenced provider's 'models' section.",
+          "visibility": "developer",
+          "mutability": "config",
+          "affects": ["ai_pipeline", "performance"],
+          "serialized": false,
+          "stability": "stable",
+          "overridable_per": "no",
+          "notes": "This is where you control the quality/cost tradeoff. 'small' role → cheap fast model. 'expert' role → capable expensive model. During testing all three can point at the same cheap model."
+        },
+        "use_case": {
+          "type": "string",
+          "required": true,
+          "description": "Human-readable description of what this role is used for. Documentation only — not consumed by code.",
+          "visibility": "developer",
+          "mutability": "config",
+          "affects": [],
+          "serialized": false,
+          "stability": "stable",
+          "overridable_per": "no",
+          "notes": "Purely informational. Helps developers understand the intent behind each role when choosing which model to assign."
+        }
+      },
+      "known_roles": {
+        "small": {
+          "description": "Fast, cheap model for classification, compression, and simple verdicts.",
+          "typical_model": "gpt-4o-mini or claude-3-haiku",
+          "used_by": ["consistency engine extract/scopes/probe/coverage/dependency passes", "RAG reranker"]
+        },
+        "draft": {
+          "description": "General-purpose drafting and continuation.",
+          "typical_model": "gpt-4o-mini or claude-3-5-sonnet",
+          "used_by": ["scene drafting", "braindump expansion", "general AI generation"]
+        },
+        "expert": {
+          "description": "Deep critique, complex reasoning, outline alignment.",
+          "typical_model": "gpt-4o or claude-3-5-sonnet",
+          "used_by": ["consistency engine outline pass (when upgraded)", "complex multi-step reasoning tasks"]
+        }
+      }
+    },
+
+    "rag": {
+      "description": "Configuration for the hybrid RAG (Retrieval-Augmented Generation) pipeline. Controls chunking, retrieval, fusion, and reranking.",
+      "visibility": "developer",
+      "mutability": "config",
+      "affects": ["ai_pipeline", "performance"],
+      "serialized": false,
+      "stability": "stable",
+      "overridable_per": "no",
+      "notes": "The RAG pipeline uses pgvector cosine similarity + in-process Okapi BM25, fused via hybrid_alpha, then optional LLM listwise reranking. These parameters control every stage.",
+      "fields": {
+        "chunk_size": {
+          "type": "integer",
+          "required": true,
+          "description": "Target size (in characters) for each text chunk when splitting documents for embedding and retrieval.",
+          "default": 800,
+          "visibility": "developer",
+          "mutability": "config",
+          "affects": ["ai_pipeline", "performance"],
+          "serialized": false,
+          "stability": "stable",
+          "overridable_per": "no",
+          "notes": "Smaller chunks → more precise retrieval but more embedding calls and potentially fragmented context. Larger chunks → fewer embeddings but may dilute relevance. 800 chars ≈ 200 tokens, a reasonable granularity for scene-level prose."
+        },
+        "chunk_overlap": {
+          "type": "integer",
+          "required": true,
+          "description": "Number of characters of overlap between consecutive chunks. Prevents information at chunk boundaries from being lost.",
+          "default": 120,
+          "visibility": "developer",
+          "mutability": "config",
+          "affects": ["ai_pipeline"],
+          "serialized": false,
+          "stability": "stable",
+          "overridable_per": "no",
+          "notes": "Should be a fraction of chunk_size (typically 10–20%). Too low → boundary information lost. Too high → redundant storage and retrieval."
+        },
+        "max_context_tokens": {
+          "type": "integer",
+          "required": true,
+          "description": "Maximum total tokens of retrieved context to include in the prompt sent to the LLM. Caps how much retrieved material is injected.",
+          "default": 8000,
+          "visibility": "developer",
+          "mutability": "config",
+          "affects": ["ai_pipeline", "performance"],
+          "serialized": false,
+          "stability": "stable",
+          "overridable_per": "no",
+          "notes": "Must leave headroom for the system prompt + user query + expected response within the model's context window. Too high → prompt exceeds model limit or crowds out reasoning space. Too low → relevant context gets truncated."
+        },
+        "embedding_model": {
+          "type": "string",
+          "required": true,
+          "description": "The embedding model used to vectorize text chunks for pgvector storage and similarity search.",
+          "default": "text-embedding-3-small",
+          "visibility": "developer",
+          "mutability": "config",
+          "affects": ["ai_pipeline", "performance"],
+          "serialized": false,
+          "stability": "stable",
+          "overridable_per": "no",
+          "notes": "Changing the embedding model INVALIDATES all existing vectors in the database — they were computed with the old model's geometry. After changing, you must re-embed all documents. 'text-embedding-3-small' is OpenAI's cheapest embedding model with good quality."
+        },
+        "top_k": {
+          "type": "integer",
+          "required": true,
+          "description": "Number of top candidate chunks to retrieve from the hybrid search before reranking.",
+          "default": 10,
+          "visibility": "developer",
+          "mutability": "config",
+          "affects": ["ai_pipeline", "performance"],
+          "serialized": false,
+          "stability": "stable",
+          "overridable_per": "no",
+          "notes": "This is the retrieval pool size, not the final context size (which is capped by max_context_tokens). Higher top_k → more candidates for reranking → better recall but slower. Lower → faster but may miss relevant chunks."
+        },
+        "hybrid_alpha": {
+          "type": "number",
+          "required": true,
+          "description": "Fusion weight between BM25 (keyword) and vector (semantic) search. 0 = pure BM25, 1 = pure vector, 0.5 = equal blend.",
+          "default": 0.5,
+          "visibility": "developer",
+          "mutability": "config",
+          "affects": ["ai_pipeline"],
+          "serialized": false,
+          "stability": "stable",
+          "overridable_per": "no",
+          "notes": "0.5 is a balanced default. Lean toward BM25 (lower) when exact keyword matching matters (e.g. character names, place names). Lean toward vector (higher) when semantic similarity matters more (e.g. thematic queries). The reranker (if enabled) can compensate for imperfect alpha tuning."
+        },
+        "rerank": {
+          "type": "object",
+          "required": true,
+          "description": "Configuration for the optional LLM listwise reranking step that runs after hybrid fusion.",
+          "visibility": "developer",
+          "mutability": "config",
+          "affects": ["ai_pipeline", "performance"],
+          "serialized": false,
+          "stability": "stable",
+          "overridable_per": "no",
+          "notes": "Reranking adds one LLM call per retrieval but significantly improves relevance ordering. Config-gated — disable for cost savings during development.",
+          "fields": {
+            "enabled": {
+              "type": "boolean",
+              "required": true,
+              "description": "Whether LLM reranking runs after hybrid fusion. When false, the fusion order is used directly.",
+              "default": true,
+              "visibility": "developer",
+              "mutability": "config",
+              "affects": ["ai_pipeline", "performance"],
+              "serialized": false,
+              "stability": "stable",
+              "overridable_per": "no",
+              "notes": "Disabling saves one LLM call per retrieval but degrades relevance. Good to disable during local dev/testing for speed. Keep enabled in production."
+            },
+            "role": {
+              "type": "string",
+              "required": true,
+              "description": "Which LLM role to use for the reranking call. References a key in the top-level 'roles' section.",
+              "default": "small",
+              "visibility": "developer",
+              "mutability": "config",
+              "affects": ["ai_pipeline", "performance"],
+              "serialized": false,
+              "stability": "stable",
+              "overridable_per": "no",
+              "notes": "Reranking is a simple comparison task — 'small' is usually sufficient. Using 'expert' would improve quality marginally but at much higher cost per retrieval."
+            },
+            "max_candidates": {
+              "type": "integer",
+              "required": true,
+              "description": "Maximum number of candidate chunks sent to the reranker LLM. Caps token usage for the reranking prompt.",
+              "default": 20,
+              "visibility": "developer",
+              "mutability": "config",
+              "affects": ["ai_pipeline", "performance"],
+              "serialized": false,
+              "stability": "stable",
+              "overridable_per": "no",
+              "notes": "Must be >= top_k to avoid discarding candidates before reranking. If top_k=10 and max_candidates=20, the reranker sees up to 20 chunks from the union of BM25 and vector results before fusion truncates to top_k."
+            }
+          }
+        }
+      }
+    },
+
+    "tools": {
+      "description": "Toggle and configuration for agent tools — specialised capabilities the AI can invoke during generation or analysis. Each key is a tool name.",
+      "visibility": "developer",
+      "mutability": "config",
+      "affects": ["ai_pipeline"],
+      "serialized": false,
+      "stability": "stable",
+      "overridable_per": "no",
+      "notes": "Tools are opt-in capabilities the LLM agent can call. Disabling a tool here removes it from the agent's available tool set — the agent won't know about it.",
+      "known_tools": {
+        "style_meter": {
+          "description": "Analyses prose style (readability, sentence variety, voice consistency).",
+          "fields": {
+            "enabled": {
+              "type": "boolean",
+              "required": true,
+              "description": "Whether the style meter tool is available to agents.",
+              "visibility": "developer",
+              "mutability": "config",
+              "affects": ["ai_pipeline"],
+              "serialized": false,
+              "stability": "stable"
+            },
+            "timeout": {
+              "type": "integer",
+              "required": true,
+              "description": "Maximum seconds for a style meter invocation before it aborts.",
+              "default": 5,
+              "visibility": "developer",
+              "mutability": "config",
+              "affects": ["performance"],
+              "serialized": false,
+              "stability": "stable"
+            }
+          }
+        },
+        "constraints_tool": {
+          "description": "Checks prose or outline against declared story constraints / world rules.",
+          "fields": {
+            "enabled": {
+              "type": "boolean",
+              "required": true,
+              "description": "Whether the constraints tool is available to agents.",
+              "visibility": "developer",
+              "mutability": "config",
+              "affects": ["ai_pipeline"],
+              "serialized": false,
+              "stability": "stable"
+            },
+            "timeout": {
+              "type": "integer",
+              "required": true,
+              "description": "Maximum seconds for a constraints check before it aborts.",
+              "default": 10,
+              "visibility": "developer",
+              "mutability": "config",
+              "affects": ["performance"],
+              "serialized": false,
+              "stability": "stable"
+            }
+          }
+        },
+        "timeline_tool": {
+          "description": "Validates or generates timeline / chronology information for events in the story.",
+          "fields": {
+            "enabled": {
+              "type": "boolean",
+              "required": true,
+              "description": "Whether the timeline tool is available to agents.",
+              "visibility": "developer",
+              "mutability": "config",
+              "affects": ["ai_pipeline"],
+              "serialized": false,
+              "stability": "stable"
+            },
+            "timeout": {
+              "type": "integer",
+              "required": true,
+              "description": "Maximum seconds for a timeline invocation before it aborts.",
+              "default": 5,
+              "visibility": "developer",
+              "mutability": "config",
+              "affects": ["performance"],
+              "serialized": false,
+              "stability": "stable"
+            }
+          }
+        },
+        "quote_tool": {
+          "description": "Retrieves exact quotes from the manuscript to support analysis or generation.",
+          "fields": {
+            "enabled": {
+              "type": "boolean",
+              "required": true,
+              "description": "Whether the quote tool is available to agents.",
+              "visibility": "developer",
+              "mutability": "config",
+              "affects": ["ai_pipeline"],
+              "serialized": false,
+              "stability": "stable"
+            },
+            "max_quotes": {
+              "type": "integer",
+              "required": true,
+              "description": "Maximum number of quotes the tool can return in a single invocation.",
+              "default": 5,
+              "visibility": "developer",
+              "mutability": "config",
+              "affects": ["ai_pipeline", "performance"],
+              "serialized": false,
+              "stability": "stable",
+              "overridable_per": "no",
+              "notes": "Higher → more evidence per call but more tokens consumed in the agent's context. Lower → fewer examples but faster and cheaper."
+            }
+          }
+        },
+        "search_tool": {
+          "description": "Searches the project's indexed content (RAG-backed) to find relevant passages.",
+          "fields": {
+            "enabled": {
+              "type": "boolean",
+              "required": true,
+              "description": "Whether the search tool is available to agents.",
+              "visibility": "developer",
+              "mutability": "config",
+              "affects": ["ai_pipeline"],
+              "serialized": false,
+              "stability": "stable"
+            },
+            "timeout": {
+              "type": "integer",
+              "required": true,
+              "description": "Maximum seconds for a search invocation before it aborts.",
+              "default": 10,
+              "visibility": "developer",
+              "mutability": "config",
+              "affects": ["performance"],
+              "serialized": false,
+              "stability": "stable"
+            }
+          }
+        }
+      },
+      "common_tool_fields": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Present on every tool. Acts as a kill switch — false removes the tool from the agent's available set entirely.",
+          "visibility": "developer",
+          "mutability": "config",
+          "affects": ["ai_pipeline"],
+          "serialized": false,
+          "stability": "stable",
+          "notes": "Disabling a tool the agent was relying on may degrade output quality (the agent can't use the capability) but won't cause errors — the agent simply won't see the tool."
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Present on most tools. Maximum seconds before the tool invocation is aborted. Prevents a hung tool from blocking the entire agent run.",
+          "visibility": "developer",
+          "mutability": "config",
+          "affects": ["performance"],
+          "serialized": false,
+          "stability": "stable",
+          "notes": "Set relative to expected execution time. Tools that hit external APIs (search) need more headroom than local-compute tools (style_meter)."
+        }
+      }
+    }
+  }
+}

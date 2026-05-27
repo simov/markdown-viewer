@@ -16,7 +16,13 @@ importScripts('/background/xhr.js')
 importScripts('/background/icon.js')
 
 ;(() => {
+  console.log('[mdv] SW boot — md.compilers keys =', Object.keys(md.compilers || {}))
+
   var storage = md.storage(md)
+  console.log('[mdv] storage created — state.compiler =', storage.state.compiler,
+              'has [markdown-it] options? =', !!storage.state['markdown-it'],
+              'origins? =', !!storage.state.origins)
+
   var inject = md.inject({storage})
   var detect = md.detect({storage, inject})
   var webrequest = md.webrequest({storage})
@@ -29,6 +35,8 @@ importScripts('/background/icon.js')
       all[compiler] = md.compilers[compiler]({storage}),
       all
     ), {})
+  console.log('[mdv] instantiated compilers keys =', Object.keys(compilers),
+              '— [markdown-it].description type =', typeof (compilers['markdown-it'] && compilers['markdown-it'].description))
 
   var messages = md.messages({storage, compilers, mathjax, xhr, webrequest, icon})
 
@@ -36,4 +44,5 @@ importScripts('/background/icon.js')
   chrome.runtime.onMessage.addListener(messages)
 
   icon()
+  console.log('[mdv] SW ready')
 })()

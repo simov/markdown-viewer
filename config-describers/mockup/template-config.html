@@ -1,0 +1,944 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>configurum · consistency.yml side-by-side</title>
+<style>
+  :root {
+    --bg:        #0d1117;
+    --surface:   #161b22;
+    --surface-2: #1c232c;
+    --border:    #2a313c;
+    --border-2:  #3a424f;
+    --text:      #e6edf3;
+    --text-2:    #9aa6b2;
+    --text-3:    #6b7682;
+
+    --accent-name:  #ffffff;
+    --accent-value: #7dd3fc;
+    --accent-warn:  #fcd34d;
+
+    --vis-user:      #fbbf24;
+    --vis-developer: #60a5fa;
+    --vis-system:    #94a3b8;
+
+    --mut-config:    #34d399;
+    --mut-immutable: #f87171;
+
+    --aff-ai_pipeline:        #a78bfa;
+    --aff-ui_display:         #f472b6;
+    --aff-data_model:         #fb923c;
+    --aff-performance:        #fde047;
+    --aff-outline_generation: #38bdf8;
+
+    --stab-stable:       #34d399;
+    --stab-experimental: #fbbf24;
+
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.5 var(--sans); -webkit-font-smoothing: antialiased; }
+  code, pre { font-family: var(--mono); margin: 0; }
+
+  /* ─── topbar ─────────────────────────────────────────────────── */
+  .topbar {
+    position: sticky; top: 0; z-index: 10;
+    padding: 12px 24px;
+    background: rgba(13,17,23,0.85);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .topbar__brand { font-weight: 600; }
+  .topbar__brand .sub { color: var(--text-3); font-weight: 400; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; margin-left: 6px; }
+  .topbar__nav a { color: var(--text-2); text-decoration: none; font-size: 12px; margin-left: 16px; }
+  .topbar__nav a:hover { color: var(--text); }
+
+  main { max-width: 1400px; margin: 0 auto; padding: 28px 24px 80px; }
+
+  /* ─── intro ──────────────────────────────────────────────────── */
+  .intro h1 { font-size: 22px; font-weight: 600; margin: 0 0 6px; letter-spacing: -0.01em; }
+  .intro p  { color: var(--text-2); margin: 0 0 8px; max-width: 760px; }
+  .intro .file-name { color: var(--accent-value); font-family: var(--mono); }
+
+  .legend-bar {
+    margin: 18px 0 28px;
+    padding: 12px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    display: flex; flex-wrap: wrap; gap: 14px; align-items: center;
+    font-size: 11px; color: var(--text-2);
+  }
+  .legend-bar__label {
+    font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--text-3); font-size: 10px;
+    margin-right: 4px;
+  }
+  .legend-bar .chip { background: rgba(255,255,255,0.03); }
+
+  /* ─── section ────────────────────────────────────────────────── */
+  .section { margin-top: 48px; }
+  .section__head {
+    display: flex; align-items: baseline; gap: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-2);
+    margin-bottom: 18px;
+  }
+  .section__num {
+    font-family: var(--mono); color: var(--text-3); font-size: 13px;
+  }
+  .section__title {
+    font-size: 18px; font-weight: 600; margin: 0; letter-spacing: -0.01em;
+  }
+  .section__sub {
+    color: var(--text-3); font-size: 13px; margin-left: auto;
+    font-family: var(--mono);
+  }
+  .section__desc {
+    color: var(--text-2); margin: 0 0 16px; max-width: 880px;
+  }
+
+  /* ─── split layout ───────────────────────────────────────────── */
+  .split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: 18px;
+    margin-bottom: 24px;
+  }
+  .split__col {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .split__col-head {
+    padding: 8px 14px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
+    font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--text-3);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .split__col-head .lhs::before { content: "← "; color: var(--text-3); }
+  .split__col-head .rhs::after { content: " →"; color: var(--text-3); }
+
+  /* yaml pane */
+  .yaml {
+    padding: 14px 16px 16px;
+    font-family: var(--mono); font-size: 12.5px;
+    line-height: 1.7;
+    color: var(--text);
+    white-space: pre;
+    overflow-x: auto;
+  }
+  .yaml .yk     { color: #e879f9; }                /* key */
+  .yaml .ys     { color: var(--accent-value); }    /* scalar/string value */
+  .yaml .yn     { color: #fbbf24; }                /* number/bool */
+  .yaml .yc     { color: var(--text-3); font-style: italic; }  /* comment */
+  .yaml .yp     { color: var(--text-3); }          /* punctuation */
+  .yaml .yhi    { background: rgba(125, 211, 252, 0.07); border-radius: 3px; padding: 1px 4px; margin: 0 -4px; }
+
+  /* render pane */
+  .renders { padding: 8px; }
+
+  /* ─── compact row ─────────────────────────────────────────────── */
+  .row {
+    display: flex; align-items: center; flex-wrap: wrap;
+    gap: 10px;
+    padding: 8px 10px;
+    margin: 4px 0;
+    border-radius: 5px;
+    font-family: var(--mono); font-size: 12.5px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+  }
+  .row:hover { border-color: var(--border-2); }
+  .row__name { color: var(--text); flex-shrink: 0; }
+  .row__name .dim { color: var(--text-3); }
+  .row__eq   { color: var(--text-3); }
+  .row__value {
+    color: var(--accent-value);
+    font-weight: 500;
+    flex: 1;
+    min-width: 0;
+    word-break: break-word;
+  }
+  .row__value--array {
+    display: inline-flex; flex-wrap: wrap; gap: 4px;
+  }
+  .row__value .v-chip {
+    display: inline-block;
+    padding: 1px 6px;
+    background: rgba(125, 211, 252, 0.08);
+    border: 1px solid color-mix(in srgb, var(--accent-value) 25%, var(--border-2));
+    border-radius: 3px;
+    color: var(--accent-value);
+    font-size: 11px;
+  }
+  .row__meta {
+    display: inline-flex; gap: 4px; align-items: center; flex-wrap: wrap;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  /* meta chips (compact) */
+  .chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-family: var(--mono); font-size: 10.5px;
+    padding: 1px 7px;
+    border-radius: 3px;
+    border: 1px solid var(--border-2);
+    background: rgba(255,255,255,0.025);
+    color: var(--text-2);
+    line-height: 1.5;
+    white-space: nowrap;
+  }
+  .chip::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+  .chip[data-aff="ai_pipeline"]        { color: var(--aff-ai_pipeline); }
+  .chip[data-aff="ui_display"]         { color: var(--aff-ui_display); }
+  .chip[data-aff="data_model"]         { color: var(--aff-data_model); }
+  .chip[data-aff="performance"]        { color: var(--aff-performance); }
+  .chip[data-aff="outline_generation"] { color: var(--aff-outline_generation); }
+  .chip[data-vis="developer"]          { color: var(--vis-developer); }
+  .chip[data-vis="user"]               { color: var(--vis-user); }
+  .chip[data-vis="system"]             { color: var(--vis-system); }
+  .chip[data-mut="config"]             { color: var(--mut-config); }
+  .chip[data-mut="immutable"]          { color: var(--mut-immutable); }
+  .chip[data-stab="experimental"]      { color: var(--stab-experimental); }
+  .chip[data-stab="stable"]            { color: var(--stab-stable); }
+  .chip[data-over="per_lens"]          { color: #c084fc; border-style: dashed; }
+  .chip[data-ser="true"]               { color: var(--mut-immutable); }
+  .chip--warn {
+    color: var(--accent-warn);
+    border-color: color-mix(in srgb, var(--accent-warn) 35%, var(--border-2));
+    background: rgba(252, 211, 77, 0.06);
+  }
+  .chip--warn::before { display: none; }
+
+  /* group label inside renders (e.g. "tunables.roles fields") */
+  .group {
+    margin: 12px 0 4px;
+    padding: 4px 8px;
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-3);
+  }
+  .group--first { margin-top: 4px; }
+
+  /* nested chart rows — indented under template */
+  .row--child {
+    margin-left: 22px;
+    border-left: 2px solid var(--border-2);
+    border-radius: 0 5px 5px 0;
+    background: rgba(255,255,255,0.015);
+  }
+  .row--child-head {
+    margin-left: 22px;
+    padding: 8px 10px 4px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-left: 2px solid var(--border-2);
+    padding-left: 12px;
+    margin-top: 8px;
+  }
+
+  /* divider between renders inside one pane */
+  .render-divider {
+    margin: 14px 4px;
+    border: 0; border-top: 1px dashed var(--border);
+  }
+
+  /* pattern badge (only when matched) */
+  .pattern {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 2px 8px;
+    font-size: 10.5px;
+    border-radius: 3px;
+    color: var(--accent-warn);
+    background: rgba(252, 211, 77, 0.08);
+    border: 1px solid color-mix(in srgb, var(--accent-warn) 30%, var(--border-2));
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar__brand">
+    configurum <span class="sub">consistency.yml · side-by-side</span>
+  </div>
+  <nav class="topbar__nav">
+    <a href="./layouts.html">layout gallery</a>
+    <a href="./index.html">card mockup</a>
+  </nav>
+</header>
+
+<main>
+
+  <section class="intro">
+    <h1>The actual yaml, next to its rendered fields</h1>
+    <p>
+      Left column = the raw <span class="file-name">consistency.yml</span> as written.
+      Right column = the same lines rendered by the library, with metadata pulled from
+      <span class="file-name">consistency_fields.json</span> attached as small chips.
+      Two sections: <strong>BASE</strong> (tunables, element_branches, bit_kinds, scaffold)
+      and <strong>CHARTS</strong> (one template with its inner chart definitions).
+    </p>
+  </section>
+
+  <!-- ─── legend bar ─────────────────────────────────────────────── -->
+  <div class="legend-bar">
+    <span class="legend-bar__label">chip key</span>
+    <span class="chip" data-vis="developer">developer</span>
+    <span class="chip" data-vis="user">user</span>
+    <span class="chip" data-vis="system">system</span>
+    <span class="chip" data-mut="config">config</span>
+    <span class="chip" data-mut="immutable">immutable</span>
+    <span class="chip" data-aff="ai_pipeline">ai_pipeline</span>
+    <span class="chip" data-aff="ui_display">ui_display</span>
+    <span class="chip" data-aff="data_model">data_model</span>
+    <span class="chip" data-aff="performance">performance</span>
+    <span class="chip" data-aff="outline_generation">outline_generation</span>
+    <span class="chip" data-stab="experimental">experimental</span>
+    <span class="chip" data-over="per_lens">per_lens</span>
+    <span class="chip" data-ser="true">persisted</span>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SECTION 1 — BASE
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="section__head">
+      <span class="section__num">§1</span>
+      <h2 class="section__title">Base</h2>
+      <span class="section__sub">tunables · element_branches · bit_kinds · scaffold</span>
+    </div>
+    <p class="section__desc">
+      The top-level engine knobs and type registry. Most fields are <em>developer</em>-tuned (engine behaviour),
+      except <code style="color: var(--vis-user); font-family: var(--mono);">scaffold</code> beat labels and
+      <code style="color: var(--vis-user); font-family: var(--mono);">snap.min_confidence</code>, which surface to the writer.
+    </p>
+
+    <!-- ─── 1a · tunables.roles ─────────────────────────────────── -->
+    <div class="split">
+      <div class="split__col">
+        <div class="split__col-head"><span class="lhs">consistency.yml</span><span>tunables.roles</span></div>
+<pre class="yaml"><span class="yk">tunables</span><span class="yp">:</span>
+  <span class="yc"># which LLM role each pass uses</span>
+  <span class="yk">roles</span><span class="yp">:</span>
+    <span class="yk">extract</span><span class="yp">:</span>    <span class="ys">small</span>
+    <span class="yk">scopes</span><span class="yp">:</span>     <span class="ys">small</span>
+    <span class="yhi"><span class="yk">outline</span><span class="yp">:</span>    <span class="ys">small</span></span>
+    <span class="yk">probe</span><span class="yp">:</span>      <span class="ys">small</span>
+    <span class="yk">coverage</span><span class="yp">:</span>   <span class="ys">small</span>
+    <span class="yk">dependency</span><span class="yp">:</span> <span class="ys">small</span></pre>
+      </div>
+      <div class="split__col">
+        <div class="split__col-head"><span>rendered fields</span><span class="rhs">6 leaves</span></div>
+        <div class="renders">
+          <div class="row">
+            <span class="row__name"><span class="dim">tunables.roles.</span>extract</span>
+            <span class="row__eq">=</span>
+            <span class="row__value">"small"</span>
+            <span class="row__meta">
+              <span class="chip" data-vis="developer">dev</span>
+              <span class="chip" data-mut="config">config</span>
+              <span class="chip" data-aff="ai_pipeline">ai_pipeline</span>
+            </span>
+          </div>
+          <div class="row">
+            <span class="row__name"><span class="dim">tunables.roles.</span>scopes</span>
+            <span class="row__eq">=</span>
+            <span class="row__value">"small"</span>
+            <span class="row__meta">
+              <span class="chip" data-vis="developer">dev</span>
+              <span class="chip" data-mut="config">config</span>
+              <span class="chip" data-aff="ai_pipeline">ai_pipeline</span>
+            </span>
+          </div>
+          <div class="row" style="background: rgba(125, 211, 252, 0.04); border-color: color-mix(in srgb, var(--accent-value) 20%, var(--border-2));">
+            <span class="row__name"><span class="dim">tunables.roles.</span>outline</span>
+            <span class="row__eq">=</span>
+            <span class="row__value">"small"</span>
+            <span class="row__meta">
+              <span class="chip" data-vis="developer">dev</span>
+              <span class="chip" data-mut="config">config</span>
+              <span class="chip" data-aff="ai_pipeline">ai_pipeline</span>
+              <span class="chip" data-aff="outline_generation">outline_generation</span>
+            </span>
+          </div>
+          <div class="row">
+            <span class="row__name"><span class="dim">tunables.roles.</span>probe</span>
+            <span class="row__eq">=</span>
+            <span class="row__value">"small"</span>
+            <span class="row__meta">
+              <span class="chip" data-vis="developer">dev</span>
+              <span class="chip" data-mut="config">config</span>
+              <span class="chip" data-aff="ai_pipeline">ai_pipeline</span>
+            </span>
+          </div>
+          <div class="row">
+            <span class="row__name"><span class="dim">tunables.roles.</span>coverage</span>
+            <span class="row__eq">=</span>
+            <span class="row__value">"small"</span>
+            <span class="row__meta">
+              <span class="chip" data-vis="developer">dev</span>
+              <span class="chip" data-mut="config">config</span>
+              <span class="chip" data-aff="ai_pipeline">ai_pipeline</span>
+            </span>
+          </div>
+          <div class="row">
+            <span class="row__name"><span class="dim">tunables.roles.</span>dependency</span>
+            <span class="row__eq">=</span>
+            <span class="row__value">"small"</span>
+            <span class="row__meta">
+              <span class="chip" data-vis="developer">dev</span>
+              <span class="chip" data-mut="config">config</span>
+              <span class="chip" data-aff="ai_pipeline">ai_pipeline</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── 1b · tunables scalars ───────────────────────────────── -->
+    <div class="split">
+      <div class="split__col">
+        <div class="split__col-head"><span class="lhs">consistency.yml</span><span>tunables scalars</span></div>
+<pre class="yaml">  <span class="yk">rule_min_confidence</span><span class="yp">:</span>   <span class="yn">0.8</span>      <span class="yc"># rule bits below this → silently dropped</span>
+  <span class="yk">scope_min_occurrences</span><span class="yp">:</span> <span class="yn">2</span>        <span class="yc"># entity must recur this often to be a scope</span>
+  <span class="yk">chars_per_token</span><span class="yp">:</span>       <span class="yn">4</span>        <span class="yc"># ~tok estimate for the usage panel</span>
+  <span class="yhi"><span class="yk">batch_scene_probes</span><span class="yp">:</span>    <span class="yn">false</span>    <span class="yc"># flip on when batching lands</span></span></pre>
+      </div>
+      <div class="split__col">
+        <div class="split__col-head"><span>rendered fields</span><span class="rhs">4 leaves</span></div>
+        <div class="renders">
+          <div class="row">
+            <span class="row__name"><span class="dim">tunables.</span>rule_min_confidence</span>
+            <span class="row__eq">=</span>
+            <span class="row__value">0.8</span>
+            <span class="row__meta">
+              <span class="chip" data-vis="system">system</span>
+              <span class="chip" data-mut="config">config</span>
+              <span class="chip" data-aff="data_model">data_model</span>
+            </span>
+          </div>
+          <div class="row">
+            <span class="row__name"><span class="dim">tunables.</span>scope_min_occurrences</span>
+            <span class="row__eq">=</span>
+            <span class="row__value">2</span>
+            <span class="row__meta">
+              <span class="chip" data-vis="system">system</span>
+              <span class="chip" data-mut="config">config</span>
+              <span class="chip" data-aff="data_model">data_model</span>
+            </span>
+          </div>
+          <div class="row">
+            <span class="row__name"><span class="dim">tunables.</span>chars_per_token</span>
+            <span class="row__eq">=</span>
+            <span class="row__value">4</span>
+            <span class="row__meta">
+              <span class="chip" data-vis="user">user</span>
+              <span class="chip" data-mut="config">config</span>
+              <span class="chip" data-aff="ui_display">ui_display</span>
+            </span>
+          </div>
+          <div class="row" style="background: rgba(251, 191, 36, 0.04); border-color: color-mix(in srgb, var(--stab-experimental) 25%, var(--border-2));">
+            <span class="row__name"><span class="dim">tunables.</span>batch_scene_probes</span>
+            <span class="row__eq">=</span>
+            <span class="row__value">false</span>
+            <span class="row__meta">
+              <span class="chip" data-vis="developer">dev</span>
+              <span class="chip" data-mut="config">config</span>
+              <span class="chip" data-aff="performance">performance</span>
+              <span class="chip" data-stab="experimental">experimental</span>
+              <span class="chip chip--warn">⚗ feature-gated</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── 1c · tunables.snap ──────────────────────────────────── -->
+    <div class="split">
+      <div class="split__col">
+        <div class="split__col-head"><span class="lhs">consistency.yml</span><span>tunables.snap</span></div>
+<pre class="yaml">  <span class="yk">snap</span><span class="yp">:</span>
+    <span class="yk">leaf_weight</span><span class="yp">:</span>      <span class="yn">2.0</span>
+    <span class="yk">path_weight</span><span class="yp">:</span>      <span class="yn">1.0</span>
+    <span class="yk">kind_prior_bonus</span><span class="yp">:</span> <span class="yn">1.5</span>
+    <span class="yhi"><span class="yk">min_confidence</span><span class="yp">:</span>   <span class="yn">0.2</span></span>      <span class="yc"># below this → dangling (UI flags for writer)</span></pre>
+      </div>
+      <div class="split__col">
+        <div class="split__col-head"><span>rendered fields</span><span class="rhs">4 leaves</span></div>
+        <div class="renders">
+          <div class="row">
+            <span class="row__name"><span class="dim">tunables.snap.</span>leaf_weight</span>
+            <span class="row__eq">=</span>
+            <span class="row__value">2.0</span>
+            <span class="row__meta">
+              <span class="chip" data-vis="system">system</span>
+              <span class="chip" data-mut="config">config</span>
+              <span class="chip" data-aff="data_model">data_model</span>
+            </span>
+          </div>
+          <div class="row">
+            <span class="row__name"><span class="dim">tunables.snap.</span>path_weight</span>
+            <span class="row__eq">=</span>
+            <span class="row__value">1.0</span>
+            <span class="row__meta">
+              <span class="chip" data-vis="system">system</span>
+              <span class="chip" data-mut="config">config</span>
+              <span class="chip" data-aff="data_model">data_model</span>
+            </span>
+          </div>
+          <div class="row">
+            <span class="row__name"><span class="dim">tunables.snap.</span>kind_prior_bonus</span>
+            <span class="row__eq">=</span>
+            <span class="row__value">1.5</span>
+            <span class="row__meta">
+              <span class="chip" data-vis="system">system</span>
+              <span class="chip" data-mut="config">config</span>
+              <span class="chip" data-aff="data_model">data_model</span>
+            </span>
+          </div>
+          <div class="row" style="background: rgba(251, 191, 36, 0.03); border-color: color-mix(in srgb, var(--vis-user) 20%, var(--border-2));">
+            <span class="row__name"><span class="dim">tunables.snap.</span>min_confidence</span>
+            <span class="row__eq">=</span>
+            <span class="row__value">0.2</span>
+            <span class="row__meta">
+              <span class="chip" data-vis="user">user</span>
+              <span class="chip" data-mut="config">config</span>
+              <span class="chip" data-aff="ui_display">ui_display</span>
+              <span class="chip" data-aff="data_model">data_model</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── 1d · element_branches + bit_kinds ───────────────────── -->
+    <div class="split">
+      <div class="split__col">
+        <div class="split__col-head"><span class="lhs">consistency.yml</span><span>element_branches · bit_kinds</span></div>
+<pre class="yaml"><span class="yk">element_branches</span><span class="yp">:</span>
+  <span class="yp">-</span> <span class="ys">story</span>
+  <span class="yp">-</span> <span class="ys">character</span>
+  <span class="yp">-</span> <span class="ys">item</span>
+  <span class="yp">-</span> <span class="ys">rule</span>
+
+<span class="yk">bit_kinds</span><span class="yp">:</span>
+  <span class="yk">rule</span><span class="yp">:</span>   <span class="yp">[</span><span class="ys">hard_rule</span><span class="yp">]</span>
+  <span class="yk">state</span><span class="yp">:</span>  <span class="yp">[</span><span class="ys">location, knowledge, emotional, possession, condition, alliance</span><span class="yp">]</span>
+  <span class="yk">thread</span><span class="yp">:</span> <span class="yp">[</span><span class="ys">plant, progress, payoff</span><span class="yp">]</span></pre>
+      </div>
+      <div class="split__col">
+        <div class="split__col-head"><span>rendered fields</span><span class="rhs">2 array leaves</span></div>
+        <div class="renders">
+          <div class="row">
+            <span class="row__name">element_branches</span>
+            <span class="row__eq">=</span>
+            <span class="row__value row__value--array">
+              <span class="v-chip">story</span>
+              <span class="v-chip">character</span>
+              <span class="v-chip">item</span>
+              <span class="v-chip">rule</span>
+            </span>
+            <span class="row__meta">
+              <span class="chip" data-vis="system">system</span>
+              <span class="chip" data-mut="config">config</span>
+              <span class="chip" data-aff="data_model">data_model</span>
+              <span class="chip" data-aff="ai_pipeline">ai_pipeline</span>
+            </span>
+          </div>
+          <div class="row">
+            <span class="row__name"><span class="dim">bit_kinds.</span>rule</span>
+            <span class="row__eq">=</span>
+            <span class="row__value row__value--array">
+              <span class="v-chip">hard_rule</span>
+            </span>
+            <span class="row__meta">
+              <span class="chip" data-vis="system">system</span>
+              <span class="chip" data-mut="config">config</span>
+              <span class="chip" data-aff="data_model">data_model</span>
+            </span>
+          </div>
+          <div class="row">
+            <span class="row__name"><span class="dim">bit_kinds.</span>state</span>
+            <span class="row__eq">=</span>
+            <span class="row__value row__value--array">
+              <span class="v-chip">location</span>
+              <span class="v-chip">knowledge</span>
+              <span class="v-chip">emotional</span>
+              <span class="v-chip">possession</span>
+              <span class="v-chip">condition</span>
+              <span class="v-chip">alliance</span>
+            </span>
+            <span class="row__meta">
+              <span class="chip" data-vis="system">system</span>
+              <span class="chip" data-mut="config">config</span>
+              <span class="chip" data-aff="data_model">data_model</span>
+            </span>
+          </div>
+          <div class="row">
+            <span class="row__name"><span class="dim">bit_kinds.</span>thread</span>
+            <span class="row__eq">=</span>
+            <span class="row__value row__value--array">
+              <span class="v-chip">plant</span>
+              <span class="v-chip">progress</span>
+              <span class="v-chip">payoff</span>
+            </span>
+            <span class="row__meta">
+              <span class="chip" data-vis="system">system</span>
+              <span class="chip" data-mut="config">config</span>
+              <span class="chip" data-aff="data_model">data_model</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── 1e · scaffold (user-facing beat labels) ─────────────── -->
+    <div class="split">
+      <div class="split__col">
+        <div class="split__col-head"><span class="lhs">consistency.yml</span><span>scaffold</span></div>
+<pre class="yaml"><span class="yk">scaffold</span><span class="yp">:</span>
+  <span class="yhi"><span class="yk">three_act</span><span class="yp">:</span>
+    <span class="yp">-</span> <span class="ys">"Act I — Setup"</span>
+    <span class="yp">-</span> <span class="ys">"Inciting Incident"</span>
+    <span class="yp">-</span> <span class="ys">"Act II — Confrontation"</span>
+    <span class="yp">-</span> <span class="ys">"Midpoint"</span>
+    <span class="yp">-</span> <span class="ys">"Crisis"</span>
+    <span class="yp">-</span> <span class="ys">"Act III — Resolution"</span>
+    <span class="yp">-</span> <span class="ys">"Climax"</span>
+    <span class="yp">-</span> <span class="ys">"Denouement"</span></span>
+  <span class="yk">hero_journey</span><span class="yp">:</span> <span class="yp">[ ... 12 beats ... ]</span>
+  <span class="yk">save_the_cat</span><span class="yp">:</span> <span class="yp">[ ... 15 beats ... ]</span>
+  <span class="yk">tragedy</span><span class="yp">:</span>      <span class="yp">[ ... 5 beats ... ]</span></pre>
+      </div>
+      <div class="split__col">
+        <div class="split__col-head"><span>rendered field</span><span class="rhs">user-facing copy</span></div>
+        <div class="renders">
+          <div class="row" style="align-items: flex-start; background: rgba(251,191,36,0.04); border-color: color-mix(in srgb, var(--vis-user) 25%, var(--border-2));">
+            <span class="row__name"><span class="dim">scaffold.</span>three_act</span>
+            <span class="row__eq">=</span>
+            <span class="row__value row__value--array">
+              <span class="v-chip">Act I — Setup</span>
+              <span class="v-chip">Inciting Incident</span>
+              <span class="v-chip">Act II — Confrontation</span>
+              <span class="v-chip">Midpoint</span>
+              <span class="v-chip">Crisis</span>
+              <span class="v-chip">Act III — Resolution</span>
+              <span class="v-chip">Climax</span>
+              <span class="v-chip">Denouement</span>
+            </span>
+            <span class="row__meta">
+              <span class="chip" data-vis="user">user</span>
+              <span class="chip" data-mut="config">config</span>
+              <span class="chip" data-aff="ui_display">ui_display</span>
+              <span class="chip" data-aff="outline_generation">outline_generation</span>
+              <span class="chip chip--warn">✎ writer-facing copy</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       SECTION 2 — CHARTS
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="section">
+    <div class="section__head">
+      <span class="section__num">§2</span>
+      <h2 class="section__title">Charts</h2>
+      <span class="section__sub">templates[] · charts[]</span>
+    </div>
+    <p class="section__desc">
+      <code style="color: var(--accent-value); font-family: var(--mono);">templates</code> is an array.
+      Each template wraps a bundle of <code style="color: var(--accent-value); font-family: var(--mono);">charts</code>.
+      Below: one full template (<code style="color: var(--accent-value); font-family: var(--mono);">tragedy</code>) rendered field-by-field —
+      its top-level keys first, then its two chart definitions indented below.
+      Notice how chart fields like <code style="color: var(--accent-value); font-family: var(--mono);">id</code>, <code style="color: var(--accent-value); font-family: var(--mono);">y_items</code>, and
+      <code style="color: var(--accent-value); font-family: var(--mono);">label</code> light up differently —
+      they're persisted, immutable, or user-facing.
+    </p>
+
+    <div class="split">
+      <div class="split__col">
+        <div class="split__col-head"><span class="lhs">consistency.yml</span><span>templates[ tragedy ]</span></div>
+<pre class="yaml"><span class="yp">-</span> <span class="yhi"><span class="yk">id</span><span class="yp">:</span> <span class="ys">tragedy</span></span>
+  <span class="yk">label</span><span class="yp">:</span> <span class="ys">"Tragedy (Booker)"</span>
+  <span class="yk">scope_type</span><span class="yp">:</span> <span class="ys">story</span>
+  <span class="yk">scaffold</span><span class="yp">:</span> <span class="ys">tragedy</span>
+  <span class="yk">grand_fit</span><span class="yp">:</span> <span class="yn">true</span>
+  <span class="yk">grand_outline_base_fit</span><span class="yp">:</span> <span class="yn">false</span>
+  <span class="yk">bit_dependency</span><span class="yp">:</span> <span class="ys">none</span>
+
+  <span class="yk">charts</span><span class="yp">:</span>
+    <span class="yp">-</span> <span class="yk">id</span><span class="yp">:</span> <span class="ys">tragedy.coverage</span>
+      <span class="yk">label</span><span class="yp">:</span> <span class="ys">"Required beats present"</span>
+      <span class="yk">backend</span><span class="yp">:</span> <span class="ys">coverage</span>
+      <span class="yk">mode</span><span class="yp">:</span> <span class="ys">consistency</span>
+      <span class="yk">required</span><span class="yp">:</span> <span class="ys">tragedy</span>
+
+    <span class="yp">-</span> <span class="yk">id</span><span class="yp">:</span> <span class="ys">tragedy.fall</span>
+      <span class="yk">label</span><span class="yp">:</span> <span class="ys">"Protagonist fortune falls"</span>
+      <span class="yk">backend</span><span class="yp">:</span> <span class="ys">trajectory</span>
+      <span class="yk">mode</span><span class="yp">:</span> <span class="ys">consistency</span>
+      <span class="yhi"><span class="yk">y_items</span><span class="yp">:</span> <span class="yp">[</span><span class="ys">destroyed, ruined, struggling, shaken, secure, thriving</span><span class="yp">]</span></span>
+      <span class="yk">math_rule</span><span class="yp">:</span> <span class="ys">falling</span>
+      <span class="yk">math_rule_explain</span><span class="yp">:</span> <span class="ys">"A tragedy expects the protagonist's
+        fortune to fall across the story. If the chart trends flat or up,
+        check whether the descent is being staged convincingly enough."</span></pre>
+      </div>
+
+      <div class="split__col">
+        <div class="split__col-head"><span>rendered fields</span><span class="rhs">1 template · 2 charts</span></div>
+        <div class="renders">
+
+          <div class="group group--first">template fields</div>
+
+          <div class="row" style="background: rgba(248, 113, 113, 0.04); border-color: color-mix(in srgb, var(--mut-immutable) 25%, var(--border-2));">
+            <span class="row__name"><span class="dim">tragedy.</span>id</span>
+            <span class="row__eq">=</span>
+            <span class="row__value">"tragedy"</span>
+            <span class="row__meta">
+              <span class="chip" data-vis="system">system</span>
+              <span class="chip" data-mut="immutable">immutable</span>
+              <span class="chip" data-ser="true">persisted</span>
+              <span class="chip" data-aff="data_model">data_model</span>
+              <span class="chip chip--warn">⚠ DB key</span>
+            </span>
+          </div>
+
+          <div class="row">
+            <span class="row__name"><span class="dim">tragedy.</span>label</span>
+            <span class="row__eq">=</span>
+            <span class="row__value">"Tragedy (Booker)"</span>
+            <span class="row__meta">
+              <span class="chip" data-vis="user">user</span>
+              <span class="chip" data-mut="config">config</span>
+              <span class="chip" data-aff="ui_display">ui_display</span>
+              <span class="chip chip--warn">✎ copy</span>
+            </span>
+          </div>
+
+          <div class="row">
+            <span class="row__name"><span class="dim">tragedy.</span>scope_type</span>
+            <span class="row__eq">=</span>
+            <span class="row__value">"story"</span>
+            <span class="row__meta">
+              <span class="chip" data-vis="user">user</span>
+              <span class="chip" data-mut="config">config</span>
+              <span class="chip" data-ser="true">persisted</span>
+              <span class="chip" data-aff="ui_display">ui_display</span>
+              <span class="chip" data-aff="data_model">data_model</span>
+            </span>
+          </div>
+
+          <div class="row">
+            <span class="row__name"><span class="dim">tragedy.</span>scaffold</span>
+            <span class="row__eq">=</span>
+            <span class="row__value">"tragedy"</span>
+            <span class="row__meta">
+              <span class="chip" data-vis="user">user</span>
+              <span class="chip" data-mut="config">config</span>
+              <span class="chip" data-aff="ui_display">ui_display</span>
+              <span class="chip" data-aff="outline_generation">outline_generation</span>
+            </span>
+          </div>
+
+          <div class="row">
+            <span class="row__name"><span class="dim">tragedy.</span>grand_fit</span>
+            <span class="row__eq">=</span>
+            <span class="row__value">true</span>
+            <span class="row__meta">
+              <span class="chip" data-vis="system">system</span>
+              <span class="chip" data-mut="config">config</span>
+              <span class="chip" data-aff="outline_generation">outline_generation</span>
+            </span>
+          </div>
+
+          <div class="row">
+            <span class="row__name"><span class="dim">tragedy.</span>grand_outline_base_fit</span>
+            <span class="row__eq">=</span>
+            <span class="row__value">false</span>
+            <span class="row__meta">
+              <span class="chip" data-vis="system">system</span>
+              <span class="chip" data-mut="config">config</span>
+              <span class="chip" data-aff="outline_generation">outline_generation</span>
+            </span>
+          </div>
+
+          <div class="row">
+            <span class="row__name"><span class="dim">tragedy.</span>bit_dependency</span>
+            <span class="row__eq">=</span>
+            <span class="row__value">"none"</span>
+            <span class="row__meta">
+              <span class="chip" data-vis="system">system</span>
+              <span class="chip" data-mut="config">config</span>
+              <span class="chip" data-aff="ai_pipeline">ai_pipeline</span>
+              <span class="chip" data-aff="data_model">data_model</span>
+            </span>
+          </div>
+
+          <!-- ─── chart 1 ─────────────────────────────── -->
+          <div class="row--child-head">↳ charts[0] · tragedy.coverage</div>
+
+          <div class="row row--child" style="background: rgba(248, 113, 113, 0.04);">
+            <span class="row__name"><span class="dim">charts[0].</span>id</span>
+            <span class="row__eq">=</span>
+            <span class="row__value">"tragedy.coverage"</span>
+            <span class="row__meta">
+              <span class="chip" data-vis="system">system</span>
+              <span class="chip" data-mut="immutable">immutable</span>
+              <span class="chip" data-ser="true">persisted</span>
+              <span class="chip chip--warn">⚠ DB key</span>
+            </span>
+          </div>
+          <div class="row row--child">
+            <span class="row__name"><span class="dim">charts[0].</span>label</span>
+            <span class="row__eq">=</span>
+            <span class="row__value">"Required beats present"</span>
+            <span class="row__meta">
+              <span class="chip" data-vis="user">user</span>
+              <span class="chip" data-over="per_lens">per_lens</span>
+              <span class="chip" data-aff="ui_display">ui_display</span>
+            </span>
+          </div>
+          <div class="row row--child">
+            <span class="row__name"><span class="dim">charts[0].</span>backend</span>
+            <span class="row__eq">=</span>
+            <span class="row__value">"coverage"</span>
+            <span class="row__meta">
+              <span class="chip" data-vis="system">system</span>
+              <span class="chip" data-ser="true">persisted</span>
+              <span class="chip" data-aff="ai_pipeline">ai_pipeline</span>
+            </span>
+          </div>
+          <div class="row row--child">
+            <span class="row__name"><span class="dim">charts[0].</span>mode</span>
+            <span class="row__eq">=</span>
+            <span class="row__value">"consistency"</span>
+            <span class="row__meta">
+              <span class="chip" data-vis="user">user</span>
+              <span class="chip" data-ser="true">persisted</span>
+              <span class="chip" data-aff="ui_display">ui_display</span>
+            </span>
+          </div>
+          <div class="row row--child">
+            <span class="row__name"><span class="dim">charts[0].</span>required</span>
+            <span class="row__eq">=</span>
+            <span class="row__value">"tragedy"</span>
+            <span class="row__meta">
+              <span class="chip" data-vis="system">system</span>
+              <span class="chip" data-mut="config">config</span>
+              <span class="chip" data-aff="ai_pipeline">ai_pipeline</span>
+            </span>
+          </div>
+
+          <!-- ─── chart 2 ─────────────────────────────── -->
+          <div class="row--child-head">↳ charts[1] · tragedy.fall</div>
+
+          <div class="row row--child" style="background: rgba(248, 113, 113, 0.04);">
+            <span class="row__name"><span class="dim">charts[1].</span>id</span>
+            <span class="row__eq">=</span>
+            <span class="row__value">"tragedy.fall"</span>
+            <span class="row__meta">
+              <span class="chip" data-vis="system">system</span>
+              <span class="chip" data-mut="immutable">immutable</span>
+              <span class="chip" data-ser="true">persisted</span>
+              <span class="chip chip--warn">⚠ DB key</span>
+            </span>
+          </div>
+          <div class="row row--child">
+            <span class="row__name"><span class="dim">charts[1].</span>label</span>
+            <span class="row__eq">=</span>
+            <span class="row__value">"Protagonist fortune falls"</span>
+            <span class="row__meta">
+              <span class="chip" data-vis="user">user</span>
+              <span class="chip" data-over="per_lens">per_lens</span>
+              <span class="chip" data-aff="ui_display">ui_display</span>
+            </span>
+          </div>
+          <div class="row row--child">
+            <span class="row__name"><span class="dim">charts[1].</span>backend</span>
+            <span class="row__eq">=</span>
+            <span class="row__value">"trajectory"</span>
+            <span class="row__meta">
+              <span class="chip" data-vis="system">system</span>
+              <span class="chip" data-ser="true">persisted</span>
+              <span class="chip" data-aff="ai_pipeline">ai_pipeline</span>
+            </span>
+          </div>
+          <div class="row row--child">
+            <span class="row__name"><span class="dim">charts[1].</span>mode</span>
+            <span class="row__eq">=</span>
+            <span class="row__value">"consistency"</span>
+            <span class="row__meta">
+              <span class="chip" data-vis="user">user</span>
+              <span class="chip" data-ser="true">persisted</span>
+              <span class="chip" data-aff="ui_display">ui_display</span>
+            </span>
+          </div>
+          <div class="row row--child" style="background: rgba(192, 132, 252, 0.04); border-color: color-mix(in srgb, #c084fc 30%, var(--border-2));">
+            <span class="row__name"><span class="dim">charts[1].</span>y_items</span>
+            <span class="row__eq">=</span>
+            <span class="row__value row__value--array">
+              <span class="v-chip">destroyed</span>
+              <span class="v-chip">ruined</span>
+              <span class="v-chip">struggling</span>
+              <span class="v-chip">shaken</span>
+              <span class="v-chip">secure</span>
+              <span class="v-chip">thriving</span>
+            </span>
+            <span class="row__meta">
+              <span class="chip" data-vis="user">user</span>
+              <span class="chip" data-over="per_lens">per_lens</span>
+              <span class="chip" data-ser="true">persisted</span>
+              <span class="chip" data-aff="ai_pipeline">ai_pipeline</span>
+              <span class="chip chip--warn">⤩ override drift risk</span>
+            </span>
+          </div>
+          <div class="row row--child">
+            <span class="row__name"><span class="dim">charts[1].</span>math_rule</span>
+            <span class="row__eq">=</span>
+            <span class="row__value">"falling"</span>
+            <span class="row__meta">
+              <span class="chip" data-vis="system">system</span>
+              <span class="chip" data-ser="true">persisted</span>
+              <span class="chip" data-aff="ai_pipeline">ai_pipeline</span>
+            </span>
+          </div>
+          <div class="row row--child" style="align-items: flex-start;">
+            <span class="row__name"><span class="dim">charts[1].</span>math_rule_explain</span>
+            <span class="row__eq">=</span>
+            <span class="row__value" style="font-style: italic; font-weight: normal; font-size: 11.5px;">"A tragedy expects the protagonist's fortune to fall across the story. If the chart trends flat or up, check whether the descent is being staged convincingly enough."</span>
+            <span class="row__meta">
+              <span class="chip" data-vis="user">user</span>
+              <span class="chip" data-ser="true">persisted</span>
+              <span class="chip" data-aff="ui_display">ui_display</span>
+              <span class="chip chip--warn">✎ copy</span>
+            </span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+</body>
+</html>

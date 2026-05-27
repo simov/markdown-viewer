@@ -1,0 +1,597 @@
+{
+  "$description": "Field-level documentation for consistency.yml — the parametric config for the consistency engine.",
+  "$field_meta_legend": {
+    "visibility": "Who sees this field's effect: 'user' = shown/felt in the writer-facing UI; 'developer' = config-level tuning knob for devs/admins; 'system' = engine-internal, never surfaces to users.",
+    "mutability": "How this field can be changed: 'config' = edit the yml file, requires restart/reload; 'runtime' = changeable via API or UI at runtime; 'immutable' = changing it breaks stored references (DB foreign keys, saved lens configs).",
+    "affects": "What system layer this field influences: 'ai_pipeline' = LLM call behavior/prompt construction; 'ui_display' = what the writer sees in the frontend; 'data_model' = how bits/scopes/charts are structured; 'performance' = speed/cost of engine runs; 'outline_generation' = grand outline scaffold flow.",
+    "serialized": "Whether this value is persisted to the database (true) or lives only in the config file (false). Serialized fields appear in saved lens/chart records.",
+    "stability": "'stable' = finalized, safe to depend on; 'experimental' = feature-gated or likely to change; 'reserved' = declared but not yet consumed by any template.",
+    "overridable_per": "Whether per-project or per-lens overrides exist: 'no' = global only; 'per_lens' = can be overridden in chart_overrides on a saved lens."
+  },
+
+  "sections": {
+    "tunables": {
+      "description": "Parametric knobs that control engine behaviour. Deterministic logic stays in code; everything tunable lives here.",
+      "fields": {
+        "roles": {
+          "type": "object",
+          "description": "Maps each engine pass to an LLM role name (resolved via providers.yml). Agents request roles, never model names.",
+          "visibility": "developer",
+          "mutability": "config",
+          "affects": ["ai_pipeline", "performance"],
+          "serialized": false,
+          "stability": "stable",
+          "overridable_per": "no",
+          "notes": "Changing a role from 'small' to 'expert' increases quality but also cost and latency for that pass.",
+          "keys": {
+            "extract": {
+              "type": "string",
+              "description": "Role used by the extraction pass (synopsis → bits).",
+              "visibility": "developer",
+              "mutability": "config",
+              "affects": ["ai_pipeline"],
+              "serialized": false,
+              "stability": "stable"
+            },
+            "scopes": {
+              "type": "string",
+              "description": "Role used by the scope-detection pass (entity deduplication).",
+              "visibility": "developer",
+              "mutability": "config",
+              "affects": ["ai_pipeline"],
+              "serialized": false,
+              "stability": "stable"
+            },
+            "outline": {
+              "type": "string",
+              "description": "Role used by the outline pass (scene drafting with bit constraints).",
+              "visibility": "developer",
+              "mutability": "config",
+              "affects": ["ai_pipeline", "outline_generation"],
+              "serialized": false,
+              "stability": "stable"
+            },
+            "probe": {
+              "type": "string",
+              "description": "Role used by probe passes (per-scene chart evaluation).",
+              "visibility": "developer",
+              "mutability": "config",
+              "affects": ["ai_pipeline"],
+              "serialized": false,
+              "stability": "stable"
+            },
+            "coverage": {
+              "type": "string",
+              "description": "Role used by coverage chart evaluation.",
+              "visibility": "developer",
+              "mutability": "config",
+              "affects": ["ai_pipeline"],
+              "serialized": false,
+              "stability": "stable"
+            },
+            "dependency": {
+              "type": "string",
+              "description": "Role used by dependency chart evaluation.",
+              "visibility": "developer",
+              "mutability": "config",
+              "affects": ["ai_pipeline"],
+              "serialized": false,
+              "stability": "stable"
+            }
+          },
+          "valid_values": ["small", "draft", "expert"]
+        },
+        "rule_min_confidence": {
+          "type": "number",
+          "description": "Minimum confidence score (0–1) a 'rule' bit must reach to be surfaced on a chart. Below this threshold the bit is silently dropped.",
+          "default": 0.8,
+          "visibility": "system",
+          "mutability": "config",
+          "affects": ["data_model"],
+          "serialized": false,
+          "stability": "stable",
+          "overridable_per": "no",
+          "notes": "Too low → noise (weak guesses clutter charts). Too high → real rules get missed. 0.8 is conservative."
+        },
+        "scope_min_occurrences": {
+          "type": "integer",
+          "description": "Minimum number of times an entity must appear before the engine treats it as a scope (chartable target).",
+          "default": 2,
+          "visibility": "system",
+          "mutability": "config",
+          "affects": ["data_model"],
+          "serialized": false,
+          "stability": "stable",
+          "overridable_per": "no",
+          "notes": "Too low → one-off mentions become scopes and clutter the scope picker. Too high → minor but recurring characters get missed."
+        },
+        "chars_per_token": {
+          "type": "integer",
+          "description": "Rough characters-per-token estimate used by the usage panel to show approximate token counts to the writer.",
+          "default": 4,
+          "visibility": "user",
+          "mutability": "config",
+          "affects": ["ui_display"],
+          "serialized": false,
+          "stability": "stable",
+          "overridable_per": "no",
+          "notes": "Cosmetic only — affects the token-count estimate shown in the UI, not actual LLM behaviour."
+        },
+        "batch_scene_probes": {
+          "type": "boolean",
+          "description": "When true, probe passes batch multiple scenes per LLM call instead of one-at-a-time. Feature-gated; flip on when per-chart batching implementation lands.",
+          "default": false,
+          "visibility": "developer",
+          "mutability": "config",
+          "affects": ["performance", "ai_pipeline"],
+          "serialized": false,
+          "stability": "experimental",
+          "overridable_per": "no",
+          "notes": "Not yet implemented — flipping to true before the batching code lands will break probe passes."
+        },
+        "snap": {
+          "type": "object",
+          "description": "Weights for the snap algorithm that resolves extracted entity mentions to canonical scopes.",
+          "visibility": "system",
+          "mutability": "config",
+          "affects": ["data_model", "ai_pipeline"],
+          "serialized": false,
+          "stability": "stable",
+          "overridable_per": "no",
+          "fields": {
+            "leaf_weight": {
+              "type": "number",
+              "description": "Weight given to leaf-level (exact string) matches during snap resolution.",
+              "default": 2.0,
+              "visibility": "system",
+              "mutability": "config",
+              "affects": ["data_model"],
+              "serialized": false,
+              "stability": "stable",
+              "notes": "Higher → exact-name matches dominate over contextual matches."
+            },
+            "path_weight": {
+              "type": "number",
+              "description": "Weight given to path-level (hierarchical/contextual) matches during snap resolution.",
+              "default": 1.0,
+              "visibility": "system",
+              "mutability": "config",
+              "affects": ["data_model"],
+              "serialized": false,
+              "stability": "stable",
+              "notes": "Higher → contextual matches (e.g. 'the king' in a scene about King Lear) get more influence."
+            },
+            "kind_prior_bonus": {
+              "type": "number",
+              "description": "Bonus score added when the candidate scope's kind matches the expected kind prior (e.g. a character mention snapping to a character scope).",
+              "default": 1.5,
+              "visibility": "system",
+              "mutability": "config",
+              "affects": ["data_model"],
+              "serialized": false,
+              "stability": "stable",
+              "notes": "Prevents cross-kind mismatches (e.g. a place name snapping to a character)."
+            },
+            "min_confidence": {
+              "type": "number",
+              "description": "Snap confidence floor (0–1). Matches below this threshold are flagged as 'dangling' in the UI for the writer to resolve manually.",
+              "default": 0.2,
+              "visibility": "user",
+              "mutability": "config",
+              "affects": ["ui_display", "data_model"],
+              "serialized": false,
+              "stability": "stable",
+              "notes": "The writer sees dangling flags in the scope panel — this threshold controls how aggressively the engine admits uncertainty."
+            }
+          }
+        }
+      }
+    },
+
+    "element_branches": {
+      "type": "array",
+      "item_type": "string",
+      "description": "The set of top-level element branches used in Phase 1 (synopsis → structured elements). Each branch is a category of extractable story elements.",
+      "valid_values": ["story", "character", "item", "rule"],
+      "visibility": "system",
+      "mutability": "config",
+      "affects": ["data_model", "ai_pipeline"],
+      "serialized": false,
+      "stability": "stable",
+      "overridable_per": "no",
+      "notes": "Extensible — adding a new branch here makes the extraction pass look for that category. Must add corresponding templates and bit_kinds to make the branch useful."
+    },
+
+    "bit_kinds": {
+      "type": "object",
+      "description": "Declares the valid bit kinds and their sub-values. Each sub-value must be justified by at least one template in the registry that consumes it. Bits are the atomic units of tracked story state.",
+      "visibility": "system",
+      "mutability": "config",
+      "affects": ["data_model", "ai_pipeline"],
+      "serialized": false,
+      "stability": "stable",
+      "overridable_per": "no",
+      "notes": "This is the type system for bits. Adding a sub here without a consuming template is harmless but pointless. Removing a sub that a template consumes will break that template's bit_kinds_consumed declaration.",
+      "keys": {
+        "rule": {
+          "type": "array",
+          "item_type": "string",
+          "description": "Sub-values for rule bits — invariants the outline must not violate.",
+          "valid_values": ["hard_rule"],
+          "visibility": "system",
+          "stability": "stable",
+          "consumed_by": ["hard_magic_rules"]
+        },
+        "state": {
+          "type": "array",
+          "item_type": "string",
+          "description": "Sub-values for state bits — trackable per-scene state of an entity.",
+          "valid_values": ["location", "knowledge", "emotional", "possession", "condition", "alliance"],
+          "visibility": "system",
+          "stability": "stable",
+          "consumed_by": {
+            "location": ["location_tracker"],
+            "knowledge": ["character_knowledge", "dramatic_irony"],
+            "emotional": { "status": "reserved", "note": "emotional_journey is probe-only today; could promote to tracker" },
+            "possession": ["item_custody"],
+            "condition": ["condition_tracker"],
+            "alliance": ["alliance_tracker"]
+          }
+        },
+        "thread": {
+          "type": "array",
+          "item_type": "string",
+          "description": "Sub-values for thread bits — narrative threads with open/close semantics.",
+          "valid_values": ["plant", "progress", "payoff"],
+          "visibility": "system",
+          "stability": "stable",
+          "consumed_by": {
+            "plant": ["chekhov (optional)", "red_herring", "mice_threads", "promise_progress_payoff"],
+            "progress": ["promise_progress_payoff"],
+            "payoff": ["chekhov (optional)", "red_herring", "mice_threads", "promise_progress_payoff"]
+          }
+        }
+      }
+    },
+
+    "scaffold": {
+      "type": "object",
+      "description": "Named structural beat sets. Each key maps to an ordered list of beat labels. Used as the coverage chart's 'required' set AND shown as the outline-scaffold preview at template-selection time.",
+      "visibility": "user",
+      "mutability": "config",
+      "affects": ["ui_display", "outline_generation", "ai_pipeline"],
+      "serialized": false,
+      "stability": "stable",
+      "overridable_per": "no",
+      "notes": "Beat labels are shown directly to the writer in the scaffold preview and on coverage charts. Wording matters — these are user-facing copy. New scaffold keys can be added freely; they become available as 'required' references in template chart definitions.",
+      "extensible": true,
+      "keys": {
+        "three_act": {
+          "type": "array",
+          "item_type": "string",
+          "description": "Classic three-act structure beats.",
+          "length": 8,
+          "visibility": "user",
+          "stability": "stable"
+        },
+        "hero_journey": {
+          "type": "array",
+          "item_type": "string",
+          "description": "Campbell/Vogler hero's journey stages.",
+          "length": 12,
+          "visibility": "user",
+          "stability": "stable"
+        },
+        "save_the_cat": {
+          "type": "array",
+          "item_type": "string",
+          "description": "Blake Snyder's Save the Cat beat sheet.",
+          "length": 15,
+          "visibility": "user",
+          "stability": "stable"
+        },
+        "tragedy": {
+          "type": "array",
+          "item_type": "string",
+          "description": "Booker's tragedy arc stages.",
+          "length": 5,
+          "visibility": "user",
+          "stability": "stable"
+        }
+      }
+    },
+
+    "templates": {
+      "type": "array",
+      "description": "Flat template registry. Each template binds a scope_type to a bundle of candidate charts. Templates are what writers select to track aspects of their story.",
+      "visibility": "user",
+      "mutability": "config",
+      "affects": ["ui_display", "data_model", "ai_pipeline"],
+      "serialized": true,
+      "stability": "stable",
+      "overridable_per": "per_lens",
+      "notes": "Template ids are stored in the database as the lens's template_id. Renaming an id orphans saved lenses. The template label and charts are what the writer interacts with directly.",
+      "item_schema": {
+        "id": {
+          "type": "string",
+          "required": true,
+          "description": "Unique identifier for the template. Used as the primary key / foreign key when a writer saves a lens.",
+          "visibility": "system",
+          "mutability": "immutable",
+          "affects": ["data_model"],
+          "serialized": true,
+          "stability": "stable",
+          "overridable_per": "no",
+          "notes": "Renaming breaks all saved lenses that reference this id. Treat as a permanent identifier."
+        },
+        "label": {
+          "type": "string",
+          "required": true,
+          "description": "Human-readable display name shown in the template picker and lens configuration UI.",
+          "visibility": "user",
+          "mutability": "config",
+          "affects": ["ui_display"],
+          "serialized": false,
+          "stability": "stable",
+          "overridable_per": "no",
+          "notes": "User-facing copy — should be clear, concise, and recognisable to fiction writers."
+        },
+        "scope_type": {
+          "type": "string",
+          "required": true,
+          "description": "What kind of entity this template tracks. Controls which scope picker section the template appears under and which entities can be bound to it.",
+          "valid_values": ["story", "character", "relationship", "object"],
+          "visibility": "user",
+          "mutability": "config",
+          "affects": ["ui_display", "data_model"],
+          "serialized": true,
+          "stability": "stable",
+          "overridable_per": "no",
+          "notes": "Determines the 'bind target' — story templates bind to the whole book, character templates bind to a specific character, etc."
+        },
+        "scaffold": {
+          "type": "string",
+          "required": false,
+          "description": "Reference to a key in the top-level 'scaffold' section. When present, the template uses this beat set for coverage charts and outline scaffolding.",
+          "visibility": "user",
+          "mutability": "config",
+          "affects": ["ui_display", "outline_generation"],
+          "serialized": false,
+          "stability": "stable",
+          "overridable_per": "no",
+          "notes": "The scaffold's beat labels are shown to the writer as a preview when selecting the template. Only meaningful for story-scope templates that have a structural beat sheet."
+        },
+        "grand_fit": {
+          "type": "boolean",
+          "required": false,
+          "default": false,
+          "description": "Whether this template is suitable for the 'grand outline' flow — i.e., the AI can generate a full outline scaffolded around this template's beats.",
+          "visibility": "system",
+          "mutability": "config",
+          "affects": ["outline_generation"],
+          "serialized": false,
+          "stability": "stable",
+          "overridable_per": "no",
+          "notes": "Only templates with a scaffold and structural beats should be grand_fit. Non-structural templates (pacing, chekhov) are overlays, not scaffolds."
+        },
+        "grand_outline_base_fit": {
+          "type": "boolean",
+          "required": false,
+          "default": false,
+          "description": "Whether the template's leaf-level headings can serve as scene containers (true) or are terminal beats with no room for scenes underneath (false).",
+          "visibility": "system",
+          "mutability": "config",
+          "affects": ["outline_generation"],
+          "serialized": false,
+          "stability": "stable",
+          "overridable_per": "no",
+          "notes": "Controls outline generation depth. true = 'Act I > Chapter 1 > Scene 1' (scene can nest under beat). false = beat IS the leaf (e.g. Save the Cat's 15 beats are terminal — scenes go beside them, not under)."
+        },
+        "hidden": {
+          "type": "boolean",
+          "required": false,
+          "default": false,
+          "description": "When true, the template is hidden from the suggester menu and manual-bind UI. Only reachable via AI-suggested special charts + the bind_special endpoint.",
+          "visibility": "system",
+          "mutability": "config",
+          "affects": ["ui_display"],
+          "serialized": false,
+          "stability": "stable",
+          "overridable_per": "no",
+          "notes": "Used for the four 'custom_*' vehicle templates. These are generic containers that the AI fills with bespoke y_items/title via chart_overrides."
+        },
+        "bit_dependency": {
+          "type": "string",
+          "required": true,
+          "description": "Declares what bits, if any, the outline pass needs to honour as constraints when this template is active.",
+          "visibility": "system",
+          "mutability": "config",
+          "affects": ["ai_pipeline", "data_model"],
+          "serialized": false,
+          "stability": "stable",
+          "overridable_per": "no",
+          "valid_values": {
+            "none": "Chart template is probe-driven only; no bits are read by the outline pass. Most common for trajectory/coverage charts.",
+            "state": "Outline tracker; needs 'state' bits (sub: location|knowledge|emotional|possession|condition|alliance). The outline pass reads these bits and must not contradict them.",
+            "thread": "Outline tracker; needs 'thread' bits (sub: plant|progress|payoff). The outline pass must open and close threads correctly.",
+            "rule": "Outline tracker; needs 'rule' bits as hard invariants the outline must not violate.",
+            "optional": "Chart works without bits but can be augmented if the writer manually adds them. Currently only used by 'chekhov'."
+          },
+          "notes": "This field is purely engine-internal — the writer never sees 'bit_dependency'. It controls whether the outline pass fetches and respects bits when generating scene content."
+        },
+        "bit_kinds_consumed": {
+          "type": "array",
+          "required": false,
+          "description": "Explicit list of {kind, sub} pairs this template reads from the bit store. Present only when bit_dependency is not 'none'. Tells the engine exactly which bit sub-types to fetch and feed into this template's pipeline.",
+          "visibility": "system",
+          "mutability": "config",
+          "affects": ["ai_pipeline", "data_model"],
+          "serialized": false,
+          "stability": "stable",
+          "overridable_per": "no",
+          "notes": "Must reference valid entries from the bit_kinds section. If a {kind, sub} pair listed here doesn't exist in bit_kinds, the engine will fail to resolve it.",
+          "item_schema": {
+            "kind": {
+              "type": "string",
+              "valid_values": ["rule", "state", "thread"],
+              "visibility": "system",
+              "serialized": false
+            },
+            "sub": {
+              "type": "string",
+              "description": "A valid sub-value from the bit_kinds section for the given kind.",
+              "visibility": "system",
+              "serialized": false
+            }
+          }
+        },
+        "charts": {
+          "type": "array",
+          "required": true,
+          "description": "Bundle of chart definitions this template provides. Each chart is one visualization the writer can see. A template can have one or many charts (e.g. hero_journey has both a coverage chart and a tension trajectory).",
+          "visibility": "user",
+          "mutability": "config",
+          "affects": ["ui_display", "ai_pipeline"],
+          "serialized": true,
+          "stability": "stable",
+          "overridable_per": "per_lens",
+          "notes": "Chart ids are stored in the database. The chart's label and render type are what the writer sees. Chart data (probe results) are computed at runtime and not stored in config.",
+          "item_schema": {
+            "id": {
+              "type": "string",
+              "required": true,
+              "description": "Unique chart identifier. Namespaced by template when the template has multiple charts (e.g. 'three_act.coverage', 'hero_journey.tension'). Single-chart templates often share their id with the template id.",
+              "visibility": "system",
+              "mutability": "immutable",
+              "affects": ["data_model"],
+              "serialized": true,
+              "stability": "stable",
+              "overridable_per": "no",
+              "notes": "Stored in the database as chart_id on saved chart data. Renaming orphans existing chart data records."
+            },
+            "label": {
+              "type": "string",
+              "required": true,
+              "description": "Human-readable chart title shown in the charts panel and lens detail view.",
+              "visibility": "user",
+              "mutability": "config",
+              "affects": ["ui_display"],
+              "serialized": false,
+              "stability": "stable",
+              "overridable_per": "per_lens",
+              "notes": "User-facing copy — should describe what the chart shows in plain language a fiction writer would understand."
+            },
+            "backend": {
+              "type": "string",
+              "required": true,
+              "description": "Which chart backend computes and renders this chart. Determines what kind of data the probe pass produces and how the frontend draws it.",
+              "visibility": "system",
+              "mutability": "config",
+              "affects": ["ai_pipeline", "ui_display"],
+              "serialized": true,
+              "stability": "stable",
+              "overridable_per": "no",
+              "valid_values": {
+                "coverage": "Checks whether required beats are present in the outline. Produces a checklist-style chart. Needs a 'required' scaffold reference.",
+                "trajectory": "Plots a value across scenes over time. Produces a line/bar chart. Uses y_items for the scale and optionally math_rule for trend validation.",
+                "dependency": "Tracks setup→payoff or open→close relationships between story elements. Produces a paired-items chart showing which setups have matching payoffs.",
+                "ledger": "Tabular state tracker — who/what/where across scenes. Produces a grid/table showing entity state per scene. Used for knowledge, location, condition, custody, alliance tracking."
+              },
+              "notes": "Each backend has its own probe prompt, data shape, and frontend renderer. Adding a new backend requires implementation in both ai_engine and the frontend."
+            },
+            "mode": {
+              "type": "string",
+              "required": true,
+              "description": "Whether the chart enforces a structural rule or just mirrors what the AI reads.",
+              "visibility": "user",
+              "mutability": "config",
+              "affects": ["ui_display", "ai_pipeline"],
+              "serialized": true,
+              "stability": "stable",
+              "overridable_per": "no",
+              "valid_values": {
+                "consistency": "Chart validates a structural expectation (beat presence, trend direction, dependency closure). Violations produce visual warnings the writer can act on.",
+                "descriptive": "Chart mirrors what the AI reads without judging. No pass/fail, no warnings — just a visualization for the writer to interpret."
+              },
+              "notes": "The writer sees this distinction as: consistency charts have green/red/amber status indicators; descriptive charts just show data. Consistency mode requires some form of validation rule (required beats, math_rule, or dependency matching)."
+            },
+            "required": {
+              "type": "string",
+              "required": false,
+              "description": "Reference to a scaffold key. The scaffold's beat list becomes the set of required items the coverage backend checks for.",
+              "visibility": "system",
+              "mutability": "config",
+              "affects": ["ai_pipeline"],
+              "serialized": false,
+              "stability": "stable",
+              "overridable_per": "no",
+              "applies_to_backend": "coverage",
+              "notes": "Only meaningful for coverage-backend charts. The referenced scaffold must exist in the top-level scaffold section."
+            },
+            "y_items": {
+              "type": "array",
+              "item_type": "string",
+              "required": false,
+              "description": "Vocabulary for the Y-axis of a trajectory chart. For consistency-mode charts: ordered LOW→HIGH on the conceptual axis — this ordering is what 'rising' and 'falling' math_rules are measured against. For descriptive-mode charts: unordered categorical labels (no direction implied).",
+              "visibility": "user",
+              "mutability": "config",
+              "affects": ["ui_display", "ai_pipeline"],
+              "serialized": true,
+              "stability": "stable",
+              "overridable_per": "per_lens",
+              "applies_to_backend": "trajectory",
+              "notes": "These labels appear as Y-axis ticks on the chart. For custom templates (hidden=true), y_items are filled dynamically by the AI via chart_overrides at bind time. The probe LLM is instructed to pick from exactly these values when evaluating each scene."
+            },
+            "math_rule": {
+              "type": "string",
+              "required": false,
+              "description": "Trend validation rule for consistency-mode trajectory charts. Checks whether the plotted values follow the expected direction across scenes.",
+              "visibility": "system",
+              "mutability": "config",
+              "affects": ["ai_pipeline"],
+              "serialized": true,
+              "stability": "stable",
+              "overridable_per": "no",
+              "applies_to_backend": "trajectory",
+              "applies_to_mode": "consistency",
+              "valid_values": {
+                "rising": "Values should increase over time (move toward the HIGH end of y_items). Validates that the trend line has a positive slope.",
+                "falling": "Values should decrease over time (move toward the LOW end of y_items). Validates that the trend line has a negative slope."
+              },
+              "notes": "The engine computes the trend after all scene probes complete. A violation doesn't block anything — it produces a visual warning and shows math_rule_explain to the writer."
+            },
+            "math_rule_explain": {
+              "type": "string",
+              "required": false,
+              "description": "Human-readable explanation shown to the writer when the math_rule trend is violated. Should frame the violation narratively and suggest what to check.",
+              "visibility": "user",
+              "mutability": "config",
+              "affects": ["ui_display"],
+              "serialized": true,
+              "stability": "stable",
+              "overridable_per": "no",
+              "applies_to_backend": "trajectory",
+              "applies_to_mode": "consistency",
+              "notes": "Writer-facing copy — tone should be suggestive, not prescriptive. The engine doesn't judge; it flags. Example: 'A tragedy expects the protagonist's fortune to fall across the story. If the chart trends flat or up, check whether the descent is being staged convincingly enough.'"
+            },
+            "render": {
+              "type": "string",
+              "required": false,
+              "default": "line",
+              "description": "Frontend draw type for the chart visualization.",
+              "visibility": "user",
+              "mutability": "config",
+              "affects": ["ui_display"],
+              "serialized": false,
+              "stability": "stable",
+              "overridable_per": "per_lens",
+              "valid_values": ["line", "bar"],
+              "applies_to_backend": "trajectory",
+              "notes": "Only affects trajectory charts. Coverage uses checklists, dependency uses paired-items, ledger uses tables — those draw types are fixed by the backend, not configurable."
+            }
+          }
+        }
+      }
+    }
+  }
+}

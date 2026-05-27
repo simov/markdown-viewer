@@ -1,0 +1,1724 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>configurum · providers.yml mockup</title>
+<style>
+  /* ─── design tokens ───────────────────────────────────────────────── */
+  :root {
+    --bg:        #0d1117;
+    --surface:   #161b22;
+    --surface-2: #1c232c;
+    --border:    #2a313c;
+    --border-2:  #3a424f;
+    --text:      #e6edf3;
+    --text-2:    #9aa6b2;
+    --text-3:    #6b7682;
+
+    /* operation type palette */
+    --op-action:  #c084fc;
+    --op-gate:    #fbbf24;
+    --op-limit:   #22d3ee;
+    --op-read:    #94a3b8;
+
+    /* visibility palette */
+    --vis-user:      #fbbf24;
+    --vis-developer: #60a5fa;
+    --vis-system:    #94a3b8;
+
+    /* mutability palette */
+    --mut-config:    #34d399;
+    --mut-runtime:   #22d3ee;
+    --mut-immutable: #f87171;
+
+    /* affects palette */
+    --aff-ai_pipeline:        #a78bfa;
+    --aff-ui_display:         #f472b6;
+    --aff-data_model:         #fb923c;
+    --aff-performance:        #fde047;
+    --aff-outline_generation: #38bdf8;
+
+    /* stability */
+    --stab-stable:       #34d399;
+    --stab-experimental: #fbbf24;
+    --stab-reserved:     #6b7682;
+
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+
+    --radius: 8px;
+    --radius-sm: 5px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: inherit; }
+  code { font-family: var(--mono); }
+
+  /* ─── topbar ──────────────────────────────────────────────────────── */
+  .topbar {
+    position: sticky; top: 0; z-index: 10;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 24px;
+    background: rgba(13, 17, 23, 0.85);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+  }
+  .topbar__brand {
+    font-weight: 600; letter-spacing: -0.01em;
+  }
+  .brand-dot { color: var(--text-3); margin: 0 6px; }
+  .brand-sub { color: var(--text-3); font-weight: 400; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .topbar__path {
+    font-family: var(--mono); font-size: 12px; color: var(--text-2);
+  }
+
+  main { padding: 32px 24px 80px; max-width: 1180px; margin: 0 auto; }
+
+  /* ─── section headers ─────────────────────────────────────────────── */
+  .section { margin-bottom: 48px; }
+  .section__title {
+    font-size: 20px; font-weight: 600; margin: 0 0 4px;
+    letter-spacing: -0.01em;
+  }
+  .section__desc {
+    color: var(--text-2); margin: 0 0 24px; max-width: 720px;
+  }
+
+  /* ─── LEGEND (block vocabulary) ───────────────────────────────────── */
+  .legend {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 48px;
+  }
+  .legend__intro {
+    color: var(--text-2); margin: 0 0 24px; max-width: 760px;
+  }
+  .legend__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+  }
+  .legend-block {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+  }
+  .legend-block__name {
+    font-family: var(--mono); font-size: 11px;
+    color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em;
+    margin-bottom: 4px;
+  }
+  .legend-block__purpose {
+    color: var(--text-2); font-size: 12px; margin-bottom: 10px;
+  }
+  .legend-block__examples {
+    display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+  }
+
+  /* ─── BLOCK PRIMITIVES ────────────────────────────────────────────── */
+
+  /* OperationGlyph — large symbol indicating action/gate/limit/read */
+  .op-glyph {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px;
+    border-radius: 7px;
+    font-size: 14px; font-weight: 700;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border-2);
+  }
+  .op-glyph[data-op="action"] { color: var(--op-action); border-color: color-mix(in srgb, var(--op-action) 40%, transparent); background: color-mix(in srgb, var(--op-action) 8%, transparent); }
+  .op-glyph[data-op="gate"]   { color: var(--op-gate);   border-color: color-mix(in srgb, var(--op-gate)   40%, transparent); background: color-mix(in srgb, var(--op-gate)   8%, transparent); }
+  .op-glyph[data-op="limit"]  { color: var(--op-limit);  border-color: color-mix(in srgb, var(--op-limit)  40%, transparent); background: color-mix(in srgb, var(--op-limit)  8%, transparent); }
+  .op-glyph[data-op="read"]   { color: var(--op-read);   border-color: color-mix(in srgb, var(--op-read)   40%, transparent); background: color-mix(in srgb, var(--op-read)   8%, transparent); }
+
+  /* AudienceBadge — visibility */
+  .audience {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 8px 3px 6px;
+    border-radius: 999px;
+    font-size: 11px; font-weight: 500;
+    border: 1px solid var(--border-2);
+    background: rgba(255,255,255,0.02);
+  }
+  .audience__dot { width: 6px; height: 6px; border-radius: 50%; }
+  .audience[data-vis="user"]      .audience__dot { background: var(--vis-user); }
+  .audience[data-vis="developer"] .audience__dot { background: var(--vis-developer); }
+  .audience[data-vis="system"]    .audience__dot { background: var(--vis-system); }
+  .audience[data-vis="user"]      { color: var(--vis-user); border-color: color-mix(in srgb, var(--vis-user) 35%, var(--border-2)); }
+  .audience[data-vis="developer"] { color: var(--vis-developer); border-color: color-mix(in srgb, var(--vis-developer) 35%, var(--border-2)); }
+  .audience[data-vis="system"]    { color: var(--vis-system); border-color: color-mix(in srgb, var(--vis-system) 35%, var(--border-2)); }
+
+  /* MutabilityLock */
+  .lock {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 500;
+  }
+  .lock__icon {
+    display: inline-block; width: 12px; height: 12px;
+    border-radius: 2px;
+    position: relative;
+  }
+  /* config = open padlock */
+  .lock[data-mut="config"]    .lock__icon { background: var(--mut-config); }
+  .lock[data-mut="runtime"]   .lock__icon { background: var(--mut-runtime); }
+  .lock[data-mut="immutable"] .lock__icon { background: var(--mut-immutable); }
+  .lock[data-mut="config"]    { color: var(--mut-config); }
+  .lock[data-mut="runtime"]   { color: var(--mut-runtime); }
+  .lock[data-mut="immutable"] { color: var(--mut-immutable); }
+
+  /* AffectsChips */
+  .affects { display: inline-flex; flex-wrap: wrap; gap: 4px; }
+  .affect-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: var(--mono);
+    font-size: 10.5px; font-weight: 500;
+    line-height: 1.5;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border-2);
+  }
+  .affect-chip::before {
+    content: ""; width: 6px; height: 6px; border-radius: 50%;
+  }
+  .affect-chip[data-aff="ai_pipeline"] { color: var(--aff-ai_pipeline); border-color: color-mix(in srgb, var(--aff-ai_pipeline) 30%, var(--border-2)); }
+  .affect-chip[data-aff="ai_pipeline"]::before { background: var(--aff-ai_pipeline); }
+  .affect-chip[data-aff="ui_display"]  { color: var(--aff-ui_display);  border-color: color-mix(in srgb, var(--aff-ui_display)  30%, var(--border-2)); }
+  .affect-chip[data-aff="ui_display"]::before  { background: var(--aff-ui_display); }
+  .affect-chip[data-aff="data_model"]  { color: var(--aff-data_model);  border-color: color-mix(in srgb, var(--aff-data_model)  30%, var(--border-2)); }
+  .affect-chip[data-aff="data_model"]::before  { background: var(--aff-data_model); }
+  .affect-chip[data-aff="performance"] { color: var(--aff-performance); border-color: color-mix(in srgb, var(--aff-performance) 30%, var(--border-2)); }
+  .affect-chip[data-aff="performance"]::before { background: var(--aff-performance); }
+  .affect-chip[data-aff="outline_generation"] { color: var(--aff-outline_generation); border-color: color-mix(in srgb, var(--aff-outline_generation) 30%, var(--border-2)); }
+  .affect-chip[data-aff="outline_generation"]::before { background: var(--aff-outline_generation); }
+
+  /* TriggersRow */
+  .triggers { display: inline-flex; gap: 4px; }
+  .trigger {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px;
+    border-radius: 5px;
+    font-size: 11px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border-2);
+    color: var(--text-2);
+    cursor: help;
+  }
+  .trigger[data-trig="user"]    { color: #60a5fa; }
+  .trigger[data-trig="ai"]      { color: #c084fc; }
+  .trigger[data-trig="cron"]    { color: #34d399; }
+  .trigger[data-trig="startup"] { color: #f59e0b; }
+
+  /* PersistenceMark */
+  .persist {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px;
+    color: var(--text-2);
+  }
+  .persist__bar {
+    display: inline-block;
+    width: 16px; height: 10px;
+    border-radius: 2px;
+    border: 1.5px solid currentColor;
+  }
+  .persist[data-ser="true"]  { color: var(--mut-runtime); }
+  .persist[data-ser="false"] { color: var(--text-3); }
+  .persist[data-ser="true"]  .persist__bar { background: currentColor; }
+
+  /* StabilityDot */
+  .stability {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 10.5px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--text-2);
+  }
+  .stability__dot { width: 7px; height: 7px; border-radius: 50%; }
+  .stability[data-st="stable"]       .stability__dot { background: var(--stab-stable); box-shadow: 0 0 6px color-mix(in srgb, var(--stab-stable) 60%, transparent); }
+  .stability[data-st="experimental"] .stability__dot {
+    background: var(--stab-experimental);
+    box-shadow: 0 0 6px color-mix(in srgb, var(--stab-experimental) 60%, transparent);
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+  .stability[data-st="reserved"]     .stability__dot { background: var(--stab-reserved); }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: 0.45; transform: scale(0.85); }
+  }
+
+  /* ArrayPreview — when a field's VALUE is an array */
+  .array-preview {
+    display: flex; flex-direction: column; gap: 6px;
+    width: 100%;
+  }
+  .array-preview__header {
+    display: flex; align-items: baseline; gap: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .array-preview__count { color: var(--text-2); }
+  .array-preview__items {
+    display: flex; flex-direction: column;
+    border-left: 2px solid var(--border-2);
+    padding-left: 10px;
+    gap: 2px;
+  }
+  .array-preview__item {
+    font-family: var(--mono); font-size: 12px;
+    color: var(--text);
+    display: flex; gap: 8px; align-items: baseline;
+  }
+  .array-preview__item .idx {
+    color: var(--text-3); font-size: 10px;
+    min-width: 16px; text-align: right;
+  }
+  .array-preview__items--chips {
+    flex-direction: row; flex-wrap: wrap; gap: 5px;
+    border-left: none; padding-left: 0;
+  }
+  .array-preview__chip {
+    font-family: var(--mono); font-size: 11px;
+    padding: 2px 8px;
+    border: 1px solid var(--border-2);
+    border-radius: 3px;
+    background: rgba(255,255,255,0.03);
+    color: var(--text);
+  }
+
+  /* Adaptive meta grid — when meta-file doesn't define op_type/triggers,
+     we drop those cells and the grid collapses to 2 cols */
+  .card__meta--cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .card__meta--cols-2 .meta-cell:nth-child(3n)             { border-right: 1px solid var(--border); }
+  .card__meta--cols-2 .meta-cell:nth-child(2n)             { border-right: none; }
+  .card__meta--cols-2 .meta-cell:nth-last-child(-n+3)      { border-bottom: 1px solid var(--border); }
+  .card__meta--cols-2 .meta-cell:nth-last-child(-n+2)      { border-bottom: none; }
+
+  /* ─── TABS — switch which config the engine renders ───────────────── */
+  .tabs {
+    display: flex; gap: 4px;
+    margin-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .tab {
+    appearance: none;
+    background: transparent;
+    border: 1px solid transparent;
+    border-bottom: none;
+    color: var(--text-2);
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 10px 18px;
+    cursor: pointer;
+    border-radius: 6px 6px 0 0;
+    margin-bottom: -1px;
+    transition: color 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+  }
+  .tab:hover { color: var(--text); }
+  .tab[aria-selected="true"] {
+    color: var(--text);
+    background: var(--surface);
+    border-color: var(--border);
+  }
+  .tab__count {
+    color: var(--text-3);
+    font-size: 10px;
+    margin-left: 8px;
+  }
+
+  .config-pane[hidden] { display: none !important; }
+  .config-pane__head {
+    margin-bottom: 24px;
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .config-pane__file {
+    font-family: var(--mono); font-size: 12px; color: var(--text-3);
+    margin-bottom: 4px;
+  }
+  .config-pane__title {
+    font-size: 17px; font-weight: 600; margin: 0 0 4px;
+  }
+  .config-pane__desc {
+    color: var(--text-2); margin: 0; font-size: 13px;
+  }
+  .config-pane__meta-supported {
+    margin-top: 10px;
+    display: flex; flex-wrap: wrap; gap: 4px;
+  }
+  .meta-support-chip {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.04);
+    color: var(--text-2);
+    border: 1px solid var(--border-2);
+  }
+  .meta-support-chip--absent {
+    color: var(--text-3);
+    text-decoration: line-through;
+    opacity: 0.6;
+  }
+
+  /* OverrideBadge */
+  .override {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--text-2);
+    background: rgba(255,255,255,0.03);
+    border: 1px dashed var(--border-2);
+  }
+
+  /* PatternBadge — when a field matches a $patterns rule */
+  .pattern {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 9px;
+    border-radius: 5px;
+    font-size: 11px; font-weight: 500;
+    color: #fcd34d;
+    background: linear-gradient(180deg, rgba(252,211,77,0.10), rgba(252,211,77,0.02));
+    border: 1px solid color-mix(in srgb, #fcd34d 35%, var(--border-2));
+  }
+  .pattern__icon { font-size: 12px; }
+
+  /* ─── CARD COMPOSITION ────────────────────────────────────────────── */
+  .cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color 0.15s ease;
+  }
+  .card:hover { border-color: var(--border-2); }
+
+  /* op-type rail: thin colored stripe on the left edge */
+  .card { position: relative; }
+  .card::before {
+    content: ""; position: absolute; top: 0; left: 0; bottom: 0;
+    width: 3px;
+  }
+  .card[data-op="action"]::before { background: var(--op-action); }
+  .card[data-op="gate"]::before   { background: var(--op-gate); }
+  .card[data-op="limit"]::before  { background: var(--op-limit); }
+  .card[data-op="read"]::before   { background: var(--op-read); }
+
+  .card__head {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 18px 12px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .card__path {
+    flex: 1;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .card__path .seg-dim { color: var(--text-3); }
+  .card__path .seg-key { color: var(--text); font-weight: 600; }
+
+  .card__value-row {
+    display: flex; align-items: baseline; gap: 12px;
+    padding: 10px 18px 10px 20px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
+  }
+  .card__value {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text);
+  }
+  .card__type {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .card__desc {
+    padding: 12px 18px 14px 20px;
+    color: var(--text-2);
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* meta grid */
+  .card__meta {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+  }
+  .meta-cell {
+    padding: 12px 16px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .meta-cell:nth-child(3n) { border-right: none; }
+  .meta-cell:nth-last-child(-n+3) { border-bottom: none; }
+  .meta-cell__label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+
+  /* notes drawer */
+  .card__notes {
+    border-top: 1px solid var(--border);
+    background: rgba(255,255,255,0.015);
+  }
+  .card__notes > summary {
+    list-style: none;
+    padding: 10px 18px 10px 20px;
+    font-size: 12px;
+    color: var(--text-2);
+    cursor: pointer;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card__notes > summary::-webkit-details-marker { display: none; }
+  .card__notes > summary::before {
+    content: "›";
+    color: var(--text-3);
+    transition: transform 0.15s ease;
+    display: inline-block;
+  }
+  .card__notes[open] > summary::before { transform: rotate(90deg); }
+  .card__notes-body {
+    padding: 0 18px 14px 32px;
+    color: var(--text-2);
+    font-size: 12.5px;
+    line-height: 1.55;
+    border-top: 1px dashed var(--border);
+    padding-top: 12px;
+  }
+
+  /* pattern badge row, when present */
+  .card__patterns {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    padding: 10px 18px 10px 20px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(252, 211, 77, 0.03);
+  }
+
+  /* small helper for status row at right of card__head */
+  .card__head-right {
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  /* small section TOC */
+  .toc {
+    display: flex; gap: 4px; flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .toc__pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-2);
+    text-decoration: none;
+  }
+  .toc__pill .count {
+    color: var(--text-3); font-family: var(--mono); font-size: 11px;
+  }
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="topbar__brand">
+    configurum <span class="brand-dot">·</span> <span class="brand-sub">mockup</span>
+  </div>
+  <div class="topbar__path">
+    same engine · two configs · zero card-template changes
+  </div>
+</header>
+
+<main>
+
+  <!-- ─── LEGEND: BLOCK VOCABULARY ──────────────────────────────────── -->
+  <section class="section legend">
+    <h2 class="section__title">Block vocabulary</h2>
+    <p class="legend__intro">
+      Every metadata property defined in <code>*_fields_meta.json</code> maps to one HTML block primitive.
+      Below is the full vocabulary. Cards (further down) are nothing but these primitives
+      composed together. Add a new metadata property to the meta-file → register a new
+      block → every existing card picks it up.
+    </p>
+
+    <div class="legend__grid">
+
+      <div class="legend-block">
+        <div class="legend-block__name">OperationGlyph</div>
+        <div class="legend-block__purpose">operation_type: does the field DO, GATE, LIMIT, or DESCRIBE?</div>
+        <div class="legend-block__examples">
+          <span class="op-glyph" data-op="action" title="action">⚡</span>
+          <span class="op-glyph" data-op="gate"   title="gate">⛨</span>
+          <span class="op-glyph" data-op="limit"  title="limit">≡</span>
+          <span class="op-glyph" data-op="read"   title="read">◌</span>
+        </div>
+      </div>
+
+      <div class="legend-block">
+        <div class="legend-block__name">AudienceBadge</div>
+        <div class="legend-block__purpose">visibility: who is this field for?</div>
+        <div class="legend-block__examples">
+          <span class="audience" data-vis="user"><span class="audience__dot"></span>user</span>
+          <span class="audience" data-vis="developer"><span class="audience__dot"></span>developer</span>
+          <span class="audience" data-vis="system"><span class="audience__dot"></span>system</span>
+        </div>
+      </div>
+
+      <div class="legend-block">
+        <div class="legend-block__name">MutabilityLock</div>
+        <div class="legend-block__purpose">mutability: how/when can it be changed?</div>
+        <div class="legend-block__examples">
+          <span class="lock" data-mut="config"><span class="lock__icon"></span>config</span>
+          <span class="lock" data-mut="runtime"><span class="lock__icon"></span>runtime</span>
+          <span class="lock" data-mut="immutable"><span class="lock__icon"></span>immutable</span>
+        </div>
+      </div>
+
+      <div class="legend-block">
+        <div class="legend-block__name">AffectsChips</div>
+        <div class="legend-block__purpose">affects[]: which system layers are impacted? Palette extends per config.</div>
+        <div class="legend-block__examples">
+          <span class="affect-chip" data-aff="ai_pipeline">ai_pipeline</span>
+          <span class="affect-chip" data-aff="ui_display">ui_display</span>
+          <span class="affect-chip" data-aff="data_model">data_model</span>
+          <span class="affect-chip" data-aff="performance">performance</span>
+          <span class="affect-chip" data-aff="outline_generation">outline_generation</span>
+        </div>
+      </div>
+
+      <div class="legend-block">
+        <div class="legend-block__name">ArrayPreview</div>
+        <div class="legend-block__purpose">when the field VALUE is an array — chips for short lists, numbered rows for ordered lists</div>
+        <div class="legend-block__examples">
+          <div class="array-preview" style="margin-top:6px">
+            <div class="array-preview__items array-preview__items--chips">
+              <span class="array-preview__chip">a</span>
+              <span class="array-preview__chip">b</span>
+              <span class="array-preview__chip">c</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="legend-block">
+        <div class="legend-block__name">TriggersRow</div>
+        <div class="legend-block__purpose">triggered_by[]: who/what activates this behaviour?</div>
+        <div class="legend-block__examples">
+          <span class="triggers">
+            <span class="trigger" data-trig="user"    title="user">👤</span>
+            <span class="trigger" data-trig="ai"      title="ai">✦</span>
+            <span class="trigger" data-trig="cron"    title="cron">⏱</span>
+            <span class="trigger" data-trig="startup" title="startup">⏻</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="legend-block">
+        <div class="legend-block__name">PersistenceMark</div>
+        <div class="legend-block__purpose">serialized: stored in DB or config-only?</div>
+        <div class="legend-block__examples">
+          <span class="persist" data-ser="true"><span class="persist__bar"></span>persisted</span>
+          <span class="persist" data-ser="false"><span class="persist__bar"></span>config-only</span>
+        </div>
+      </div>
+
+      <div class="legend-block">
+        <div class="legend-block__name">StabilityDot</div>
+        <div class="legend-block__purpose">stability: how settled is the field?</div>
+        <div class="legend-block__examples">
+          <span class="stability" data-st="stable"><span class="stability__dot"></span>stable</span>
+          <span class="stability" data-st="experimental"><span class="stability__dot"></span>experimental</span>
+          <span class="stability" data-st="reserved"><span class="stability__dot"></span>reserved</span>
+        </div>
+      </div>
+
+      <div class="legend-block">
+        <div class="legend-block__name">OverrideBadge</div>
+        <div class="legend-block__purpose">overridable_per: where does the override live?</div>
+        <div class="legend-block__examples">
+          <span class="override">override: no</span>
+          <span class="override">override: per_lens</span>
+        </div>
+      </div>
+
+      <div class="legend-block">
+        <div class="legend-block__name">PatternBadge</div>
+        <div class="legend-block__purpose">$patterns match: auto-flagged scenario from meta cross-references</div>
+        <div class="legend-block__examples">
+          <span class="pattern"><span class="pattern__icon">⚠</span>DB drift hazard</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ─── TABS — pick which config triple to render ────────────────── -->
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" aria-selected="true"  data-target="pane-providers">
+      operations / providers.yml<span class="tab__count">7 fields</span>
+    </button>
+    <button class="tab" role="tab" aria-selected="false" data-target="pane-consistency">
+      templates / consistency.yml<span class="tab__count">7 fields</span>
+    </button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- ─── CONFIG PANE: providers.yml ──────────────────────────────── -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <section class="config-pane" id="pane-providers" data-config="providers">
+
+    <header class="config-pane__head">
+      <div class="config-pane__file">config-describers / operations / providers.yml</div>
+      <h2 class="config-pane__title">AI Providers, Roles, RAG, Tools</h2>
+      <p class="config-pane__desc">Operations config for AI provider connections, role mapping, RAG pipeline, and tool toggles.</p>
+      <div class="config-pane__meta-supported">
+        <span class="meta-support-chip">visibility</span>
+        <span class="meta-support-chip">mutability</span>
+        <span class="meta-support-chip">affects</span>
+        <span class="meta-support-chip">operation_type</span>
+        <span class="meta-support-chip">triggered_by</span>
+        <span class="meta-support-chip">serialized</span>
+        <span class="meta-support-chip">overridable_per</span>
+        <span class="meta-support-chip">stability</span>
+      </div>
+    </header>
+
+    <nav class="toc">
+      <a class="toc__pill" href="#providers">providers <span class="count">2</span></a>
+      <a class="toc__pill" href="#roles">roles <span class="count">1</span></a>
+      <a class="toc__pill" href="#rag">rag <span class="count">2</span></a>
+      <a class="toc__pill" href="#tools">tools <span class="count">2</span></a>
+    </nav>
+
+  <!-- ─── PROVIDERS SECTION ─────────────────────────────────────────── -->
+  <section id="providers" class="section">
+    <h2 class="section__title">providers</h2>
+    <p class="section__desc">Registry of AI provider connections. Each key is a provider name mapping to its connection config and available models.</p>
+
+    <div class="cards">
+
+      <!-- FIELD: providers.openai.enabled -->
+      <article class="card" data-op="gate">
+        <header class="card__head">
+          <span class="op-glyph" data-op="gate">⛨</span>
+          <div class="card__path">
+            <span class="seg-dim">providers.openai.</span><span class="seg-key">enabled</span>
+          </div>
+          <div class="card__head-right">
+            <span class="stability" data-st="stable"><span class="stability__dot"></span>stable</span>
+          </div>
+        </header>
+
+        <div class="card__value-row">
+          <code class="card__value">true</code>
+          <span class="card__type">boolean</span>
+        </div>
+
+        <p class="card__desc">
+          Whether this provider is available for use. When false, roles pointing at this provider will fail at runtime.
+        </p>
+
+        <div class="card__meta">
+          <div class="meta-cell">
+            <div class="meta-cell__label">audience</div>
+            <span class="audience" data-vis="developer"><span class="audience__dot"></span>developer</span>
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">mutability</div>
+            <span class="lock" data-mut="config"><span class="lock__icon"></span>config</span>
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">op type</div>
+            <span class="op-glyph" data-op="gate" style="margin-right:6px">⛨</span>gate
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">affects</div>
+            <div class="affects">
+              <span class="affect-chip" data-aff="ai_pipeline">ai_pipeline</span>
+            </div>
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">triggers</div>
+            <div class="triggers">
+              <span class="trigger" data-trig="startup" title="startup">⏻</span>
+            </div>
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">persistence / override</div>
+            <span class="persist" data-ser="false"><span class="persist__bar"></span>config-only</span>
+            &nbsp;<span class="override">override: no</span>
+          </div>
+        </div>
+
+        <details class="card__notes">
+          <summary>notes</summary>
+          <div class="card__notes-body">
+            Acts as a kill switch. Set to <code>false</code> to disable a provider without removing its config.
+            Roles that reference a disabled provider will error — check role mappings before disabling.
+          </div>
+        </details>
+      </article>
+
+      <!-- FIELD: providers.openai.models.gpt-4o-mini.cost_per_1k -->
+      <article class="card" data-op="read">
+        <header class="card__head">
+          <span class="op-glyph" data-op="read">◌</span>
+          <div class="card__path">
+            <span class="seg-dim">providers.openai.models.gpt-4o-mini.</span><span class="seg-key">cost_per_1k</span>
+          </div>
+          <div class="card__head-right">
+            <span class="stability" data-st="stable"><span class="stability__dot"></span>stable</span>
+          </div>
+        </header>
+
+        <div class="card__value-row">
+          <code class="card__value">0.0001</code>
+          <span class="card__type">number</span>
+        </div>
+
+        <p class="card__desc">
+          Approximate cost per 1,000 tokens in USD. Used for the usage panel's cost estimate — not for billing.
+        </p>
+
+        <div class="card__meta">
+          <div class="meta-cell">
+            <div class="meta-cell__label">audience</div>
+            <span class="audience" data-vis="user"><span class="audience__dot"></span>user</span>
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">mutability</div>
+            <span class="lock" data-mut="config"><span class="lock__icon"></span>config</span>
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">op type</div>
+            <span class="op-glyph" data-op="read" style="margin-right:6px">◌</span>read
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">affects</div>
+            <div class="affects">
+              <span class="affect-chip" data-aff="ui_display">ui_display</span>
+            </div>
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">triggers</div>
+            <div class="triggers">
+              <span class="trigger" data-trig="user" title="user">👤</span>
+            </div>
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">persistence / override</div>
+            <span class="persist" data-ser="false"><span class="persist__bar"></span>config-only</span>
+            &nbsp;<span class="override">override: no</span>
+          </div>
+        </div>
+
+        <details class="card__notes">
+          <summary>notes</summary>
+          <div class="card__notes-body">
+            Cosmetic only — shown in the usage panel so writers can see approximate cost. Not used for actual billing or rate limiting. Update when provider pricing changes.
+          </div>
+        </details>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ─── ROLES SECTION ─────────────────────────────────────────────── -->
+  <section id="roles" class="section">
+    <h2 class="section__title">roles</h2>
+    <p class="section__desc">Maps abstract role names (small / draft / expert) to concrete provider+model pairs. The indirection layer between engine code and concrete LLMs.</p>
+
+    <div class="cards">
+
+      <!-- FIELD: roles.small.model -->
+      <article class="card" data-op="action">
+        <header class="card__head">
+          <span class="op-glyph" data-op="action">⚡</span>
+          <div class="card__path">
+            <span class="seg-dim">roles.small.</span><span class="seg-key">model</span>
+          </div>
+          <div class="card__head-right">
+            <span class="stability" data-st="stable"><span class="stability__dot"></span>stable</span>
+          </div>
+        </header>
+
+        <div class="card__value-row">
+          <code class="card__value">"gpt-4o-mini"</code>
+          <span class="card__type">string</span>
+        </div>
+
+        <p class="card__desc">
+          Which model to use for this role. Must match a key in the referenced provider's <code>models</code> section.
+        </p>
+
+        <div class="card__patterns">
+          <span class="pattern">
+            <span class="pattern__icon">⤳</span>
+            user-or-AI-invoked LLM call
+          </span>
+        </div>
+
+        <div class="card__meta">
+          <div class="meta-cell">
+            <div class="meta-cell__label">audience</div>
+            <span class="audience" data-vis="developer"><span class="audience__dot"></span>developer</span>
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">mutability</div>
+            <span class="lock" data-mut="config"><span class="lock__icon"></span>config</span>
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">op type</div>
+            <span class="op-glyph" data-op="action" style="margin-right:6px">⚡</span>action
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">affects</div>
+            <div class="affects">
+              <span class="affect-chip" data-aff="ai_pipeline">ai_pipeline</span>
+              <span class="affect-chip" data-aff="performance">performance</span>
+            </div>
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">triggers</div>
+            <div class="triggers">
+              <span class="trigger" data-trig="user" title="user">👤</span>
+              <span class="trigger" data-trig="ai" title="ai">✦</span>
+            </div>
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">persistence / override</div>
+            <span class="persist" data-ser="false"><span class="persist__bar"></span>config-only</span>
+            &nbsp;<span class="override">override: no</span>
+          </div>
+        </div>
+
+        <details class="card__notes">
+          <summary>notes</summary>
+          <div class="card__notes-body">
+            This is where you control the quality/cost tradeoff. 'small' role → cheap fast model. 'expert' role → capable expensive model. During testing all three can point at the same cheap model.
+          </div>
+        </details>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ─── RAG SECTION ───────────────────────────────────────────────── -->
+  <section id="rag" class="section">
+    <h2 class="section__title">rag</h2>
+    <p class="section__desc">Hybrid RAG pipeline configuration — chunking, retrieval, fusion, and reranking.</p>
+
+    <div class="cards">
+
+      <!-- FIELD: rag.embedding_model -->
+      <article class="card" data-op="action">
+        <header class="card__head">
+          <span class="op-glyph" data-op="action">⚡</span>
+          <div class="card__path">
+            <span class="seg-dim">rag.</span><span class="seg-key">embedding_model</span>
+          </div>
+          <div class="card__head-right">
+            <span class="stability" data-st="stable"><span class="stability__dot"></span>stable</span>
+          </div>
+        </header>
+
+        <div class="card__value-row">
+          <code class="card__value">"text-embedding-3-small"</code>
+          <span class="card__type">string</span>
+        </div>
+
+        <p class="card__desc">
+          The embedding model used to vectorize text chunks for pgvector storage and similarity search.
+        </p>
+
+        <div class="card__patterns">
+          <span class="pattern">
+            <span class="pattern__icon">⚠</span>
+            background-scheduled — invalidates state on change
+          </span>
+        </div>
+
+        <div class="card__meta">
+          <div class="meta-cell">
+            <div class="meta-cell__label">audience</div>
+            <span class="audience" data-vis="developer"><span class="audience__dot"></span>developer</span>
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">mutability</div>
+            <span class="lock" data-mut="config"><span class="lock__icon"></span>config</span>
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">op type</div>
+            <span class="op-glyph" data-op="action" style="margin-right:6px">⚡</span>action
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">affects</div>
+            <div class="affects">
+              <span class="affect-chip" data-aff="ai_pipeline">ai_pipeline</span>
+              <span class="affect-chip" data-aff="performance">performance</span>
+            </div>
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">triggers</div>
+            <div class="triggers">
+              <span class="trigger" data-trig="cron" title="cron">⏱</span>
+            </div>
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">persistence / override</div>
+            <span class="persist" data-ser="false"><span class="persist__bar"></span>config-only</span>
+            &nbsp;<span class="override">override: no</span>
+          </div>
+        </div>
+
+        <details class="card__notes" open>
+          <summary>notes</summary>
+          <div class="card__notes-body">
+            Changing the embedding model <strong>INVALIDATES all existing vectors</strong> in the database — they were computed with the old model's geometry. After changing, you must re-embed all documents. <code>text-embedding-3-small</code> is OpenAI's cheapest embedding model with good quality.
+          </div>
+        </details>
+      </article>
+
+      <!-- FIELD: rag.rerank.enabled -->
+      <article class="card" data-op="gate">
+        <header class="card__head">
+          <span class="op-glyph" data-op="gate">⛨</span>
+          <div class="card__path">
+            <span class="seg-dim">rag.rerank.</span><span class="seg-key">enabled</span>
+          </div>
+          <div class="card__head-right">
+            <span class="stability" data-st="stable"><span class="stability__dot"></span>stable</span>
+          </div>
+        </header>
+
+        <div class="card__value-row">
+          <code class="card__value">true</code>
+          <span class="card__type">boolean</span>
+        </div>
+
+        <p class="card__desc">
+          Whether LLM reranking runs after hybrid fusion. When false, the fusion order is used directly.
+        </p>
+
+        <div class="card__meta">
+          <div class="meta-cell">
+            <div class="meta-cell__label">audience</div>
+            <span class="audience" data-vis="developer"><span class="audience__dot"></span>developer</span>
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">mutability</div>
+            <span class="lock" data-mut="config"><span class="lock__icon"></span>config</span>
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">op type</div>
+            <span class="op-glyph" data-op="gate" style="margin-right:6px">⛨</span>gate
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">affects</div>
+            <div class="affects">
+              <span class="affect-chip" data-aff="ai_pipeline">ai_pipeline</span>
+              <span class="affect-chip" data-aff="performance">performance</span>
+            </div>
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">triggers</div>
+            <div class="triggers">
+              <span class="trigger" data-trig="ai" title="ai">✦</span>
+            </div>
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">persistence / override</div>
+            <span class="persist" data-ser="false"><span class="persist__bar"></span>config-only</span>
+            &nbsp;<span class="override">override: no</span>
+          </div>
+        </div>
+
+        <details class="card__notes">
+          <summary>notes</summary>
+          <div class="card__notes-body">
+            Disabling saves one LLM call per retrieval but degrades relevance. Good to disable during local dev/testing for speed. Keep enabled in production.
+          </div>
+        </details>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ─── TOOLS SECTION ─────────────────────────────────────────────── -->
+  <section id="tools" class="section">
+    <h2 class="section__title">tools</h2>
+    <p class="section__desc">Toggle and configuration for agent tools — specialised capabilities the AI can invoke during generation or analysis.</p>
+
+    <div class="cards">
+
+      <!-- FIELD: tools.quote_tool.max_quotes -->
+      <article class="card" data-op="limit">
+        <header class="card__head">
+          <span class="op-glyph" data-op="limit">≡</span>
+          <div class="card__path">
+            <span class="seg-dim">tools.quote_tool.</span><span class="seg-key">max_quotes</span>
+          </div>
+          <div class="card__head-right">
+            <span class="stability" data-st="stable"><span class="stability__dot"></span>stable</span>
+          </div>
+        </header>
+
+        <div class="card__value-row">
+          <code class="card__value">5</code>
+          <span class="card__type">integer</span>
+        </div>
+
+        <p class="card__desc">
+          Maximum number of quotes the tool can return in a single invocation.
+        </p>
+
+        <div class="card__patterns">
+          <span class="pattern">
+            <span class="pattern__icon">⏲</span>
+            cost/speed cap — loosening increases quality and cost
+          </span>
+        </div>
+
+        <div class="card__meta">
+          <div class="meta-cell">
+            <div class="meta-cell__label">audience</div>
+            <span class="audience" data-vis="developer"><span class="audience__dot"></span>developer</span>
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">mutability</div>
+            <span class="lock" data-mut="config"><span class="lock__icon"></span>config</span>
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">op type</div>
+            <span class="op-glyph" data-op="limit" style="margin-right:6px">≡</span>limit
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">affects</div>
+            <div class="affects">
+              <span class="affect-chip" data-aff="ai_pipeline">ai_pipeline</span>
+              <span class="affect-chip" data-aff="performance">performance</span>
+            </div>
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">triggers</div>
+            <div class="triggers">
+              <span class="trigger" data-trig="ai" title="ai">✦</span>
+            </div>
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">persistence / override</div>
+            <span class="persist" data-ser="false"><span class="persist__bar"></span>config-only</span>
+            &nbsp;<span class="override">override: no</span>
+          </div>
+        </div>
+
+        <details class="card__notes">
+          <summary>notes</summary>
+          <div class="card__notes-body">
+            Higher → more evidence per call but more tokens consumed in the agent's context. Lower → fewer examples but faster and cheaper.
+          </div>
+        </details>
+      </article>
+
+      <!-- FIELD: tools.search_tool.timeout -->
+      <article class="card" data-op="limit">
+        <header class="card__head">
+          <span class="op-glyph" data-op="limit">≡</span>
+          <div class="card__path">
+            <span class="seg-dim">tools.search_tool.</span><span class="seg-key">timeout</span>
+          </div>
+          <div class="card__head-right">
+            <span class="stability" data-st="stable"><span class="stability__dot"></span>stable</span>
+          </div>
+        </header>
+
+        <div class="card__value-row">
+          <code class="card__value">10</code>
+          <span class="card__type">integer (seconds)</span>
+        </div>
+
+        <p class="card__desc">
+          Maximum seconds for a search invocation before it aborts.
+        </p>
+
+        <div class="card__meta">
+          <div class="meta-cell">
+            <div class="meta-cell__label">audience</div>
+            <span class="audience" data-vis="developer"><span class="audience__dot"></span>developer</span>
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">mutability</div>
+            <span class="lock" data-mut="config"><span class="lock__icon"></span>config</span>
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">op type</div>
+            <span class="op-glyph" data-op="limit" style="margin-right:6px">≡</span>limit
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">affects</div>
+            <div class="affects">
+              <span class="affect-chip" data-aff="performance">performance</span>
+            </div>
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">triggers</div>
+            <div class="triggers">
+              <span class="trigger" data-trig="ai" title="ai">✦</span>
+            </div>
+          </div>
+          <div class="meta-cell">
+            <div class="meta-cell__label">persistence / override</div>
+            <span class="persist" data-ser="false"><span class="persist__bar"></span>config-only</span>
+            &nbsp;<span class="override">override: no</span>
+          </div>
+        </div>
+
+        <details class="card__notes">
+          <summary>notes</summary>
+          <div class="card__notes-body">
+            Set relative to expected execution time. Tools that hit external APIs (search) need more headroom than local-compute tools.
+          </div>
+        </details>
+      </article>
+
+    </div>
+  </section>
+
+  </section> <!-- /pane-providers -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- ─── CONFIG PANE: consistency.yml ────────────────────────────── -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <section class="config-pane" id="pane-consistency" data-config="consistency" hidden>
+
+    <header class="config-pane__head">
+      <div class="config-pane__file">config-describers / templates / consistency.yml</div>
+      <h2 class="config-pane__title">Consistency Engine Templates</h2>
+      <p class="config-pane__desc">
+        Parametric config for the consistency engine — tunables, bit type system, scaffolds, and the template registry.
+        <strong>Same block primitives</strong> as the operations pane, but the meta-schema omits <code>operation_type</code> and <code>triggered_by</code>
+        (so those cells disappear from cards) and adds <code>outline_generation</code> to the <code>affects</code> palette.
+      </p>
+      <div class="config-pane__meta-supported">
+        <span class="meta-support-chip">visibility</span>
+        <span class="meta-support-chip">mutability</span>
+        <span class="meta-support-chip">affects (+outline_generation)</span>
+        <span class="meta-support-chip meta-support-chip--absent">operation_type</span>
+        <span class="meta-support-chip meta-support-chip--absent">triggered_by</span>
+        <span class="meta-support-chip">serialized</span>
+        <span class="meta-support-chip">overridable_per</span>
+        <span class="meta-support-chip">stability</span>
+      </div>
+    </header>
+
+    <nav class="toc">
+      <a class="toc__pill" href="#tunables">tunables <span class="count">3</span></a>
+      <a class="toc__pill" href="#scaffold">scaffold <span class="count">1</span></a>
+      <a class="toc__pill" href="#templates">templates <span class="count">3</span></a>
+    </nav>
+
+    <!-- ─── TUNABLES SECTION ─────────────────────────────────────── -->
+    <section id="tunables" class="section">
+      <h2 class="section__title">tunables</h2>
+      <p class="section__desc">Parametric knobs that control engine behaviour. Deterministic logic stays in code; everything tunable lives here.</p>
+
+      <div class="cards">
+
+        <!-- FIELD: tunables.roles.outline -->
+        <article class="card">
+          <header class="card__head">
+            <div class="card__path">
+              <span class="seg-dim">tunables.roles.</span><span class="seg-key">outline</span>
+            </div>
+            <div class="card__head-right">
+              <span class="stability" data-st="stable"><span class="stability__dot"></span>stable</span>
+            </div>
+          </header>
+
+          <div class="card__value-row">
+            <code class="card__value">"small"</code>
+            <span class="card__type">string</span>
+          </div>
+
+          <p class="card__desc">
+            Role used by the outline pass (scene drafting with bit constraints).
+          </p>
+
+          <div class="card__meta card__meta--cols-2">
+            <div class="meta-cell">
+              <div class="meta-cell__label">audience</div>
+              <span class="audience" data-vis="developer"><span class="audience__dot"></span>developer</span>
+            </div>
+            <div class="meta-cell">
+              <div class="meta-cell__label">mutability</div>
+              <span class="lock" data-mut="config"><span class="lock__icon"></span>config</span>
+            </div>
+            <div class="meta-cell">
+              <div class="meta-cell__label">affects</div>
+              <div class="affects">
+                <span class="affect-chip" data-aff="ai_pipeline">ai_pipeline</span>
+                <span class="affect-chip" data-aff="outline_generation">outline_generation</span>
+              </div>
+            </div>
+            <div class="meta-cell">
+              <div class="meta-cell__label">persistence / override</div>
+              <span class="persist" data-ser="false"><span class="persist__bar"></span>config-only</span>
+              &nbsp;<span class="override">override: no</span>
+            </div>
+          </div>
+
+          <details class="card__notes">
+            <summary>notes</summary>
+            <div class="card__notes-body">
+              Changing a role from 'small' to 'expert' increases quality but also cost and latency for the outline pass. The <code>outline_generation</code> affect is unique to this config — proves new <code>affects</code> values get a color automatically.
+            </div>
+          </details>
+        </article>
+
+        <!-- FIELD: tunables.batch_scene_probes -->
+        <article class="card">
+          <header class="card__head">
+            <div class="card__path">
+              <span class="seg-dim">tunables.</span><span class="seg-key">batch_scene_probes</span>
+            </div>
+            <div class="card__head-right">
+              <span class="stability" data-st="experimental"><span class="stability__dot"></span>experimental</span>
+            </div>
+          </header>
+
+          <div class="card__value-row">
+            <code class="card__value">false</code>
+            <span class="card__type">boolean</span>
+          </div>
+
+          <p class="card__desc">
+            When true, probe passes batch multiple scenes per LLM call instead of one-at-a-time. Feature-gated; flip on when batching implementation lands.
+          </p>
+
+          <div class="card__patterns">
+            <span class="pattern">
+              <span class="pattern__icon">⚗</span>
+              experimental + config-only — feature gate, backing code not landed
+            </span>
+          </div>
+
+          <div class="card__meta card__meta--cols-2">
+            <div class="meta-cell">
+              <div class="meta-cell__label">audience</div>
+              <span class="audience" data-vis="developer"><span class="audience__dot"></span>developer</span>
+            </div>
+            <div class="meta-cell">
+              <div class="meta-cell__label">mutability</div>
+              <span class="lock" data-mut="config"><span class="lock__icon"></span>config</span>
+            </div>
+            <div class="meta-cell">
+              <div class="meta-cell__label">affects</div>
+              <div class="affects">
+                <span class="affect-chip" data-aff="ai_pipeline">ai_pipeline</span>
+                <span class="affect-chip" data-aff="performance">performance</span>
+              </div>
+            </div>
+            <div class="meta-cell">
+              <div class="meta-cell__label">persistence / override</div>
+              <span class="persist" data-ser="false"><span class="persist__bar"></span>config-only</span>
+              &nbsp;<span class="override">override: no</span>
+            </div>
+          </div>
+
+          <details class="card__notes" open>
+            <summary>notes</summary>
+            <div class="card__notes-body">
+              Not yet implemented — flipping to <code>true</code> before the batching code lands will break probe passes. The pulsing stability dot signals "don't depend on this yet."
+            </div>
+          </details>
+        </article>
+
+        <!-- FIELD: tunables.snap.min_confidence -->
+        <article class="card">
+          <header class="card__head">
+            <div class="card__path">
+              <span class="seg-dim">tunables.snap.</span><span class="seg-key">min_confidence</span>
+            </div>
+            <div class="card__head-right">
+              <span class="stability" data-st="stable"><span class="stability__dot"></span>stable</span>
+            </div>
+          </header>
+
+          <div class="card__value-row">
+            <code class="card__value">0.2</code>
+            <span class="card__type">number (0–1)</span>
+          </div>
+
+          <p class="card__desc">
+            Snap confidence floor. Matches below this threshold are flagged as 'dangling' in the UI for the writer to resolve manually.
+          </p>
+
+          <div class="card__meta card__meta--cols-2">
+            <div class="meta-cell">
+              <div class="meta-cell__label">audience</div>
+              <span class="audience" data-vis="user"><span class="audience__dot"></span>user</span>
+            </div>
+            <div class="meta-cell">
+              <div class="meta-cell__label">mutability</div>
+              <span class="lock" data-mut="config"><span class="lock__icon"></span>config</span>
+            </div>
+            <div class="meta-cell">
+              <div class="meta-cell__label">affects</div>
+              <div class="affects">
+                <span class="affect-chip" data-aff="ui_display">ui_display</span>
+                <span class="affect-chip" data-aff="data_model">data_model</span>
+              </div>
+            </div>
+            <div class="meta-cell">
+              <div class="meta-cell__label">persistence / override</div>
+              <span class="persist" data-ser="false"><span class="persist__bar"></span>config-only</span>
+              &nbsp;<span class="override">override: no</span>
+            </div>
+          </div>
+
+          <details class="card__notes">
+            <summary>notes</summary>
+            <div class="card__notes-body">
+              The writer sees dangling flags in the scope panel — this threshold controls how aggressively the engine admits uncertainty.
+            </div>
+          </details>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ─── SCAFFOLD SECTION ─────────────────────────────────────── -->
+    <section id="scaffold" class="section">
+      <h2 class="section__title">scaffold</h2>
+      <p class="section__desc">Named structural beat sets. Used as the coverage chart's required set AND shown as the outline-scaffold preview at template-selection time.</p>
+
+      <div class="cards">
+
+        <!-- FIELD: scaffold.three_act (array value!) -->
+        <article class="card">
+          <header class="card__head">
+            <div class="card__path">
+              <span class="seg-dim">scaffold.</span><span class="seg-key">three_act</span>
+            </div>
+            <div class="card__head-right">
+              <span class="stability" data-st="stable"><span class="stability__dot"></span>stable</span>
+            </div>
+          </header>
+
+          <div class="card__value-row" style="display:block; padding-top:12px; padding-bottom:12px;">
+            <div class="array-preview">
+              <div class="array-preview__header">
+                <span>array&lt;string&gt;</span>
+                <span class="array-preview__count">8 items · ordered</span>
+              </div>
+              <div class="array-preview__items">
+                <div class="array-preview__item"><span class="idx">1</span>Act I — Setup</div>
+                <div class="array-preview__item"><span class="idx">2</span>Inciting Incident</div>
+                <div class="array-preview__item"><span class="idx">3</span>Act II — Confrontation</div>
+                <div class="array-preview__item"><span class="idx">4</span>Midpoint</div>
+                <div class="array-preview__item"><span class="idx">5</span>Crisis</div>
+                <div class="array-preview__item"><span class="idx">6</span>Act III — Resolution</div>
+                <div class="array-preview__item"><span class="idx">7</span>Climax</div>
+                <div class="array-preview__item"><span class="idx">8</span>Denouement</div>
+              </div>
+            </div>
+          </div>
+
+          <p class="card__desc">
+            Classic three-act structure beats. Beat labels are shown directly to the writer in the scaffold preview and on coverage charts — wording matters.
+          </p>
+
+          <div class="card__patterns">
+            <span class="pattern">
+              <span class="pattern__icon">✎</span>
+              user-facing copy — review wording before shipping
+            </span>
+          </div>
+
+          <div class="card__meta card__meta--cols-2">
+            <div class="meta-cell">
+              <div class="meta-cell__label">audience</div>
+              <span class="audience" data-vis="user"><span class="audience__dot"></span>user</span>
+            </div>
+            <div class="meta-cell">
+              <div class="meta-cell__label">mutability</div>
+              <span class="lock" data-mut="config"><span class="lock__icon"></span>config</span>
+            </div>
+            <div class="meta-cell">
+              <div class="meta-cell__label">affects</div>
+              <div class="affects">
+                <span class="affect-chip" data-aff="ui_display">ui_display</span>
+                <span class="affect-chip" data-aff="outline_generation">outline_generation</span>
+                <span class="affect-chip" data-aff="ai_pipeline">ai_pipeline</span>
+              </div>
+            </div>
+            <div class="meta-cell">
+              <div class="meta-cell__label">persistence / override</div>
+              <span class="persist" data-ser="false"><span class="persist__bar"></span>config-only</span>
+              &nbsp;<span class="override">override: no</span>
+            </div>
+          </div>
+
+          <details class="card__notes">
+            <summary>notes</summary>
+            <div class="card__notes-body">
+              New scaffold keys can be added freely; they become available as <code>required</code> references in template chart definitions.
+            </div>
+          </details>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ─── TEMPLATES SECTION ────────────────────────────────────── -->
+    <section id="templates" class="section">
+      <h2 class="section__title">templates</h2>
+      <p class="section__desc">Flat template registry. Each template binds a scope_type to a bundle of candidate charts.</p>
+
+      <div class="cards">
+
+        <!-- FIELD: templates[].id -->
+        <article class="card">
+          <header class="card__head">
+            <div class="card__path">
+              <span class="seg-dim">templates[].</span><span class="seg-key">id</span>
+            </div>
+            <div class="card__head-right">
+              <span class="stability" data-st="stable"><span class="stability__dot"></span>stable</span>
+            </div>
+          </header>
+
+          <div class="card__value-row">
+            <code class="card__value">"three_act"</code>
+            <span class="card__type">string · primary key</span>
+          </div>
+
+          <p class="card__desc">
+            Unique identifier for the template. Used as the primary key / foreign key when a writer saves a lens.
+          </p>
+
+          <div class="card__patterns">
+            <span class="pattern">
+              <span class="pattern__icon">⚠</span>
+              DB identifier — renaming orphans saved lens records
+            </span>
+          </div>
+
+          <div class="card__meta card__meta--cols-2">
+            <div class="meta-cell">
+              <div class="meta-cell__label">audience</div>
+              <span class="audience" data-vis="system"><span class="audience__dot"></span>system</span>
+            </div>
+            <div class="meta-cell">
+              <div class="meta-cell__label">mutability</div>
+              <span class="lock" data-mut="immutable"><span class="lock__icon"></span>immutable</span>
+            </div>
+            <div class="meta-cell">
+              <div class="meta-cell__label">affects</div>
+              <div class="affects">
+                <span class="affect-chip" data-aff="data_model">data_model</span>
+              </div>
+            </div>
+            <div class="meta-cell">
+              <div class="meta-cell__label">persistence / override</div>
+              <span class="persist" data-ser="true"><span class="persist__bar"></span>persisted</span>
+              &nbsp;<span class="override">override: no</span>
+            </div>
+          </div>
+
+          <details class="card__notes" open>
+            <summary>notes</summary>
+            <div class="card__notes-body">
+              <strong>Treat as a permanent identifier.</strong> Saved lenses reference this id. Renaming requires a data migration that updates all referencing DB rows first. The red <code>immutable</code> lock and the filled <code>persisted</code> bar combine to flag this as the highest-risk field shape in either config.
+            </div>
+          </details>
+        </article>
+
+        <!-- FIELD: templates[].label -->
+        <article class="card">
+          <header class="card__head">
+            <div class="card__path">
+              <span class="seg-dim">templates[].</span><span class="seg-key">label</span>
+            </div>
+            <div class="card__head-right">
+              <span class="stability" data-st="stable"><span class="stability__dot"></span>stable</span>
+            </div>
+          </header>
+
+          <div class="card__value-row">
+            <code class="card__value">"Three-Act Structure"</code>
+            <span class="card__type">string</span>
+          </div>
+
+          <p class="card__desc">
+            Human-readable display name shown in the template picker and lens configuration UI.
+          </p>
+
+          <div class="card__patterns">
+            <span class="pattern">
+              <span class="pattern__icon">✎</span>
+              user-facing copy — clarity matters
+            </span>
+          </div>
+
+          <div class="card__meta card__meta--cols-2">
+            <div class="meta-cell">
+              <div class="meta-cell__label">audience</div>
+              <span class="audience" data-vis="user"><span class="audience__dot"></span>user</span>
+            </div>
+            <div class="meta-cell">
+              <div class="meta-cell__label">mutability</div>
+              <span class="lock" data-mut="config"><span class="lock__icon"></span>config</span>
+            </div>
+            <div class="meta-cell">
+              <div class="meta-cell__label">affects</div>
+              <div class="affects">
+                <span class="affect-chip" data-aff="ui_display">ui_display</span>
+              </div>
+            </div>
+            <div class="meta-cell">
+              <div class="meta-cell__label">persistence / override</div>
+              <span class="persist" data-ser="false"><span class="persist__bar"></span>config-only</span>
+              &nbsp;<span class="override">override: no</span>
+            </div>
+          </div>
+
+          <details class="card__notes">
+            <summary>notes</summary>
+            <div class="card__notes-body">
+              Should be clear, concise, and recognisable to fiction writers.
+            </div>
+          </details>
+        </article>
+
+        <!-- FIELD: templates[].charts[].y_items -->
+        <article class="card">
+          <header class="card__head">
+            <div class="card__path">
+              <span class="seg-dim">templates[].charts[].</span><span class="seg-key">y_items</span>
+              <span class="seg-dim"> &nbsp;(tragedy.fall)</span>
+            </div>
+            <div class="card__head-right">
+              <span class="stability" data-st="stable"><span class="stability__dot"></span>stable</span>
+            </div>
+          </header>
+
+          <div class="card__value-row" style="display:block; padding-top:12px; padding-bottom:12px;">
+            <div class="array-preview">
+              <div class="array-preview__header">
+                <span>array&lt;string&gt;</span>
+                <span class="array-preview__count">6 items · ordered LOW → HIGH</span>
+              </div>
+              <div class="array-preview__items array-preview__items--chips">
+                <span class="array-preview__chip">destroyed</span>
+                <span class="array-preview__chip">ruined</span>
+                <span class="array-preview__chip">struggling</span>
+                <span class="array-preview__chip">shaken</span>
+                <span class="array-preview__chip">secure</span>
+                <span class="array-preview__chip">thriving</span>
+              </div>
+            </div>
+          </div>
+
+          <p class="card__desc">
+            Vocabulary for the Y-axis of a trajectory chart. For consistency-mode charts: ordered LOW→HIGH on the conceptual axis — what 'rising' and 'falling' math_rules measure against.
+          </p>
+
+          <div class="card__patterns">
+            <span class="pattern">
+              <span class="pattern__icon">⤩</span>
+              per-lens override + persisted — config change won't reach lenses that already overrode
+            </span>
+          </div>
+
+          <div class="card__meta card__meta--cols-2">
+            <div class="meta-cell">
+              <div class="meta-cell__label">audience</div>
+              <span class="audience" data-vis="user"><span class="audience__dot"></span>user</span>
+            </div>
+            <div class="meta-cell">
+              <div class="meta-cell__label">mutability</div>
+              <span class="lock" data-mut="config"><span class="lock__icon"></span>config</span>
+            </div>
+            <div class="meta-cell">
+              <div class="meta-cell__label">affects</div>
+              <div class="affects">
+                <span class="affect-chip" data-aff="ui_display">ui_display</span>
+                <span class="affect-chip" data-aff="ai_pipeline">ai_pipeline</span>
+              </div>
+            </div>
+            <div class="meta-cell">
+              <div class="meta-cell__label">persistence / override</div>
+              <span class="persist" data-ser="true"><span class="persist__bar"></span>persisted</span>
+              &nbsp;<span class="override">override: per_lens</span>
+            </div>
+          </div>
+
+          <details class="card__notes">
+            <summary>notes</summary>
+            <div class="card__notes-body">
+              These labels appear as Y-axis ticks on the chart. For custom templates (<code>hidden: true</code>), y_items are filled dynamically by the AI via <code>chart_overrides</code> at bind time. The probe LLM is instructed to pick from exactly these values when evaluating each scene.
+            </div>
+          </details>
+        </article>
+
+      </div>
+    </section>
+
+  </section> <!-- /pane-consistency --></main>
+
+<script>
+  // Minimal tab switcher — picks which config-pane is visible.
+  (function () {
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(t => t.addEventListener('click', () => {
+      tabs.forEach(o => o.setAttribute('aria-selected', o === t ? 'true' : 'false'));
+      document.querySelectorAll('.config-pane').forEach(p => {
+        p.hidden = (p.id !== t.dataset.target);
+      });
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }));
+  })();
+</script>
+
+</body>
+</html>

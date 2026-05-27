@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Markdown Editor</title>
+  <link rel="stylesheet" href="/vendor/toastui-editor.min.css">
+  <link rel="stylesheet" href="/editor/editor.css">
+</head>
+<body>
+  <div class="toolbar">
+    <button id="btn-save"   title="Save (Cmd/Ctrl+S)">Save</button>
+    <button id="btn-revert" title="Reload from disk, discarding changes">Revert</button>
+    <span id="filename">Loading…</span>
+    <span id="status"></span>
+    <span id="root" title="Folder permission grants for silent save"></span>
+  </div>
+  <div id="editor"></div>
+  <script src="/vendor/toastui-editor-all.min.js"></script>
+  <script src="/editor/editor.js"></script>
+</body>
+</html>

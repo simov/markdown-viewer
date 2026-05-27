@@ -1,0 +1,228 @@
+{
+  "$description": "Meta-schema for providers_fields.json — describes the metadata properties attached to every operations config field and how to interpret them.",
+
+  "$how_to_read": [
+    "Each field in providers_fields.json carries metadata properties beyond 'type' and 'description'.",
+    "This file documents what those properties mean, what values they can take, and how to use them.",
+    "",
+    "Start with 'visibility' → WHO is this field for?",
+    "Then 'mutability' → CAN I safely change this?",
+    "Then 'serialized' → WILL the database and config disagree?",
+    "Then 'affects' → WHAT system layers are impacted?",
+    "Then 'operation_type' → DOES this field drive an action or just describe/display?",
+    "Then 'triggered_by' → WHO or WHAT activates the behaviour this field controls?",
+    "Then 'overridable_per' → WHERE does the override live?",
+    "Then 'stability' → HOW SETTLED is this field?",
+    "Finally 'notes' → trade-offs, edge cases, gotchas."
+  ],
+
+  "metadata_properties": {
+    "visibility": {
+      "purpose": "Identifies the intended audience for this field's value or effect. Answers: 'Who is this for?'",
+      "type": "string",
+      "required_on": "all fields",
+      "values": {
+        "user": {
+          "meaning": "The writer (end user) sees this field's value or its effect directly in the UI.",
+          "examples": ["models.cost_per_1k (shown in usage panel)"],
+          "implication": "Treat as user-facing copy or data. Changes affect what the writer reads."
+        },
+        "developer": {
+          "meaning": "A developer or admin tunes this field to control engine behaviour. Not shown to end users.",
+          "examples": ["roles.model", "rag.chunk_size", "tools.*.enabled"],
+          "implication": "Safe to change without copy review. Test the downstream effect."
+        },
+        "system": {
+          "meaning": "Purely engine-internal. Consumed only by code.",
+          "examples": ["(most operations fields are developer-visible, few are pure system)"],
+          "implication": "Changes are invisible to users but can break internal contracts."
+        }
+      }
+    },
+
+    "mutability": {
+      "purpose": "How and when this field can be changed. Answers: 'Can I safely change this, and what does it take?'",
+      "type": "string",
+      "required_on": "all fields",
+      "values": {
+        "config": {
+          "meaning": "Change by editing the yml file. Takes effect on next server restart or config reload.",
+          "risk": "low"
+        },
+        "runtime": {
+          "meaning": "Can be changed via API or UI without restarting the server.",
+          "risk": "low"
+        },
+        "immutable": {
+          "meaning": "Changing breaks references in the database or other config sections.",
+          "risk": "high"
+        }
+      }
+    },
+
+    "affects": {
+      "purpose": "Which system layers are impacted when this field changes. Answers: 'What will be different?'",
+      "type": "array of strings",
+      "required_on": "all fields",
+      "values": {
+        "ai_pipeline": {
+          "meaning": "Changes LLM call behavior — model selection, prompt construction, tool availability.",
+          "how_to_verify": "Re-run an AI task and compare outputs."
+        },
+        "ui_display": {
+          "meaning": "Changes what the writer sees in the frontend.",
+          "how_to_verify": "Check the affected UI area in the browser."
+        },
+        "data_model": {
+          "meaning": "Changes how data is structured, typed, or filtered.",
+          "how_to_verify": "Check that existing DB records still load correctly."
+        },
+        "performance": {
+          "meaning": "Changes speed, cost, or resource usage. No functional change.",
+          "how_to_verify": "Time operations before/after. Check API usage."
+        }
+      }
+    },
+
+    "operation_type": {
+      "purpose": "Whether this field drives a mutation/side-effect or is read-only/informational. Answers: 'Does this DO something or just DESCRIBE something?'",
+      "type": "string",
+      "required_on": "all fields",
+      "values": {
+        "action": {
+          "meaning": "This field controls behaviour that causes a side effect — an LLM call, a tool invocation, a data write, a retrieval query, an embedding computation.",
+          "examples": ["roles.model (selects which LLM is called)", "rag.rerank.enabled (triggers or skips an LLM reranking call)", "tools.*.enabled (makes a tool available for invocation)", "rag.embedding_model (drives embedding computation)"],
+          "implication": "Changing this field changes what the system DOES. Test by running the affected operation and observing side effects."
+        },
+        "read": {
+          "meaning": "This field is informational — it configures a display, sets a label, provides a cost estimate, or documents intent. No side effects.",
+          "examples": ["models.cost_per_1k (displayed in usage panel)", "roles.use_case (documentation string)", "rag.hybrid_alpha (weights a score calculation, no external call)"],
+          "implication": "Changing this field changes what the system SHOWS or how it SCORES, but doesn't trigger new operations."
+        },
+        "gate": {
+          "meaning": "This field acts as a boolean or threshold gate — it doesn't perform the action itself but controls whether an action happens.",
+          "examples": ["providers.enabled (gates all calls to that provider)", "tools.*.enabled (gates tool availability)", "rag.rerank.enabled (gates the reranking step)"],
+          "implication": "Flipping a gate enables or disables an entire subsystem. Check what depends on the gated subsystem before toggling."
+        },
+        "limit": {
+          "meaning": "This field caps or constrains an action — it doesn't trigger the action but bounds its scope, cost, or duration.",
+          "examples": ["models.max_tokens (caps response length)", "models.timeout (caps wait time)", "rag.max_context_tokens (caps injected context)", "rag.rerank.max_candidates (caps reranker input)", "tools.quote_tool.max_quotes (caps returned quotes)"],
+          "implication": "Changing a limit widens or narrows an existing operation. Too tight → truncation or timeouts. Too loose → cost or latency spikes."
+        }
+      },
+      "how_to_read": "Ask: 'If I change this field, does the system call something new, stop calling something, or just change a number on screen?' action = new/different call. gate = enables/disables a call. limit = constrains an existing call. read = display/score only."
+    },
+
+    "triggered_by": {
+      "purpose": "Who or what activates the behaviour this field controls. Answers: 'What sets this in motion?'",
+      "type": "string or array of strings",
+      "required_on": "all fields with operation_type 'action', 'gate', or 'limit'",
+      "values": {
+        "user": {
+          "meaning": "The writer triggers the operation — by clicking 'Run scan', 'Generate outline', asking a question in chat, etc.",
+          "examples": ["roles.model (used when writer triggers a scan or generation)", "tools.search_tool (invoked when writer asks a question that needs retrieval)"]
+        },
+        "ai": {
+          "meaning": "The AI engine triggers the operation autonomously — during a multi-step pipeline, an agent deciding to call a tool, or a background extraction pass.",
+          "examples": ["tools.style_meter (agent decides to check style during generation)", "rag.rerank (engine runs reranking as part of retrieval pipeline)", "tools.constraints_tool (agent decides to validate against rules)"]
+        },
+        "cron": {
+          "meaning": "A scheduled background job triggers the operation — periodic re-indexing, embedding refresh, health checks.",
+          "examples": ["rag.embedding_model (used during scheduled re-embedding jobs)", "rag.chunk_size (applied during scheduled re-chunking)"]
+        },
+        "startup": {
+          "meaning": "Triggered once at server startup or config reload — provider initialization, API key validation.",
+          "examples": ["providers.enabled (checked at startup to initialize provider connections)", "providers.api_key_env (resolved at startup to load the API key)"]
+        }
+      },
+      "how_to_read": "Multiple triggers are common — a field like 'roles.model' is activated by user (manual scan), ai (agent tool call), and potentially cron (scheduled re-analysis). Read the list to understand all the entry points that exercise this field."
+    },
+
+    "serialized": {
+      "purpose": "Whether this field's value is persisted to the database.",
+      "type": "boolean",
+      "required_on": "all fields",
+      "values": {
+        "true": {
+          "meaning": "Stored in the database. Changing the config creates drift with existing DB records.",
+          "implication": "Consider a migration if changing."
+        },
+        "false": {
+          "meaning": "Lives only in the config file. Config is the single source of truth.",
+          "implication": "Safe to change. New value takes effect on reload."
+        }
+      }
+    },
+
+    "overridable_per": {
+      "purpose": "Whether per-project or per-lens overrides can replace the global value.",
+      "type": "string",
+      "required_on": "all fields",
+      "values": {
+        "no": { "meaning": "Global — all projects and lenses use the same value." },
+        "per_lens": { "meaning": "A saved lens can override via chart_overrides." }
+      }
+    },
+
+    "stability": {
+      "purpose": "How settled this field is.",
+      "type": "string",
+      "required_on": "all fields",
+      "values": {
+        "stable": { "meaning": "Finalized. Safe to depend on." },
+        "experimental": { "meaning": "May change shape or be removed." },
+        "reserved": { "meaning": "Declared but not consumed yet." }
+      }
+    },
+
+    "notes": {
+      "purpose": "Free-form human context — trade-offs, edge cases, gotchas.",
+      "type": "string",
+      "required_on": "optional"
+    }
+  },
+
+  "$reading_order": {
+    "steps": [
+      { "step": 1, "property": "visibility",     "question": "WHO is this field for?" },
+      { "step": 2, "property": "mutability",      "question": "CAN I safely change this?" },
+      { "step": 3, "property": "serialized",      "question": "WILL the DB drift?" },
+      { "step": 4, "property": "affects",          "question": "WHAT layers are impacted?" },
+      { "step": 5, "property": "operation_type",   "question": "DOES this DO something or just DESCRIBE?" },
+      { "step": 6, "property": "triggered_by",     "question": "WHO or WHAT sets this in motion?" },
+      { "step": 7, "property": "overridable_per",  "question": "WHERE does the override live?" },
+      { "step": 8, "property": "stability",        "question": "HOW SETTLED is this?" },
+      { "step": 9, "property": "notes",            "question": "ANYTHING ELSE?" }
+    ]
+  },
+
+  "$cross_references": {
+    "patterns": [
+      {
+        "pattern": "gate + triggered_by:['startup']",
+        "meaning": "A provider-level kill switch resolved at boot time. Flipping it requires a restart and affects everything downstream.",
+        "fields": ["providers.*.enabled"]
+      },
+      {
+        "pattern": "action + triggered_by:['user', 'ai']",
+        "meaning": "An LLM call or tool invocation that can be triggered both by the writer clicking something AND by the agent deciding autonomously.",
+        "fields": ["roles.model", "tools.search_tool", "tools.constraints_tool"]
+      },
+      {
+        "pattern": "limit + affects:['performance']",
+        "meaning": "A cap that trades completeness for speed/cost. Loosening increases quality but also cost and latency.",
+        "fields": ["models.max_tokens", "models.timeout", "rag.max_context_tokens", "rag.rerank.max_candidates", "tools.quote_tool.max_quotes"]
+      },
+      {
+        "pattern": "action + triggered_by:['cron']",
+        "meaning": "Background scheduled operations. Changes here affect automated jobs — check the cron schedule to understand timing.",
+        "fields": ["rag.embedding_model", "rag.chunk_size"]
+      },
+      {
+        "pattern": "read + visibility:'user'",
+        "meaning": "Purely cosmetic user-facing data. Safe to change freely, only affects what the writer sees.",
+        "fields": ["models.cost_per_1k"]
+      }
+    ]
+  }
+}

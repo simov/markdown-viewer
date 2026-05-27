@@ -1,0 +1,68 @@
+:root { --tb: 44px; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  font: 13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #24292f;
+  background: #fff;
+}
+
+.toolbar {
+  height: var(--tb);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  border-bottom: 1px solid #d0d7de;
+  background: #f6f8fa;
+  box-sizing: border-box;
+}
+
+.toolbar button {
+  appearance: none;
+  border: 1px solid #d0d7de;
+  background: #fff;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font: inherit;
+  cursor: pointer;
+}
+.toolbar button:hover { background: #f3f4f6; }
+.toolbar button:active { background: #eaeef2; }
+.toolbar button:disabled { opacity: .5; cursor: default; }
+
+#filename {
+  font-weight: 600;
+  margin-left: 12px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+#status {
+  color: #6e7781;
+  font-size: 12px;
+}
+
+#root {
+  color: #6e7781;
+  font-size: 11px;
+  margin-left: 8px;
+  max-width: 320px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+#editor {
+  position: absolute;
+  top: var(--tb);
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
