@@ -1,4 +1,7 @@
-:root { --tb: 44px; }
+:root {
+  --tb: 44px;
+  --md-sidebar-w: 280px;  /* matches content/sidebar.css so the editor lines up with the viewer */
+}
 
 html, body {
   margin: 0;
@@ -62,7 +65,20 @@ html, body {
 #editor {
   position: absolute;
   top: var(--tb);
-  left: 0;
+  left: var(--md-sidebar-w);
   right: 0;
   bottom: 0;
 }
+
+/* Center the Toast UI editor in the remaining space, mirroring the width
+   breakpoints used by .markdown-theme in content/index.css. */
+.toastui-editor-defaultUI {
+  box-sizing: border-box;
+  margin: 0 auto !important;
+  max-width: 100%;
+}
+@media (min-width: 576px)  { .toastui-editor-defaultUI { max-width: 576px; } }
+@media (min-width: 768px)  { .toastui-editor-defaultUI { max-width: 768px; } }
+@media (min-width: 992px)  { .toastui-editor-defaultUI { max-width: 992px; } }
+@media (min-width: 1200px) { .toastui-editor-defaultUI { max-width: 1200px; } }
+@media (min-width: 1400px) { .toastui-editor-defaultUI { max-width: 1400px; } }
