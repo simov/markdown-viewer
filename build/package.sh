@@ -13,12 +13,13 @@ fi
 
 # set current working directory to directory of the shell script
 cd "$(dirname "$0")"
+rm -f ../markdown-viewer.zip
 
 # cleanup
-rm -rf ../themes
+# TODO: need to patch `vendor/markdown-it.min.js`: replace `c=o.split(""),l=a.split("|")` with `c=o.split(""),l=a.split("/")` with
+# rm -rf ../themes
 rm -rf ../vendor
-rm -f ../markdown-viewer.zip
-mkdir -p ../themes
+# mkdir -p ../themes
 mkdir -p ../vendor
 
 # build deps
@@ -33,7 +34,7 @@ sh mithril/build.sh
 sh panzoom/build.sh
 sh prism/build.sh
 sh remark/build.sh
-sh themes/build.sh $browser
+# sh themes/build.sh $browser
 
 # copy files
 mkdir -p tmp
