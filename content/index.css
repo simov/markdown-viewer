@@ -68,6 +68,13 @@ pre#_markdown,
   overflow-y: auto;
 }
 
+.frontmatter pre,
+.frontmatter pre code {
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
 @media (max-width: 576px) { /*Extra small - none*/
   .markdown-theme { width: auto !important; }
 }
@@ -335,6 +342,13 @@ pre:has(> code.mermaid) {
   height: 100%;
 }
 
+/*allow <br> line breaks inside mermaid node labels; the github theme
+  hides them via `code br { display: none }`*/
+.markdown-body code.mermaid br,
+.markdown-theme code.mermaid br {
+  display: inline !important;
+}
+
 /*mermaid text bold effect*/
 svg[id^=mermaid] text {
   stroke: none !important;
@@ -358,4 +372,118 @@ svg[id^=mermaid] text {
 img.emojione {
   /* prevent img stretch */
   width: auto;
+}
+
+/*---------------------------------------------------------------------------*/
+/*copy button*/
+
+.markdown-theme pre._copy-enabled,
+.markdown-body pre._copy-enabled,
+pre[class*=language-]._copy-enabled {
+  position: relative;
+  padding-top: 44px !important;
+}
+
+.markdown-theme ._copy-button,
+.markdown-body ._copy-button,
+pre[class*=language-] ._copy-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: sans-serif;
+  font-size: 12px;
+  line-height: 1;
+  padding: 6px 10px;
+}
+
+@media (prefers-color-scheme: light) {
+  body {
+    --copy-button-bg: rgba(255, 255, 255, 0.92);
+    --copy-button-fg: #24292f;
+    --copy-button-border: rgba(31, 35, 40, 0.15);
+    --copy-button-hover: #f6f8fa;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    --copy-button-bg: rgba(22, 27, 34, 0.92);
+    --copy-button-fg: #e6edf3;
+    --copy-button-border: rgba(240, 246, 252, 0.12);
+    --copy-button-hover: #30363d;
+  }
+}
+
+._color-light {
+  --copy-button-bg: rgba(255, 255, 255, 0.92);
+  --copy-button-fg: #24292f;
+  --copy-button-border: rgba(31, 35, 40, 0.15);
+  --copy-button-hover: #f6f8fa;
+  --copy-button-marked-bg: #1f883d;
+  --copy-button-marked-fg: #ffffff;
+  --copy-button-marked-border: #1a7f37;
+}
+
+._color-dark {
+  --copy-button-bg: rgba(22, 27, 34, 0.92);
+  --copy-button-fg: #e6edf3;
+  --copy-button-border: rgba(240, 246, 252, 0.12);
+  --copy-button-hover: #30363d;
+  --copy-button-marked-bg: #238636;
+  --copy-button-marked-fg: #ffffff;
+  --copy-button-marked-border: #2ea043;
+}
+
+.markdown-theme ._copy-button,
+.markdown-body ._copy-button,
+pre[class*=language-] ._copy-button {
+  background: var(--copy-button-bg);
+  color: var(--copy-button-fg);
+  border-color: var(--copy-button-border);
+}
+
+.markdown-theme ._copy-button:hover,
+.markdown-body ._copy-button:hover,
+pre[class*=language-] ._copy-button:hover {
+  background: var(--copy-button-hover);
+}
+
+.markdown-theme ._copy-button._copy-button-marked,
+.markdown-body ._copy-button._copy-button-marked,
+pre[class*=language-] ._copy-button._copy-button-marked {
+  background: var(--copy-button-marked-bg);
+  color: var(--copy-button-marked-fg);
+  border-color: var(--copy-button-marked-border);
+}
+
+/*---------------------------------------------------------------------------*/
+/*code wrap*/
+
+body._code-wrap .markdown-body pre:not(:has(> code.mermaid)),
+body._code-wrap .markdown-body pre > code:not(.mermaid),
+body._code-wrap .markdown-body pre code:not(.mermaid),
+body._code-wrap .markdown-theme pre:not(:has(> code.mermaid)),
+body._code-wrap .markdown-theme pre code:not(.mermaid),
+body._code-wrap pre[class*=language-],
+body._code-wrap pre[class*=language-] code,
+body._code-wrap code[class*=language-],
+body._code-wrap pre#_markdown,
+body._code-wrap #_markdown > pre > code {
+  white-space: pre-wrap !important;
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
+}
+
+/*hanging indent so wrapped lines are distinguishable from real ones;
+  mermaid diagram containers are excluded so their layout is untouched*/
+body._code-wrap .markdown-body pre:not(:has(> code.mermaid)),
+body._code-wrap .markdown-theme pre:not(:has(> code.mermaid)),
+body._code-wrap pre[class*=language-],
+body._code-wrap pre#_markdown {
+  text-indent: -2em each-line;
+  padding-left: calc(2em + 16px) !important;
 }

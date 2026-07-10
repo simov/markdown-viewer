@@ -16,6 +16,7 @@ md.compilers['markdown-it'] = (() => {
     cjk: false,
     deflist: false,
     footnote: false,
+    gridTableRulePlugin: false,
     ins: false,
     mark: false,
     sub: false,
@@ -35,6 +36,7 @@ md.compilers['markdown-it'] = (() => {
     cjk: 'Suppress linebreaks between east asian characters',
     deflist: 'Definition list <dl>\ntitle\n: definition',
     footnote: 'Footnotes\nword[^1]\n[^1]: text',
+    gridTableRulePlugin: 'support for pandoc grid_tables',
     ins: 'Inserted text <ins>\n++text++',
     mark: 'Marked text <mark>\n==text==',
     sub: 'Subscript <sub>\n~text~',
@@ -55,6 +57,7 @@ md.compilers['markdown-it'] = (() => {
         .use(state['markdown-it'].cjk ? mdit.cjk : () => {})
         .use(state['markdown-it'].deflist ? mdit.deflist : () => {})
         .use(state['markdown-it'].footnote ? mdit.footnote : () => {})
+        .use(state['markdown-it'].gridTableRulePlugin ? mdit.gridTableRulePlugin : () => {})
         .use(state['markdown-it'].ins ? mdit.ins : () => {})
         .use(state['markdown-it'].mark ? mdit.mark : () => {})
         .use(state['markdown-it'].sub ? mdit.sub : () => {})

@@ -153,11 +153,42 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, xhr, webreq
       sendResponse(state.custom)
     }
     else if (req.message === 'custom.set') {
-      set({custom: req.custom}).then(sendResponse).catch((err) => {
-        if (/QUOTA_BYTES_PER_ITEM quota exceeded/.test(err.message)) {
-          sendResponse({error: 'Minified theme exceeded 8KB in size!'})
-        }
-      })
+      var custom = {
+        theme: req.custom.theme || '',
+        color: req.custom.color,
+        base: req.custom.base || '',
+      }
+      // local: store on this device only, leave the synced theme untouched
+      if (req.local) {
+        chrome.storage.local.set({custom})
+          .then(() => {
+            state.custom = Object.assign({}, custom, {local: true})
+            sendResponse({local: true})
+          })
+          .catch((err) => sendResponse({error: err.message}))
+      }
+      // sync: store shared; if it is too large for a sync item, keep it local
+      else {
+        set({custom})
+          .then(() => chrome.storage.local.remove('custom'))
+          .then(() => {
+            state.custom = Object.assign({}, custom, {local: false})
+            sendResponse({local: false})
+          })
+          .catch((err) => {
+            if (/quota exceeded/i.test(err.message)) {
+              chrome.storage.local.set({custom})
+                .then(() => {
+                  state.custom = Object.assign({}, custom, {local: true})
+                  sendResponse({local: true, fallback: true})
+                })
+                .catch((err2) => sendResponse({error: err2.message}))
+            }
+            else {
+              sendResponse({error: err.message})
+            }
+          })
+      }
     }
 
     return true
@@ -165,7 +196,19 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, xhr, webreq
 
   function notifyContent (req, res) {
     chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-      chrome.tabs.sendMessage(tabs[0].id, req, res)
+      if (!tabs.length) {
+        res && res()
+        return
+      }
+
+      chrome.tabs.sendMessage(tabs[0].id, req, (response) => {
+        if (chrome.runtime.lastError) {
+          res && res()
+          return
+        }
+
+        res && res(response)
+      })
     })
   }
 }

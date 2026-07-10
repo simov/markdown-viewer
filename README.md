@@ -11,9 +11,12 @@
 - Multiple markdown parsers
 - Full control over the compiler options ([markdown-it], [marked], [remark])
 - 30+ Themes ([cleanrmd], [GitHub][github-theme])
-- Custom theme support
+- Custom theme support (extend a base theme; stored synced or locally)
 - GitHub Flavored Markdown (GFM)
 - Auto reload on file change
+- Optional copy buttons for fenced code blocks
+- Optional wrapping of long lines in code blocks
+- Optional display of yaml/toml frontmatter
 - Syntax highlighted code blocks ([prism][prism])
 - Table of Contents (ToC)
 - MathJax formulas ([mathjax])
@@ -75,10 +78,11 @@ The `auto` option on the `github` and `github-dark` themes has a fixed width wit
 
 1. Go to the Advanced Options and click on Settings
 2. Select `CUSTOM` for Content Theme
-3. Upload your Custom Theme below
-4. Specify the Color Scheme of your theme
+3. Optionally pick a Base Theme to extend (leave as `none` for a full custom theme)
+4. Provide your CSS by typing it into the text field or by uploading a `.css` file
+5. Specify the Color Scheme of your theme (full custom themes only; extended themes follow the base theme)
 
-> Your custom theme will be minified automatically on upload and it can be up to 8KB in size.
+> Uploaded `.css` files are minified automatically. Themes are kept in sync storage (shared across devices, up to 8KB per item); themes that exceed that limit are stored locally on the current device instead. You can also select `local` storage explicitly via the Storage option.
 
 > You can add `<link rel="stylesheet" type="text/css" href="file:///home/me/custom-theme.css">` to your markdown document to speed up development while working on your theme. Custom theme [example][custom-theme].
 
@@ -96,6 +100,7 @@ Full **CommonMark** support including **GFM** tables and strikethrough **+**
 | **cjk**        | `false` | Suppress linebreaks between east asian characters
 | **deflist**    | `false` | Definition list `<dl>`
 | **footnote**   | `false` | Footnotes `[^1]` `[^1]: a`
+| **gridtables** | `false` | Support for pandoc grid tables
 | **html**       | **`true`**  | Enable HTML tags in source
 | **ins**        | `false` | Inserted text `++a++` `<ins>`
 | **linkify**    | **`true`**  | Autoconvert URL-like text to links
@@ -113,7 +118,10 @@ Full **CommonMark** support including **GFM** tables and strikethrough **+**
 | Option         | Default | Description
 | :-             | :-:     | :-
 | **autoreload** | `false` | Auto reload on file change
+| **codewrap**   | `false` | Wrap long lines in code blocks instead of scrolling
+| **copy**       | `false` | Show copy buttons on fenced code blocks
 | **emoji**      | `false` | Convert emoji `:shortnames:` into EmojiOne images
+| **frontmatter**| `false` | Display yaml/toml frontmatter
 | **mathjax**    | `false` | Render MathJax formulas
 | **mermaid**    | `false` | Render Mermaid diagrams
 | **syntax**     | **`true`**  | Syntax highlighted fenced code blocks

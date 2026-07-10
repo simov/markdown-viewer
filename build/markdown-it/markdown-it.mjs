@@ -6,6 +6,7 @@ import attrs from 'markdown-it-attrs'
 import cjk from 'markdown-it-cjk-breaks'
 import deflist from 'markdown-it-deflist'
 import footnote from 'markdown-it-footnote'
+import gridTableRulePlugin from 'markdown-it-gridtables'
 import ins from 'markdown-it-ins'
 import mark from 'markdown-it-mark'
 import sub from 'markdown-it-sub'
@@ -21,6 +22,7 @@ export {
   cjk,
   deflist,
   footnote,
+  gridTableRulePlugin,
   ins,
   mark,
   sub,

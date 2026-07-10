@@ -30,6 +30,14 @@ md.storage = ({compilers}) => {
     md.storage.migrations(state)
 
     set(state)
+
+    // a locally stored custom theme (this device only) overrides the
+    // synced one; the 'local' flag is derived per device, never synced
+    chrome.storage.local.get('custom').then((res) => {
+      state.custom = res.custom
+        ? Object.assign({}, res.custom, {local: true})
+        : Object.assign({}, state.custom, {local: false})
+    })
   })
 
   return {defaults, state, set}
@@ -48,7 +56,10 @@ md.storage.defaults = (compilers) => {
     },
     content: {
       autoreload: false,
+      codewrap: false,
+      copy: false,
       emoji: false,
+      frontmatter: false,
       mathjax: false,
       mermaid: false,
       syntax: true,
@@ -68,6 +79,7 @@ md.storage.defaults = (compilers) => {
     custom: {
       theme: '',
       color: 'auto',
+      base: '',
     }
   }
 
@@ -133,6 +145,15 @@ md.storage.migrations = (state) => {
   if (state.content.syntax === undefined) {
     state.content.syntax = true
   }
+  if (state.content.copy === undefined) {
+    state.content.copy = false
+  }
+  if (state.content.codewrap === undefined) {
+    state.content.codewrap = false
+  }
+  if (state.content.frontmatter === undefined) {
+    state.content.frontmatter = false
+  }
   if (state.themes.wide !== undefined) {
     if (state.themes.wide) {
       state.themes.width = 'full'
@@ -180,6 +201,9 @@ md.storage.migrations = (state) => {
     })
 
   }
+  if (state['markdown-it'].gridTableRulePlugin === undefined) {
+    state['markdown-it'].gridTableRulePlugin = false
+  }
   if (state.marked.linkify === undefined) {
     Object.assign(state.marked, {
       linkify: true,
@@ -192,5 +216,9 @@ md.storage.migrations = (state) => {
       theme: '',
       color: 'auto'
     }
+  }
+  // custom theme can now extend a base theme
+  if (state.custom.base === undefined) {
+    state.custom.base = ''
   }
 }

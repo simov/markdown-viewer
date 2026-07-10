@@ -103,6 +103,8 @@ var update = (update) => {
     setTimeout(() => Prism.highlightAll(), 20)
   }
 
+  setTimeout(() => copybuttons.render(), 30)
+
   if (state.content.mermaid) {
     setTimeout(() => mmd.render(), 40)
   }
@@ -117,7 +119,7 @@ var render = (md) => {
   chrome.runtime.sendMessage({
     message: 'markdown',
     compiler: state.compiler,
-    markdown: frontmatter(state.markdown)
+    markdown: frontmatter(state.markdown, state.content.frontmatter)
   }, (res) => {
     state.html = res.html
     if (state.content.emoji) {
@@ -152,18 +154,28 @@ function mount () {
       if (state.html) {
         state._themes.custom = state.custom.color
 
+        // a custom theme may extend a base theme; resolve the theme whose
+        // stylesheet, color scheme and wrapper class should actually apply
+        var effective = state.theme === 'custom' && state.custom.base
+          ? state.custom.base
+          : state.theme
+
         var color =
-          state._themes[state.theme] === 'dark' ||
-          (state._themes[state.theme] === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)
+          state._themes[effective] === 'dark' ||
+          (state._themes[effective] === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)
           ? 'dark' : 'light'
 
         $('body').classList.remove(...Array.from($('body').classList).filter((name) => /^_theme|_color/.test(name)))
         dom.push(m('link#_theme', {
           onupdate: onupdate.theme,
           rel: 'stylesheet', type: 'text/css',
-          href: state.theme !== 'custom' ? chrome.runtime.getURL(`/themes/${state.theme}.css`) : '',
+          href: effective !== 'custom' ? chrome.runtime.getURL(`/themes/${effective}.css`) : '',
         }))
-        $('body').classList.add(`_theme-${state.theme}`, `_color-${color}`)
+        $('body').classList.add(`_theme-${effective}`, `_color-${color}`)
+
+        state.content.codewrap
+          ? $('body').classList.add('_code-wrap')
+          : $('body').classList.remove('_code-wrap')
 
         if (state.content.syntax) {
           dom.push(m('link#_prism', {
@@ -173,7 +185,7 @@ function mount () {
         }
 
         var theme =
-          (/github(-dark)?/.test(state.theme) ? 'markdown-body' : 'markdown-theme') +
+          (/github(-dark)?/.test(effective) ? 'markdown-body' : 'markdown-theme') +
           (state.themes.width !== 'auto' ? ` _width-${state.themes.width}` : '')
 
         if (state.raw) {
@@ -233,18 +245,120 @@ var toc = (() => {
   }
 })()
 
-var frontmatter = (md) => {
-  if (/^-{3}[\s\S]+?-{3}/.test(md)) {
-    var [, yaml] = /^-{3}([\s\S]+?)-{3}/.exec(md)
-    var title = /title: (?:'|")*(.*)(?:'|")*/.exec(yaml)
-    title && (document.title = title[1])
+var copybuttons = (() => {
+  var copied = (value) =>
+    value.replace(/[\r\n]+$/, '')
+
+  var text = (button, next) => {
+    button.textContent = next
+    clearTimeout(button._timeout)
+    if (next !== 'Copy') {
+      button._timeout = setTimeout(() => {
+        button.textContent = 'Copy'
+      }, 1500)
+    }
   }
-  else if (/^\+{3}[\s\S]+?\+{3}/.test(md)) {
-    var [, toml] = /^\+{3}([\s\S]+?)\+{3}/.exec(md)
-    var title = /title = (?:'|"|`)*(.*)(?:'|"|`)*/.exec(toml)
-    title && (document.title = title[1])
+
+  var fallback = (value) => {
+    var textarea = document.createElement('textarea')
+    textarea.value = value
+    textarea.setAttribute('readonly', '')
+    textarea.style.position = 'fixed'
+    textarea.style.top = '-9999px'
+    textarea.style.left = '-9999px'
+    document.body.appendChild(textarea)
+    textarea.select()
+    var ok = false
+    try {
+      ok = document.execCommand('copy')
+    }
+    catch (_) {}
+    document.body.removeChild(textarea)
+    return ok
   }
-  return md.replace(/^(?:-|\+){3}[\s\S]+?(?:-|\+){3}/, '')
+
+  var write = async (value) => {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      try {
+        await navigator.clipboard.writeText(value)
+        return true
+      }
+      catch (_) {}
+    }
+    return fallback(value)
+  }
+
+  var click = async (event) => {
+    var button = event.currentTarget
+    var value = button._code ? copied(button._code.textContent || '') : ''
+    var ok = value && await write(value)
+    if (ok) {
+      button.classList.toggle('_copy-button-marked')
+    }
+    text(button, ok ? 'Copied' : 'Error')
+  }
+
+  var clear = (root) => {
+    root.querySelectorAll('._copy-button').forEach((button) => button.remove())
+    root.querySelectorAll('pre._copy-enabled').forEach((block) => block.classList.remove('_copy-enabled'))
+  }
+
+  return {
+    render: () => {
+      var root = document.querySelector('#_html')
+      if (!root) {
+        return
+      }
+
+      clear(root)
+
+      if (state.raw || !state.content.copy) {
+        return
+      }
+
+      root.querySelectorAll('pre > code:not(.mermaid)').forEach((code) => {
+        var pre = code.parentElement
+        if (!pre || pre.querySelector('._copy-button')) {
+          return
+        }
+
+        pre.classList.add('_copy-enabled')
+
+        var button = document.createElement('button')
+        button.type = 'button'
+        button.className = '_copy-button'
+        button.textContent = 'Copy'
+        button._code = code
+        button.addEventListener('click', click)
+        pre.insertBefore(button, pre.firstChild)
+      })
+    }
+  }
+})()
+
+var frontmatter = (md, show) => {
+  var yamlMatch = /^(-{3})([\s\S]+?)(-{3})/.exec(md)
+  var tomlMatch = /^(\+{3})([\s\S]+?)(\+{3})/.exec(md)
+
+  if (yamlMatch) {
+    var [full, , content] = yamlMatch
+    var title = /title: (?:'|")*(.*)(?:'|")*/.exec(content)
+    title && (document.title = title[1])
+    if (show) {
+      return md.replace(full, '<div class="frontmatter">\n\n```yaml\n' + content.trim() + '\n```\n\n</div>\n\n')
+    }
+    return md.replace(full, '')
+  }
+  else if (tomlMatch) {
+    var [full, , content] = tomlMatch
+    var title = /title = (?:'|"|`)*(.*)(?:'|"|`)*/.exec(content)
+    title && (document.title = title[1])
+    if (show) {
+      return md.replace(full, '<div class="frontmatter">\n\n```toml\n' + content.trim() + '\n```\n\n</div>\n\n')
+    }
+    return md.replace(full, '')
+  }
+  return md
 }
 
 var favicon = () => {
