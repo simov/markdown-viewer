@@ -45,7 +45,10 @@
         "/themes/*",
         "/vendor/mathjax/fonts/*",
         "/vendor/prism.min.css",
-        "/vendor/prism-okaidia.min.css"
+        "/vendor/prism-okaidia.min.css",
+        "/vendor/mammoth.browser.min.js",
+        "/vendor/jszip.min.js",
+        "/vendor/docx-preview.min.js"
       ]
     }
   ],

@@ -183,6 +183,16 @@ body.dark .m-button {
   border-color: #607d8b;
   box-shadow: 0 0 0 2px rgba(96, 125, 139, 0.25);
 }
+.preview-textarea.drag-over {
+  border: 2px dashed #607d8b !important;
+  background-color: rgba(96, 125, 139, 0.08) !important;
+  color: #607d8b;
+}
+.preview-textarea:disabled {
+  background-color: #f1f1f1;
+  color: #777;
+  cursor: not-allowed;
+}
 
 /* preview controls layout */
 .preview-controls {

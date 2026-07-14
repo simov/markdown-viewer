@@ -457,3 +457,113 @@ body {
   --copy-btn-color-copied: #58a6ff;
 }
 
+/* Drag and Drop Premium Overlay */
+.dropzone-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  pointer-events: none;
+}
+
+body._color-dark .dropzone-overlay {
+  background: rgba(15, 17, 23, 0.8);
+}
+
+.dropzone-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.dropzone-box {
+  border: 3px dashed #607d8b;
+  border-radius: 20px;
+  padding: 40px 60px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  max-width: 80%;
+  text-align: center;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform: scale(0.9);
+}
+
+body._color-dark .dropzone-box {
+  background: rgba(30, 34, 45, 0.95);
+  border-color: #8b949e;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.dropzone-overlay.active .dropzone-box {
+  transform: scale(1);
+}
+
+.dropzone-icon {
+  width: 64px;
+  height: 64px;
+  color: #607d8b;
+}
+
+body._color-dark .dropzone-icon {
+  color: #8b949e;
+}
+
+.dropzone-text {
+  font-family: sans-serif !important;
+  font-size: 20px;
+  font-weight: 600;
+  color: #24292f;
+  margin: 0;
+}
+
+body._color-dark .dropzone-text {
+  color: #c9d1d9;
+}
+
+.dropzone-subtext {
+  font-family: sans-serif !important;
+  font-size: 14px;
+  color: #57606a;
+  margin: 0;
+}
+
+body._color-dark .dropzone-subtext {
+  color: #8b949e;
+}
+
+/* DOCX Mode full page overrides */
+body.docx-mode {
+  padding: 0 !important;
+  margin: 0 !important;
+  background: #f4f4f4 !important; /* light gray desktop background */
+}
+
+body.docx-mode #_html {
+  visibility: visible !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  display: block !important;
+}
+
+body.docx-mode #_toc {
+  display: none !important;
+}
+

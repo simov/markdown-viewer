@@ -44,6 +44,9 @@
   ])
 
   await loadScript('/vendor/mithril.min.js')
+  await loadScript('/vendor/mammoth.browser.min.js')
+  await loadScript('/vendor/jszip.min.js')
+  await loadScript('/vendor/docx-preview.min.js')
 
   if (window.args.content.syntax) {
     await loadScript('/vendor/prism.min.js')

@@ -71,7 +71,10 @@ var Popup = () => {
     tempMarkdown: '',
     history: [],
     editingId: null,
-    editingTitle: ''
+    editingTitle: '',
+    dragging: false,
+    loading: false,
+    loadingMessage: ''
   }
 
   var openPreview = (previewUrl) => {
@@ -97,6 +100,73 @@ var Popup = () => {
       state.tab = e.target.hash.replace('#tab-', '')
       localStorage.setItem('tab', state.tab)
       return false
+    },
+
+    dragover: (e) => {
+      e.preventDefault()
+      state.dragging = true
+    },
+
+    dragenter: (e) => {
+      e.preventDefault()
+      state.dragging = true
+    },
+
+    dragleave: (e) => {
+      state.dragging = false
+    },
+
+    drop: (e) => {
+      e.preventDefault()
+      state.dragging = false
+
+      var files = e.dataTransfer.files
+      if (files.length === 0) return
+
+      var file = files[0]
+      var ext = file.name.split('.').pop().toLowerCase()
+
+      if (ext === 'docx') {
+        state.loading = true
+        state.loadingMessage = 'Loading DOCX file...'
+        m.redraw()
+
+        var reader = new FileReader()
+        reader.onload = (event) => {
+          var base64String = event.target.result.split(',')[1]
+          state.tempMarkdown = `[DOCX Document] ${file.name}`
+          chrome.storage.local.set({ 
+            temporaryDocx: base64String,
+            temporaryMarkdown: state.tempMarkdown
+          }, () => {
+            state.loading = false
+            state.loadingMessage = ''
+            m.redraw()
+          })
+        }
+        reader.onerror = (err) => {
+          console.error(err)
+          state.loading = false
+          state.loadingMessage = ''
+          alert('Error reading DOCX file')
+          m.redraw()
+        }
+        reader.readAsDataURL(file)
+      } else {
+        state.loading = true
+        state.loadingMessage = 'Reading file...'
+        m.redraw()
+
+        var reader = new FileReader()
+        reader.onload = (event) => {
+          state.tempMarkdown = event.target.result
+          chrome.storage.local.set({ temporaryMarkdown: state.tempMarkdown })
+          state.loading = false
+          state.loadingMessage = ''
+          m.redraw()
+        }
+        reader.readAsText(file)
+      }
     },
 
     compiler: {
@@ -202,13 +272,13 @@ var Popup = () => {
 
     clear: () => {
       state.tempMarkdown = ''
-      chrome.storage.local.set({ temporaryMarkdown: '' }, () => {
+      chrome.storage.local.set({ temporaryMarkdown: '', temporaryDocx: '' }, () => {
         m.redraw()
       })
     },
 
     reopenHistory: (item) => {
-      chrome.storage.local.set({ temporaryMarkdown: item.markdown }, () => {
+      chrome.storage.local.set({ temporaryMarkdown: item.markdown, temporaryDocx: '' }, () => {
         openPreview(chrome.runtime.getURL('/content/preview.html'))
       })
     },
@@ -410,19 +480,27 @@ var Popup = () => {
           class: state.tab === 'preview' ? 'is-active' : ''
           },
           m('textarea.preview-textarea', {
-            placeholder: 'Paste your Markdown here...',
-            value: state.tempMarkdown,
+            class: state.dragging ? 'drag-over' : '',
+            disabled: state.loading,
+            placeholder: state.loading ? state.loadingMessage : 'Paste your Markdown, or drag & drop a .md / .docx file here...',
+            value: state.loading ? state.loadingMessage : state.tempMarkdown,
             oninput: (e) => {
               state.tempMarkdown = e.target.value
-            }
+            },
+            ondragover: events.dragover,
+            ondragenter: events.dragenter,
+            ondragleave: events.dragleave,
+            ondrop: events.drop
           }),
           m('.preview-controls',
             m('button.mdc-button mdc-button--raised m-button clear-btn', {
               oncreate: oncreate.ripple,
+              disabled: state.loading,
               onclick: events.clear
             }, 'Clear'),
             m('button.mdc-button mdc-button--raised m-button preview-btn-half', {
               oncreate: oncreate.ripple,
+              disabled: state.loading,
               onclick: events.preview
             }, 'Preview')
           )
