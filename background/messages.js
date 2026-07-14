@@ -26,22 +26,30 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, xhr, webreq
       })
     }
     else if (req.message === 'prism') {
-      chrome.scripting.executeScript({
-        target: {tabId: sender.tab.id},
-        files: [
-          `/vendor/prism/prism-${req.language}.min.js`,
-        ],
-        injectImmediately: true
-      }, sendResponse)
+      if (sender.tab) {
+        chrome.scripting.executeScript({
+          target: {tabId: sender.tab.id},
+          files: [
+            `/vendor/prism/prism-${req.language}.min.js`,
+          ],
+          injectImmediately: true
+        }, sendResponse)
+      } else {
+        sendResponse()
+      }
     }
     else if (req.message === 'mathjax') {
-      chrome.scripting.executeScript({
-        target: {tabId: sender.tab.id},
-        files: [
-          `/vendor/mathjax/extensions/${req.extension}.js`,
-        ],
-        injectImmediately: true
-      }, sendResponse)
+      if (sender.tab) {
+        chrome.scripting.executeScript({
+          target: {tabId: sender.tab.id},
+          files: [
+            `/vendor/mathjax/extensions/${req.extension}.js`,
+          ],
+          injectImmediately: true
+        }, sendResponse)
+      } else {
+        sendResponse()
+      }
     }
 
     // popup

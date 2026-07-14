@@ -53,7 +53,7 @@ var Popup = () => {
     ],
     raw: false,
     tab: '',
-    tabs: ['theme', 'compiler', 'content'],
+    tabs: ['theme', 'compiler', 'content', 'preview', 'history'],
     compilers: [],
     description: {
       themes: {},
@@ -67,7 +67,32 @@ var Popup = () => {
         syntax: 'Syntax highlighting for fenced code blocks',
       }
     },
-    settings: {}
+    settings: {},
+    tempMarkdown: '',
+    history: [],
+    editingId: null,
+    editingTitle: '',
+    dragging: false,
+    loading: false,
+    loadingMessage: ''
+  }
+
+  var openPreview = (previewUrl) => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      var activeTab = tabs[0]
+      var isNewTab = activeTab && activeTab.url && (
+        activeTab.url === 'chrome://newtab/' ||
+        activeTab.url === 'about:newtab' ||
+        activeTab.url === 'about:home' ||
+        activeTab.url === 'about:blank' ||
+        activeTab.url.startsWith('chrome-search://')
+      )
+      if (isNewTab) {
+        chrome.tabs.update(activeTab.id, { url: previewUrl })
+      } else {
+        chrome.tabs.create({ url: previewUrl })
+      }
+    })
   }
 
   var events = {
@@ -75,6 +100,73 @@ var Popup = () => {
       state.tab = e.target.hash.replace('#tab-', '')
       localStorage.setItem('tab', state.tab)
       return false
+    },
+
+    dragover: (e) => {
+      e.preventDefault()
+      state.dragging = true
+    },
+
+    dragenter: (e) => {
+      e.preventDefault()
+      state.dragging = true
+    },
+
+    dragleave: (e) => {
+      state.dragging = false
+    },
+
+    drop: (e) => {
+      e.preventDefault()
+      state.dragging = false
+
+      var files = e.dataTransfer.files
+      if (files.length === 0) return
+
+      var file = files[0]
+      var ext = file.name.split('.').pop().toLowerCase()
+
+      if (ext === 'docx') {
+        state.loading = true
+        state.loadingMessage = 'Loading DOCX file...'
+        m.redraw()
+
+        var reader = new FileReader()
+        reader.onload = (event) => {
+          var base64String = event.target.result.split(',')[1]
+          state.tempMarkdown = `[DOCX Document] ${file.name}`
+          chrome.storage.local.set({ 
+            temporaryDocx: base64String,
+            temporaryMarkdown: state.tempMarkdown
+          }, () => {
+            state.loading = false
+            state.loadingMessage = ''
+            m.redraw()
+          })
+        }
+        reader.onerror = (err) => {
+          console.error(err)
+          state.loading = false
+          state.loadingMessage = ''
+          alert('Error reading DOCX file')
+          m.redraw()
+        }
+        reader.readAsDataURL(file)
+      } else {
+        state.loading = true
+        state.loadingMessage = 'Reading file...'
+        m.redraw()
+
+        var reader = new FileReader()
+        reader.onload = (event) => {
+          state.tempMarkdown = event.target.result
+          chrome.storage.local.set({ temporaryMarkdown: state.tempMarkdown })
+          state.loading = false
+          state.loadingMessage = ''
+          m.redraw()
+        }
+        reader.readAsText(file)
+      }
     },
 
     compiler: {
@@ -141,6 +233,89 @@ var Popup = () => {
 
     advanced: () => {
       chrome.runtime.sendMessage({message: 'popup.advanced'})
+    },
+
+    preview: () => {
+      chrome.storage.local.set({ temporaryMarkdown: state.tempMarkdown || '' }, () => {
+        chrome.storage.local.get('previewHistory', (localRes) => {
+          var history = localRes.previewHistory || []
+          
+          var title = ''
+          var lines = (state.tempMarkdown || '').trim().split('\n')
+          if (lines.length && lines[0].startsWith('#')) {
+            title = lines[0].replace(/^#+\s*/, '').trim()
+          }
+          if (!title) {
+            var snippet = (state.tempMarkdown || '').trim().substring(0, 30)
+            title = snippet ? (snippet + (state.tempMarkdown.length > 30 ? '...' : '')) : 'Empty Markdown'
+          }
+          
+          var historyItem = {
+            id: Date.now().toString(),
+            title: title,
+            timestamp: new Date().toLocaleString(),
+            markdown: state.tempMarkdown || ''
+          }
+          
+          history.unshift(historyItem)
+          if (history.length > 50) {
+            history = history.slice(0, 50)
+          }
+          state.history = history
+          
+          chrome.storage.local.set({ previewHistory: history }, () => {
+            openPreview(chrome.runtime.getURL('/content/preview.html'))
+          })
+        })
+      })
+    },
+
+    clear: () => {
+      state.tempMarkdown = ''
+      chrome.storage.local.set({ temporaryMarkdown: '', temporaryDocx: '' }, () => {
+        m.redraw()
+      })
+    },
+
+    reopenHistory: (item) => {
+      chrome.storage.local.set({ temporaryMarkdown: item.markdown, temporaryDocx: '' }, () => {
+        openPreview(chrome.runtime.getURL('/content/preview.html'))
+      })
+    },
+
+    startRename: (item) => {
+      state.editingId = item.id
+      state.editingTitle = item.title
+    },
+
+    saveRename: (itemId) => {
+      if (state.editingTitle.trim() !== '') {
+        var history = state.history.map((item) => {
+          if (item.id === itemId) {
+            item.title = state.editingTitle.trim()
+          }
+          return item
+        })
+        state.history = history
+        chrome.storage.local.set({ previewHistory: history }, () => {
+          state.editingId = null
+          state.editingTitle = ''
+          m.redraw()
+        })
+      }
+    },
+
+    cancelRename: () => {
+      state.editingId = null
+      state.editingTitle = ''
+    },
+
+    deleteHistory: (itemId) => {
+      var history = state.history.filter((item) => item.id !== itemId)
+      state.history = history
+      chrome.storage.local.set({ previewHistory: history }, () => {
+        m.redraw()
+      })
     }
   }
 
@@ -152,7 +327,7 @@ var Popup = () => {
     state.themes = res.themes
 
     state.raw = res.raw
-    state.tab = localStorage.getItem('tab') || 'theme'
+    state.tab = localStorage.getItem('tab') || 'preview'
     state.compilers = res.compilers
     state.description.compiler = res.description
 
@@ -162,7 +337,13 @@ var Popup = () => {
     m.redraw()
   }
 
-  chrome.runtime.sendMessage({message: 'popup'}, init)
+  chrome.runtime.sendMessage({message: 'popup'}, (res) => {
+    chrome.storage.local.get(['temporaryMarkdown', 'previewHistory'], (localRes) => {
+      state.tempMarkdown = localRes.temporaryMarkdown || ''
+      state.history = localRes.previewHistory || []
+      init(res)
+    })
+  })
 
   var oncreate = {
     ripple: (vnode) => {
@@ -292,6 +473,92 @@ var Popup = () => {
               m('.mdc-switch__background', m('.mdc-switch__knob')),
               m('span.mdc-switch-label', key)
             ))
+          )
+        ),
+        // preview
+        m('.m-panel', {
+          class: state.tab === 'preview' ? 'is-active' : ''
+          },
+          m('textarea.preview-textarea', {
+            class: state.dragging ? 'drag-over' : '',
+            disabled: state.loading,
+            placeholder: state.loading ? state.loadingMessage : 'Paste your Markdown, or drag & drop a .md / .docx file here...',
+            value: state.loading ? state.loadingMessage : state.tempMarkdown,
+            oninput: (e) => {
+              state.tempMarkdown = e.target.value
+            },
+            ondragover: events.dragover,
+            ondragenter: events.dragenter,
+            ondragleave: events.dragleave,
+            ondrop: events.drop
+          }),
+          m('.preview-controls',
+            m('button.mdc-button mdc-button--raised m-button clear-btn', {
+              oncreate: oncreate.ripple,
+              disabled: state.loading,
+              onclick: events.clear
+            }, 'Clear'),
+            m('button.mdc-button mdc-button--raised m-button preview-btn-half', {
+              oncreate: oncreate.ripple,
+              disabled: state.loading,
+              onclick: events.preview
+            }, 'Preview')
+          )
+        ),
+        // history
+        m('.m-panel', {
+          class: state.tab === 'history' ? 'is-active' : ''
+          },
+          m('.scroll.history-scroll',
+            state.history && state.history.length ?
+              state.history.map((item) =>
+                m('.history-item',
+                  m('.history-info',
+                    state.editingId === item.id ?
+                      m('input.edit-title-input', {
+                        value: state.editingTitle,
+                        oninput: (e) => {
+                          state.editingTitle = e.target.value
+                        },
+                        onkeydown: (e) => {
+                          if (e.key === 'Enter') events.saveRename(item.id)
+                          if (e.key === 'Escape') events.cancelRename()
+                        }
+                      })
+                    : [
+                        m('.history-title', item.title),
+                        m('.history-time', item.timestamp)
+                      ]
+                  ),
+                  state.editingId === item.id ?
+                    m('.history-actions',
+                      m('button.action-btn.save-btn', {
+                        title: 'Save',
+                        onclick: () => events.saveRename(item.id)
+                      }, m.trust('<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>')),
+                      m('button.action-btn.discard-btn', {
+                        title: 'Discard',
+                        onclick: () => events.cancelRename()
+                      }, m.trust('<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>'))
+                    )
+                  :
+                    m('.history-actions',
+                      m('button.action-btn.reopen-btn', {
+                        title: 'Open preview',
+                        onclick: () => events.reopenHistory(item)
+                      }, m.trust('<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>')),
+                      m('button.action-btn.rename-btn', {
+                        title: 'Rename',
+                        onclick: () => events.startRename(item)
+                      }, m.trust('<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>')),
+                      m('button.action-btn.delete-btn', {
+                        title: 'Delete',
+                        onclick: () => events.deleteHistory(item.id)
+                      }, m.trust('<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>'))
+                    )
+                )
+              )
+            : m('.history-empty', 'No preview history found.')
           )
         )
       ),

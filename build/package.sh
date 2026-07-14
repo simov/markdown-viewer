@@ -27,6 +27,9 @@ sh csso/build.sh
 sh markdown-it/build.sh
 sh marked/build.sh
 sh mathjax/build.sh
+sh mammoth/build.sh
+sh jszip/build.sh
+sh docx-preview/build.sh
 sh mdc/build.sh
 sh mermaid/build.sh
 sh mithril/build.sh

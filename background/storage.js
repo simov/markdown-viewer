@@ -82,10 +82,19 @@ md.storage.bug = (res) => {
   // reload extension bug
   chrome.permissions.getAll((permissions) => {
     var origins = Object.keys(res.origins || {})
-    chrome.permissions.remove({
-      origins: permissions.origins
-        .filter((origin) => origins.indexOf(origin.slice(0, -2)) === -1)
-    })
+    var originsToRemove = (permissions.origins || [])
+      .filter((origin) => origins.indexOf(origin.slice(0, -2)) === -1)
+    if (originsToRemove.length) {
+      var promise = chrome.permissions.remove({
+        origins: originsToRemove
+      }, () => {
+        // Ignore error when trying to remove required permissions
+        var error = chrome.runtime.lastError
+      })
+      if (promise && promise.catch) {
+        promise.catch(() => {})
+      }
+    }
   })
 }
 

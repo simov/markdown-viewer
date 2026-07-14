@@ -4,11 +4,22 @@ var MathJax = {
     pathFilters: [
       ({name}) => name.startsWith('[tex]') ? false : true // keep the name
     ],
-    require: (path) => path.startsWith('[tex]') ?
-      chrome.runtime.sendMessage({
-        message: 'mathjax',
-        extension: path.replace('[tex]/', '')
-      }) : null
+    require: (path) => {
+      if (path.startsWith('[tex]')) {
+        var extension = path.replace('[tex]/', '')
+        if (location.protocol.endsWith('-extension:')) {
+          var script = document.createElement('script')
+          script.src = `/vendor/mathjax/extensions/${extension}.js`
+          document.body.appendChild(script)
+          return null
+        }
+        return chrome.runtime.sendMessage({
+          message: 'mathjax',
+          extension
+        })
+      }
+      return null
+    }
   },
   tex: {
     inlineMath: [
