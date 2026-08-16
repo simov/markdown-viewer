@@ -1,6 +1,15 @@
 
 md.inject = ({storage: {state}}) => (id) => {
 
+  chrome.scripting.insertCSS({
+    target: {tabId: id},
+    files: [
+      '/content/index.css',
+      '/content/themes.css',
+      (state.content.comments || state.content.commentsWrite) && '/content/comments.css',
+    ].filter(Boolean)
+  })
+
   chrome.scripting.executeScript({
     target: {tabId: id},
     args: [{
@@ -19,14 +28,6 @@ md.inject = ({storage: {state}}) => (id) => {
     injectImmediately: true
   })
 
-  chrome.scripting.insertCSS({
-    target: {tabId: id},
-    files: [
-      '/content/index.css',
-      '/content/themes.css',
-    ]
-  })
-
   chrome.scripting.executeScript({
     target: {tabId: id},
     files: [
@@ -38,6 +39,7 @@ md.inject = ({storage: {state}}) => (id) => {
       '/content/index.js',
       '/content/scroll.js',
       state.content.autoreload && '/content/autoreload.js',
+      (state.content.comments || state.content.commentsWrite) && '/content/comments.js',
     ].filter(Boolean).flat(),
     injectImmediately: true
   })
