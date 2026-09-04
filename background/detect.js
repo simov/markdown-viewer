@@ -65,7 +65,7 @@ md.detect = ({storage: {state}, inject}) => {
           }
 
           if (detect(win.header, win.url)) {
-            if (onwakeup && chrome.webRequest) {
+            if (onwakeup && chrome.webRequest && !win.url.startsWith('file:')) {
               onwakeup = false
               chrome.tabs.reload(id)
             }
