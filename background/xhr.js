@@ -5,7 +5,8 @@ md.xhr = () => {
     ;(async () => {
       await new Promise(async (resolve, reject) => {
         try {
-          var res = await fetch(url + '?preventCache=' + Date.now())
+          var bust = url.startsWith('file:') ? '' : '?preventCache=' + Date.now()
+          var res = await fetch(url + bust)
           done(null, await res.text())
         }
         catch (err) {
