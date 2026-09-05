@@ -1,11 +1,11 @@
 
 md.xhr = () => {
 
-  var get = (url, done) => {
+  var request = (url, done) => {
     ;(async () => {
       await new Promise(async (resolve, reject) => {
         try {
-          var res = await fetch(url + '?preventCache=' + Date.now())
+          var res = await fetch(url)
           done(null, await res.text())
         }
         catch (err) {
@@ -15,5 +15,9 @@ md.xhr = () => {
     })()
   }
 
-  return {get}
+  var get = (url, done) => request(url + '?preventCache=' + Date.now(), done)
+
+  var raw = (url, done) => request(url, done)
+
+  return {get, raw}
 }

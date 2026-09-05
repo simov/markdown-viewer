@@ -43,6 +43,7 @@
       "/background/messages.js",
       "/background/mathjax.js",
       "/background/xhr.js",
+      "/background/files.js",
       "/background/icon.js",
 
       "/background/index.js"

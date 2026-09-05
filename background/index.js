@@ -13,6 +13,7 @@ importScripts('/background/inject.js')
 importScripts('/background/messages.js')
 importScripts('/background/mathjax.js')
 importScripts('/background/xhr.js')
+importScripts('/background/files.js')
 importScripts('/background/icon.js')
 
 ;(() => {
@@ -22,6 +23,7 @@ importScripts('/background/icon.js')
   var webrequest = md.webrequest({storage})
   var mathjax = md.mathjax()
   var xhr = md.xhr()
+  var files = md.files({storage, xhr})
   var icon = md.icon({storage})
 
   var compilers = Object.keys(md.compilers)
@@ -30,7 +32,7 @@ importScripts('/background/icon.js')
       all
     ), {})
 
-  var messages = md.messages({storage, compilers, mathjax, xhr, webrequest, icon})
+  var messages = md.messages({storage, compilers, mathjax, xhr, files, webrequest, icon})
 
   chrome.tabs.onUpdated.addListener(detect.tab)
   chrome.runtime.onMessage.addListener(messages)

@@ -25,6 +25,9 @@
 /*toc*/
 
 /*github*/
+._theme-github #_files {
+  background-color: var(--color-canvas-default);
+}
 ._theme-github #_toc { /*.markdown-body {*/
   background-color: var(--color-canvas-default);
   font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
@@ -42,6 +45,9 @@
 }
 
 /*github-dark*/
+._theme-github-dark #_files {
+  background-color: #0d1117;
+}
 ._theme-github-dark #_toc { /*.markdown-body {*/
   background-color: #0d1117;
   font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";

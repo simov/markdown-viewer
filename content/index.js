@@ -192,9 +192,19 @@ function mount () {
           ))
         }
 
+        var explorer = state.content.files && location.protocol === 'file:'
+
+        if (explorer) {
+          dom.push(m(files))
+          $('body').classList.add('_files-left')
+        }
+
         if (state.content.toc) {
           dom.push(m('#_toc.tex2jax-ignore', m.trust(state.toc)))
-          state.raw ? $('body').classList.remove('_toc-left') : $('body').classList.add('_toc-left')
+          $('body').classList.remove('_toc-left', '_toc-right')
+          if (!state.raw) {
+            $('body').classList.add(explorer ? '_toc-right' : '_toc-left')
+          }
         }
 
         if (state.theme === 'custom') {

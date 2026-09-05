@@ -1,5 +1,5 @@
 
-md.messages = ({storage: {defaults, state, set}, compilers, mathjax, xhr, webrequest, icon}) => {
+md.messages = ({storage: {defaults, state, set}, compilers, mathjax, xhr, files, webrequest, icon}) => {
 
   return (req, sender, sendResponse) => {
 
@@ -24,6 +24,9 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, xhr, webreq
       xhr.get(req.location, (err, body) => {
         sendResponse({err, body})
       })
+    }
+    else if (req.message === 'files') {
+      files.get(req.url, sendResponse)
     }
     else if (req.message === 'prism') {
       chrome.scripting.executeScript({

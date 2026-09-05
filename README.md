@@ -16,6 +16,7 @@
 - Auto reload on file change
 - Syntax highlighted code blocks ([prism][prism])
 - Table of Contents (ToC)
+- File explorer for local files
 - MathJax formulas ([mathjax])
 - Mermaid diagrams ([mermaid])
 - Convert emoji shortnames (icons provided free by [EmojiOne][emojione])

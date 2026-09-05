@@ -31,7 +31,8 @@ details summary {
   /*hide sidebar*/
   html body._toc-left { padding-left: 0px !important; }
   html body._toc-right { padding-right: 0px !important; }
-  #_toc { display: none; }
+  html body._files-left { padding-left: 0px !important; }
+  #_toc, #_files { display: none; }
   /*fix github themes auto*/
   body._theme-github .markdown-body { border: 0; padding: 20px; }
   body._theme-github-dark .markdown-body { border: 0; padding: 20px; }
@@ -170,6 +171,155 @@ body._toc-right { padding-right: 300px !important; }
 }
 ._color-dark #_toc {
   border-right: 1px solid #30363d;
+}
+body._toc-right #_toc {
+  left: auto; right: 0;
+  border-right: 0 !important;
+  border-left: 1px solid var(--toc-delimiter);
+}
+._color-light._toc-right #_toc {
+  border-left: 1px solid #e1e4e8;
+}
+._color-dark._toc-right #_toc {
+  border-left: 1px solid #30363d;
+}
+
+/*---------------------------------------------------------------------------*/
+/*file explorer*/
+
+@media (prefers-color-scheme: light) {
+  body {
+    --files-hover: rgba(0, 0, 0, 0.05);
+    --files-active: rgba(9, 105, 218, 0.12);
+    --files-muted: #6e7781;
+    --files-text: #24292f;
+  }
+}
+@media (prefers-color-scheme: dark) {
+  body {
+    --files-hover: rgba(255, 255, 255, 0.06);
+    --files-active: rgba(88, 166, 255, 0.18);
+    --files-muted: #8b949e;
+    --files-text: #c9d1d9;
+  }
+}
+._color-light {
+  --files-hover: rgba(0, 0, 0, 0.05);
+  --files-active: rgba(9, 105, 218, 0.12);
+  --files-muted: #6e7781;
+  --files-text: #24292f;
+}
+._color-dark {
+  --files-hover: rgba(255, 255, 255, 0.06);
+  --files-active: rgba(88, 166, 255, 0.18);
+  --files-muted: #8b949e;
+  --files-text: #c9d1d9;
+}
+body._files-left { padding-left: 300px !important; }
+#_files {
+  position: fixed;
+  top: 0; bottom: 0; left: 0;
+  width: 299px;
+  height: 100%;
+  box-sizing: border-box;
+  border-right: 1px solid var(--toc-delimiter);
+  overflow-y: auto;
+  overflow-x: hidden;
+  color: var(--files-text);
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+  font-size: 14px;
+  line-height: 1.5;
+  word-wrap: normal;
+}
+._color-light #_files {
+  border-right: 1px solid #e1e4e8;
+}
+._color-dark #_files {
+  border-right: 1px solid #30363d;
+}
+#_files ._header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 10px 8px !important;
+  border-bottom: 1px solid var(--toc-delimiter);
+  font-weight: 600;
+}
+#_files ._header ._up {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  line-height: 24px !important;
+  text-align: center;
+  border-radius: 4px;
+  border: 0 !important;
+  text-decoration: none !important;
+}
+#_files ._header ._up:hover {
+  background: var(--files-hover);
+}
+#_files ._header ._up._disabled {
+  opacity: 0.35;
+  pointer-events: none;
+}
+#_files ._header ._name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+#_files ._tree {
+  padding: 8px 0 15px !important;
+}
+#_files ._ul {
+  padding-left: 16px !important;
+  margin: 0 !important;
+}
+#_files ._dir > a,
+#_files ._file > a {
+  display: flex !important;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  color: inherit !important;
+  text-decoration: none !important;
+  white-space: nowrap;
+}
+#_files ._dir > a:hover,
+#_files ._file > a:hover {
+  background: var(--files-hover);
+}
+#_files ._file._active > a {
+  background: var(--files-active);
+  font-weight: 600;
+}
+#_files ._label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#_files ._file ._label {
+  padding-left: 16px;
+}
+#_files ._caret {
+  flex: none;
+  width: 12px;
+  color: var(--files-muted);
+  font-size: 10px;
+}
+#_files ._caret::before {
+  content: '▶';
+  display: inline-block;
+  transition: transform 0.1s;
+}
+#_files ._dir._open > a ._caret::before {
+  transform: rotate(90deg);
+}
+#_files ._info {
+  padding: 3px 10px 3px 26px !important;
+  color: var(--files-muted);
+  font-style: italic;
+  white-space: nowrap;
 }
 
 /*---------------------------------------------------------------------------*/
