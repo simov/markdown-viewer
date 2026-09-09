@@ -62,6 +62,7 @@ var Popup = () => {
         autoreload: 'Auto reload on file change',
         emoji: 'Convert emoji :shortnames: into EmojiOne images',
         toc: 'Generate Table of Contents',
+        files: 'File explorer for local files',
         mathjax: 'Render MathJax formulas',
         mermaid: 'Mermaid diagrams',
         syntax: 'Syntax highlighting for fenced code blocks',

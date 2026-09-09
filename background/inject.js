@@ -35,6 +35,7 @@ md.inject = ({storage: {state}}) => (id) => {
       state.content.emoji && '/content/emoji.js',
       state.content.mermaid && ['/vendor/mermaid.min.js', '/vendor/panzoom.min.js', '/content/mermaid.js'],
       state.content.mathjax && ['/content/mathjax.js', '/vendor/mathjax/tex-mml-chtml.js'],
+      state.content.files && '/content/files.js',
       '/content/index.js',
       '/content/scroll.js',
       state.content.autoreload && '/content/autoreload.js',
