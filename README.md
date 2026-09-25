@@ -113,6 +113,8 @@ Full **CommonMark** support including **GFM** tables and strikethrough **+**
 | Option         | Default | Description
 | :-             | :-:     | :-
 | **autoreload** | `false` | Auto reload on file change
+| **comments**   | **`true`**  | Show comments (highlights + sidebar). See [Comments](COMMENTS-README.md)
+| **commentsWrite** | `false` | Allow adding/editing comments. See [Comments](COMMENTS-README.md)
 | **emoji**      | `false` | Convert emoji `:shortnames:` into EmojiOne images
 | **mathjax**    | `false` | Render MathJax formulas
 | **mermaid**    | `false` | Render Mermaid diagrams
@@ -125,6 +127,15 @@ When enabled the extension will make a GET request every second to markdown file
 
 - `file:///` URLs
 - any host that resolves to localhost IPv4 `127.0.0.1` or IPv6 `::1`
+
+## Comments
+
+Select any text in a rendered markdown document to attach a comment to it.
+Comments persist locally per page, can be tagged/prioritized/replied to/
+resolved, and can be exported as JSON or written back into the markdown
+source as HTML comment markers. See [COMMENTS-README.md](COMMENTS-README.md)
+for the full write-up, including the read/write settings split, keyboard
+shortcuts, and data format.
 
 ## Emoji
 

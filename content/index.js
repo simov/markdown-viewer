@@ -261,14 +261,27 @@ var _escape = (str) =>
     '>': '&gt;'
   }[tag] || tag))
 
-if (document.readyState === 'complete') {
+// readyState === 'complete' is not sufficient on its own: when detect.js
+// force-reloads the tab on service-worker wakeup (autoreload enabled), this
+// script can run against a document that is "complete" but whose <pre> has
+// not been (re)built yet, and mount() would throw on a null $('pre') and
+// abort rendering entirely. Wait for the <pre> as well, with a cap so a
+// document that genuinely has no <pre> does not poll forever.
+var ready = () => document.readyState === 'complete' && $('pre')
+
+if (ready()) {
   mount()
 }
 else {
+  var attempts = 0
   var timeout = setInterval(() => {
-    if (document.readyState === 'complete') {
+    if (ready()) {
       clearInterval(timeout)
       mount()
     }
-  }, 0)
+    else if (++attempts > 500) { // ~5s at the fastest interval
+      clearInterval(timeout)
+      console.warn('[markdown-viewer] gave up waiting for <pre> to render')
+    }
+  }, 10)
 }

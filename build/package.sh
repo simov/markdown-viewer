@@ -62,5 +62,16 @@ elif [ "$browser" = "firefox" ]; then
   cd ../../
 fi
 
+# emit a persistent per-browser unpacked tree so Chrome and Firefox can each
+# be loaded from their own directory at the same time, without the shared
+# repo-root manifest.json (last-build-wins) clobbering the other browser.
+# Load unpacked from dist/chrome or dist/firefox respectively.
+# (Local convenience; dist/ is gitignored.)
+cd ..
+rm -rf "dist/$browser"
+mkdir -p "dist/$browser"
+cp -r build/tmp/markdown-viewer/. "dist/$browser/"
+cd build
+
 # cleanup
 rm -rf tmp/

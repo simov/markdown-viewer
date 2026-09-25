@@ -53,6 +53,8 @@ md.storage.defaults = (compilers) => {
       mermaid: false,
       syntax: true,
       toc: false,
+      comments: true,
+      commentsWrite: false,
     },
     origins: {
       'file://': {
@@ -192,5 +194,16 @@ md.storage.migrations = (state) => {
       theme: '',
       color: 'auto'
     }
+  }
+  // v5.3 -> v5.3.1
+  if (state.content.comments === undefined) {
+    state.content.comments = true
+  }
+  // v5.3.1 -> v5.3.2
+  if (state.content.commentsWrite === undefined) {
+    // Existing users who already had comments enabled keep write access
+    // (they may already be actively creating comments). New installs
+    // default to read-only per the updated default above.
+    state.content.commentsWrite = state.content.comments === true
   }
 }

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name"            : "Markdown Viewer",
-  "version"         : "5.3",
+  "version"         : "5.4.1",
   "description"     : "Dark Mode • Themes • Autoreload • Mermaid Diagrams • MathJax • ToC • Syntax Highlighting",
 
   "homepage_url": "https://github.com/simov/markdown-viewer",
@@ -44,6 +44,7 @@
       "/background/mathjax.js",
       "/background/xhr.js",
       "/background/icon.js",
+      "/background/comments.js",
 
       "/background/index.js"
     ]
@@ -74,7 +75,9 @@
 
   "permissions": [
     "storage",
-    "scripting"
+    "scripting",
+    "contextMenus",
+    "downloads"
   ],
 
   "host_permissions": [

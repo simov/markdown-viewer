@@ -1,6 +1,15 @@
 
 md.inject = ({storage: {state}}) => (id) => {
 
+  chrome.scripting.insertCSS({
+    target: {tabId: id},
+    files: [
+      '/content/index.css',
+      '/content/themes.css',
+      (state.content.comments || state.content.commentsWrite) && '/content/comments.css',
+    ].filter(Boolean)
+  })
+
   chrome.scripting.executeScript({
     target: {tabId: id},
     args: [{
@@ -13,18 +22,14 @@ md.inject = ({storage: {state}}) => (id) => {
       icon: state.settings.icon,
     }],
     func: (_args) => {
-      document.querySelector('pre').style.visibility = 'hidden'
+      // Guard: detect.js can fire inject() more than once per tab (multiple
+      // 'loading' events race the window.state check), and on the reload
+      // path the <pre> may not be present yet. Neither case should throw.
+      var pre = document.querySelector('pre')
+      if (pre) pre.style.visibility = 'hidden'
       args = _args
     },
     injectImmediately: true
-  })
-
-  chrome.scripting.insertCSS({
-    target: {tabId: id},
-    files: [
-      '/content/index.css',
-      '/content/themes.css',
-    ]
   })
 
   chrome.scripting.executeScript({
@@ -38,6 +43,7 @@ md.inject = ({storage: {state}}) => (id) => {
       '/content/index.js',
       '/content/scroll.js',
       state.content.autoreload && '/content/autoreload.js',
+      (state.content.comments || state.content.commentsWrite) && '/content/comments.js',
     ].filter(Boolean).flat(),
     injectImmediately: true
   })

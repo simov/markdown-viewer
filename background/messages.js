@@ -46,12 +46,24 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, xhr, webreq
 
     // popup
     else if (req.message === 'popup') {
+      // Guard against an unset state.compiler or a compilers map that is
+      // missing that entry (fresh profile, or compiler scripts not yet
+      // registered). Dereferencing compilers[state.compiler].description
+      // directly throws inside the Object.assign argument, so sendResponse
+      // is never called with a usable object and the popup/options Compiler
+      // and Content sections render empty with no visible error.
+      var compilerNames = Object.keys(compilers)
+      var activeCompiler =
+        (state.compiler && compilers[state.compiler]) ? state.compiler
+          : compilerNames[0]
+      var activeEntry = activeCompiler ? compilers[activeCompiler] : undefined
       sendResponse(Object.assign({}, state, {
-        options: state[state.compiler],
-        description: compilers[state.compiler].description,
-        compilers: Object.keys(compilers),
+        compiler: activeCompiler,
+        options: activeCompiler ? state[activeCompiler] : {},
+        description: activeEntry ? activeEntry.description : '',
+        compilers: compilerNames,
         themes: state.themes,
-        settings: {theme: state.settings.theme}
+        settings: {theme: (state.settings && state.settings.theme) || 'light'}
       }))
     }
     else if (req.message === 'popup.theme') {

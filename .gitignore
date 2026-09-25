@@ -8,3 +8,8 @@ package-lock.json
 /*.zip
 /manifest.json
 /background/index-compilers.js
+/dist/
+
+# Local-only planning docs, not part of the shipped feature
+/DESIGN-comments.md
+/ROADMAP-comments.md

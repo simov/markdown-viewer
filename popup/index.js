@@ -65,10 +65,25 @@ var Popup = () => {
         mathjax: 'Render MathJax formulas',
         mermaid: 'Mermaid diagrams',
         syntax: 'Syntax highlighting for fenced code blocks',
+        comments: 'View comments: highlights + sidebar (read-only)',
+        commentsWrite: 'Create comments: ⌘⇧K + selection tooltip (adds on top of View comments)',
+      }
+    },
+    // Optional display-name overrides for content switches whose raw
+    // storage key alone isn't self-explanatory in the UI (e.g. two
+    // keys that only differ by a suffix). Falls back to the raw key
+    // for every other setting via labelFor() below.
+    labels: {
+      content: {
+        comments: 'Show comments',
+        commentsWrite: 'Create comments',
       }
     },
     settings: {}
   }
+
+  var labelFor = (tab, key) =>
+    (state.labels[tab] && state.labels[tab][key]) || key
 
   var events = {
     tab: (e) => {
@@ -290,7 +305,7 @@ var Popup = () => {
                 onchange: events.content
               }),
               m('.mdc-switch__background', m('.mdc-switch__knob')),
-              m('span.mdc-switch-label', key)
+              m('span.mdc-switch-label', labelFor('content', key))
             ))
           )
         )
@@ -402,7 +417,7 @@ var Popup = () => {
                 onchange: events.content
               }),
               m('.mdc-switch__background', m('.mdc-switch__knob')),
-              m('span.mdc-switch-label', key)
+              m('span.mdc-switch-label', labelFor('content', key))
             ))
           )
         ),

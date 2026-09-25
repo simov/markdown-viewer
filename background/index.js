@@ -14,6 +14,7 @@ importScripts('/background/messages.js')
 importScripts('/background/mathjax.js')
 importScripts('/background/xhr.js')
 importScripts('/background/icon.js')
+importScripts('/background/comments.js')
 
 ;(() => {
   var storage = md.storage(md)
@@ -23,6 +24,7 @@ importScripts('/background/icon.js')
   var mathjax = md.mathjax()
   var xhr = md.xhr()
   var icon = md.icon({storage})
+  var comments = md.comments({storage})
 
   var compilers = Object.keys(md.compilers)
     .reduce((all, compiler) => (
@@ -34,6 +36,7 @@ importScripts('/background/icon.js')
 
   chrome.tabs.onUpdated.addListener(detect.tab)
   chrome.runtime.onMessage.addListener(messages)
+  chrome.runtime.onMessage.addListener(comments)
 
   icon()
 })()
