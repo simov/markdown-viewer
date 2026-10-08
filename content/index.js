@@ -237,13 +237,19 @@ var frontmatter = (md) => {
   if (/^-{3}[\s\S]+?-{3}/.test(md)) {
     var [, yaml] = /^-{3}([\s\S]+?)-{3}/.exec(md)
     var title = /title: (?:'|")*(.*)(?:'|")*/.exec(yaml)
-    title && (document.title = title[1])
   }
   else if (/^\+{3}[\s\S]+?\+{3}/.test(md)) {
     var [, toml] = /^\+{3}([\s\S]+?)\+{3}/.exec(md)
     var title = /title = (?:'|"|`)*(.*)(?:'|"|`)*/.exec(toml)
-    title && (document.title = title[1])
   }
+  var filename = location.pathname.split('/').pop()
+  try {
+    filename = decodeURIComponent(filename)
+  }
+  catch (err) {
+    // Keep the filename if the URL contains malformed percent encoding.
+  }
+  document.title = title ? title[1] : filename
   return md.replace(/^(?:-|\+){3}[\s\S]+?(?:-|\+){3}/, '')
 }
 

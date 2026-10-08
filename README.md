@@ -110,6 +110,10 @@ Full **CommonMark** support including **GFM** tables and strikethrough **+**
 
 # Content Options
 
+The page title uses the `title` field from YAML or TOML front matter when present.
+Otherwise, it uses the filename from the URL, with percent-encoded characters
+decoded when possible. This also gives local files a window title in Firefox.
+
 | Option         | Default | Description
 | :-             | :-:     | :-
 | **autoreload** | `false` | Auto reload on file change
