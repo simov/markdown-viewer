@@ -1,0 +1,297 @@
+
+/*---------------------------------------------------------------------------*/
+/*github theme*/
+
+.markdown-body {
+  overflow: auto;
+
+  min-width: 830px;
+  max-width: 830px;
+
+  padding: 32px;
+  margin: 20px auto !important;
+}
+.markdown-body #_html>*:first-child {
+  margin-top: 0 !important;
+}
+.markdown-body #_html>*:last-child {
+  margin-bottom: 0 !important;
+}
+.markdown-body img {
+  background-color: transparent;
+}
+
+/*---------------------------------------------------------------------------*/
+/*toc*/
+
+/*github*/
+._theme-github #_toc { /*.markdown-body {*/
+  background-color: var(--color-canvas-default);
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+  font-size: 16px;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+._theme-github #_toc a { /*.markdown-body a {*/
+  background-color: transparent;
+  color: #0969da;
+  text-decoration: none;
+}
+._theme-github #_toc a:hover {
+  text-decoration: underline;
+}
+
+/*github-dark*/
+._theme-github-dark #_toc { /*.markdown-body {*/
+  background-color: #0d1117;
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+  font-size: 16px;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+._theme-github-dark #_toc a { /*.markdown-body a {*/
+  background-color: transparent;
+  color: #58a6ff;
+  text-decoration: none;
+}
+._theme-github-dark #_toc a:hover {
+  text-decoration: underline;
+}
+
+/*---------------------------------------------------------------------------*/
+/*anchor link*/
+
+/*fix hover*/
+.markdown-theme .anchor {
+  border-bottom: 0;
+}
+
+/*fix position*/
+._theme-almond .octicon,
+._theme-awsm .octicon,
+._theme-axist .octicon,
+._theme-kacit .octicon,
+._theme-mini .octicon,
+._theme-new .octicon,
+._theme-sakura .octicon,
+._theme-sakura-vader .octicon,
+._theme-semantic .octicon,
+._theme-simple .octicon,
+._theme-stylize .octicon,
+._theme-superstylin .octicon {
+  line-height: 1px;
+}
+._theme-splendor .anchor,
+._theme-splendor .octicon {
+  padding: 0 !important;
+  margin: 0 0 0 -10px !important;
+}
+._theme-splendor h3 .octicon,
+._theme-splendor h4 .octicon,
+._theme-splendor h5 .octicon,
+._theme-splendor h6 .octicon
+{
+  position: relative;
+  top: 4px;
+}
+._theme-no-class h1 .octicon,
+._theme-no-class h2 .octicon,
+._theme-no-class h3 .octicon {
+  position: relative;
+  top: -5px;
+}
+._theme-pico h1 .octicon,
+._theme-pico h2 .octicon {
+  position: relative;
+  top: 5px;
+}
+._theme-superstylin h1 .octicon {
+  position: relative;
+  top: -5px;
+}
+._theme-writ .octicon {
+  line-height: 0;
+}
+._theme-writ h2 .octicon {
+  position: relative;
+  top: 4px;
+}
+._theme-writ h3 .octicon {
+  position: relative;
+  top: 10px;
+}
+
+/*---------------------------------------------------------------------------*/
+/*task list checkboxes*/
+
+._theme-awsm input[type=checkbox],
+._theme-kacit input[type=checkbox],
+._theme-no-class input[type=checkbox],
+._theme-semantic input[type=checkbox],
+._theme-tacit input[type=checkbox],
+._theme-vanilla input[type=checkbox] {
+  display: inline-block !important;
+  box-sizing: border-box !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+._theme-bullframe input[type=checkbox],
+._theme-superstylin input[type=checkbox] {
+  position: relative;
+  top: 3px;
+}
+._theme-mini input[type=checkbox] {
+  position: relative;
+  top: 4px;
+}
+._theme-no-class input[type=checkbox] {
+  width: auto !important;
+}
+._theme-vanilla input[type=checkbox] {
+  appearance: auto !important;
+}
+
+/*---------------------------------------------------------------------------*/
+/*fix auto dark*/
+
+/*set default background color*/
+._theme-air,
+._theme-marx,
+._theme-modest,
+._theme-splendor,
+._theme-stylize,
+._theme-writ {
+  background-color: #fff;
+}
+
+/*set default text and link color*/
+._theme-semantic { color: #000; }
+._theme-semantic a { color: #0000ff; }
+._theme-semantic a:visited { color: #800080; }
+._theme-semantic a:active { color: #ff0000; }
+
+/*---------------------------------------------------------------------------*/
+/*mermaid*/
+._theme-mini code { line-height: normal; }
+._theme-tacit * { max-width: none; }
+._theme-kacit * { max-width: none; }
+
+/*---------------------------------------------------------------------------*/
+/*panzoom*/
+
+._theme-mini pre > code.mermaid { padding: 0; }
+._theme-superstylin pre > code.mermaid { background: none; padding: 0; margin: 0; border-radius: 0; }
+._theme-superstylin pre:has(> code.mermaid) { background: #f6f6f6; padding: 1rem; margin-bottom: 1.563rem; border-radius: 10px; }
+._theme-water pre > code.mermaid { padding: 0; background: none; border-radius: 0; }
+._theme-water pre:has(> code.mermaid) { padding: 10px; background: #efefef; border-radius: 6px; }
+._theme-water-dark pre > code.mermaid { padding: 0; background: none; border-radius: 0; }
+._theme-water-dark pre:has(> code.mermaid) { padding: 10px; background: #161f27; border-radius: 6px; }
+@media (prefers-color-scheme: dark) {
+  ._theme-superstylin pre:has(> code.mermaid) { background: #595859; }
+}
+
+/*---------------------------------------------------------------------------*/
+/*theme fixes*/
+
+@media (prefers-color-scheme: dark) {
+  /*no-class - fix code block*/
+  ._theme-no-class pre {
+    background: #303030;
+  }
+  /*no-class - fix table*/
+  ._theme-no-class tbody tr:nth-of-type(odd) {
+    background-color: #303030;
+  }
+}
+
+/*github*/
+._theme-github {
+  background-color: #fff;
+}
+._theme-github > pre {
+  color: #000;
+}
+._theme-github .markdown-body {
+  border: 1px solid #e1e4e8;
+}
+
+/*github-dark*/
+._theme-github-dark {
+  background-color: #0d1117;
+}
+._theme-github-dark > pre {
+  color: #fff;
+}
+._theme-github-dark a {
+  color: #4493f8 !important;
+}
+._theme-github-dark .markdown-body {
+  border: 1px solid #30363d;
+}
+
+/*markdown-air - fix images*/
+._theme-air img {
+  border-radius: 0;
+  width: auto;
+  height: auto;
+}
+
+/*axist - fix lists*/
+._theme-axist ul li p {
+  display: inline-block;
+}
+/*axist - fix fenced code blocks*/
+._theme-axist pre::after {
+  content: none;
+}
+
+/*kacit, tacit - fix mermaid diagrams size*/
+._theme-kacit pre code,
+._theme-tacit pre code {
+  display: block;
+}
+
+/*mini - fix table*/
+._theme-mini table {
+  overflow-x: clip !important;
+  max-height: none !important;
+}
+/*mini - fix special symbols*/
+._theme-mini blockquote::before {
+  content: "“";
+}
+._theme-mini [type=checkbox]:checked:before {
+  content: "✓";
+  top: -3px;
+}
+
+/*simple - fix body width*/
+._theme-simple {
+  display: block;
+}
+
+/*style-sans, style-serif - fix inline code*/
+._theme-style-sans *:not(pre) > code::before,
+._theme-style-sans *:not(pre) > code::after,
+._theme-style-serif *:not(pre) > code::before,
+._theme-style-serif *:not(pre) > code::after {
+  content: '';
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+/*superstylin - fix lists*/
+._theme-superstylin ul ul,
+._theme-superstylin ol ol {
+  padding-left: 40px;
+}
+._theme-superstylin ul li p,
+._theme-superstylin ol li p {
+  display: inline-block;
+  margin-bottom: 0;
+}
+
+/*vanilla - fix pre margin*/
+._theme-vanilla pre {
+  margin-bottom: 10px;
+}

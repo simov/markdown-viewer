@@ -1,0 +1,7 @@
+{
+  "name": "markdown-viewer",
+  "private": true,
+  "dependencies": {
+    "abcjs": "6.4.4"
+  }
+}

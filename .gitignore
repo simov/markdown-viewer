@@ -1,0 +1,11 @@
+npm-debug.log
+coverage/
+node_modules/
+package-lock.json
+*.tgz
+
+/themes/
+/vendor/
+/*.zip
+/background/index-compilers.js
+build/**/node_modules/

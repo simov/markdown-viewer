@@ -1,0 +1,23 @@
+{
+  "name": "markdown-viewer",
+  "version": "0.0.0",
+  "description": "Markdown Viewer / Browser Extension",
+  "private": true,
+  "dependencies": {
+    "remark": "15.0.1",
+    "remark-breaks": "4.0.0",
+    "remark-gfm": "4.0.0",
+    "remark-html": "16.0.1",
+    "remark-slug": "7.0.1"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "25.0.7",
+    "@rollup/plugin-node-resolve": "15.2.3",
+    "rollup": "3.29.4",
+    "rollup-plugin-polyfill-node": "0.13.0",
+    "terser": "5.30.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

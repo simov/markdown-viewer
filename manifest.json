@@ -1,0 +1,94 @@
+{
+  "manifest_version": 3,
+  "name"            : "Markdown Viewer",
+  "version"         : "5.3",
+  "description"     : "Dark Mode • Themes • Autoreload • Mermaid • Plotly • Vega-Lite • Graphviz • WaveDrom • ABC • CSV • MathJax • ToC • Syntax Highlighting",
+
+  "homepage_url": "https://github.com/avih7531/markdown-viewer",
+
+  "icons": {
+    "16" : "/icons/default/16x16.png",
+    "19" : "/icons/default/19x19.png",
+    "38" : "/icons/default/38x38.png",
+    "48" : "/icons/default/48x48.png",
+    "128": "/icons/default/128x128.png"
+  },
+
+  "action": {
+    "default_icon": {
+      "16" : "/icons/default/16x16.png",
+      "19" : "/icons/default/19x19.png",
+      "38" : "/icons/default/38x38.png",
+      "48" : "/icons/default/48x48.png",
+      "128" : "/icons/default/128x128.png"
+    },
+    "default_title": "Markdown Viewer",
+    "default_popup": "/popup/index.html"
+  },
+
+  "background": {
+    "scripts": [
+      "/vendor/markdown-it.min.js",
+      "/vendor/marked.min.js",
+      "/vendor/remark.min.js",
+      "/background/compilers/markdown-it.js",
+      "/background/compilers/marked.js",
+      "/background/compilers/remark.js",
+      "/background/storage.js",
+      "/background/webrequest.js",
+      "/background/detect.js",
+      "/background/inject.js",
+      "/background/messages.js",
+      "/background/mathjax.js",
+      "/background/xhr.js",
+      "/background/icon.js",
+      "/background/index.js"
+    ]
+  },
+
+  "options_ui": {
+    "page": "/options/index.html",
+    "browser_style": false
+  },
+
+  "web_accessible_resources": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "resources": [
+        "/content/anchor.svg",
+        "/icons/default/16x16.png",
+        "/icons/dark/16x16.png",
+        "/icons/light/16x16.png",
+        "/themes/*",
+        "/vendor/mathjax/fonts/*",
+        "/vendor/prism.min.css",
+        "/vendor/prism-okaidia.min.css",
+        "/vendor/graphviz.min.js",
+        "/vendor/wavedrom-skin.min.js"
+      ]
+    }
+  ],
+
+  "permissions": [
+    "storage",
+    "scripting"
+  ],
+
+  "host_permissions": [
+    "file:///*"
+  ],
+
+  "optional_permissions": [
+    "webRequest",
+    "*://*/"
+  ],
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "markdown-viewer@outofindex.com",
+      "strict_min_version": "110.0"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "markdown-viewer",
+  "private": true,
+  "dependencies": {
+    "@hpcc-js/wasm": "2.22.4"
+  }
+}

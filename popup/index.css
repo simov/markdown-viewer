@@ -1,0 +1,209 @@
+
+/*---------------------------------------------------------------------------*/
+/*global*/
+
+html, body {
+  height: auto;
+  min-height: auto;
+  overflow: hidden;
+  background: #fff;
+  padding: 0;
+  margin: 0;
+}
+
+body,
+body label,
+body input {
+  font-family: 'Monospace', monospace !important;
+}
+body select,
+body button,
+body a.mdc-tab {
+  font-family: sans-serif !important;
+}
+
+.mdc-elevation--z2 {
+  box-shadow:
+    0 3px 1px -2px rgba(0,0,0,.2),
+    0 2px 2px 0 rgba(0,0,0,.14),
+    0 1px 5px 0 rgba(0,0,0,.12);
+}
+
+#popup {
+  width: 350px;
+  padding: 20px;
+  -webkit-user-select: none;
+}
+#popup:after { content: ''; display: block; clear: both; }
+
+.m-file-access {
+  margin: 0 0 16px;
+  padding: 10px 12px;
+  background: #fff3e0;
+  color: #4e342e;
+  font-family: sans-serif !important;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.m-file-access a {
+  color: #e65100;
+}
+
+/*---------------------------------------------------------------------------*/
+/*color modes*/
+
+body.dark {
+  filter: invert(100%) hue-rotate(180deg);
+  background-color: #e4e4e4;
+}
+body.dark .m-select {
+  background-color: #c5c5c5;
+}
+body.dark .m-button {
+  background-color: #c5c5c5 !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  body.auto {
+    filter: invert(100%) hue-rotate(180deg);
+    background-color: #e4e4e4;
+  }
+  body.auto .m-select {
+    background-color: #c5c5c5;
+  }
+  body.auto .m-button {
+    background-color: #c5c5c5 !important;
+  }
+}
+
+/*---------------------------------------------------------------------------*/
+/*button*/
+
+/*defaults button*/
+#popup button:nth-child(2) { float: right; }
+/*advanced options button*/
+#popup button:nth-child(2n+3) { float: right; margin-top: 20px; }
+
+.m-button {
+  background-color: #ececec !important;
+  color: #000 !important;
+}
+.m-button:before {
+  background-color: rgba(96, 125, 139, 0.56) !important;
+}
+.m-button:after {
+  background-color: rgba(96, 125, 139, 0.56) !important;
+}
+
+/*---------------------------------------------------------------------------*/
+/*select*/
+
+.m-select {
+  font-size: 14px;
+  line-height: 17px;
+  color: #000;
+  text-transform: uppercase;
+  background-color: #ececec;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  padding: 9px 12px;
+}
+
+#popup .m-select {
+  width: 350px;
+  margin: 20px 0 0 0;
+}
+
+/*---------------------------------------------------------------------------*/
+/*switch*/
+
+.m-switch {
+  cursor: pointer;
+  margin: 7px 0;
+}
+.m-switch:first-child {
+  margin-top: 12px;
+}
+.m-switch:last-child {
+  margin-bottom: 10px;
+}
+.m-switch .mdc-switch__background {
+  display: inline-block;
+  bottom: 5px;
+  left: 15px;
+}
+.m-switch .mdc-switch-label {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  padding: 0 0 0 30px;
+}
+
+#popup .m-switch .mdc-switch-label { width: 276px; }
+
+/*---------------------------------------------------------------------------*/
+/*tabs*/
+
+.m-tabs {
+  border: 0;
+  height: 36px;
+  margin: 20px 0 0 0;
+  display: flex;
+}
+.m-tabs a {
+  line-height: 36px;
+  border-bottom: 1px solid #e0e0e0;
+  display: inline-block;
+  width: 33.33%;
+  max-width: 33.33%;
+  min-width: 33.33%;
+  height: 36px;
+  max-height: 36px;
+  min-height: 36px;
+  padding: 0;
+  align-content: stretch;
+}
+.m-tabs .mdc-tab-bar__indicator { background: #607d8b; }
+
+.m-panels {}
+.m-panel { display: none; }
+.m-panel.is-active { display: block; }
+
+/*---------------------------------------------------------------------------*/
+/*options scroll*/
+
+.scroll {
+  margin-top: 10px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.scroll.max {
+  height: 324px;
+}
+
+/*---------------------------------------------------------------------------*/
+/*scrollbar*/
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track-piece {
+  background: #ececec;
+  -webkit-border-radius: 8px;
+}
+::-webkit-scrollbar-thumb {
+  height: 50px;
+  background: #afbdc3;
+  -webkit-border-radius: 8px;
+  outline-offset: -2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  height: 50px;
+  background-color: #607d8b;
+  -webkit-border-radius: 8px;
+}

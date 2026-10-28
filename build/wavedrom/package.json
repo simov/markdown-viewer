@@ -1,0 +1,7 @@
+{
+  "name": "markdown-viewer",
+  "private": true,
+  "dependencies": {
+    "wavedrom": "3.4.0"
+  }
+}
