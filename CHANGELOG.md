@@ -1,6 +1,11 @@
 
 # Change Log
 
+## Unreleased
+- update mermaid from v10.8.0 to v12.3.0 (use `mermaid.run` instead of deprecated `mermaid.init`)
+- add GitHub alerts support (`> [!NOTE]`, `[!TIP]`, `[!IMPORTANT]`, `[!WARNING]`, `[!CAUTION]`) with a settings toggle
+- fix `<br>` line breaks hidden in mermaid diagrams by github themes
+
 ## v5.3 - 2024-04-30
 - custom theme support
 - syntax highlighted raw markdown view

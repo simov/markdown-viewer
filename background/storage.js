@@ -47,6 +47,7 @@ md.storage.defaults = (compilers) => {
       width: 'auto',
     },
     content: {
+      alerts: true,
       autoreload: false,
       emoji: false,
       mathjax: false,
@@ -112,6 +113,9 @@ md.storage.migrations = (state) => {
   }
   if (state.remark.pedantic !== undefined) {
     delete state.remark.pedantic
+  }
+  if (state.content.alerts === undefined) {
+    state.content.alerts = true
   }
   if (state.content.mermaid === undefined) {
     state.content.mermaid = false

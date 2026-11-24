@@ -112,6 +112,7 @@ Full **CommonMark** support including **GFM** tables and strikethrough **+**
 
 | Option         | Default | Description
 | :-             | :-:     | :-
+| **alerts**     | `true`  | Render GitHub alerts (`> [!NOTE]`, `[!TIP]`, `[!IMPORTANT]`, `[!WARNING]`, `[!CAUTION]`)
 | **autoreload** | `false` | Auto reload on file change
 | **emoji**      | `false` | Convert emoji `:shortnames:` into EmojiOne images
 | **mathjax**    | `false` | Render MathJax formulas

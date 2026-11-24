@@ -1,5 +1,5 @@
 
-md.messages = ({storage: {defaults, state, set}, compilers, mathjax, xhr, webrequest, icon}) => {
+md.messages = ({storage: {defaults, state, set}, compilers, mathjax, alerts, xhr, webrequest, icon}) => {
 
   return (req, sender, sendResponse) => {
 
@@ -13,6 +13,9 @@ md.messages = ({storage: {defaults, state, set}, compilers, mathjax, xhr, webreq
       }
 
       var html = compilers[state.compiler].compile(markdown)
+      if (state.content.alerts) {
+        html = alerts.render(html)
+      }
 
       if (state.content.mathjax) {
         html = jax.detokenize(html)
