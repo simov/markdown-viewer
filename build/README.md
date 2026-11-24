@@ -26,7 +26,7 @@ sh build/package.sh
 | cleanrmd            | 0.1.0
 | github-markdown-css | 5.5.1
 | mathjax             | 3.2.2
-| mermaid             | 10.8.0
+| mermaid             | 12.3.0
 | mithril             | 1.1.7
 | prismjs             | 1.29.0
 | csso                | 5.0.5
