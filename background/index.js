@@ -12,6 +12,7 @@ importScripts('/background/detect.js')
 importScripts('/background/inject.js')
 importScripts('/background/messages.js')
 importScripts('/background/mathjax.js')
+importScripts('/background/alerts.js')
 importScripts('/background/xhr.js')
 importScripts('/background/icon.js')
 
@@ -21,6 +22,7 @@ importScripts('/background/icon.js')
   var detect = md.detect({storage, inject})
   var webrequest = md.webrequest({storage})
   var mathjax = md.mathjax()
+  var alerts = md.alerts()
   var xhr = md.xhr()
   var icon = md.icon({storage})
 
@@ -30,7 +32,7 @@ importScripts('/background/icon.js')
       all
     ), {})
 
-  var messages = md.messages({storage, compilers, mathjax, xhr, webrequest, icon})
+  var messages = md.messages({storage, compilers, mathjax, alerts, xhr, webrequest, icon})
 
   chrome.tabs.onUpdated.addListener(detect.tab)
   chrome.runtime.onMessage.addListener(messages)

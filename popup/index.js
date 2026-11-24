@@ -59,6 +59,7 @@ var Popup = () => {
       themes: {},
       compiler: {},
       content: {
+        alerts: 'GitHub alerts (> [!NOTE], [!TIP], ...)',
         autoreload: 'Auto reload on file change',
         emoji: 'Convert emoji :shortnames: into EmojiOne images',
         toc: 'Generate Table of Contents',

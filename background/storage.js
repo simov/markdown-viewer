@@ -47,6 +47,7 @@ md.storage.defaults = (compilers) => {
       width: 'auto',
     },
     content: {
+      alerts: true,
       autoreload: false,
       emoji: false,
       mathjax: false,
@@ -82,10 +83,15 @@ md.storage.bug = (res) => {
   // reload extension bug
   chrome.permissions.getAll((permissions) => {
     var origins = Object.keys(res.origins || {})
-    chrome.permissions.remove({
-      origins: permissions.origins
-        .filter((origin) => origins.indexOf(origin.slice(0, -2)) === -1)
-    })
+    // required host permissions cannot be removed
+    var required = chrome.runtime.getManifest().host_permissions || []
+    var stale = (permissions.origins || [])
+      .filter((origin) => required.indexOf(origin) === -1)
+      .filter((origin) => origins.indexOf(origin.slice(0, -2)) === -1)
+    if (!stale.length) {
+      return
+    }
+    chrome.permissions.remove({origins: stale})
   })
 }
 
@@ -112,6 +118,9 @@ md.storage.migrations = (state) => {
   }
   if (state.remark.pedantic !== undefined) {
     delete state.remark.pedantic
+  }
+  if (state.content.alerts === undefined) {
+    state.content.alerts = true
   }
   if (state.content.mermaid === undefined) {
     state.content.mermaid = false
